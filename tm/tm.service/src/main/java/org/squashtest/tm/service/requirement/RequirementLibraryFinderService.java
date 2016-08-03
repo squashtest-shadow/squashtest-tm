@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 
 /**
  * @author Gregory Fouquet
@@ -99,5 +101,17 @@ public interface RequirementLibraryFinderService {
 	 * @return
 	 */
 	Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+	
+	/**
+	 * Passing the ids of some selected RequirementLibrary and RequirementLibraryNodes (in separate collections), will return
+	 * the statistics covering all the Requirements encompassed by this selection. The requirement ids that cannot be
+	 * accessed for security reason will be filtered out.
+	 * 
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @return RequirementStatisticsBundle
+	 */
+	RequirementStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 
 }

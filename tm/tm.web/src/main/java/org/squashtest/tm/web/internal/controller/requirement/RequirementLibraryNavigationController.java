@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,9 +53,11 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -86,6 +89,7 @@ public class RequirementLibraryNavigationController extends
 
 	@Inject
 	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
+	
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
@@ -293,5 +297,16 @@ public class RequirementLibraryNavigationController extends
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
+	
+	// ****************************** statistics section *******************************
+	
+	@ResponseBody
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {
+		LIBRARIES, NODES})
+	public RequirementStatisticsBundle getStatisticsAsJson(
+			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
 
+		return requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+	}
 }

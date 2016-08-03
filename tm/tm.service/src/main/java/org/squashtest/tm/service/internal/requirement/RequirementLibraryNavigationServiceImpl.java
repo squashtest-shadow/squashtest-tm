@@ -96,12 +96,15 @@ import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCo
 import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.requirement.coercers.RequirementLibraryIdsCoercerForArray;
 import org.squashtest.tm.service.internal.requirement.coercers.RequirementLibraryIdsCoercerForList;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -146,6 +149,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
 
+	@Inject
+	private RequirementStatisticsService statisticsService;
+	
 	@Inject
 	private MilestoneMembershipManager milestoneService;
 
@@ -950,6 +956,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 			)
 	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds) {
 		return super.deleteNodes(targetIds);
+	}
+
+	@Override
+	public RequirementStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds,
+			Collection<Long> nodeIds) {
+		
+		Collection<Long> reqIds = findRequirementIdsFromSelection(libraryIds, nodeIds);
+
+		return statisticsService.gatherRequirementStatisticsBundle(reqIds);
 	}
 
 

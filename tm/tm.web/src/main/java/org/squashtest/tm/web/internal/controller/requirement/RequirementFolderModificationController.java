@@ -20,19 +20,23 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/requirement-folders/{folderId}")
 public class RequirementFolderModificationController extends FolderModificationController<RequirementFolder> {
+	
 	private FolderModificationService<RequirementFolder> folderModificationService;
 
 	@Override
@@ -48,6 +52,17 @@ public class RequirementFolderModificationController extends FolderModificationC
 	@Override
 	protected String getWorkspaceName() {
 		return "requirement";
+	}
+	
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+
+		ModelAndView mav = super.showFolder(folderId, request);
+		
+		mav.setViewName("fragment/requirements/requirement-folder");
+		
+		return mav;
 	}
 
 }
