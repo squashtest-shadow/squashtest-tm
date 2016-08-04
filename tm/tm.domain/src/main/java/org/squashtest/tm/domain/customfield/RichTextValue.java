@@ -33,7 +33,7 @@ import org.squashtest.tm.exception.customfield.MandatoryCufException;
 public class RichTextValue extends CustomFieldValue {
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String largeValue ;
 
 	@Override

@@ -76,7 +76,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	private String name;
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	@Field(analyzer = @Analyzer(definition = "htmlStrip"))
 	private String description;
 

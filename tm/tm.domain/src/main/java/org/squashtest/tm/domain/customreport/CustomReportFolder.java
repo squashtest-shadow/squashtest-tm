@@ -55,7 +55,7 @@ public class CustomReportFolder implements TreeEntity {
 
 	@Column
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
 
 	@OneToOne(fetch=FetchType.LAZY)

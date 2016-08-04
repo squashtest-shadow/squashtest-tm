@@ -65,7 +65,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	private String name;
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	@Fields({
 		@Field(),
 		@Field(

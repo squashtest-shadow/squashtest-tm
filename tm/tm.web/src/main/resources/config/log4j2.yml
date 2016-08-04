@@ -34,3 +34,11 @@ Configuration:
       level: error
       AppenderRef:
         ref: Console
+    Logger:
+      - name: org.h2
+        level: trace
+        additivity: false
+        AppenderRef:
+            ref: Console
+        
+        

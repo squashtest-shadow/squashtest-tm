@@ -34,7 +34,8 @@
     <ooxml-schemas.version>1.1</ooxml-schemas.version>
     <poi.version>3.12</poi.version>
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
-    <querydsl.version>4.0.4</querydsl.version>
+    <!-- warning : querysdl.version should match that of spring-data-jpa -->
+    <querydsl.version>4.1.2</querydsl.version>
     <spock.version>1.0-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.10.RELEASE</spring-security-oauth2.version>
     <spring-security.version>4.0.4.RELEASE</spring-security.version>

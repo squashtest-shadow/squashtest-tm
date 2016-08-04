@@ -66,12 +66,12 @@ ChangedProperty {
 	private String propertyName;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	@Basic(fetch = FetchType.LAZY)
 	private String oldValue;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	@Basic(fetch = FetchType.LAZY)
 	private String newValue;
 

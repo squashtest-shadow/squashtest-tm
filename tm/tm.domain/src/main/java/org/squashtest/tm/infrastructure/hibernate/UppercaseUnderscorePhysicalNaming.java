@@ -31,7 +31,7 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 /**
- * Mostly ripped off org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+ * Shamelessly ripped from org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
  * and now defunct org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy
  * 
  * @author bsiri
@@ -78,16 +78,15 @@ implements PhysicalNamingStrategy{
 		}
 		StringBuilder text = new StringBuilder(name.getText().replace('.', '_'));
 		for (int i = 1; i < text.length() - 1; i++) {
-			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i), text.charAt(i + 1))) {
+			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i))) {
 				text.insert(i++, '_');
 			}
 		}
 		return new Identifier(text.toString().toUpperCase(Locale.ROOT), name.isQuoted());
 	}
 
-	private boolean isUnderscoreRequired(char before, char current, char after) {
-		return Character.isLowerCase(before) && Character.isUpperCase(current)
-				&& Character.isLowerCase(after);
+	private boolean isUnderscoreRequired(char before, char current) {
+		return Character.isLowerCase(before) && Character.isUpperCase(current);
 	}
     
 }

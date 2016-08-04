@@ -59,7 +59,7 @@ public class InfoList implements Comparable<InfoList> {
 	private String label = "";
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
 
 	@Size(max = 30)

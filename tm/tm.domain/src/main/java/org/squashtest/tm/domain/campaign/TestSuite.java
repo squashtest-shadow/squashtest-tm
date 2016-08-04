@@ -86,7 +86,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private String name;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String description;
 
 	@ManyToOne

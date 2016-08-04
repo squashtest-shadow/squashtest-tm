@@ -25,109 +25,39 @@
  */
 package org.squashtest.tm.infrastructure.hibernate;
 
-import org.hibernate.boot.model.naming.Identifier;
-import org.hibernate.boot.model.naming.ImplicitAnyDiscriminatorColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitAnyKeyColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitBasicColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitCollectionTableNameSource;
-import org.hibernate.boot.model.naming.ImplicitDiscriminatorColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitEntityNameSource;
-import org.hibernate.boot.model.naming.ImplicitForeignKeyNameSource;
-import org.hibernate.boot.model.naming.ImplicitIdentifierColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitIndexColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitIndexNameSource;
-import org.hibernate.boot.model.naming.ImplicitJoinColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitJoinTableNameSource;
-import org.hibernate.boot.model.naming.ImplicitMapKeyColumnNameSource;
+import java.util.Locale;
 import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
-import org.hibernate.boot.model.naming.ImplicitPrimaryKeyJoinColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitTenantIdColumnNameSource;
-import org.hibernate.boot.model.naming.ImplicitUniqueKeyNameSource;
+import org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl;
+import org.hibernate.boot.model.source.spi.AttributePath;
 
 /**
- *
+ * That classe fixes naming problems for Hibernate initialization. Due to the large amount of methods to implement
+ * the goal here is to type as few code as possible to make it work. Currently I have a problem with the @Any in CustomReportLibraryNode
+ * and putting this solves the problem, don't ask me why.
+ * 
  * @author bsiri
  */
-public class UppercaseUnderscoreImplicitNaming implements ImplicitNamingStrategy{
+public class UppercaseUnderscoreImplicitNaming extends ImplicitNamingStrategyJpaCompliantImpl implements ImplicitNamingStrategy{
 
-    @Override
-    public Identifier determinePrimaryTableName(ImplicitEntityNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+        @Override
+    	protected String transformAttributePath(AttributePath attributePath) {
+            return apply(attributePath.getProperty());
+	}
+        
+        private String apply(String basename) {
+		if (basename == null) {
+			return null;
+		}
+		StringBuilder text = new StringBuilder(basename.replace('.', '_'));
+		for (int i = 1; i < text.length() - 1; i++) {
+			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i))) {
+				text.insert(i++, '_');
+			}
+		}
+		return text.toString().toUpperCase(Locale.ROOT);
+	}
 
-    @Override
-    public Identifier determineJoinTableName(ImplicitJoinTableNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineCollectionTableName(ImplicitCollectionTableNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineDiscriminatorColumnName(ImplicitDiscriminatorColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineTenantIdColumnName(ImplicitTenantIdColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineIdentifierColumnName(ImplicitIdentifierColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineBasicColumnName(ImplicitBasicColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineJoinColumnName(ImplicitJoinColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determinePrimaryKeyJoinColumnName(ImplicitPrimaryKeyJoinColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineAnyDiscriminatorColumnName(ImplicitAnyDiscriminatorColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineAnyKeyColumnName(ImplicitAnyKeyColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineMapKeyColumnName(ImplicitMapKeyColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineListIndexColumnName(ImplicitIndexColumnNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineForeignKeyName(ImplicitForeignKeyNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineUniqueKeyName(ImplicitUniqueKeyNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Identifier determineIndexName(ImplicitIndexNameSource source) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+	private boolean isUnderscoreRequired(char before, char current) {
+		return Character.isLowerCase(before) && Character.isUpperCase(current);
+	}
 }

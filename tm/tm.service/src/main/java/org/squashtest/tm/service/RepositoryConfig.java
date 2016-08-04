@@ -21,6 +21,9 @@
 package org.squashtest.tm.service;
 
 
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -29,7 +32,6 @@ import javax.validation.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +41,8 @@ import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -107,9 +111,9 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	    );
 
 	    // setting the properties
-	    //Properties hibProperties = hibernateProperties();
-	    //factory.setJpaProperties(hibProperties);
-            factory.getJpaPropertyMap().put("hibernate.dialect", "org.squashtest.tm.domain.jpql.PostgresEnhancedDialect");
+	    Properties hibProperties = hibernateProperties();
+	    factory.setJpaProperties(hibProperties);
+           // factory.getJpaPropertyMap().put("hibernate.dialect", "org.squashtest.tm.domain.jpql.PostgresEnhancedDialect");
 
             factory.afterPropertiesSet();
 
@@ -129,12 +133,8 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 		return jpaTransactionManager;
 	}
 
-	/**
-	 * TODO nosgi that's kind of ugly.. find something better
-	 *
-	 * @return
-	 */
-        /*
+
+        
 	@Bean
 	public Properties hibernateProperties() {
 		Set<String> names = new HashSet<>();
@@ -164,7 +164,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 
 		return props;
 	}
-*/
+
 	@Bean
         @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
         public static ValidatorFactory validatorFactory() {

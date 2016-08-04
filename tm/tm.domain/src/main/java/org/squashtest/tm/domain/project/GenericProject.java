@@ -92,7 +92,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private Long id;
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
 
 	@Size(max = Sizes.LABEL_MAX)

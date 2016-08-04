@@ -91,7 +91,7 @@ public class AutomatedExecutionExtender {
 	private AutomatedSuite automatedSuite;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String resultSummary = "";
 
 	/**

@@ -143,18 +143,18 @@ DenormalizedFieldHolder, BoundEntity {
 	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String description;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String prerequisite = "";
 
 	@NotNull
 	private String reference = "";
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
 

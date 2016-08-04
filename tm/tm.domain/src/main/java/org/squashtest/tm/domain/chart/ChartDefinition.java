@@ -93,7 +93,7 @@ public class ChartDefinition implements TreeEntity{
 	private ChartType type;
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
 
 	@OneToOne(fetch=FetchType.LAZY)

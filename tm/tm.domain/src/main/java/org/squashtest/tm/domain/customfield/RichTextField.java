@@ -31,7 +31,7 @@ import org.hibernate.annotations.Type;
 public class RichTextField extends CustomField {
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String largeDefaultValue;
 
 	public RichTextField() {

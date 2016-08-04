@@ -86,7 +86,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	private Long id;
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
 
 	@NotBlank

@@ -49,11 +49,11 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String action = "";
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String expectedResult = "";
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })

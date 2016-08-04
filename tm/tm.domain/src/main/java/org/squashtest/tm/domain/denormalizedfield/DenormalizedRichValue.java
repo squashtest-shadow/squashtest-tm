@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 public class DenormalizedRichValue extends DenormalizedFieldValue {
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String largeValue;
 
 	public DenormalizedRichValue() {

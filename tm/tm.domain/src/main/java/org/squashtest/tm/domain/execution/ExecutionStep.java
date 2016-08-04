@@ -74,19 +74,19 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private Long id;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	@Basic(optional = false)
 	private String action;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String expectedResult;
 
 	@Enumerated(EnumType.STRING)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Lob
-	@Type(type="org.hibernate.type.MaterializedClobType")
+	@Type(type="org.hibernate.type.TextType")
 	private String comment;
 
 	@Column(insertable = false)

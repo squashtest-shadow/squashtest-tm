@@ -116,7 +116,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String reference = "";
 
 	@Lob
-	@Type(type = "org.hibernate.type.MaterializedClobType")
+	@Type(type = "org.hibernate.type.TextType")
 	@Field
 	private String prerequisite = "";
 
