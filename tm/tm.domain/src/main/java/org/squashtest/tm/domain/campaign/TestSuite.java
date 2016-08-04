@@ -78,7 +78,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@DocumentId
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_suite_id_seq")
-	@SequenceGenerator(name = "test_suite_id_seq", sequenceName = "test_suite_id_seq")
+	@SequenceGenerator(name = "test_suite_id_seq", sequenceName = "test_suite_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

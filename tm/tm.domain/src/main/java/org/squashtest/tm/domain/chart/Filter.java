@@ -46,7 +46,7 @@ public class Filter implements ColumnPrototypeInstance {
 	@Id
 	@Column(name = "FILTER_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_filter_filter_id_seq")
-	@SequenceGenerator(name = "chart_filter_filter_id_seq", sequenceName = "chart_filter_filter_id_seq")
+	@SequenceGenerator(name = "chart_filter_filter_id_seq", sequenceName = "chart_filter_filter_id_seq", allocationSize = 1)
 	private long Id;
 
 	@JoinColumn(name = "CHART_COLUMN_ID")

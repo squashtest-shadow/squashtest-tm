@@ -62,7 +62,7 @@ public class CustomField {
 	@Id
 	@Column(name = "CF_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_cf_id_seq")
-	@SequenceGenerator(name = "custom_field_cf_id_seq", sequenceName = "custom_field_cf_id_seq")
+	@SequenceGenerator(name = "custom_field_cf_id_seq", sequenceName = "custom_field_cf_id_seq", allocationSize = 1)
 	protected Long id;
 
 	@NotBlank

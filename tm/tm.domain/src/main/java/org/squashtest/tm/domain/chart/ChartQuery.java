@@ -101,7 +101,7 @@ public class ChartQuery {
 	@Id
 	@Column(name = "CHART_QUERY_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_query_chart_query_id_seq")
-	@SequenceGenerator(name = "chart_query_chart_query_id_seq", sequenceName = "chart_query_chart_query_id_seq")
+	@SequenceGenerator(name = "chart_query_chart_query_id_seq", sequenceName = "chart_query_chart_query_id_seq", allocationSize = 1)
 	private long id;
 
 	@OneToMany(cascade = CascadeType.ALL)

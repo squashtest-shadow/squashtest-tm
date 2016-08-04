@@ -65,7 +65,7 @@ public class TestAutomationServer {
 	@Id
 	@Column(name = "SERVER_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_automation_server_server_id_seq")
-	@SequenceGenerator(name = "test_automation_server_server_id_seq", sequenceName = "test_automation_server_server_id_seq")
+	@SequenceGenerator(name = "test_automation_server_server_id_seq", sequenceName = "test_automation_server_server_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Column(unique=true)

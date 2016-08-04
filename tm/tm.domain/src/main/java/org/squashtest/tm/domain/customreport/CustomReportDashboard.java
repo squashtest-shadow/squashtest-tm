@@ -51,7 +51,7 @@ public class CustomReportDashboard implements TreeEntity {
 	@Id
 	@Column(name = "CRD_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_dashboard_crd_id_seq")
-	@SequenceGenerator(name="custom_report_dashboard_crd_id_seq", sequenceName="custom_report_dashboard_crd_id_seq")
+	@SequenceGenerator(name="custom_report_dashboard_crd_id_seq", sequenceName="custom_report_dashboard_crd_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

@@ -37,7 +37,7 @@ public class CustomFieldBinding {
 	@Id
 	@Column(name = "CFB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_binding_cfb_id_seq")
-	@SequenceGenerator(name = "custom_field_binding_cfb_id_seq", sequenceName = "custom_field_binding_cfb_id_seq")
+	@SequenceGenerator(name = "custom_field_binding_cfb_id_seq", sequenceName = "custom_field_binding_cfb_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = CustomField.class, cascade = CascadeType.DETACH)

@@ -64,7 +64,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	@Id
 	@Column(name = "RLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_node_rln_id_seq")
-	@SequenceGenerator(name = "requirement_library_node_rln_id_seq", sequenceName = "requirement_library_node_rln_id_seq")
+	@SequenceGenerator(name = "requirement_library_node_rln_id_seq", sequenceName = "requirement_library_node_rln_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

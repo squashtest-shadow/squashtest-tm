@@ -47,7 +47,7 @@ public abstract class InfoListItem {
 	@Id
 	@Column(name = "ITEM_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "info_list_item_item_id_seq")
-	@SequenceGenerator(name = "info_list_item_item_id_seq", sequenceName = "info_list_item_item_id_seq")
+	@SequenceGenerator(name = "info_list_item_item_id_seq", sequenceName = "info_list_item_item_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

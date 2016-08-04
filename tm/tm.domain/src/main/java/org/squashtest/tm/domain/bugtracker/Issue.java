@@ -62,7 +62,7 @@ public class Issue {
 	@Id
 	@Column(name = "ISSUE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "issue_issue_id_seq")
-	@SequenceGenerator(name = "issue_issue_id_seq", sequenceName = "issue_issue_id_seq")
+	@SequenceGenerator(name = "issue_issue_id_seq", sequenceName = "issue_issue_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

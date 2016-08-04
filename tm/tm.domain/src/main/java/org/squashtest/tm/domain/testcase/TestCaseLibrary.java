@@ -53,7 +53,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@Id
 	@Column(name = "TCL_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_case_library_tcl_id_seq")
-	@SequenceGenerator(name = "test_case_library_tcl_id_seq", sequenceName = "test_case_library_tcl_id_seq")
+	@SequenceGenerator(name = "test_case_library_tcl_id_seq", sequenceName = "test_case_library_tcl_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToMany // no cascade is desired because we need to handle it manually

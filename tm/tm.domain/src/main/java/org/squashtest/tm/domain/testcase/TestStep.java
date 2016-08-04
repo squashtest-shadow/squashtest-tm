@@ -64,7 +64,7 @@ public abstract class TestStep implements Identified {
 	@Id
 	@Column(name = "TEST_STEP_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_step_test_step_id_seq")
-	@SequenceGenerator(name = "test_step_test_step_id_seq", sequenceName = "test_step_test_step_id_seq")
+	@SequenceGenerator(name = "test_step_test_step_id_seq", sequenceName = "test_step_test_step_id_seq", allocationSize = 1)
 	private Long id;
 
 

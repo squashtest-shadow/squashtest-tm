@@ -32,7 +32,7 @@ public class PartyPreference implements Identified{
 	@Id
 	@Column(name = "PREFERENCE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "party_preference_preference_id_seq")
-	@SequenceGenerator(name = "party_preference_preference_id_seq", sequenceName = "party_preference_preference_id_seq")
+	@SequenceGenerator(name = "party_preference_preference_id_seq", sequenceName = "party_preference_preference_id_seq", allocationSize = 1)
 	protected Long id;
 
 	@ManyToOne

@@ -43,7 +43,7 @@ public class ProjectFilter {
 	@Id
 	@Column(name = "PROJECT_FILTER_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "project_filter_project_filter_id_seq")
-	@SequenceGenerator(name = "project_filter_project_filter_id_seq", sequenceName = "project_filter_project_filter_id_seq")
+	@SequenceGenerator(name = "project_filter_project_filter_id_seq", sequenceName = "project_filter_project_filter_id_seq", allocationSize = 1)
 	private Long id;
 
 	private String userLogin;

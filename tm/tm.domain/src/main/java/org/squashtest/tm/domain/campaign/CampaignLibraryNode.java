@@ -34,7 +34,7 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id
 	@Column(name = "CLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_node_cln_id_seq")
-	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq")
+	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq", allocationSize = 1)
 	private Long id;
 
 	public CampaignLibraryNode() {

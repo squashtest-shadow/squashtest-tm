@@ -132,7 +132,7 @@ DenormalizedFieldHolder, BoundEntity {
 	@Id
 	@Column(name = "EXECUTION_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_execution_id_seq")
-	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq")
+	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq", allocationSize = 1)
 	private Long id;
 
 	// Not Null & Column missed comparing to requirementStatus

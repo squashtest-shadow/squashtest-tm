@@ -39,7 +39,7 @@ public class DatasetParamValue implements Identified {
 	@Id
 	@Column(name = "DATASET_PARAM_VALUE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_param_value_dataset_param_value_id_seq")
-	@SequenceGenerator(name = "dataset_param_value_dataset_param_value_id_seq", sequenceName = "dataset_param_value_dataset_param_value_id_seq")
+	@SequenceGenerator(name = "dataset_param_value_dataset_param_value_id_seq", sequenceName = "dataset_param_value_dataset_param_value_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotNull

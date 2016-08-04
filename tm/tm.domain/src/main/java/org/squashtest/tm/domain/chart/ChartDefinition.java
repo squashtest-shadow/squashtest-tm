@@ -69,7 +69,7 @@ public class ChartDefinition implements TreeEntity{
 	@Id
 	@Column(name = "CHART_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_definition_chart_id_seq")
-	@SequenceGenerator(name = "chart_definition_chart_id_seq", sequenceName = "chart_definition_chart_id_seq")
+	@SequenceGenerator(name = "chart_definition_chart_id_seq", sequenceName = "chart_definition_chart_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

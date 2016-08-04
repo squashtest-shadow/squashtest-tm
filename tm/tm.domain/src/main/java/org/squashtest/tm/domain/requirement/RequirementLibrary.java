@@ -54,7 +54,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@Id
 	@Column(name = "RL_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_rl_id_seq")
-	@SequenceGenerator(name = "requirement_library_rl_id_seq", sequenceName = "requirement_library_rl_id_seq")
+	@SequenceGenerator(name = "requirement_library_rl_id_seq", sequenceName = "requirement_library_rl_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToMany // no cascade is desired because we need to handle it manually

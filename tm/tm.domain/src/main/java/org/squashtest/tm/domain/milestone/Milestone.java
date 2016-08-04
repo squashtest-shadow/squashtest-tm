@@ -54,7 +54,7 @@ public class Milestone implements Identified {
 	@Id
 	@Column(name = "MILESTONE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_milestone_id_seq")
-	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq")
+	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Lob

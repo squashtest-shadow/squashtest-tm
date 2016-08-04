@@ -66,7 +66,7 @@ public class Parameter implements Identified {
 	@Id
 	@Column(name = "PARAM_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "parameter_param_id_seq")
-	@SequenceGenerator(name = "parameter_param_id_seq", sequenceName = "parameter_param_id_seq")
+	@SequenceGenerator(name = "parameter_param_id_seq", sequenceName = "parameter_param_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

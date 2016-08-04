@@ -40,7 +40,7 @@ public class AttachmentList {
 	@Id
 	@Column(name = "ATTACHMENT_LIST_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "attachment_list_attachment_list_id_seq")
-	@SequenceGenerator(name = "attachment_list_attachment_list_id_seq", sequenceName = "attachment_list_attachment_list_id_seq")
+	@SequenceGenerator(name = "attachment_list_attachment_list_id_seq", sequenceName = "attachment_list_attachment_list_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.ALL })

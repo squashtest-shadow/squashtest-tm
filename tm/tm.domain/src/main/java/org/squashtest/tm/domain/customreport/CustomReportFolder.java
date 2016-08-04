@@ -45,7 +45,7 @@ public class CustomReportFolder implements TreeEntity {
 	@Id
 	@Column(name = "CRF_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_folder_crf_id_seq")
-	@SequenceGenerator(name="custom_report_folder_crf_id_seq", sequenceName="custom_report_folder_crf_id_seq")
+	@SequenceGenerator(name="custom_report_folder_crf_id_seq", sequenceName="custom_report_folder_crf_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

@@ -69,7 +69,7 @@ public class RequirementVersionCoverage implements Identified {
 	@Id
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_coverage_requirement_version_coverage_i_seq")
-	@SequenceGenerator(name = "requirement_version_coverage_requirement_version_coverage_i_seq", sequenceName = "requirement_version_coverage_requirement_version_coverage_i_seq")
+	@SequenceGenerator(name = "requirement_version_coverage_requirement_version_coverage_i_seq", sequenceName = "requirement_version_coverage_requirement_version_coverage_i_seq", allocationSize = 1)
 	@DocumentId
 	private Long id;
 

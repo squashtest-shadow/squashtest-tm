@@ -73,7 +73,7 @@ public class AutomatedExecutionExtender {
 	@Id
 	@Column(name = "EXTENDER_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "automated_execution_extender_extender_id_seq")
-	@SequenceGenerator(name = "automated_execution_extender_extender_id_seq", sequenceName = "automated_execution_extender_extender_id_seq")
+	@SequenceGenerator(name = "automated_execution_extender_extender_id_seq", sequenceName = "automated_execution_extender_extender_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne()

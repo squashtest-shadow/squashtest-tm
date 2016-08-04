@@ -51,7 +51,7 @@ public class InfoList implements Comparable<InfoList> {
 	@Id
 	@Column(name = "INFO_LIST_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "info_list_info_list_id_seq")
-	@SequenceGenerator(name = "info_list_info_list_id_seq", sequenceName = "info_list_info_list_id_seq")
+	@SequenceGenerator(name = "info_list_info_list_id_seq", sequenceName = "info_list_info_list_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Size(max = 100)

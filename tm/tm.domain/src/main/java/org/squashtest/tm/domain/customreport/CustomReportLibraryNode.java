@@ -64,14 +64,27 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Id
 	@Column(name = "CRLN_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_node_crln_id_seq")
-	@SequenceGenerator(name="custom_report_library_node_crln_id_seq", sequenceName="custom_report_library_node_crln_id_seq")
+	@SequenceGenerator(name="custom_report_library_node_crln_id_seq", sequenceName="custom_report_library_node_crln_id_seq", allocationSize = 1)
 	private Long id;
 
+        
+        /*
+         * careful : the @Column for entityId and entityType must state name =  
+         * ENTITY_ID and ENTITY_TYPE, otherwise these column would be registered as entityId and 
+         * entityType. This is problematic because the @Any annotation (on property 'entity') 
+         * states that it expects ENTITY_ID and ENTITY_TYPE. And so Hibernate crashes because of the 
+         * double definition of the same columns.
+         * 
+         * Note : Hibernate resolves column name using a PhysicalNamingStrategy and ImplicitNamingStrategy. 
+         * In our case we have a custom PhysicalNamingStrategy, but no ImplicitNamingStrategy. The default 
+         * there is ImplicitNamingStrategyJpaCompliantImpl, provided by Hibernate. If some more problems occur 
+         * one day maybe having our custom strategy would help.
+         */
 	@Enumerated(EnumType.STRING)
-	@Column(insertable=false, updatable=false)
+	@Column(insertable=false, updatable=false, name="ENTITY_TYPE")
 	private CustomReportTreeDefinition entityType;
 
-	@Column(insertable=false, updatable=false)
+	@Column(insertable=false, updatable=false, name="ENTITY_ID")
 	private Long entityId;
 
 	/**

@@ -49,7 +49,7 @@ public class CampaignTestPlanItem {
 	@Id
 	@Column(name = "CTPI_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_test_plan_item_ctpi_id_seq")
-	@SequenceGenerator(name = "campaign_test_plan_item_ctpi_id_seq", sequenceName = "campaign_test_plan_item_ctpi_id_seq")
+	@SequenceGenerator(name = "campaign_test_plan_item_ctpi_id_seq", sequenceName = "campaign_test_plan_item_ctpi_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

@@ -77,7 +77,7 @@ implements PhysicalNamingStrategy{
 			return null;
 		}
 		StringBuilder text = new StringBuilder(name.getText().replace('.', '_'));
-		for (int i = 1; i < text.length() - 1; i++) {
+		for (int i = 1; i < text.length(); i++) {
 			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i))) {
 				text.insert(i++, '_');
 			}

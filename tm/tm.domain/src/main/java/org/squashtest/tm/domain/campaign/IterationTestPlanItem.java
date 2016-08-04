@@ -104,7 +104,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Id
 	@Column(name = "ITEM_TEST_PLAN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "item_test_plan_item_test_plan_id_seq")
-	@SequenceGenerator(name = "item_test_plan_item_test_plan_id_seq", sequenceName = "item_test_plan_item_test_plan_id_seq")
+	@SequenceGenerator(name = "item_test_plan_item_test_plan_id_seq", sequenceName = "item_test_plan_item_test_plan_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Enumerated(EnumType.STRING)

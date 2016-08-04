@@ -58,7 +58,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Id
 	@Column(name = "CL_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_cl_id_seq")
-	@SequenceGenerator(name = "campaign_library_cl_id_seq", sequenceName = "campaign_library_cl_id_seq")
+	@SequenceGenerator(name = "campaign_library_cl_id_seq", sequenceName = "campaign_library_cl_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToMany // no cascade is desired because we need to handle it manually

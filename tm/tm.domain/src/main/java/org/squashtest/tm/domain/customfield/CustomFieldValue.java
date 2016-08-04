@@ -45,7 +45,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Id
 	@Column(name = "CFV_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_value_cfv_id_seq")
-	@SequenceGenerator(name = "custom_field_value_cfv_id_seq", sequenceName = "custom_field_value_cfv_id_seq")
+	@SequenceGenerator(name = "custom_field_value_cfv_id_seq", sequenceName = "custom_field_value_cfv_id_seq", allocationSize = 1)
 	private Long id;
 
 	protected Long boundEntityId;

@@ -55,7 +55,7 @@ public class TestAutomationProject {
 	@Id
 	@Column(name = "TA_PROJECT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "proto_test_automation_project_ta_project_id_seq")
-	@SequenceGenerator(name = "proto_test_automation_project_ta_project_id_seq", sequenceName = "proto_test_automation_project_ta_project_id_seq")
+	@SequenceGenerator(name = "proto_test_automation_project_ta_project_id_seq", sequenceName = "proto_test_automation_project_ta_project_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Column(name = "REMOTE_NAME")

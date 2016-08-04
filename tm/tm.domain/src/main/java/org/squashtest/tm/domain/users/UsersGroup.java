@@ -42,7 +42,7 @@ public class UsersGroup {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "core_group_id_seq")
-	@SequenceGenerator(name = "core_group_id_seq", sequenceName = "core_group_id_seq")
+	@SequenceGenerator(name = "core_group_id_seq", sequenceName = "core_group_id_seq", allocationSize = 1)
 	private Long id;
 	private String qualifiedName;
 	private transient String simpleName;

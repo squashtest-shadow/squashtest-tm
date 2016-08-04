@@ -50,7 +50,7 @@ public abstract class LibraryPluginBinding  {
 	@Id
 	@Column(name = "PLUGIN_BINDING_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "library_plugin_binding_plugin_binding_id_seq")
-	@SequenceGenerator(name = "library_plugin_binding_plugin_binding_id_seq", sequenceName = "library_plugin_binding_plugin_binding_id_seq")
+	@SequenceGenerator(name = "library_plugin_binding_plugin_binding_id_seq", sequenceName = "library_plugin_binding_plugin_binding_id_seq", allocationSize = 1)
 	private long id;
 
 	@Column

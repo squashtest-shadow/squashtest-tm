@@ -77,7 +77,7 @@ public class DenormalizedFieldValue {
 	@Id
 	@Column(name = "DFV_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "denormalized_field_value_dfv_id_seq")
-	@SequenceGenerator(name = "denormalized_field_value_dfv_id_seq", sequenceName = "denormalized_field_value_dfv_id_seq")
+	@SequenceGenerator(name = "denormalized_field_value_dfv_id_seq", sequenceName = "denormalized_field_value_dfv_id_seq", allocationSize = 1)
 	protected Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

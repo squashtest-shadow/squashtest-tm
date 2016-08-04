@@ -51,7 +51,7 @@ public class AttachmentContent {
 	@Id
 	@Column(name = "ATTACHMENT_CONTENT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "attachment_content_attachment_content_id_seq")
-	@SequenceGenerator(name = "attachment_content_attachment_content_id_seq", sequenceName = "attachment_content_attachment_content_id_seq")
+	@SequenceGenerator(name = "attachment_content_attachment_content_id_seq", sequenceName = "attachment_content_attachment_content_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Lob

@@ -47,7 +47,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	@Id
 	@Column(name = "RES_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "resource_res_id_seq")
-	@SequenceGenerator(name = "resource_res_id_seq", sequenceName = "resource_res_id_seq")
+	@SequenceGenerator(name = "resource_res_id_seq", sequenceName = "resource_res_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

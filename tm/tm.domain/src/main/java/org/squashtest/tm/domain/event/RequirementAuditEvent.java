@@ -46,7 +46,7 @@ public abstract class RequirementAuditEvent {
 	@Id
 	@Column(name = "EVENT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_audit_event_event_id_seq")
-	@SequenceGenerator(name = "requirement_audit_event_event_id_seq", sequenceName = "requirement_audit_event_event_id_seq")
+	@SequenceGenerator(name = "requirement_audit_event_event_id_seq", sequenceName = "requirement_audit_event_event_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

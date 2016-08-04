@@ -52,7 +52,7 @@ public class BugTrackerBinding {
 	@Id
 	@Column(name = "BUGTRACKER_BINDING_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "bugtracker_binding_bugtracker_binding_id_seq")
-	@SequenceGenerator(name = "bugtracker_binding_bugtracker_binding_id_seq", sequenceName = "bugtracker_binding_bugtracker_binding_id_seq")
+	@SequenceGenerator(name = "bugtracker_binding_bugtracker_binding_id_seq", sequenceName = "bugtracker_binding_bugtracker_binding_id_seq", allocationSize = 1)
 	private Long id;
 
 	/*@NotNull

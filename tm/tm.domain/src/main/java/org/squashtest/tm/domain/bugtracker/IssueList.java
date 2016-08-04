@@ -32,7 +32,7 @@ public class IssueList {
 	@Id
 	@Column(name = "ISSUE_LIST_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "issue_list_issue_list_id_seq")
-	@SequenceGenerator(name = "issue_list_issue_list_id_seq", sequenceName = "issue_list_issue_list_id_seq")
+	@SequenceGenerator(name = "issue_list_issue_list_id_seq", sequenceName = "issue_list_issue_list_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToMany(mappedBy="issueList", cascade={CascadeType.REMOVE})

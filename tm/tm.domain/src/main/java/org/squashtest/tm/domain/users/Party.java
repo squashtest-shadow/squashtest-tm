@@ -46,7 +46,7 @@ public abstract class Party implements Identified{
 	@Id
 	@Column(name = "PARTY_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "core_party_party_id_seq")
-	@SequenceGenerator(name = "core_party_party_id_seq", sequenceName = "core_party_party_id_seq")
+	@SequenceGenerator(name = "core_party_party_id_seq", sequenceName = "core_party_party_id_seq", allocationSize = 1)
 	protected Long id;
 
 	/**

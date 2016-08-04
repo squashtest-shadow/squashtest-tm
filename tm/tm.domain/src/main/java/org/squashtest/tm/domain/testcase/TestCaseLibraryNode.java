@@ -51,7 +51,7 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 	@Id
 	@Column(name = "TCLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_case_library_node_tcln_id_seq")
-	@SequenceGenerator(name = "test_case_library_node_tcln_id_seq", sequenceName = "test_case_library_node_tcln_id_seq")
+	@SequenceGenerator(name = "test_case_library_node_tcln_id_seq", sequenceName = "test_case_library_node_tcln_id_seq", allocationSize = 1)
 	private Long id;
 
 	public TestCaseLibraryNode() {

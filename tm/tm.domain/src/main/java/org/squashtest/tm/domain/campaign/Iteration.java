@@ -82,7 +82,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Id
 	@Column(name = ITERATION_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "iteration_iteration_id_seq")
-	@SequenceGenerator(name = "iteration_iteration_id_seq", sequenceName = "iteration_iteration_id_seq")
+	@SequenceGenerator(name = "iteration_iteration_id_seq", sequenceName = "iteration_iteration_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Lob

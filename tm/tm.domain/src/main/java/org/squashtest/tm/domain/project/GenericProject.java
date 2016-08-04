@@ -88,7 +88,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Id
 	@Column(name = "PROJECT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "project_project_id_seq")
-	@SequenceGenerator(name = "project_project_id_seq", sequenceName = "project_project_id_seq")
+	@SequenceGenerator(name = "project_project_id_seq", sequenceName = "project_project_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Lob

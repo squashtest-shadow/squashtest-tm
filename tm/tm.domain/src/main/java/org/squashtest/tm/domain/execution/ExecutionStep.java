@@ -70,7 +70,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@Id
 	@Column(name = "EXECUTION_STEP_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_step_execution_step_id_seq")
-	@SequenceGenerator(name = "execution_step_execution_step_id_seq", sequenceName = "execution_step_execution_step_id_seq")
+	@SequenceGenerator(name = "execution_step_execution_step_id_seq", sequenceName = "execution_step_execution_step_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Lob

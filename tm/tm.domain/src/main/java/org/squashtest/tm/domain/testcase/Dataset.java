@@ -50,7 +50,7 @@ public class Dataset implements Identified {
 	@Id
 	@Column(name = "DATASET_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_dataset_id_seq")
-	@SequenceGenerator(name = "dataset_dataset_id_seq", sequenceName = "dataset_dataset_id_seq")
+	@SequenceGenerator(name = "dataset_dataset_id_seq", sequenceName = "dataset_dataset_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

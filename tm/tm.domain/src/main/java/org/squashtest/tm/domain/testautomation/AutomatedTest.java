@@ -48,7 +48,7 @@ public class AutomatedTest {
 	@Id
 	@Column(name="TEST_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "automated_test_test_id_seq")
-	@SequenceGenerator(name = "automated_test_test_id_seq", sequenceName = "automated_test_test_id_seq")
+	@SequenceGenerator(name = "automated_test_test_id_seq", sequenceName = "automated_test_test_id_seq", allocationSize = 1)
 	private Long id;
 
 	@ManyToOne

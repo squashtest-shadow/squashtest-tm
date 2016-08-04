@@ -42,7 +42,7 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	@Id
 	@Column(name="CRL_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_crl_id_seq")
-	@SequenceGenerator(name="custom_report_library_crl_id_seq", sequenceName="custom_report_library_crl_id_seq")
+	@SequenceGenerator(name="custom_report_library_crl_id_seq", sequenceName="custom_report_library_crl_id_seq", allocationSize = 1)
 	private Long id;
 
 	@OneToOne(mappedBy = "customReportLibrary")

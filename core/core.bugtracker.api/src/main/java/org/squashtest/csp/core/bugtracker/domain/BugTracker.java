@@ -57,7 +57,7 @@ public class BugTracker {
 
 	@Id
 	@GeneratedValue(generator = "bugtracker_bugtracker_id_seq")
-	@SequenceGenerator(name = "bugtracker_bugtracker_id_seq", sequenceName = "bugtracker_bugtracker_id_seq")
+	@SequenceGenerator(name = "bugtracker_bugtracker_id_seq", sequenceName = "bugtracker_bugtracker_id_seq", allocationSize = 1)
 	@Column(name = "BUGTRACKER_ID")
 	private Long id;
 
