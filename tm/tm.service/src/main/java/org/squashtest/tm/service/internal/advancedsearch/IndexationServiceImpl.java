@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import org.hibernate.CacheMode;
-import org.hibernate.Criteria;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.SearchFactory;
@@ -266,7 +263,9 @@ public class IndexationServiceImpl implements IndexationService {
 			ConcurrentMap<Object, PostTransactionWorkQueueSynchronization> synchronizationPerTransaction = (ConcurrentMap<Object, PostTransactionWorkQueueSynchronization>) synchronizationPerTransactionField
 				.get(worker);
 
-			EntityTransaction transaction = em.getTransaction();
+			// NdGRF : entityManager.getTransaction() is illegal + I dow't know which "black magic" we're using so we
+			// rely on the same code as before JPA i.e. we get the Tx from the hibernate Session
+			Transaction transaction = em.unwrap(Session.class).getTransaction();
 			PostTransactionWorkQueueSynchronization txSync = synchronizationPerTransaction
 				.get(transaction);
 
