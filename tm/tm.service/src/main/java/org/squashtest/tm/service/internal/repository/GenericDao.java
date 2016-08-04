@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
 
