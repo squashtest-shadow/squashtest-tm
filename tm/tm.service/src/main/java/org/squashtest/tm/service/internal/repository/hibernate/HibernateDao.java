@@ -94,7 +94,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	@SuppressWarnings("unchecked")
 	protected /*final*/ ENTITY_TYPE getEntity(long objectId) {
-		return entityManager.getReference(entityType, objectId);
+		return entityManager.find(entityType, objectId);
 	}
 
 	protected /*final*/ void persistEntity(Object entity) {
