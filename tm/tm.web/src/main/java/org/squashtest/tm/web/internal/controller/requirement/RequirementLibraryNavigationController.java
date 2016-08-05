@@ -34,6 +34,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -309,4 +310,15 @@ public class RequirementLibraryNavigationController extends
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
+	
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES })
+	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, @RequestParam(NODES) Collection<Long> nodeIds) {
+		
+		RequirementStatisticsBundle stats = requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+		
+		model.addAttribute("statistics",stats);
+		
+		return "fragment/requirements/requirement-dashboard";
+	}
+	
 }

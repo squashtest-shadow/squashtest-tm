@@ -22,8 +22,6 @@ define(["workspace.event-bus"], function(eventBus) {
 	"use strict";
 	return {
 		generate : function() {
-			console.log("appel de la fonction");
-			
 			return {
 				
 				"types" : {
@@ -48,8 +46,6 @@ define(["workspace.event-bus"], function(eventBus) {
 				
 				"dnd" : {
 					drop_finish : function(data) {
-						console.log('dropping');
-						console.log(data);
 						var node = data.o.treeNode();
 						var calledid = [node.getResId()];
 						var callerid = this.get_selected().treeNode().getResId();
