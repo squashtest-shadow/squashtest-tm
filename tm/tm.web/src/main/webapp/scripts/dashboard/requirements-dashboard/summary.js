@@ -30,37 +30,34 @@ define(["jquery", "backbone", "squash.translator"], function($, Backbone, transl
 			this.zeroItemsMsg = template[1];		
 			
 			this.render();
-			this.listenTo(this.model, 'change:boundRequirementsStatistics', this.render);
+			this.listenTo(this.model, 'change:boundTestCasesStatistics', this.render);
 		},
 		
-		// dirty but effective way to know how many test cases we have here.
+		// dirty but effective way to know how many requirements we have here.
 		render : function(){
 			
 			if (! this.model.isAvailable()){
 				return;
 			}
 			
-			var stats = this.model.get('boundRequirementsStatistics');
-			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements;
-			
-			
+			var stats = this.model.get('boundTestCasesStatistics');
+			var nbtc = stats.zeroTestCases + stats.oneTestCase + stats.manyTestCases;
 		
-				var ids = this.model.get('selectedIds');
+			var ids = this.model.get('selectedIds');
 				
-				 var search = {fields:{
-					 id:{type:"LIST", values:"" }	 
-				 }};
+			var search = {fields:{
+				id:{type:"LIST", values:"" }	 
+			}};
 				 
-				 search.fields.id.values = ids.toString().split(",");
+			search.fields.id.values = ids.toString().split(",");
 				    
-				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-				var urlSearch = squashtm.app.contextRoot + "/advanced-search/results?test-case&" + queryString;
+			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
+			var urlSearch = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
 
 			var todisplay;
-			if (nbtc===0){
+			if (nbtc === 0) {
 				todisplay = this.zeroItemsMsg;
-			}
-			else{
+			} else {
 				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>').replace('{details}', '<span><b><a href=' + urlSearch + '>'+ translator.get("dashboard.test-cases.detail")+ '</b></a></span>');
 			
 			}

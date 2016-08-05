@@ -20,42 +20,33 @@
  */
 package org.squashtest.tm.service.statistics.requirement;
 
-public final class RequirementBoundTestCasesStatistics {
+public final class RequirementBoundDescriptionStatistics {
 	
-	private int zeroTestCases = 0;
-	private int oneTestCase = 0;
-	private int manyTestCases = 0;
+	private int hasDescription = 0;
+	private int hasNoDescription = 0;
 	
-	public int getZeroTestCases() {
-		return zeroTestCases;
+	public int getHasDescription() {
+		return hasDescription;
 	}
-	public void setZeroTestCases(int zeroTestCases) {
-		this.zeroTestCases = zeroTestCases;
+	public void setHasDescription(int hasDescription) {
+		this.hasDescription = hasDescription;
 	}
-
-	public int getOneTestCase() {
-		return oneTestCase;
+	
+	public int getHasNoDescription() {
+		return hasNoDescription;
 	}
-	public void setOneTestCase(int oneTestCase) {
-		this.oneTestCase = oneTestCase;
+	public void setHasNoDescription(int hasNoDescription) {
+		this.hasNoDescription = hasNoDescription;
 	}
-
-	public int getManyTestCases() {
-		return manyTestCases;
-	}
-	public void setManyTestCases(int manyTestCases) {
-		this.manyTestCases = manyTestCases;
-	}
-
-	public RequirementBoundTestCasesStatistics() {
+	
+	public RequirementBoundDescriptionStatistics(int hasDescription, int hasNoDescription) {
 		super();
+		this.hasDescription = hasDescription;
+		this.hasNoDescription = hasNoDescription;
 	}
-	public RequirementBoundTestCasesStatistics(int zeroTestCases,
-			int oneTestCase, int manyTestCases) {
+	public RequirementBoundDescriptionStatistics() {
 		super();
-		this.zeroTestCases = zeroTestCases;
-		this.oneTestCase = oneTestCase;
-		this.manyTestCases = manyTestCases;
+		// TODO Auto-generated constructor stub
 	}
 	
 }

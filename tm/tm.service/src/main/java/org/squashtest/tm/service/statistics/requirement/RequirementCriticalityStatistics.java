@@ -20,42 +20,51 @@
  */
 package org.squashtest.tm.service.statistics.requirement;
 
-public final class RequirementBoundTestCasesStatistics {
+public final class RequirementCriticalityStatistics {
 	
-	private int zeroTestCases = 0;
-	private int oneTestCase = 0;
-	private int manyTestCases = 0;
+	private int undefined;
+	private int minor;
+	private int major;
+	private int critical;
 	
-	public int getZeroTestCases() {
-		return zeroTestCases;
+	public int getUndefined() {
+		return undefined;
 	}
-	public void setZeroTestCases(int zeroTestCases) {
-		this.zeroTestCases = zeroTestCases;
+	public void setUndefined(int undefined) {
+		this.undefined = undefined;
+	}
+	
+	public int getMinor() {
+		return minor;
+	}
+	public void setMinor(int minor) {
+		this.minor = minor;
+	}
+	
+	public int getMajor() {
+		return major;
+	}
+	public void setMajor(int major) {
+		this.major = major;
+	}
+	
+	public int getCritical() {
+		return critical;
+	}
+	public void setCritical(int critical) {
+		this.critical = critical;
 	}
 
-	public int getOneTestCase() {
-		return oneTestCase;
-	}
-	public void setOneTestCase(int oneTestCase) {
-		this.oneTestCase = oneTestCase;
-	}
-
-	public int getManyTestCases() {
-		return manyTestCases;
-	}
-	public void setManyTestCases(int manyTestCases) {
-		this.manyTestCases = manyTestCases;
-	}
-
-	public RequirementBoundTestCasesStatistics() {
+	
+	public RequirementCriticalityStatistics(int undefined, int minor, int major, int critical) {
 		super();
+		this.undefined = undefined;
+		this.minor = minor;
+		this.major = major;
+		this.critical = critical;
 	}
-	public RequirementBoundTestCasesStatistics(int zeroTestCases,
-			int oneTestCase, int manyTestCases) {
+	public RequirementCriticalityStatistics() {
 		super();
-		this.zeroTestCases = zeroTestCases;
-		this.oneTestCase = oneTestCase;
-		this.manyTestCases = manyTestCases;
 	}
 	
 }

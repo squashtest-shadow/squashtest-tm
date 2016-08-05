@@ -958,17 +958,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return super.deleteNodes(targetIds);
 	}
 
+	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
+	
 	@Override
 	public RequirementStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds,
 			Collection<Long> nodeIds) {
 		
 		Collection<Long> reqIds = findRequirementIdsFromSelection(libraryIds, nodeIds);
-
+		
 		return statisticsService.gatherRequirementStatisticsBundle(reqIds);
 	}
-
-
-
-	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 
 }

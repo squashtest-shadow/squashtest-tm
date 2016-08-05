@@ -31,9 +31,9 @@
  */
 
 define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/timestamp-label",
-		"dashboard/SuperMasterView",/*"./summary",*/ "./bound-test-cases-pie",/* "./status-pie",*/ /*"./importance-pie",*/
-		/*"./size-pie",*/ "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, /*Summary,*/
-		BoundTestCasePie, /*StatusPie,*/ /*ImportancePie,*/ /*SizePie,*/ translator) {
+		"dashboard/SuperMasterView","./summary", "./bound-test-cases-pie", "./status-pie", "./criticality-pie",
+		"./bound-description-pie", "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, Summary,
+		BoundTestCasePie, StatusPie, CriticalityPie, BoundDescriptionPie, translator) {
 
 	function doInit(settings) {
 		new SuperMasterView({
@@ -49,11 +49,33 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			el : this.$("#dashboard-item-bound-tcs"),
 			model : this.model
 		});
+		
+		var statPie = new StatusPie({
+			el : this.$("#dashboard-item-requirements-status"),
+			model : this.model
+		});
+		
+		var critPie = new CriticalityPie({
+			el : this.$("#dashboard-item-requirements-criticality"),
+			model : this.model
+		});
+		
+		var descPie = new BoundDescriptionPie({
+			el : this.$("#dashboard-item-bound-desc"),
+			model : this.model
+		});
+		
+		var summary = new Summary({
+			el : this.$(".dashboard-summary"),
+			model : this.model
+		});
 
 		addClickSearchEvent($("#dashboard-item-bound-tcs"), tcPie, "testcase");
-		/* adds des autres graphiques */
+		addClickSearchEvent($("#dashboard-item-requirements-status"), statPie, "status");
+		addClickSearchEvent($("#dashboard-item-requirements-criticality"), critPie, "criticality");
+		addClickSearchEvent($("#dashboard-item-bound-desc"), critPie, "description");
 		
-		return [ tcPie /*+Autres Graphiques*/ ];
+		return [ summary, tcPie, statPie, critPie, descPie ];
 	}
 	
 	function addTestCasesToSearch(search, pointIndex) {
@@ -76,7 +98,58 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		}
 	}
 	
-	/* Les autres functions pour les autres graphiques */
+	function addStatusToSearch(search, pointIndex) {
+		search.fields.status = {};
+		search.fields.status.type = "LIST";
+		switch (pointIndex) {
+		case 0:
+			search.fields.status.values = [ "1-WORK_IN_PROGRESS" ];
+			break;
+		case 1:
+			search.fields.status.values = [ "2-UNDER_REVIEW" ];
+			break;
+		case 2:
+			search.fields.status.values = [ "3-APPROVED" ];
+			break;
+		case 3:
+			search.fields.status.values = [ "4-OBSOLETE" ];
+			break;
+		}
+	}
+	
+	function addCriticalityToSearch(search, pointIndex) {
+		search.fields.criticality = {};
+		search.fields.criticality.type = "LIST";
+		switch (pointIndex) {
+		case 0:
+			search.fields.criticality.values = [ "3-UNDEFINED" ];
+			break;
+		case 1:
+			search.fields.criticality.values = [ "2-MINOR" ];
+			break;
+		case 2:
+			search.fields.criticality.values = [ "1-MAJOR" ];
+			break;
+		case 3:
+			search.fields.criticality.values = [ "0-CRITICAL" ];
+			break;
+		}
+	}
+	
+	function addDescriptionToSearch(search, pointIndex) {
+		search.fields.hasDescription = {};
+		search.fields.hasDescription.type = "RANGE";
+		switch (pointIndex) {
+		case 0:
+			search.fields.hasDescription.minValue = "";
+			search.fields.hasDescription.maxValue = "0";
+			break;
+		case 1:
+			search.fields.hasDescription.minValue = "1";
+			search.fields.hasDescription.maxValue = "";
+			break;
+		}
+	}
 	
 	function addClickSearchEvent(item, pie, type) {
 
@@ -114,7 +187,15 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			case "testcase":
 				addTestCasesToSearch(search, pointIndex);
 				break;
-			/* Cases des autres graphiques */
+			case "status":
+				addStatusToSearch(search, pointIndex);
+				break;
+			case "criticality":
+				addCriticalityToSearch(search, pointIndex);
+				break;
+			case "description":
+				addDescriptionToSearch(search, pointIndex);
+				break;
 			}
 
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));

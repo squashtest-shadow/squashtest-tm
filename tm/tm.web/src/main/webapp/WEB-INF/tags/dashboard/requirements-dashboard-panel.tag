@@ -99,8 +99,8 @@
             </div>
           </div>
           
-          <div id="dashboard-item-requirements-importance" class="dashboard-item dashboard-pie" data-def="model-attribute=importanceStatistics">
-            <div id="dashboard-requirement-importance-view" class="dashboard-item-view">
+          <div id="dashboard-item-requirements-criticality" class="dashboard-item dashboard-pie" data-def="model-attribute=criticalityStatistics">
+            <div id="dashboard-requirement-criticality-view" class="dashboard-item-view">
             
             </div>
             
@@ -140,18 +140,18 @@
               <div class="dashboard-item-legend">
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#DFC3EF"></div>
-                  <span><f:message key="dashboard.requirements.bound-desc.legend.has-description" /></span>
+                  <span><f:message key="dashboard.requirements.bound-desc.legend.has-no-description" /></span>
                 </div>
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#993CCC"></div>
-                  <span><f:message key="dashboard.requirements.bound-desc.legend.has-no-description" /></span>
+                  <span><f:message key="dashboard.requirements.bound-desc.legend.has-description" /></span>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="unsnap"> </div>     
-          <span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/></span>
+          <span class="dashboard-summary"><f:message key="dashboard.requirements.summary"/></span>
         
         </div>
       

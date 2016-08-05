@@ -23,8 +23,8 @@ define(["dashboard/basic-objects/pie-view"], function(PieView){
 	return PieView.extend({
 		
 		getSeries : function(){
-			var stats = this.model.get('sizeStatistics');
-			return [ stats.zeroSteps, stats.between0And10Steps, stats.between11And20Steps , stats.above20Steps];
+			var stats = this.model.get('criticalityStatistics');
+			return [ stats.undefined, stats.minor, stats.major, stats.critical ];
 		}
 	});
 	

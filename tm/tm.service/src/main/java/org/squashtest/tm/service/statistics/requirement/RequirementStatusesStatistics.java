@@ -20,42 +20,51 @@
  */
 package org.squashtest.tm.service.statistics.requirement;
 
-public final class RequirementBoundTestCasesStatistics {
+public final class RequirementStatusesStatistics {
 	
-	private int zeroTestCases = 0;
-	private int oneTestCase = 0;
-	private int manyTestCases = 0;
+	private int workInProgress;
+	private int underReview;
+	private int approved;
+	private int obsolete;
 	
-	public int getZeroTestCases() {
-		return zeroTestCases;
+	public int getWorkInProgress() {
+		return workInProgress;
 	}
-	public void setZeroTestCases(int zeroTestCases) {
-		this.zeroTestCases = zeroTestCases;
+	public void setWorkInProgress(int workInProgress) {
+		this.workInProgress = workInProgress;
 	}
-
-	public int getOneTestCase() {
-		return oneTestCase;
+	
+	public int getUnderReview() {
+		return underReview;
 	}
-	public void setOneTestCase(int oneTestCase) {
-		this.oneTestCase = oneTestCase;
+	public void setUnderReview(int underReview) {
+		this.underReview = underReview;
 	}
-
-	public int getManyTestCases() {
-		return manyTestCases;
+	
+	public int getApproved() {
+		return approved;
 	}
-	public void setManyTestCases(int manyTestCases) {
-		this.manyTestCases = manyTestCases;
+	public void setApproved(int approved) {
+		this.approved = approved;
 	}
-
-	public RequirementBoundTestCasesStatistics() {
+	
+	public int getObsolete() {
+		return obsolete;
+	}
+	public void setObsolete(int obsolete) {
+		this.obsolete = obsolete;
+	}
+	
+	public RequirementStatusesStatistics() {
 		super();
 	}
-	public RequirementBoundTestCasesStatistics(int zeroTestCases,
-			int oneTestCase, int manyTestCases) {
+	public RequirementStatusesStatistics(int workInProgress, int underReview,
+			int approved, int obsolete) {
 		super();
-		this.zeroTestCases = zeroTestCases;
-		this.oneTestCase = oneTestCase;
-		this.manyTestCases = manyTestCases;
+		this.workInProgress = workInProgress;
+		this.underReview = underReview;
+		this.approved = approved;
+		this.obsolete = obsolete;
 	}
-	
+
 }

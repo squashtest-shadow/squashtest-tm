@@ -22,8 +22,11 @@ package org.squashtest.tm.service.requirement;
 
 import java.util.Collection;
 
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
 
 public interface RequirementStatisticsService {
 
@@ -43,4 +46,29 @@ public interface RequirementStatisticsService {
 	 * @return
 	 */
 	RequirementStatisticsBundle gatherRequirementStatisticsBundle(Collection<Long> requirementIds);
+	
+	/**
+	 * Given those requirements ids, sort them by status and returns how many of each were found. Warning : no security check will 
+	 * be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	RequirementStatusesStatistics gatherRequirementStatusesStatistics(Collection<Long> requirementIds);
+	/**
+	 * Given those requirements ids, sort them by criticality and returns how many of each were found. Warning : no security check will 
+	 * be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	RequirementCriticalityStatistics gatherRequirementCriticalityStatistics(Collection<Long> requirementIds);
+	/**
+	 * Given those requirements ids, returns how many of them have a description and how many haven't. Warning : no security check will 
+	 * be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	RequirementBoundDescriptionStatistics gatherRequirementBoundDescriptionStatistics(Collection<Long> requirementIds);
 }

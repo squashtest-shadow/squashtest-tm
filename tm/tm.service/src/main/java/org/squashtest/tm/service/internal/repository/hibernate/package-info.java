@@ -684,6 +684,10 @@
 	//Administration
 	@NamedQuery(name = "administration.findAdministrationStatistics", query = "select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User u where u.active = true"),
 
+	// Requirement Statistics
+	@NamedQuery(name = "RequirementStatistics.statusesStatistics", query = "select reqVer.status, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.status"),
+	@NamedQuery(name = "RequirementStatistics.criticalityStatistics", query = "select reqVer.criticality, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.criticality"),
+	
 	//Test Case Statistics
 	@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 	@NamedQuery(name = "TestCaseStatistics.statusesStatistics", query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),

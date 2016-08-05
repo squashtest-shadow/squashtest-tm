@@ -25,12 +25,14 @@ import java.util.Collection;
 public class RequirementStatisticsBundle {
 
 	private RequirementBoundTestCasesStatistics boundTestCasesStatistics;
+	private RequirementStatusesStatistics statusesStatistics;
+	private RequirementCriticalityStatistics criticalityStatistics;
+	private RequirementBoundDescriptionStatistics boundDescriptionStatistics;
 	private Collection<Long> selectedIds;
 	
 	public Collection<Long> getSelectedIds() {
 		return selectedIds;
 	}
-	
 	public void setSelectedIds(Collection<Long> selectedIds) {
 		this.selectedIds = selectedIds;
 	}
@@ -38,22 +40,43 @@ public class RequirementStatisticsBundle {
 	public RequirementBoundTestCasesStatistics getBoundTestCasesStatistics() {
 		return boundTestCasesStatistics;
 	}
-
 	public void setBoundTestCasesStatistics(RequirementBoundTestCasesStatistics boundTestCasesStatistics) {
 		this.boundTestCasesStatistics = boundTestCasesStatistics;
 	}
 
+	public RequirementStatusesStatistics getStatusesStatistics() {
+		return statusesStatistics;
+	}
+	public void setStatusesStatistics(RequirementStatusesStatistics statusesStatistics) {
+		this.statusesStatistics = statusesStatistics;
+	}
+	
+	public RequirementCriticalityStatistics getCriticalityStatistics() {
+		return criticalityStatistics;
+	}
+	public void setCriticalityStatistics(RequirementCriticalityStatistics criticalityStatistics) {
+		this.criticalityStatistics = criticalityStatistics;
+	}
+	
+	public RequirementBoundDescriptionStatistics getBoundDescriptionStatistics() {
+		return boundDescriptionStatistics;
+	}
+	public void setBoundDescriptionStatistics(RequirementBoundDescriptionStatistics descriptionStatistics) {
+		this.boundDescriptionStatistics = descriptionStatistics;
+	}
+	
 	public RequirementStatisticsBundle(RequirementBoundTestCasesStatistics boundTestCasesStatistics,
-			Collection<Long> selectedIds) {
+			RequirementStatusesStatistics statusesStatistics, RequirementCriticalityStatistics criticalityStatistics,
+			RequirementBoundDescriptionStatistics boundDescriptionStatistics, Collection<Long> selectedIds) {
 		super();
 		this.boundTestCasesStatistics = boundTestCasesStatistics;
+		this.statusesStatistics = statusesStatistics;
+		this.criticalityStatistics = criticalityStatistics;
+		this.boundDescriptionStatistics = boundDescriptionStatistics;
 		this.selectedIds = selectedIds;
 	}
-
 	public RequirementStatisticsBundle() {
 		super();
 	}
-	
-	
 	
 }
