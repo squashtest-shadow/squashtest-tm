@@ -37,7 +37,7 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
 
 	/**
-	 * This is a downcast-version of #findById
+	 * This is a downcast-version of #findOne
 	 * will find the {@link SingleSelectField} of the given id
 	 * @param customFieldId the id of the wanted {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>

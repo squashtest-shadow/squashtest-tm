@@ -133,7 +133,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private Attachment findById(Long attachmentId) {
-		return attachmentDao.findById(attachmentId);
+		return attachmentDao.findOne(attachmentId);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) {
 		AttachmentList list = attachmentListDao.findOne(attachmentListId);
-		Attachment attachment = attachmentDao.findById(attachmentId);
+		Attachment attachment = attachmentDao.findOne(attachmentId);
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
@@ -181,7 +181,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void renameAttachment(long attachmentId, String newName) {
-		Attachment attachment = attachmentDao.findById(attachmentId);
+		Attachment attachment = attachmentDao.findOne(attachmentId);
 		attachment.setShortName(newName);
 	}
 

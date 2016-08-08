@@ -31,23 +31,8 @@ import org.squashtest.tm.domain.attachment.Attachment;
 
 public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao{
 
-    @UsesTheSpringJpaDsl
-    Attachment findById(long attachmentId);
-
-    /**
-     * Returns an attachment given its ID, with payload (the blob)
-     * initialized
-     *
-	 * @deprecated  not used - remove in 1.15 if it's still not used
-	 */
-	@Deprecated
-    @UsesANamedQueryInPackageInfoOrElsewhere
-    Attachment findAttachmentWithContent(@Param("id") Long attachmentId);
-
     /**
      * Returns all the attachments that belong to the given AttachmentList
-     * @param attachmentListId
-     * @return
      */
     @UsesANamedQueryInPackageInfoOrElsewhere
     Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);

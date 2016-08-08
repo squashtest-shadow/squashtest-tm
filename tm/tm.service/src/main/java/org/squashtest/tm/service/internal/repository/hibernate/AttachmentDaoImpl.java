@@ -24,25 +24,35 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.service.internal.repository.CustomAttachmentDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
-public class AttachmentDaoImpl extends HibernateEntityDao<Attachment>
- implements CustomAttachmentDao {
-
+public class AttachmentDaoImpl implements CustomAttachmentDao {
+	@PersistenceContext
+	private EntityManager entityManager;
    
     @Override
     public void removeAttachment(Long attachmentId) {
 
-        Attachment attachment = findById(attachmentId);
+		Attachment attachment = entityManager.find(Attachment.class, attachmentId);
 
 	//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob in lobs.db]
         AttachmentContent content = attachment.getContent();
         content.setContent(null);
 
-        flush();
+		entityManager.flush();
 	//End [Issue 1456]
 
-        removeEntity(attachment);
+		entityManager.remove(attachment);
 
     }
+
+	@Override
+	public void removeAll(List<Attachment> attachments) {
+		for (Attachment attachment : attachments) {
+			entityManager.remove(attachment);
+}
+	}
 
 }
