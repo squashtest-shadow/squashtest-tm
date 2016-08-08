@@ -20,111 +20,45 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.milestone.Milestone;
+
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneHolder;
+public interface MilestoneDao extends JpaRepository<Milestone, Long>, CustomMilestoneDao {
 
-public interface MilestoneDao extends EntityDao<Milestone> {
-	public interface HolderConsumer {
-		void consume(MilestoneHolder holder);
-	}
+	@Query
+	Collection<Milestone> findAssociableMilestonesForUser(@Param("userId") long UserId);
 
-	long countMilestones();
+	@Query
+	Collection<Milestone> findMilestonesForRequirementVersion(@Param("versionId") long versionId);
 
-	void checkLabelAvailability(String label);
+	@Query
+	Collection<Milestone> findMilestonesForCampaign(@Param("campaignId") long campaignId);
 
-	/**
-	 * returns the milestones available for the given project
-	 *
-	 * @param projectId
-	 * @return
-	 */
-	Collection<Milestone> findProjectMilestones(long projectId);
+	@Query
+	Collection<Milestone> findMilestonesForIteration(@Param("iterationId") long iterationId);
 
-	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
+	@Query
+	Collection<Milestone> findMilestonesForTestSuite(@Param("suiteId") long suiteId);
 
-	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
+	@Query
+	Collection<Campaign> findCampaignsForMilestone(@Param("milestoneId") long milestoneId);
 
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneDeletable(long testCaseId);
-
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneModifiable(long testCaseId);
-
-	Collection<Milestone> findAssociableMilestonesForUser(long UserId);
-
-	void bindMilestoneToProjectTestCases(long projectId, long milestoneId);
-
-	void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId);
-
-
-	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
-
-	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
-
-	Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId);
-
-	Collection<Milestone> findMilestonesForCampaign(long campaignId);
-
-	Collection<Milestone> findMilestonesForIteration(long iterationId);
-
-	Collection<Milestone> findMilestonesForTestSuite(long suiteId);
-
-	Collection<Campaign> findCampaignsForMilestone(long milestoneId);
-
-
-	void synchronizeRequirementVersions(long source, long target, List<Long> projectIds);
-
-	void synchronizeTestCases(long source, long target, List<Long> projectIds);
+	@Query
+	Milestone findByLabel(@Param("label") String label);
 
 	/**
-	 * Warning : This method may clear your session. Be carefull !
-	 * 
-	 * @param consumer
+	 * alias to #findByLabel
 	 */
-	void  performBatchUpdate(HolderConsumer consumer);
+	@Query(name = "Milestone.findByLabel")
+	Milestone findByName(@Param("label") String name);
 
-	boolean isBoundToAtleastOneObject(long milestoneId);
-
-	/**
-	 * Warning : This method may clear your session. Be carefull !
-	 * 
-	 * @param consumer
-	 */
-	void unbindAllObjects(long milestoneId);
-
-	Milestone findByName(String name);
-
-	boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId);
-
-	/**
-	 * Warning : This method may clear your session. Be carefull !
-	 * 
-	 * @param consumer
-	 */
-	void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds);
-
-	/**
-	 * Warning : This method may clear your session. Be carefull !
-	 * 
-	 * @param consumer
-	 */
-	void unbindAllObjectsForProject(Long id, Long projectId);
-
-	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 
 	long countMilestonesForUsers(List<Long> userIds);
 
-	boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds);
-	
-	Collection<Long> findTestCaseIdsBoundToMilestones(Collection<Long> milestoneIds);
-	
-	Collection<Long> findRequirementVersionIdsBoundToMilestones(Collection<Long> milestoneIds);
 }

@@ -72,7 +72,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_TC + OR_HAS_ROLE_ADMIN)
 	public void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
-		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		Collection<Milestone> milestones = milestoneDao.findAll(milestoneIds);
 
 		for (Milestone m : milestones) {
 			tc.bindMilestone(m);
@@ -92,7 +92,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_REQVERSION + OR_HAS_ROLE_ADMIN)
 	public void bindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds) {
 		RequirementVersion version = requirementVersionDao.findOne(versionId);
-		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		Collection<Milestone> milestones = milestoneDao.findAll(milestoneIds);
 
 		for (Milestone m : milestones) {
 			if (!m.isOneVersionAlreadyBound(version)) {
@@ -116,7 +116,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	public void bindCampaignToMilestone(long campaignId, Long milestoneId) {
 		if (milestoneId != null){
 			Campaign campaign = campaignDao.findById(campaignId);
-			Milestone milestone = milestoneDao.findById(milestoneId);
+			Milestone milestone = milestoneDao.findOne(milestoneId);
 			campaign.bindMilestone(milestone);
 		}
 	}

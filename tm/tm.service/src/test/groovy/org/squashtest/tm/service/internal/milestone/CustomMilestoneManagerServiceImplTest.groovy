@@ -37,11 +37,11 @@ class CustomMilestoneManagerServiceImplTest extends Specification {
 		given :
 		def ids = [1L, 2L, 5L]
 		def milestones = ids.collect{new Milestone(id:it)}
-		milestones.each{milestoneDao.findById(it.id) >> it}
+		milestones.each{milestoneDao.findOne(it.id) >> it}
 		when :
 		manager.removeMilestones(ids)
 		then :
-		milestones.each{1 * milestoneDao.remove(it)}
+		milestones.each{1 * milestoneDao.delete(it)}
 
 	}
 }

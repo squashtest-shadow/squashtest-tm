@@ -42,8 +42,9 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
+import org.squashtest.tm.service.internal.repository.CustomMilestoneDao.HolderConsumer;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
-import org.squashtest.tm.service.internal.repository.MilestoneDao.HolderConsumer;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -77,18 +78,24 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	@Override
 	public void addMilestone(Milestone milestone) {
-		milestoneDao.checkLabelAvailability(milestone.getLabel());
+		checkLabelAvailability(milestone.getLabel());
 		milestone.setOwner(userService.findCurrentUser());
-		milestoneDao.persist(milestone);
+		milestoneDao.save(milestone);
 	}
 
 	@Override
 	public void changeLabel(long milestoneId, String newLabel) {
-		milestoneDao.checkLabelAvailability(newLabel);
-		Milestone m = milestoneDao.findById(milestoneId);
+		checkLabelAvailability(newLabel);
+		Milestone m = milestoneDao.findOne(milestoneId);
 		m.setLabel(newLabel);
 	}
 
+	private void checkLabelAvailability(String label) {
+		if (milestoneDao.findByLabel(label) != null) {
+			throw new MilestoneLabelAlreadyExistsException(label);
+		}
+
+	}
 	@Override
 	public List<Milestone> findAll() {
 		return milestoneDao.findAll();
@@ -97,7 +104,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
 		for (final Long id : ids) {
-			Milestone milestone = milestoneDao.findById(id);
+			Milestone milestone = milestoneDao.findOne(id);
 			deleteMilestoneBinding(milestone);
 			deleteMilestone(milestone);
 		}
@@ -112,12 +119,12 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	private void deleteMilestone(final Milestone milestone) {
 
-		milestoneDao.remove(milestone);
+		milestoneDao.delete(milestone);
 	}
 
 	@Override
 	public Milestone findById(long milestoneId) {
-		return milestoneDao.findById(milestoneId);
+		return milestoneDao.findOne(milestoneId);
 	}
 
 	@Override
@@ -147,7 +154,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	@Override
 	public boolean canEditMilestone(long milestoneId) {
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		// admin can edit all milestones
 		if (!permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			// project manager can't edit global milestone or milestone they don't own
