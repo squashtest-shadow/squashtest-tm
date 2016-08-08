@@ -27,6 +27,18 @@ public final class RequirementStatusesStatistics {
 	private int approved;
 	private int obsolete;
 	
+	public RequirementStatusesStatistics() {
+		super();
+	}
+	public RequirementStatusesStatistics(int workInProgress, int underReview,
+			int approved, int obsolete) {
+		super();
+		this.workInProgress = workInProgress;
+		this.underReview = underReview;
+		this.approved = approved;
+		this.obsolete = obsolete;
+	}
+	
 	public int getWorkInProgress() {
 		return workInProgress;
 	}
@@ -55,16 +67,4 @@ public final class RequirementStatusesStatistics {
 		this.obsolete = obsolete;
 	}
 	
-	public RequirementStatusesStatistics() {
-		super();
-	}
-	public RequirementStatusesStatistics(int workInProgress, int underReview,
-			int approved, int obsolete) {
-		super();
-		this.workInProgress = workInProgress;
-		this.underReview = underReview;
-		this.approved = approved;
-		this.obsolete = obsolete;
-	}
-
 }

@@ -25,6 +25,15 @@ public final class RequirementBoundDescriptionStatistics {
 	private int hasDescription = 0;
 	private int hasNoDescription = 0;
 	
+	public RequirementBoundDescriptionStatistics(int hasDescription, int hasNoDescription) {
+		super();
+		this.hasDescription = hasDescription;
+		this.hasNoDescription = hasNoDescription;
+	}
+	public RequirementBoundDescriptionStatistics() {
+		super();
+	}
+	
 	public int getHasDescription() {
 		return hasDescription;
 	}
@@ -37,16 +46,6 @@ public final class RequirementBoundDescriptionStatistics {
 	}
 	public void setHasNoDescription(int hasNoDescription) {
 		this.hasNoDescription = hasNoDescription;
-	}
-	
-	public RequirementBoundDescriptionStatistics(int hasDescription, int hasNoDescription) {
-		super();
-		this.hasDescription = hasDescription;
-		this.hasNoDescription = hasNoDescription;
-	}
-	public RequirementBoundDescriptionStatistics() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 }

@@ -76,8 +76,10 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			+ "Where req.rln_id in (:requirementIds) "
 			+ "Group By hasDescription";
 	
+	private static String reqParamName = "requirementIds";
+	
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 	@Override
 	public RequirementBoundTestCasesStatistics gatherBoundTestCaseStatistics (
@@ -87,8 +89,8 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			return new RequirementBoundTestCasesStatistics();
 		}
 
-		Query query = em.createNativeQuery(SQL_BOUND_TCS_STATISTICS);
-		query.setParameter("requirementIds", requirementIds);
+		Query query = entityManager.createNativeQuery(SQL_BOUND_TCS_STATISTICS);
+		query.setParameter(reqParamName, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -121,9 +123,9 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			return new RequirementCriticalityStatistics();
 		}
 
-		Query query = em.createNamedQuery(
+		Query query = entityManager.createNamedQuery(
 				"RequirementStatistics.criticalityStatistics");
-		query.setParameter("requirementIds", requirementIds);
+		query.setParameter(reqParamName, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -164,9 +166,9 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		if (requirementIds.isEmpty()) {
 			return new RequirementStatusesStatistics();
 		}
-		Query query = em.createNamedQuery(
+		Query query = entityManager.createNamedQuery(
 				"RequirementStatistics.statusesStatistics");
-		query.setParameter("requirementIds", requirementIds);
+		query.setParameter(reqParamName, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -191,6 +193,9 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			case OBSOLETE:
 				stats.setObsolete(cardinality);
 				break;
+			default:
+				LOGGER.warn("RequirmentStatisticsService cannot handle the following RequirementStatus value : '"
+						+ (String) tuple[0] + "'");
 			}
 		}
 		return stats;
@@ -206,8 +211,8 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 
 
-		Query query = em.createNativeQuery(SQL_BOUND_DESC_STATISTICS);
-		query.setParameter("requirementIds", requirementIds);
+		Query query = entityManager.createNativeQuery(SQL_BOUND_DESC_STATISTICS);
+		query.setParameter(reqParamName, requirementIds);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -225,16 +230,6 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			} else {
 				stats.setHasNoDescription(count);
 			}
-			
-//			switch(hasDescription) {
-//				case 0 : stats.setZeroSteps(count); break;
-//				case 1 : stats.setBetween0And10Steps(count); break;
-//				case 2 : stats.setBetween11And20Steps(count); break;
-//				case 3 : stats.setAbove20Steps(count); break;
-//				default : throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : "+
-//													 "there should not be a sizeclass <0 or >3. It's a bug.");
-//
-//			}
 		}
 
 

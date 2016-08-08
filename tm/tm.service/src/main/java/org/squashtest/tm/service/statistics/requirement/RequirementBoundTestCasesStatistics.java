@@ -26,6 +26,17 @@ public final class RequirementBoundTestCasesStatistics {
 	private int oneTestCase = 0;
 	private int manyTestCases = 0;
 	
+	public RequirementBoundTestCasesStatistics() {
+		super();
+	}
+	public RequirementBoundTestCasesStatistics(int zeroTestCases,
+			int oneTestCase, int manyTestCases) {
+		super();
+		this.zeroTestCases = zeroTestCases;
+		this.oneTestCase = oneTestCase;
+		this.manyTestCases = manyTestCases;
+	}
+	
 	public int getZeroTestCases() {
 		return zeroTestCases;
 	}
@@ -47,15 +58,4 @@ public final class RequirementBoundTestCasesStatistics {
 		this.manyTestCases = manyTestCases;
 	}
 
-	public RequirementBoundTestCasesStatistics() {
-		super();
-	}
-	public RequirementBoundTestCasesStatistics(int zeroTestCases,
-			int oneTestCase, int manyTestCases) {
-		super();
-		this.zeroTestCases = zeroTestCases;
-		this.oneTestCase = oneTestCase;
-		this.manyTestCases = manyTestCases;
-	}
-	
 }

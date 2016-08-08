@@ -30,6 +30,20 @@ public class RequirementStatisticsBundle {
 	private RequirementBoundDescriptionStatistics boundDescriptionStatistics;
 	private Collection<Long> selectedIds;
 	
+	public RequirementStatisticsBundle(RequirementBoundTestCasesStatistics boundTestCasesStatistics,
+			RequirementStatusesStatistics statusesStatistics, RequirementCriticalityStatistics criticalityStatistics,
+			RequirementBoundDescriptionStatistics boundDescriptionStatistics, Collection<Long> selectedIds) {
+		super();
+		this.boundTestCasesStatistics = boundTestCasesStatistics;
+		this.statusesStatistics = statusesStatistics;
+		this.criticalityStatistics = criticalityStatistics;
+		this.boundDescriptionStatistics = boundDescriptionStatistics;
+		this.selectedIds = selectedIds;
+	}
+	public RequirementStatisticsBundle() {
+		super();
+	}
+	
 	public Collection<Long> getSelectedIds() {
 		return selectedIds;
 	}
@@ -63,20 +77,6 @@ public class RequirementStatisticsBundle {
 	}
 	public void setBoundDescriptionStatistics(RequirementBoundDescriptionStatistics descriptionStatistics) {
 		this.boundDescriptionStatistics = descriptionStatistics;
-	}
-	
-	public RequirementStatisticsBundle(RequirementBoundTestCasesStatistics boundTestCasesStatistics,
-			RequirementStatusesStatistics statusesStatistics, RequirementCriticalityStatistics criticalityStatistics,
-			RequirementBoundDescriptionStatistics boundDescriptionStatistics, Collection<Long> selectedIds) {
-		super();
-		this.boundTestCasesStatistics = boundTestCasesStatistics;
-		this.statusesStatistics = statusesStatistics;
-		this.criticalityStatistics = criticalityStatistics;
-		this.boundDescriptionStatistics = boundDescriptionStatistics;
-		this.selectedIds = selectedIds;
-	}
-	public RequirementStatisticsBundle() {
-		super();
 	}
 	
 }

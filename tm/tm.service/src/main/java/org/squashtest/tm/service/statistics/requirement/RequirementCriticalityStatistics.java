@@ -27,6 +27,17 @@ public final class RequirementCriticalityStatistics {
 	private int major;
 	private int critical;
 	
+	public RequirementCriticalityStatistics(int undefined, int minor, int major, int critical) {
+		super();
+		this.undefined = undefined;
+		this.minor = minor;
+		this.major = major;
+		this.critical = critical;
+	}
+	public RequirementCriticalityStatistics() {
+		super();
+	}
+	
 	public int getUndefined() {
 		return undefined;
 	}
@@ -55,16 +66,4 @@ public final class RequirementCriticalityStatistics {
 		this.critical = critical;
 	}
 
-	
-	public RequirementCriticalityStatistics(int undefined, int minor, int major, int critical) {
-		super();
-		this.undefined = undefined;
-		this.minor = minor;
-		this.major = major;
-		this.critical = critical;
-	}
-	public RequirementCriticalityStatistics() {
-		super();
-	}
-	
 }

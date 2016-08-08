@@ -36,7 +36,7 @@ class RequirementStatisticsServiceImplTest extends Specification {
 	EntityManager em = Mock()
 
 	def setup() {
-		service.em = em
+		service.entityManager = em
 	}
 
 	//def "should say that campaign progression statistics cannot be computed because some dates are "
