@@ -804,7 +804,7 @@
 	@NamedQuery(name = "Milestone.findMilestonesForRequirementVersion", query="select milestones from RequirementVersion version join version.milestones milestones where version.id = :versionId"),
 	@NamedQuery(name = "Milestone.findMilestonesForCampaign", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
 	@NamedQuery(name = "Milestone.findMilestonesForIteration", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterationId"),
-	@NamedQuery(name = "milestone.findMilestonesForTestSuite", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :testSuiteId"),
+	@NamedQuery(name = "Milestone.findMilestonesForTestSuite", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :testSuiteId"),
     @NamedQuery(name = "milestone.findLastNonObsoleteReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId  and rv.versionNumber = (select max(reqV.versionNumber) from RequirementVersion reqV where reqV.requirement.id = r.id and reqV.status != 'OBSOLETE')"),
 	@NamedQuery(name = "milestone.findAllTestCasesForProjectAndMilestone", query = "select tc from TestCase tc join tc.milestones m where tc.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllRequirementVersionsForProjectAndMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where r.project.id in (:projectIds) and m.id = :milestoneId"),
@@ -826,12 +826,11 @@
 
 
    //InfoList
-	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
+	@NamedQuery(name = "InfoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
-	@NamedQuery(name = "infoList.findAllOrdered", query = "from InfoList order by label"),
-	@NamedQuery(name = "infoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
-	@NamedQuery(name = "infoList.findAllUnbound", query = "from InfoList il where not exists (from Project p  where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
-	@NamedQuery(name = "infoList.findAllWithBoundProjectsCount", query = "from InfoList, Project rc, Project tcn, Project  "),
+	@NamedQuery(name = "InfoList.findAllOrdered", query = "from InfoList order by label"),
+	@NamedQuery(name = "InfoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
+	@NamedQuery(name = "InfoList.findAllUnbound", query = "from InfoList il where not exists (from Project p  where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
 
 
 	//InfoListItem
@@ -865,9 +864,9 @@
 	@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
 
 	//set InfoListItem of a project to default value
-	@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
-	@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
-	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
+	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :projectId) "),
+	@NamedQuery(name="InfoList.setDefaultNatureForProject", query = "update TestCase tc set tc.nature = :defaultItem where tc.project.id = :projectId"),
+	@NamedQuery(name="InfoList.setDefaultTypeForProject", query = "update TestCase tc set tc.type = :defaultItem where tc.project.id = :projectId"),
 
 	// ChartDefinition
 	@NamedQuery(name="ChartDefinition.selectChartsOwnedByUsers",query="from ChartDefinition chart join chart.owner user where user.id in (:userIds)"),

@@ -22,32 +22,18 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
-import org.squashtest.tm.service.internal.repository.InfoListDao;
+import org.squashtest.tm.service.internal.repository.CustomInfoListDao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository
-public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao {
+public class InfoListDaoImpl implements CustomInfoListDao {
 
 	@PersistenceContext
 	private EntityManager em;
-
-	@Override
-	public InfoList findByCode(String code) {
-		Query query = em.createNamedQuery("infoList.findByCode");
-		query.setParameter("code", code);
-		try {
-			return (InfoList) query.getSingleResult();
-		} catch (NoResultException e) {//NOSONAR this method is used with null checks in business rules. We need null and no log...
-			return null;
-		}
-	}
 
 	@Override
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
@@ -66,6 +52,12 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 		execUpdateQuery(infoListId, "infoList.project.setTcTypeListToDefault", defaultTcTypeList);
 	}
 
+	private InfoList findByCode(String code) {
+		return (InfoList) em.createNamedQuery("InfoList.findByCode")
+			.setParameter("code", code)
+			.getSingleResult();
+	}
+
 	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam) {
 		Query query = em.createNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
@@ -73,43 +65,4 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 		query.executeUpdate();
 	}
 
-	@Override
-	public List<InfoList> findAllOrdered() {
-		return executeListNamedQuery("infoList.findAllOrdered");
-
 	}
-
-	@Override
-	public void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId, "infoList.setProjectCategoryToDefaultItem", defaultItem);
-	}
-
-	@Override
-	public void setDefaultNatureForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId, "infoList.setProjectNatureToDefaultItem", defaultItem);
-
-	}
-
-	@Override
-	public void setDefaultTypeForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId, "infoList.setProjectTypeToDefaultItem", defaultItem);
-
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.InfoListDao#findAllBound()
-	 */
-	@Override
-	public List<InfoList> findAllBound() {
-		return executeListNamedQuery("infoList.findAllBound");
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.InfoListDao#findAllUnbound()
-	 */
-	@Override
-	public List<InfoList> findAllUnbound() {
-		return executeListNamedQuery("infoList.findAllUnbound");
-	}
-
-}

@@ -60,7 +60,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	@Override
 	public InfoList findById(Long id) {
-		return infoListDao.findById(id);
+		return infoListDao.findOne(id);
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public void remove(long infoListId) {
 
-		InfoList infoList = infoListDao.findById(infoListId);
+		InfoList infoList = infoListDao.findOne(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
 		infoListDao.unbindFromProject(infoListId);
@@ -132,7 +132,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 			infoListItemDao.delete(item);
 		}
 
-		infoListDao.remove(infoList);
+		infoListDao.delete(infoList);
 	}
 
 	@Override
@@ -181,8 +181,6 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	/**
 	 * Returns a collection in the same (iterator) order as the given collection where systems lists have been filtered out.
 	 *
-	 * @param lists
-	 * @return
 	 */
 	private List<IsBoundInfoListAdapter> filterSystemLists(Collection<IsBoundInfoListAdapter> lists) {
 		List<IsBoundInfoListAdapter> res = new ArrayList<>(lists.size());
@@ -210,7 +208,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	 */
 	@Override
 	public InfoList persist(InfoList infoList) {
-		infoListDao.persist(infoList);
+		infoListDao.save(infoList);
 
 		for (InfoListItem item : infoList.getItems()) {
 			infoListItemDao.save(item);
