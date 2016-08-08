@@ -106,7 +106,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		InfoList infoList = findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
-		List<InfoListItem> items = infoListItemDao.findAllByIds(itemsIds);
+		List<InfoListItem> items = infoListItemDao.findAll(itemsIds);
 		for (InfoListItem item : items) {
 			infoList.removeItem(item);
 		}
@@ -129,7 +129,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		infoListItemDao.unbindFromLibraryObjects(infoListId);
 
 		for (InfoListItem item : infoList.getItems()) {
-			infoListItemDao.remove(item);
+			infoListItemDao.delete(item);
 		}
 
 		infoListDao.remove(infoList);
@@ -213,7 +213,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		infoListDao.persist(infoList);
 
 		for (InfoListItem item : infoList.getItems()) {
-			infoListItemDao.persist(item);
+			infoListItemDao.save(item);
 		}
 
 		return infoList;

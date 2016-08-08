@@ -835,10 +835,10 @@
 
 
 	//InfoListItem
-	@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
-	@NamedQuery(name="infoListItem.findDefaultRequirementCategoryForProject", query="select item from GenericProject p join p.requirementCategories categories join categories.items item where p.id = :projectId and item.isDefault is true"),
-	@NamedQuery(name="infoListItem.findDefaultTestCaseNatureForProject", query="select item from GenericProject p join p.testCaseNatures natures join natures.items item where p.id = :projectId and item.isDefault is true"),
-	@NamedQuery(name="infoListItem.findDefaultTestCaseTypeForProject", query="select item from GenericProject p join p.testCaseTypes types join types.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findByCode", query="from InfoListItem where code = :code"),
+	@NamedQuery(name="InfoListItem.findDefaultRequirementCategory", query="select item from GenericProject p join p.requirementCategories categories join categories.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findDefaultTestCaseNature", query="select item from GenericProject p join p.testCaseNatures natures join natures.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findDefaultTestCaseType", query="select item from GenericProject p join p.testCaseTypes types join types.items item where p.id = :projectId and item.isDefault is true"),
 	@NamedQuery(name="infoListItem.foundCategoryInProject", query="select count(item) from GenericProject p join p.requirementCategories categories join categories.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundNatureInProject", query="select count(item) from GenericProject p join p.testCaseNatures natures join natures.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundTypeInProject", query="select count(item) from GenericProject p join p.testCaseTypes types join types.items item where item.code = :itemCode and p.id = :projectId"),

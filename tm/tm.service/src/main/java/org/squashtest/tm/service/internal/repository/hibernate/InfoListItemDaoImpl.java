@@ -20,74 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
-import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.service.internal.repository.InfoListItemDao;
+import org.squashtest.tm.service.internal.repository.CustomInfoListItemDao;
 
-import javax.persistence.NoResultException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-@Repository
-public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao {
+public class InfoListItemDaoImpl implements CustomInfoListItemDao {
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private static final String ITEM_CODE = "itemCode";
 	private static final String PROJECT_ID = "projectId";
-
-	@Override
-	public SystemListItem getSystemRequirementCategory() {
-		return (SystemListItem) entityManager.createNamedQuery("systemListItem.getSystemRequirementCategory")
-			.getSingleResult();
-	}
-
-	@Override
-	public SystemListItem getSystemTestCaseNature() {
-		return (SystemListItem) entityManager.createNamedQuery("systemListItem.getSystemTestCaseNature").getSingleResult();
-	}
-
-	@Override
-	public SystemListItem getSystemTestCaseType() {
-		return (SystemListItem) entityManager.createNamedQuery("systemListItem.getSystemTestCaseType").getSingleResult();
-	}
-
-	@Override
-	public InfoListItem findByCode(String code) {
-		Query q = entityManager.createNamedQuery("infoListItem.findByCode");
-		q.setParameter("code", code);
-		try {
-			return (InfoListItem) q.getSingleResult();
-		} catch (NoResultException e) {//NOSONAR some null checks in calling code
-			return null;
-		}
-	}
-
-	@Override
-	public InfoListItem findReference(ListItemReference reference) {
-		return findByCode(reference.getCode());
-	}
-
-	@Override
-	public InfoListItem findDefaultRequirementCategory(long projectId) {
-		Query q = entityManager.createNamedQuery("infoListItem.findDefaultRequirementCategoryForProject");
-		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.getSingleResult();
-	}
-
-	@Override
-	public InfoListItem findDefaultTestCaseNature(long projectId) {
-		Query q = entityManager.createNamedQuery("infoListItem.findDefaultTestCaseNatureForProject");
-		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.getSingleResult();
-	}
-
-	@Override
-	public InfoListItem findDefaultTestCaseType(long projectId) {
-		Query q = entityManager.createNamedQuery("infoListItem.findDefaultTestCaseTypeForProject");
-		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.getSingleResult();
-	}
 
 	@Override
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
@@ -122,6 +68,12 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		InfoListItem defaultTcType = findByCode(SystemInfoListItemCode.TYP_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setTcTypeToDefault", defaultTcType);
 
+	}
+
+	private InfoListItem findByCode(String code) {
+		return (InfoListItem) entityManager.createNamedQuery("InfoListItem.findByCode")
+			.setParameter("code", code)
+			.getSingleResult();
 	}
 
 	private void execUpdateQuery(long infoListId, String queryName, InfoListItem defaultParam) {
