@@ -267,7 +267,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
 			org.hibernate.Query query = session.getNamedQuery(namedQuery);
 			query.setParameter(MILESTONE_ID, milestoneId);
-			query.setParameter(PROJECT_IDS, projectIds);
+			query.setParameterList(PROJECT_IDS, projectIds);
 
 			ScrollableResults holders = scrollableResults(query);
 
