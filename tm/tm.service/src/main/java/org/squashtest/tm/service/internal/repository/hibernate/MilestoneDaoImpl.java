@@ -167,7 +167,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public void synchronizeRequirementVersions(long source, long target, List<Long> projectIds) {
 		Session session = entityManager.unwrap(Session.class);
 		org.hibernate.Query query = session.getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
-		query.setParameter(PROJECT_IDS, projectIds);
+		query.setParameterList(PROJECT_IDS, projectIds);
 		query.setParameter(MILESTONE_ID, source);
 		ScrollableResults reqVersions = scrollableResults(query);
 
@@ -179,7 +179,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public void synchronizeTestCases(long source, long target, List<Long> projectIds) {
 		Session session = entityManager.unwrap(Session.class);
 		org.hibernate.Query query = session.getNamedQuery("milestone.findAllTestCasesForProjectAndMilestone");
-		query.setParameter(PROJECT_IDS, projectIds);
+		query.setParameterList(PROJECT_IDS, projectIds);
 		query.setParameter(MILESTONE_ID, source);
 		ScrollableResults tcs = scrollableResults(query);
 
