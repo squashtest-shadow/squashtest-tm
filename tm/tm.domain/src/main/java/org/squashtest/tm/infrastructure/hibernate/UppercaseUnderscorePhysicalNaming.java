@@ -26,6 +26,7 @@
 package org.squashtest.tm.infrastructure.hibernate;
 
 import java.util.Locale;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
@@ -76,17 +77,23 @@ implements PhysicalNamingStrategy{
 		if (name == null) {
 			return null;
 		}
-		StringBuilder text = new StringBuilder(name.getText().replace('.', '_'));
-		for (int i = 1; i < text.length(); i++) {
-			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i))) {
+                String shortName = name.getText();
+                shortName = shortName.substring(shortName.lastIndexOf('.')+1);
+		
+		StringBuilder text = new StringBuilder(shortName);
+		for (int i = 1; i < text.length() - 1; i++) {
+			if (isUnderscoreRequired(text.charAt(i - 1), text.charAt(i), text.charAt(i + 1))) {
 				text.insert(i++, '_');
 			}
 		}
 		return new Identifier(text.toString().toUpperCase(Locale.ROOT), name.isQuoted());
+	
 	}
 
-	private boolean isUnderscoreRequired(char before, char current) {
-		return Character.isLowerCase(before) && Character.isUpperCase(current);
-	}
+	private boolean  isUnderscoreRequired(char before, char current, char after) {
+		return (before != '_' &&
+                        Character.isLowerCase(before) && Character.isUpperCase(current) ||
+			Character.isUpperCase(current) && Character.isLowerCase(after));
+        }
     
 }

@@ -30,7 +30,7 @@ import javax.servlet.DispatcherType;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +54,8 @@ import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
  * Servlet context config (mostly). Not in SquashServletInitializer becauses it delays the servlet context initialization for
@@ -66,12 +67,20 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 @EnableConfigurationProperties({MessagesProperties.class})
 @Configuration
 public class SquashServletConfig {
+        
+        private static final String IMPORTER_REGEX = ".*/importer/.*";
+        private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
+    
+    
 	@Inject
 	private MessagesProperties messagesProperties;
 	@Inject
 	private ThymeleafProperties thymeleafProperties;
 	@Inject
 	private SquashPathProperties squashPathProperties;
+	@Inject
+	private BugTrackerContextHolder bugTrackerContextHolder;
+
 
 	/**
 	 * Message source which takes into account messages from "fragments"
@@ -121,11 +130,7 @@ public class SquashServletConfig {
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}
-
-	@Inject
-	private BugTrackerContextHolder bugTrackerContextHolder;
-
-
+        
 
 	@Bean
 	@Role(BeanDefinition.ROLE_SUPPORT)
@@ -135,16 +140,18 @@ public class SquashServletConfig {
 			MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
 			bean.setDefaultResolver(defaultMultipartResolver());
 			HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
-		    resolverMap.put(".*/import/upload.*", importMultipartResolver());
-			resolverMap.put(".*/importer/.*", importMultipartResolver());
+                        resolverMap.put(UPLOAD_REGEX, importMultipartResolver());
+			resolverMap.put(IMPORTER_REGEX, importMultipartResolver());
 			bean.setResolverMap(resolverMap);
 			return bean;
 		}
 
 
+
 	@Role(BeanDefinition.ROLE_SUPPORT)
 	public SquashMultipartResolver defaultMultipartResolver() {
-		return new SquashMultipartResolver();
+		SquashMultipartResolver bean = new SquashMultipartResolver();
+                return bean;
 	}
 
 
@@ -155,12 +162,21 @@ public class SquashServletConfig {
 		return bean;
 	}
 
+        /*
 	@Bean
 	@Order(0)
 	public MultipartFilter multipartFilter() {
 		return new MultipartFilter();
 	}
+        */
 
+        @Bean
+        public FilterRegistrationBean multipartFilterRegistrationBean() {
+            final MultipartFilter multipartFilter = new MultipartFilter();
+            final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
+            return filterRegistrationBean;
+        }      
+        
 	@Bean
 	@Order(1)
 	public FilterRegistrationBean bugTrackerContextPersister() {
@@ -204,10 +220,10 @@ public class SquashServletConfig {
 	}
 
 	@Bean
-	public Hibernate4Module hibernate4JacksonModule() {
-		Hibernate4Module bean = new Hibernate4Module();
+	public Hibernate5Module hibernate5JacksonModule() {
+		Hibernate5Module bean = new Hibernate5Module();
 		//Setting jackson tu eager on hibernate proxy... take care to your Mixins to avoid massive request ^^
-		bean.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, true);
+		bean.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true);
 		return bean;
 	}
 }

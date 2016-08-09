@@ -26,31 +26,60 @@ import org.hibernate.boot.model.naming.Identifier
 
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
-class UppercaseUnderscorePhysicalNamingTestTest extends Specification{
+class UppercaseUnderscorePhysicalNamingTest extends Specification{
 	PhysicalNamingStrategy strategy = new UppercaseUnderscorePhysicalNaming()
 	
 	def "table name should be UC-US class  name"() {
 		when:
-		def name = strategy.toPhysicalTableName(id("foo.bar.EntityName"), null)
+		def ident = strategy.toPhysicalTableName(id("foo.bar.EntityName"), null)
 		then:
-		name == "ENTITY_NAME"
+		ident.text == "ENTITY_NAME"
 	}
 	
 	def "column name should be UC-US prop name"() {
 		when:
-		def name = strategy.toPhysicalColumnName(id("propertyNameOfAKind"))
+		def ident = strategy.toPhysicalColumnName(id("propertyNameOfAKind"), null)
 		then:
-		name == "PROPERTY_NAME_OF_A_KIND"
+		ident.text == "PROPERTY_NAME_OF_A_KIND"
 	}
 	
 	def "contuiguous capitals should be considered as one word"() {
 		when:
-		def name = strategy.toPhysicalTableName(id("MyURLParser"))
+		def ident = strategy.toPhysicalTableName(id("MyURLParser"), null)
 		then:
-		name == "MY_URL_PARSER"
+		ident.text == "MY_URL_PARSER"
 	}
-	
+        
+        def "should not doubleprocess a name that is already compliant"(){
+            
+        when :
+            def ident = strategy.toPhysicalTableName(id("BOB_MIKE"), null)
+        
+        then :
+            ident.text == "BOB_MIKE"        
+        }
+        
+        def "should also process names that ends with an uppercase acronyms"(){
+        when :
+            def ident = strategy.toPhysicalTableName(id("bobMIKE"), null)
+        
+        then :
+            ident.text == "BOB_MIKE"                 
+        }
+        
+    @Unroll
+    def "should not add extra underscores when the name is rich on them"(){
+        expect :
+            strategy.toPhysicalTableName(id(inText), null).text == outText
+        
+        where :
+        
+            inText          |   outText
+            "RENT_A_BOB"    |   "RENT_A_BOB"
+            "rent_A_bob"    |   "RENT_A_BOB"
+    }
         
     def id(name){
         return Identifier.toIdentifier(name)

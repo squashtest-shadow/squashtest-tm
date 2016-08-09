@@ -49,7 +49,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 public class RequirementSyncExtender {
 
 	@Id
-	@Column(name = "REQ_SYNC_Id")
+	@Column(name = "REQ_SYNC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_sync_extender_req_sync_id_seq")
 	@SequenceGenerator(
 			name = "requirement_sync_extender_req_sync_id_seq",

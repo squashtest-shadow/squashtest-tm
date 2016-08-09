@@ -85,12 +85,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 		return new DefaultLobHandler();
 	}
 
-/*
-                        TODOOOOOOOOOOO
-                register the physical and implicit naming strategies
-                register new AuditLogInterceptor() -> good
-                Dump the plumbing from UberCustomPersistenceProvider
-  */
+
 	@Bean(name="entityManagerFactory")
 	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -113,7 +108,6 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	    // setting the properties
 	    Properties hibProperties = hibernateProperties();
 	    factory.setJpaProperties(hibProperties);
-           // factory.getJpaPropertyMap().put("hibernate.dialect", "org.squashtest.tm.domain.jpql.PostgresEnhancedDialect");
 
             factory.afterPropertiesSet();
 
