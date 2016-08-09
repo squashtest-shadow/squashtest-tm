@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import com.querydsl.jpa.impl.JPAQueryFactory
+import org.squashtest.tm.domain.attachment.QAttachmentList
+
 import javax.inject.Inject
 import javax.persistence.Query
 
@@ -84,6 +87,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		deletionDao.deleteRequirementAuditEvents([-10L, -30L])
 
 		deletionDao.removeEntities([-10L, -30L])
+		em.flush()
 
 		//then find all
 		def resReqVers = versionDao.findAll([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
@@ -93,7 +97,10 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		Query query_select_resource = em.createNativeQuery(sql_select_resource);
 		def resources = query_select_resource.getResultList()
 
-		def resAttachList = [-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L].collect {attachmentListDao.findOne(it)}
+		def resAttachList = new JPAQueryFactory(em)
+			.selectFrom(QAttachmentList.attachmentList)
+			.where(QAttachmentList.attachmentList.id.in([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L]))
+			.fetch()
 
 		String sql_select_librairy_node = "select rln_id from REQUIREMENT_LIBRARY_NODE where rln_id in (-10, -20, -30, -40)";
 		Query query_select_librairy_node = em.createNativeQuery(sql_select_librairy_node);
