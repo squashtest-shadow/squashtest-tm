@@ -28,6 +28,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.tmpl = "#attributes-step-tpl";
 			this.model = data;
 			data.name = "attributes";
+			this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 			this._initialize(data, wizrouter);
 			
 
@@ -65,14 +66,155 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			
 		},
 		
+		/**
+		 * Compute the columnPrototypes :
+		 * 1/ keep only the selected entities columnsPrototypes
+		 * 2/ generate the prototypes for the CUF
+		 */
+		computeColumnsPrototypes : function () {
+			var initialColumnsPrototypes = this.model.get('columnPrototypes');
+			var selectedEntities = this.model.get('selectedEntity');
+			var selectedEntitiesColumnsPrototypes = {};
+			var selectedProjects = this.getSelectedProject();
+			
+			var self = this;
+
+			//1 keep only the selected entities columnsPrototypes
+			_.each(initialColumnsPrototypes, function (value, key) {
+				if(_.contains(selectedEntities, key)){
+					selectedEntitiesColumnsPrototypes[key] = value;
+				}
+			});
+
+			//2 creating synthetics prototypes and merging with natural
+			return this.mergeProtoypes(selectedEntitiesColumnsPrototypes);
+		},
 		
-		
-		
-	
-		
-		
+		getSelectedProject : function () {
+			var projectsScope = this.model.get('projectsScope');
+			return _.filter(squashtm.workspace.projects,function (project) {
+				return _.contains(projectsScope,project.id);
+			});
+		},
+
+		//This function will return a map with synthetic column proto for cuf merged into the original map of prototypes
+		mergeProtoypes : function (selectedEntitiesColumnsPrototypes) {
+			var cufPrototypes = [];
+			var mapOfNaturalPrototypes = {};
+
+			//first we separate all generic cuf column prototypes from initial list of column prototype from the other one (attributes and calculated)
+			_.each(selectedEntitiesColumnsPrototypes, function (prototypes, key) {
+				//grouping by column type
+				var groupedcolumnsPrototype = _.groupBy(prototypes,function(prototype){
+					return prototype.columnType;
+				});
+				//extracting cuf prototype for this entity type and put in array of all cuf column proto
+				var cufPrototypesForOneEntityType = groupedcolumnsPrototype["CUF"];
+				cufPrototypes = cufPrototypes.concat(cufPrototypesForOneEntityType);
+				//now inject into computedColumnsPrototypes all the natural column prototypes
+				var naturalPrototypes = groupedcolumnsPrototype["ATTRIBUTE"];
+				naturalPrototypes = naturalPrototypes.concat(groupedcolumnsPrototype["CALCULATED"]);
+				mapOfNaturalPrototypes[key] = naturalPrototypes;
+			});
+
+			//now we create the map of synthetic column proto
+			//first we create a map of all cuf binding for projects in perimeter
+			var cufBindingMap = this.getCufProjectMap();
+			//now we generate the synthetics columns prototypes
+			var syntheticColumnPrototypes = this.getCufProtoForBindings(cufBindingMap,cufPrototypes);
+
+			//finally we merge the the two maps and return
+			var mergedPrototypes = this.getEmptyCufMap();
+			_.each(mapOfNaturalPrototypes,function (values,key) {
+				var syntheticColumnPrototypesForEntity = syntheticColumnPrototypes[key];
+				var allProto = values.concat(syntheticColumnPrototypesForEntity);
+				mergedPrototypes[key] = allProto;
+			});
+
+			return mergedPrototypes;
+		},
+
+		//return a map with cuf bindings by entitity type : {"CAMPAIGN":[{cufBinding1},{cufBinding2}],"ITERATION":[{cufBinding1},{cufBinding2}]...}
+		getCufProjectMap : function () {
+			var selectedProjects = this.getSelectedProject();
+			var selectedEntities = this.model.get('selectedEntity');
+			var self = this;
+			var cufMap = _.reduce(selectedProjects,function (memo, project) {
+				_.each(project.customFieldBindings,function (values,key) {
+					if(_.contains(selectedEntities,key) && values.length > 0 && memo.hasOwnProperty(key)){
+						memo[key] = memo[key].concat(values);
+					}
+				});
+				return memo;
+			},self.getEmptyCufMap());
+			return cufMap;
+		},
+
+		getEmptyCufMap : function () {
+			return {
+				"REQUIREMENT_VERSION":[],
+				"TEST_CASE":[],
+				"CAMPAIGN":[],
+				"ITERATION":[],
+				"ITEM_TEST_PLAN":[],
+				"EXECUTION":[]
+			};
+		},
+
+		getCufProtoForBindings : function (bindingMap,cufPrototypes) {
+			var protoForCufBinding = this.getEmptyCufMap();
+			var self = this;
+			_.each(bindingMap,function (values,key) {
+				var generatedPrototype = _.map(values,function (value) {
+					//1 find the proto name
+					var protoLabel = key + "_" + self.getProtoSuffix(value);
+					//2 find the prototype and upgrade it with cufCode and label
+					var cufPrototype = _.find(cufPrototypes,function (proto) {
+						return proto.label === protoLabel;
+					});
+					if (cufPrototype) {
+						cufPrototype.code = value.customField.code;
+						cufPrototype.cufLabel = value.customField.label;
+						cufPrototype.cufName = value.customField.name;
+						cufPrototype.cufId = value.customField.id;
+						cufPrototype.isCuf = true;
+						return cufPrototype;
+					} else {
+						throw "Unknown CUF prototype";
+					}
+				});
+				protoForCufBinding[key] = generatedPrototype;
+			});
+			return protoForCufBinding;
+		},
+
+		getProtoSuffix : function (value) {
+			var suffix;
+			switch (value.customField.inputType.enumName) {
+				case "PLAIN_TEXT":
+					suffix = "CUF_TEXT";
+					break;
+				case "CHECKBOX":
+					suffix = "CUF_CHECKBOX";
+					break;				
+				case "DROPDOWN_LIST":
+					suffix = "CUF_LIST";
+					break;				
+				case "DATE_PICKER":
+					suffix = "CUF_DATE";
+					break;				
+				case "TAG":
+					suffix = "CUF_TAG";
+					break;
+				case "NUMERIC":
+					suffix = "CUF_NUMERIC";
+					break;
+			
+				default:
+					throw "Unknown CUF type";
+			}
+			return suffix;
+		}
 	});
-
 	return attributesStepView;
-
 });

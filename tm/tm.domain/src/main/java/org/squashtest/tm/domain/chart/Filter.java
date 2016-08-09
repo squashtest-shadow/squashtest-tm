@@ -36,6 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.EntityType;
 
@@ -61,6 +62,9 @@ public class Filter implements ColumnPrototypeInstance {
 	@CollectionTable(name = "CHART_FILTER_VALUES", joinColumns = @JoinColumn(name = "FILTER_ID") )
 	@Column(name="FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
+
+	@Size(min = 0, max = 30)
+	private String cufCode;
 
 	@Override
 	public Operation getOperation() {
@@ -101,6 +105,14 @@ public class Filter implements ColumnPrototypeInstance {
 	@Override
 	public DataType getDataType() {
 		return getColumn().getDataType();
+	}
+
+	public String getCufCode() {
+		return cufCode;
+	}
+
+	public void setCufCode(String cufCode) {
+		this.cufCode = cufCode;
 	}
 
 	public Filter createCopy(){

@@ -49,6 +49,9 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	@Column(name ="AXIS_OPERATION")
 	private Operation operation;
 
+	@Size(min = 0, max = 30)
+	private String cufCode;
+
 
 	public String getLabel() {
 		return label;
@@ -91,4 +94,11 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		return getColumn().getDataType();
 	}
 
+	public String getCufCode() {
+		return cufCode;
+	}
+
+	public void setCufCode(String cufCode) {
+		this.cufCode = cufCode;
+	}
 }

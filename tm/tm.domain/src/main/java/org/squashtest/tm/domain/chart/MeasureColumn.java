@@ -49,6 +49,8 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	@Column(name = "MEASURE_OPERATION")
 	private Operation operation;
 
+	@Size(min = 0, max = 30)
+	private String cufCode;
 
 	@Override
 	public ColumnPrototype getColumn() {
@@ -91,5 +93,11 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		return getColumn().getDataType();
 	}
 
+	public String getCufCode() {
+		return cufCode;
+	}
 
+	public void setCufCode(String cufCode) {
+		this.cufCode = cufCode;
+	}
 }

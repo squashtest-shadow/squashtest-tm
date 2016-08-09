@@ -58,12 +58,9 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		},
 
 		registerHelper : function(){
-			Handlebars.registerHelper("cuf-label", function(label, cufs){
-
-				var cuf =_.chain(cufs).values().flatten().find(function(val){return val.code == label;});
-
-				var cufLabel = cuf.result("label").value();
-				var cufName = cuf.result("name").value();
+			Handlebars.registerHelper("cuf-label", function(prototype){
+				var cufLabel = prototype.cufLabel;
+				var cufName = prototype.cufName;
 				var html = cufLabel  + "<span class='small txt-discreet'> ("+ cufName +")</span>";
 
 				return new Handlebars.SafeString(html);

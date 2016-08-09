@@ -308,7 +308,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		},
 
 		changeOperation : function(event){
-			this.showFilterValues(event.target.name, event.target.value);
+			this.showFilterValues(event.target.name, event.target.value, event.target.getAttribute("data-cuf-id"));
 		},
 
 		findTypeFromColumnId : function(id){
@@ -319,13 +319,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			.value();
 		},
 
-		showFilterValues : function (id, val){
+		showFilterValues : function (id, val, cufId){
 
-			var selector = $("#second-filter-value-" + id);
-      var selectorLabel = $("#second-filter-value-label-" + id);
+			var selector = this.getSecondFilterSelector(id, val, cufId);
+      		var selectorLabel = this.getSecondFilterLabelSelector(id, val, cufId);
+
 			if (val == "BETWEEN") {
 				selector.show();
-        selectorLabel.show();
+       			selectorLabel.show();
 			} else {
 				selector.hide();
 				selectorLabel.hide();
@@ -338,6 +339,21 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 
 		},
+
+		getSecondFilterSelector : function (id, val, cufId) {
+			if (cufId) {
+				return $("#second-filter-value-" + id + "-" + cufId);
+			}
+			return $("#second-filter-value-" + id);
+		},
+
+		getSecondFilterLabelSelector : function (id, val, cufId) {
+			if (cufId) {
+				return $("#second-filter-value-label-" + id + "-" + cufId);
+			}
+			return $("#second-filter-value-label-" + id);
+		},
+
 		removeStatusDependingOnProjectConf : function() {
 
 			var projectScope = this.model.get('projectsScope');

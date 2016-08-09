@@ -28,41 +28,44 @@
 <br />
 <br />
 
- {{#each attributes.columnPrototypes}}
- 
+ {{#each attributes.computedColumnsPrototypes}}
+
 
 
   {{#if (contains ../attributes.selectedEntity @key)}}
-  
+
   <div class="sq-tg expand">
  <div class="tg-head">
-{{i18n @key prefix='chart.entityType.'}}            
-</div> 
+{{i18n @key prefix='chart.entityType.'}}
+</div>
 
 
 <div class="tg-body">
 {{#each  this}}
 <div style="float:left; min-width:240px;">
   {{!--<![CDATA[--}}
-<input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" 
-  {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}} 
+<input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}"
+  {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
 />
-{{!--]]>--}}	
+{{!--]]>--}}
 
 {{#equal this.columnType "CUF"}}
+  {{cuf-label this}}
+  {{!--
 {{cuf-label this.attributeName ../../attributes.customFields}}
+  --}}
 {{else}}
 {{i18n this.label prefix="chart.column."}}
 {{/equal}}
 </div>
 
-{{/each}}  
+{{/each}}
 </div>
- </div>  
- 
+ </div>
+
  {{/if}}
- 
-{{/each}}  
+
+{{/each}}
 
 
 </div>
