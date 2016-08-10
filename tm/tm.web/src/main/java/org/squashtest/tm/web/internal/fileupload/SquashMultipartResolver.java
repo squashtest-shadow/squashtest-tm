@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.web.internal.fileupload;
 
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
 /**
@@ -32,7 +28,7 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
  * get its configuration -> quick and dodgy solution is to fetch the service from beanFactory
  */
 
-public class SquashMultipartResolver extends CommonsMultipartResolver implements ApplicationListener<ApplicationEvent> {
+public class SquashMultipartResolver extends CommonsMultipartResolver {
 
 	/**
      * This shall be fetched from application context when a context started event is triggered.
@@ -57,22 +53,14 @@ public class SquashMultipartResolver extends CommonsMultipartResolver implements
 		this.maxUploadSizeKey = maxUploadSizeKey;
 
 	}
-
-	private void updateConfig() {
-		String uploadLimit = configurationService.findConfiguration(maxUploadSizeKey);
-		setMaxUploadSize(Long.valueOf(uploadLimit));
-	}
-
-	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		if (event instanceof ContextRefreshedEvent && configurationService == null) {
-			configurationService = ((ContextRefreshedEvent) event).getApplicationContext()
-					.getBean(ConfigurationService.class);
+        
+        void setConfigurationService(ConfigurationService service){
+            this.configurationService = service;
         }
 
-		if (event instanceof ConfigUpdateEvent || event instanceof ContextRefreshedEvent) {
-			updateConfig();
-		}
+	void updateConfig() {
+		String uploadLimit = configurationService.findConfiguration(maxUploadSizeKey);
+		setMaxUploadSize(Long.valueOf(uploadLimit));
 	}
 
 }

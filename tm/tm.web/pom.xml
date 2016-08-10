@@ -43,6 +43,7 @@
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+    <appserver.scope>compile</appserver.scope>
   </properties>
 
   <dependencyManagement>

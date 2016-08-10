@@ -56,6 +56,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 
 /**
  * Servlet context config (mostly). Not in SquashServletInitializer becauses it delays the servlet context initialization for
@@ -134,17 +135,15 @@ public class SquashServletConfig {
 
 	@Bean
 	@Role(BeanDefinition.ROLE_SUPPORT)
-	public CommonsMultipartResolver filterMultipartResolver()
-
-	{
-			MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
-			bean.setDefaultResolver(defaultMultipartResolver());
-			HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
-                        resolverMap.put(UPLOAD_REGEX, importMultipartResolver());
-			resolverMap.put(IMPORTER_REGEX, importMultipartResolver());
-			bean.setResolverMap(resolverMap);
-			return bean;
-		}
+	public CommonsMultipartResolver filterMultipartResolver(){
+                MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+                bean.setDefaultResolver(defaultMultipartResolver());
+                HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+                resolverMap.put(UPLOAD_REGEX, importMultipartResolver(ConfigurationService.Properties.UPLOAD_SIZE_LIMIT));
+                resolverMap.put(IMPORTER_REGEX, importMultipartResolver(ConfigurationService.Properties.IMPORT_SIZE_LIMIT));
+                bean.setResolverMap(resolverMap);
+                return bean;
+        }
 
 
 
@@ -156,23 +155,15 @@ public class SquashServletConfig {
 
 
 	@Role(BeanDefinition.ROLE_SUPPORT)
-	public SquashMultipartResolver importMultipartResolver() {
+	public SquashMultipartResolver importMultipartResolver(String configKey) {
 		SquashMultipartResolver bean = new SquashMultipartResolver();
-		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+		bean.setMaxUploadSizeKey(configKey);
 		return bean;
 	}
 
-        /*
-	@Bean
-	@Order(0)
-	public MultipartFilter multipartFilter() {
-		return new MultipartFilter();
-	}
-        */
-
         @Bean
         public FilterRegistrationBean multipartFilterRegistrationBean() {
-            final MultipartFilter multipartFilter = new MultipartFilter();
+            final MultipartFilterExceptionAware multipartFilter = new MultipartFilterExceptionAware();
             final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
             return filterRegistrationBean;
         }      
