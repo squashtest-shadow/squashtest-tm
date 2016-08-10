@@ -66,7 +66,7 @@ class AdministrationServiceImplTest extends Specification {
 		User user = Mock()
 		Team team = Mock()
 		def teams = [team]
-		userDao.findById(1L)>>user
+		userDao.findOne(1L)>>user
 		teamDao.findAllByIds([2L])>> teams
 
 		when :
@@ -80,7 +80,7 @@ class AdministrationServiceImplTest extends Specification {
 		given :
 		User user = Mock()
 		def teamIds = [2L]
-		userDao.findById(1L) >> user
+		userDao.findOne(1L) >> user
 		when :
 		service.deassociateTeams(1L, [2L])
 		then :
@@ -105,7 +105,7 @@ class AdministrationServiceImplTest extends Specification {
 		res.active
 		res.group == defaultGroup
 		// we check something was persisted and we capture it
-		1 * userDao.persist({ persisted = it })
+		1 * userDao.save({ persisted = it })
 		res == persisted
 	}
 
@@ -134,7 +134,7 @@ class AdministrationServiceImplTest extends Specification {
 		service.addUser(newUser, 10L, "y2j")
 
 		then:
-		1 * userDao.persist(newUser)
+		1 * userDao.save(newUser)
 		1 * newUser.setGroup(defaultGroup)
 		1 * adminAuthentService.createNewUserPassword("chris.jericho", "y2j", true, true, true, true, _)
 	}
@@ -152,7 +152,7 @@ class AdministrationServiceImplTest extends Specification {
 		service.createUserWithoutCredentials(newUser, 10L)
 
 		then:
-		1 * userDao.persist(newUser)
+		1 * userDao.save(newUser)
 		1 * newUser.setGroup(defaultGroup)
 		0 * adminAuthentService.createNewUserPassword(_, _, _, _, _, _, _)
 	}
@@ -164,7 +164,7 @@ class AdministrationServiceImplTest extends Specification {
 		user.active >> true
 
 		and:
-		userDao.findById(10L) >> user
+		userDao.findOne(10L) >> user
 
 		and:
 		adminAuthentService.userExists("chris.jericho") >> false
@@ -186,7 +186,7 @@ class AdministrationServiceImplTest extends Specification {
 		user.active >> true
 
 		and:
-		userDao.findById(10L) >> user
+		userDao.findOne(10L) >> user
 
 		and:
 		adminAuthentService.userExists("chris.jericho") >> true

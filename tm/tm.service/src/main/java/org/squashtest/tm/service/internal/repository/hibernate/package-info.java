@@ -514,15 +514,15 @@
 	@NamedQuery(name = "usersGroup.findByQualifiedName", query = "from UsersGroup where qualifiedName = :qualifiedName"),
 
 	//User
-	@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
-	@NamedQuery(name = "user.findAllActiveUsers", query = "from User fetch all properties where active = true order by login"),
-	@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
-	@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
+	@NamedQuery(name = "User.findAllUsersOrderedByLogin", query = "from User fetch all properties order by login"),
+	@NamedQuery(name = "User.findAllActiveUsersOrderedByLogin", query = "from User fetch all properties where active = true order by login"),
+	@NamedQuery(name = "User.findUsersByLoginList", query = "from User fetch all properties where login in (:logins)"),
+	@NamedQuery(name = "User.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 	@NamedQuery(name = "User.findUserByCiLogin", query = "from User fetch all properties where lower(login) = lower(:userLogin)"),
-	@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
-	@NamedQuery(name = "user.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
-	@NamedQuery(name = "user.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
-	@NamedQuery(name = "user.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
+	@NamedQuery(name = "User.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
+	@NamedQuery(name = "User.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
+	@NamedQuery(name = "User.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
+	@NamedQuery(name = "User.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
 	@NamedQuery(name = "User.findAllDuplicateLogins", query = "select lower(u.login) from User u group by lower(u.login) having count(u.login) > 1"),
 	@NamedQuery(name = "User.findCaseAwareLogin", query = "select u.login from User u where lower(u.login) = lower(:login)"),
 
@@ -686,7 +686,7 @@
 	// Requirement Statistics
 	@NamedQuery(name = "RequirementStatistics.statusesStatistics", query = "select reqVer.status, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.status"),
 	@NamedQuery(name = "RequirementStatistics.criticalityStatistics", query = "select reqVer.criticality, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.criticality"),
-	
+
 	//Test Case Statistics
 	@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 	@NamedQuery(name = "TestCaseStatistics.statusesStatistics", query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),

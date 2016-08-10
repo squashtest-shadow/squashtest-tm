@@ -24,19 +24,14 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
@@ -110,35 +105,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	}
 
 
-	@SuppressWarnings("unchecked")
-	protected /*final*/ List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting, Class<ENTITY_TYPE> classe, String alias) {
-		Session session = currentSession();
-
-		Criteria crit = session.createCriteria(classe, alias);
-
-		/* add ordering */
-		String sortedAttribute = pagingAndSorting.getSortedAttribute();
-		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, pagingAndSorting);
-		}
-
-		/* result range */
-		PagingUtils.addPaging(crit, pagingAndSorting);
-
-		return crit.list();
-	}
-
-	/**
-	 * Same as {@link #findSorted(PagingAndSorting, Class, String)} using the current entity type and its class name as
-	 * an alias.
-	 *
-	 * @param pagingAndSorting
-	 * @return
-	 */
-	protected /*final*/ List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting) {
-		return findSorted(pagingAndSorting, entityType, entityType.getSimpleName());
-	}
-
 	protected <X> List<X> collectFromMapList(List<X> hibernateResult, String alias){
 		List<X> collected = new ArrayList<>(hibernateResult.size());
 		for (Map<String, X> result : (List<Map<String, X>>) hibernateResult){
@@ -146,24 +112,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		return collected;
 	}
-
-	protected List<ENTITY_TYPE> collectFromMapList(Criteria crit){
-		return collectFromMapList(crit.list(), entityType.getSimpleName());
-	}
-
-	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit, String alias){
-		List<Map<String, ?>> res = crit.list();
-		Set<ENTITY_TYPE> set = new HashSet<>(res.size());
-		for (Map<String, ?> e : res){
-			set.add((ENTITY_TYPE)e.get(alias));
-		}
-		return set;
-	}
-
-	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit){
-		return collectFromMapListToSet(crit, entityType.getSimpleName());
-	}
-
 
 
 }

@@ -70,7 +70,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
 		// fetch
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -80,7 +80,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserLastName(long userId, String newName) {
 		// fetch
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -91,7 +91,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public void modifyUserLogin(long userId, String newLogin) {
 		// fetch
 		String newtrimedLogin = newLogin.trim();
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 		if (!newtrimedLogin.equals(user.getLogin())) {
 			LOGGER.debug("change login for user " + user.getLogin() + " to " + newtrimedLogin);
 			// check
@@ -109,7 +109,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void modifyUserEmail(long userId, String newEmail) {
 		// fetch
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 		// check
 		checkPermissions(user);
 		// proceed
@@ -155,9 +155,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUser(long userId) {
 
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 
-		userDao.unassignUserFromAllTestPlan(userId);
+		unassignUserFromAllTestPlan(userId);
 		user.setActive(false);
 	}
 
@@ -165,7 +165,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
 
-		User user = userDao.findById(userId);
+		User user = userDao.findOne(userId);
 
 		user.setActive(true);
 	}
@@ -173,10 +173,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void deleteUser(long userId) {
 
-		userDao.unassignUserFromAllTestPlan(userId);
+		unassignUserFromAllTestPlan(userId);
 		teamModificationService.removeMemberFromAllTeams(userId);
 		projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
 
+	}
+
+	private void unassignUserFromAllTestPlan(long userId) {
+		userDao.unassignFromAllCampaignTestPlan(userId);
+		userDao.unassignFromAllIterationTestPlan(userId);
 	}
 
 	@Override

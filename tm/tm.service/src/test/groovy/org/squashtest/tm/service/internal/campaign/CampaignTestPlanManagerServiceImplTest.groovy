@@ -361,7 +361,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	def "should assign user to test plan items"() {
 		given:
 		User u = Mock()
-		userDao.findById(10L) >> u
+		userDao.findOne(10L) >> u
 
 		and:
 		CampaignTestPlanItem i100 = Mock()
@@ -379,7 +379,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	def "should assign user to test plan item"() {
 		given:
 		User u = Mock()
-		userDao.findById(10L) >> u
+		userDao.findOne(10L) >> u
 
 		and:
 		CampaignTestPlanItem item = Mock()

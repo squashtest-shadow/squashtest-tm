@@ -29,12 +29,12 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import spock.lang.Specification
 
 class CustomTeamModificationServiceImplTest extends Specification {
-	
+
 	CustomTeamModificationServiceImpl service = new CustomTeamModificationServiceImpl()
 	TeamDao teamDao = Mock()
 	UserDao userDao = Mock()
 	ObjectAclService aclService = Mock()
-	
+
 	def setup(){
 		service.teamDao = teamDao
 		service.userDao = userDao
@@ -45,37 +45,37 @@ class CustomTeamModificationServiceImplTest extends Specification {
 		given : Team team = new Team()
 		team.name ="team1"
 		teamDao.findAllByName(_)>> Collections.emptyList()
-		
-		
+
+
 		when: service.persist(team)
-	
-		
+
+
 		then : 1* teamDao.persist(team)
 	}
-	
+
 	def "should not persist team because name already in use"(){
 		given : Team team =  new Team()
 		team.name = "team1"
 		Team team2 = Mock()
 		teamDao.findAllByName(_)>> [team2]
-		
+
 		when : service.persist(team)
-		
+
 		then:
 		0* teamDao.persist(team)
 		thrown(NameAlreadyInUseException)
 	}
-	
+
 	def "should delete a team and delete acls"(){
 		given : Team team = Mock()
 		team.getId()>> 1L
 		team.getMembers()>>[]
-		userDao.findAllByIds(_)>>[]
+		userDao.findAll(_)>>[]
 		teamDao.findById(1L)>> team
 		when: service.deleteTeam(1L)
 		then :
 		1* aclService.removeAllResponsibilities(1L)
 		1* teamDao.delete(team)
 	}
-	
+
 }

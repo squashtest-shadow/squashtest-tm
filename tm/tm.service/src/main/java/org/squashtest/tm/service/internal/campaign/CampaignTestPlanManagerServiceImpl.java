@@ -263,7 +263,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void assignUserToTestPlanItem(long itemId, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
-			assignee = userDao.findById(userId);
+			assignee = userDao.findOne(userId);
 		}
 
 		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
@@ -280,7 +280,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public void assignUserToTestPlanItems(@NotNull List<Long> itemsIds, long campaignId, long userId) {
 		User assignee = null;
 		if (userId != 0) {
-			assignee = userDao.findById(userId);
+			assignee = userDao.findOne(userId);
 		}
 
 		List<CampaignTestPlanItem> items = campaignTestPlanItemDao.findAllByIds(itemsIds);

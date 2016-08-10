@@ -18,50 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ * This file is part of the Squash TM management services for SaaS / Squash On Demand (saas.management.fragment) project.
+ * Copyright (C) 2015 - 2016 Henix, henix.fr - All Rights Reserved
+ * <p>
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * <p>
+ * (C)Henix. Tous droits réservés.
+ * <p>
+ * Avertissement : ce programme est protégé par la loi relative au droit d'auteur et par les conventions internationales. Toute reproduction ou distribution partielle ou totale du logiciel, par quelque moyen que ce soit, est strictement interdite.
+ */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.User;
 
 import java.util.List;
 
-public interface UserDao extends JpaRepository<User, Long>, CustomUserDao {
+/**
+ * @author Gregory Fouquet
+ * @since 1.15.0  09/08/16
+ */
+public interface CustomUserDao {
 
-	@Query
-	List<User> findAllUsersOrderedByLogin();
+	List<User> findAllUsers(PagingAndSorting sorter, Filtering filter);
 
-	@Query
-	List<User> findAllActiveUsersOrderedByLogin();
+	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
 
-	@Query
-	User findUserByLogin(@Param("userLogin") String login);
-
-	@Query
-	List<User> findUsersByLoginList(@Param("logins") List<String> loginList);
-
-	@Query
-	List<User> findAllNonTeamMembers(@Param("teamId") long teamId);
-
-
-	@Query
-	int countAllTeamMembers(@Param("teamId") long teamId);
-
-	/**
-	 * Finds a user by her login using case-insensitive search
-	 * @param login
-	 * @return
-	 */
-	@Query
-	User findUserByCiLogin(@Param("userLogin") String login);
-
-	@Query
-	@Modifying
-	void unassignFromAllCampaignTestPlan(@Param("userId") long userId);
-
-	@Query
-	@Modifying
-	void unassignFromAllIterationTestPlan(@Param("userId") long userId);
+	List<User> findAllAdminOrManager();
 }
