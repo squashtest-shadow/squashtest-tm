@@ -34,7 +34,7 @@
 <div style="display: table-column; width: 20%;float:left">
 
 {{#equal this.columnType "CUF"}}
-  <input type="checkbox" id="filter-selection-{{id}}-{{cufId}}" name="{{id}}" data-cuf-id="{{cufId}}"/>
+  <input type="checkbox" id="filter-selection-{{id}}-{{cufBindingId}}" name="{{id}}" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
   {{{cuf-label this}}}
 {{else}}
   <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
@@ -45,7 +45,7 @@
 <div style="display: table-column; width: 15%; float:left">
   {{!--<![CDATA[--}}
   {{#equal this.columnType "CUF"}}
-    <select id="filter-operation-select-{{id}}-{{cufId}}" class="filter-operation-select" name="{{id}}" style="width: 80%;"  data-cuf-id="{{cufId}}">
+    <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;"  data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}" data-original-prototype-id="{{originalPrototypeId}}">
   {{else}}
     <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;">
   {{/equal}}
@@ -64,27 +64,27 @@
 
   {{#equal this.columnType "CUF"}}
   {{#equal dataType "NUMERIC"}}
-  <input type="text" id="first-filter-value-{{id}}-{{cufId}}" name="{{id}}" style="margin-right: 15px;" data-cuf-id="{{cufId}}"/>
-  <span id="second-filter-value-label-{{id}}-{{cufId}}" th:text="#{label.and}" style="margin-right: 15px;" data-cuf-id="{{cufId}}"/>
-  <input type="text" id="second-filter-value-{{id}}-{{cufId}}" name="{{id}}" data-cuf-id="{{cufId}}" />
+  <input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
+  <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
+  <input type="text" id="second-filter-value-{{id}}" name="{{id}}" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
   {{/equal}}
 
   {{#equal dataType "STRING"}}
-  <input type="text" id="first-filter-value-{{id}}-{{cufId}}" name="{{id}}" data-cuf-id="{{cufId}}"/>
+  <input type="text" id="first-filter-value-{{id}}" name="{{id}}" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
   {{/equal}}
 
   {{#equal dataType "DATE_AS_STRING"}}
-  <input class="date-picker" id="first-filter-value-{{id}}-{{cufId}}" name="{{id}}" style="margin-right: 15px;" data-cuf-id="{{cufId}}"/>
-  <span id="second-filter-value-label-{{id}}-{{cufId}}" th:text="#{label.and}" style="margin-right: 15px;" data-cuf-id="{{cufId}}"/>
-  <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}" data-cuf-id="{{cufId}}"/>
+  <input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
+  <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
+  <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
   {{/equal}}
 
   {{#equal dataType "LIST"}}
-  <span id="list-filter-container-{{id}}-{{cufId}}" name="{{attributeName}}" class="cuf-list" data-cuf-id="{{cufId}}"/>
+  <span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}"/>
   {{/equal}}
 
   {{#equal dataType "BOOLEAN_AS_STRING"}}
-  <select id="first-filter-value-{{id}}-{{cufId}}" name="{{id}}"   style=" width: 151px;" data-cuf-id="{{cufId}}">
+  <select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;" data-cuf-id="{{cufId}}" data-cuf-binding-id="{{cufBindingId}}">
 
     <option value="TRUE">
       <span th:text="#{chart.filter.value.true}"/>
@@ -112,7 +112,6 @@
     <span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
     <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
   {{/equal}}
-
 
   {{#equal dataType "EXECUTION_STATUS"}}
   <select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
@@ -174,7 +173,7 @@
 
 <br />
 <br />
-{{#each attributes.columnPrototypes}}
+{{#each attributes.computedColumnsPrototypes}}
 
   {{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">

@@ -44,19 +44,21 @@
 {{#each  this}}
 <div style="float:left; min-width:240px;">
   {{!--<![CDATA[--}}
-<input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}"
-  {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
-/>
-{{!--]]>--}}
-
-{{#equal this.columnType "CUF"}}
-  {{cuf-label this}}
-  {{!--
-{{cuf-label this.attributeName ../../attributes.customFields}}
-  --}}
-{{else}}
-{{i18n this.label prefix="chart.column."}}
-{{/equal}}
+    {{#equal this.columnType "CUF"}}
+      <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf-binding-id="{{cufBindingId}}"
+             {{#if (contains ../../attributes.selectedAttributes.cufBinding cufBinding)}} checked="checked" {{/if}}
+      />
+      {{cuf-label this}}
+      {{!--
+    {{cuf-label this.attributeName ../../attributes.customFields}}
+      --}}
+    {{else}}
+      <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}"
+             {{#if (contains ../../attributes.selectedAttributes.id id)}} checked="checked" {{/if}}
+      />
+    {{i18n this.label prefix="chart.column."}}
+    {{/equal}}
+  {{!--]]>--}}
 </div>
 
 {{/each}}

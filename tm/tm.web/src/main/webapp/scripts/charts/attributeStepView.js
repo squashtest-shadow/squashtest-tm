@@ -45,16 +45,22 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var self = this;
 			
+			var selectedAttributes = _.map($('[id^="attributes-selection-"]').filter(":checked"),function (attribute) {
+				return {id:attribute.name, cufBindingId:attribute.getAttribute("data-cuf-binding-id")};
+			});
+
+
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
 			
 			this.model.set({selectedAttributes : ids});
-			
+			/*
 			var filtered = 	_(['filters', 'axis', 'measures', 'operations'])
 			.reduce(function(memo, val){ 
 				memo[val] = self.filterWithValidIds(self.model.get(val)); 
 				return memo; }, {});
 			
-			this.model.set(filtered);	
+			this.model.set(filtered);
+			*/
 			
 		},
 		
@@ -165,19 +171,23 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var protoForCufBinding = this.getEmptyCufMap();
 			var self = this;
 			_.each(bindingMap,function (values,key) {
-				var generatedPrototype = _.map(values,function (value) {
+				var generatedPrototype = _.map(values,function (cufBinding) {
 					//1 find the proto name
-					var protoLabel = key + "_" + self.getProtoSuffix(value);
+					var protoLabel = key + "_" + self.getProtoSuffix(cufBinding);
 					//2 find the prototype and upgrade it with cufCode and label
 					var cufPrototype = _.find(cufPrototypes,function (proto) {
 						return proto.label === protoLabel;
-					});
+					});		
 					if (cufPrototype) {
-						cufPrototype.code = value.customField.code;
-						cufPrototype.cufLabel = value.customField.label;
-						cufPrototype.cufName = value.customField.name;
-						cufPrototype.cufId = value.customField.id;
+						cufPrototype = _.clone(cufPrototype);
+						cufPrototype.code = cufBinding.customField.code;
+						cufPrototype.cufLabel = cufBinding.customField.label;
+						cufPrototype.cufName = cufBinding.customField.name;
+						cufPrototype.cufId = cufBinding.customField.id;
+						cufPrototype.cufBindingId = cufBinding.id;
 						cufPrototype.isCuf = true;
+						cufPrototype.originalPrototypeId = cufPrototype.id;
+						cufPrototype.id = cufPrototype.id + "-" + cufBinding.id;
 						return cufPrototype;
 					} else {
 						throw "Unknown CUF prototype";

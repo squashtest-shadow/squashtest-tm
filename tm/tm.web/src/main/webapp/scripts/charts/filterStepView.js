@@ -42,6 +42,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
+			this.initCustomfields();
 			this.initInfoListValues();
 			this.initDropDownCufValues();
 			this.reloadPreviousValues();
@@ -55,11 +56,38 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			"change .info-lists" : "changeInfoList"
 		},
 
+		initCustomfields :function () {
+			var self = this;
+			var cufIds = _.chain(self.model.get('computedColumnsPrototypes'))
+			.values()
+			.flatten()
+			.where({columnType : "CUF"})
+			.pluck("cufId")
+			.unique()
+			.value();
+
+			var customFields = [];
+			_.each(squashtm.workspace.projects,function (project) {
+				var projectCuf = _.chain(_.values(project.customFieldBindings))
+				.flatten()
+				.filter(function (customFieldBinding) {
+					return _.contains(cufIds,customFieldBinding.customField.id);
+				})
+				.uniq()
+				.value();
+
+				customFields = customFields.concat(projectCuf);
+			});
+
+			console.log(cufIds);
+			console.log(customFields);
+		},
+
 		initDropDownCufValues : function () {
 
 			var self = this;
 
-			var cufLists = _.chain(self.model.get('columnPrototypes'))
+			var cufLists = _.chain(self.model.get('computedColumnsPrototypes'))
 			.values()
 			.flatten()
 			.where({columnType : "CUF", dataType : "LIST"})
@@ -183,7 +211,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var self = this;
 			$(".filter-operation-select").each(function(indx, operation) {
-				self.showFilterValues(operation.name , operation.value);
+				self.showFilterValues(operation.name , operation.value, operation.getAttribute("data-cuf-binding-id"));
 			});
 
 		},
@@ -284,7 +312,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var result = [$("#first-filter-value-" + id).val(), $("#second-filter-value-" + id).val()];
 
 
-			if (datatype == "DATE"){
+			if (datatype == "DATE" || datatype == "DATE_AS_STRING"){
 				result = _.map(result, function(elem){
 					var date = $.datepicker.parseDate(self.datePickerFormat, elem);
 					var result = $.datepicker.formatDate(self.dateISOFormat, date);
@@ -300,7 +328,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 		},
 		findColumnById : function (id){
-			return _.chain(this.model.get("columnPrototypes"))
+			return _.chain(this.model.get("computedColumnsPrototypes"))
 			.values()
 			.flatten()
 			.find(function(col){return col.id == id; })
@@ -308,7 +336,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		},
 
 		changeOperation : function(event){
-			this.showFilterValues(event.target.name, event.target.value, event.target.getAttribute("data-cuf-id"));
+			this.showFilterValues(event.target.name, event.target.value, event.target.getAttribute("data-cuf-binding-id"));
 		},
 
 		findTypeFromColumnId : function(id){
@@ -319,10 +347,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			.value();
 		},
 
-		showFilterValues : function (id, val, cufId){
+		showFilterValues : function (id, val, cufBindingId){
 
-			var selector = this.getSecondFilterSelector(id, val, cufId);
-      		var selectorLabel = this.getSecondFilterLabelSelector(id, val, cufId);
+			var selector = this.getSecondFilterSelector(id, val, cufBindingId);
+      		var selectorLabel = this.getSecondFilterLabelSelector(id, val, cufBindingId);
 
 			if (val == "BETWEEN") {
 				selector.show();
@@ -340,17 +368,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 		},
 
-		getSecondFilterSelector : function (id, val, cufId) {
-			if (cufId) {
-				return $("#second-filter-value-" + id + "-" + cufId);
-			}
+		getSecondFilterSelector : function (id) {
 			return $("#second-filter-value-" + id);
 		},
 
-		getSecondFilterLabelSelector : function (id, val, cufId) {
-			if (cufId) {
-				return $("#second-filter-value-label-" + id + "-" + cufId);
-			}
+		getSecondFilterLabelSelector : function (id) {
 			return $("#second-filter-value-label-" + id);
 		},
 
