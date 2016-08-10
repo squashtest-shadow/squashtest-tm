@@ -122,18 +122,59 @@ return Backbone.Model.extend({
 			name : this.get("name") || param,
 			type : this.get("type"),
 			query : {
-				axis: this.get("axis"),
-				measures : this.get("measures"),
-				filters : _.map(this.get("filters"), function(filter) {var newFilter= _.clone(filter); newFilter.values = _.flatten(filter.values); return newFilter;})
+				axis: this.extractAxisCufPrototype(),
+				measures : this.extractMeasureCufPrototype(),
+				filters : _.map(this.get("filters"), function(filter) {
+					var newFilter= _.clone(filter);			
+					newFilter.values = _.flatten(filter.values);
+					if(filter.column.isCuf){
+						var newColumn = _.clone(filter.column);
+						newColumn.id = filter.column.originalPrototypeId;
+						newFilter.column = newColumn;
+						newFilter.cufCode = filter.column.code;
+					}
+					return newFilter;})
 			},
 			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
 			scope : _.map(this.get("scope"), function(val) {var newVal = _.clone(val); newVal.type = val.type.replace("LIBRARIE", "LIBRARY"); return newVal;})
 			});
+		},
+
+		//put the real prototype column id for the cuf column prototype (ie the generic column proto that exist in database)
+		extractAxisCufPrototype : function(){
+			return _.map(this.get("axis"),function (axis) {
+				if(axis.column.isCuf){
+					var newAxis = _.clone(axis);
+					var newColumn = _.clone(axis.column);
+					newColumn.id = axis.column.originalPrototypeId;
+					newAxis.column = newColumn;
+					newAxis.cufCode = axis.column.code;
+					return newAxis;
+				}
+				else{
+					return axis;
+				}
+				
+			});
+		},
+
+		extractMeasureCufPrototype : function(){
+			return _.map(this.get("measures"),function (measure) {
+				if(measure.column.isCuf){
+					var newMeasure = _.clone(measure);
+					var newColumn = _.clone(measure.column);
+					newColumn.id = measure.originalPrototypeId;
+					newMeasure.column= newColumn;
+					newMeasure.cufCode = axis.column.code;
+					return newMeasure;
+				}
+				else{
+					return measure;
+				}
+				
+			});
 		}
 
-
-		});
-
-
+	});
 });

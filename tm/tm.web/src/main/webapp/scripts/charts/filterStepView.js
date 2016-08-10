@@ -42,7 +42,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
-			this.initCustomfields();
 			this.initInfoListValues();
 			this.initDropDownCufValues();
 			this.reloadPreviousValues();
@@ -56,33 +55,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			"change .info-lists" : "changeInfoList"
 		},
 
-		initCustomfields :function () {
-			var self = this;
-			var cufIds = _.chain(self.model.get('computedColumnsPrototypes'))
-			.values()
-			.flatten()
-			.where({columnType : "CUF"})
-			.pluck("cufId")
-			.unique()
-			.value();
-
-			var customFields = [];
-			_.each(squashtm.workspace.projects,function (project) {
-				var projectCuf = _.chain(_.values(project.customFieldBindings))
-				.flatten()
-				.filter(function (customFieldBinding) {
-					return _.contains(cufIds,customFieldBinding.customField.id);
-				})
-				.uniq()
-				.value();
-
-				customFields = customFields.concat(projectCuf);
-			});
-
-			console.log(cufIds);
-			console.log(customFields);
-		},
-
 		initDropDownCufValues : function () {
 
 			var self = this;
@@ -90,19 +62,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var cufLists = _.chain(self.model.get('computedColumnsPrototypes'))
 			.values()
 			.flatten()
-			.where({columnType : "CUF", dataType : "LIST"})
+			.where({columnType : "CUF", cufType : "DROPDOWN_LIST"})
 			.value();
 
 			_.each(cufLists, function(liste){
 
 				var $val = $("#list-filter-container-" + liste.id);
 
-				var items = _.chain(self.model.get("customFields"))
-				.values()
-				.flatten()
-				.find(function(cuf){return cuf.code == liste.attributeName;})
-				.result("options")
-				.value();
+				var items = liste.cufListOptions;
 
 				$val.html(self.cufListTemplate({id : liste.id,items : items}));
 

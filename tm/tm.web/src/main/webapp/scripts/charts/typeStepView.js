@@ -47,6 +47,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 			if (self.isValid()){
 
+				self.convertBackCustomFieldColumnPrototypes();
+
 			$.ajax({
 				'type' : 'POST',
 				'dataType' : 'json',
@@ -59,6 +61,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				self.navigateNext();
 			});
 			}
+		},
+
+		convertBackCustomFieldColumnPrototypes : function () {
+			
 		},
 
 		isValid : function(){
@@ -442,7 +448,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 
 		findColumnByLabel : function (label){
-			return _.chain(this.model.get("columnPrototypes"))
+			return _.chain(this.model.get("computedColumnsPrototypes"))
 			.values()
 			.flatten()
 			.find(function(col){return col.label == label; })

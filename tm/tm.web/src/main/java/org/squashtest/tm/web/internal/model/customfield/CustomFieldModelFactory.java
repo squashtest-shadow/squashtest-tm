@@ -146,6 +146,7 @@ class CustomFieldModelFactory {
 		for (CustomFieldOption option : customField.getOptions()) {
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
+			newOption.setCode(option.getCode());
 			model.addOption(newOption);
 		}
 
@@ -177,6 +178,7 @@ class CustomFieldModelFactory {
 		for (CustomFieldOption option : field.getOptions()) {
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
+			newOption.setCode(option.getCode());
 			model.addOption(newOption);
 		}
 
@@ -226,6 +228,7 @@ class CustomFieldModelFactory {
 		for (CustomFieldOption option : customField.getOptions()) {
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
+			newOption.setCode(option.getCode());
 			model.addOption(newOption);
 		}
 
@@ -255,6 +258,7 @@ class CustomFieldModelFactory {
 		for (CustomFieldOption option : field.getOptions()){
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
+			newOption.setCode(option.getCode());
 			model.addOption(newOption);
 		}
 
@@ -385,13 +389,16 @@ class CustomFieldModelFactory {
 
 		private String label;
 
+		private String code;
+
 		public CustomFieldOptionModel(){
 			super();
 		}
 
-		public CustomFieldOptionModel(String label){
+		public CustomFieldOptionModel(String label, String code){
 			super();
 			this.label = label;
+			this.code = code;
 		}
 
 		public String getLabel() {
@@ -402,8 +409,13 @@ class CustomFieldModelFactory {
 			this.label = label;
 		}
 
+		public String getCode() {
+			return code;
+		}
 
-
+		public void setCode(String code) {
+			this.code = code;
+		}
 	}
 
 

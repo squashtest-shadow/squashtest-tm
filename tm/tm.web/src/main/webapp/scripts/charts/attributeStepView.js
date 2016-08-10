@@ -188,6 +188,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						cufPrototype.isCuf = true;
 						cufPrototype.originalPrototypeId = cufPrototype.id;
 						cufPrototype.id = cufPrototype.id + "-" + cufBinding.id;
+						cufPrototype.cufType = cufBinding.customField.inputType.enumName;
+						if (cufPrototype.cufType === "DROPDOWN_LIST") {
+							cufPrototype.cufListOptions = cufBinding.customField.options;
+						}
 						return cufPrototype;
 					} else {
 						throw "Unknown CUF prototype";
