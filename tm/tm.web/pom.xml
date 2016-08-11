@@ -781,7 +781,7 @@
                 <phase>generate-resources</phase>
                 <configuration>
                   <!--
-                    IMPORTANT : without --no-optional, spritesmith pulls optional deps which fail to be properly installed (gmsmith and node-gyp).
+                    IMPORTANT : without - -no-optional, spritesmith pulls optional deps which fail to be properly installed (gmsmith and node-gyp).
                     This _sometimes_ break the npm install task and as a result breaks the build. The solution is :
                     1. don't pull opional deps
                     2. enforce spritesmith's default engine ("pixelsmith" and "pngsmith" dependencies) in package.json because they are declared optional
