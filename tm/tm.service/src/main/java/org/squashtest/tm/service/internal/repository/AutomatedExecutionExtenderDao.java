@@ -20,42 +20,30 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author bsiri
  * @author Gregory Fouquet
- *
  */
-public interface AutomatedExecutionExtenderDao extends Repository<AutomatedExecutionExtender, Long>{
+public interface AutomatedExecutionExtenderDao extends JpaRepository<AutomatedExecutionExtender, Long> {
 
-	@UsesTheSpringJpaDsl
 	AutomatedExecutionExtender findById(long executionId);
-
-	@NativeMethodFromJpaRepository
-	void save(AutomatedExecutionExtender extender);
 
 	/**
 	 * Returns the {@link AutomatedExecutionExtender}s which match the {@link AutomatedExecutionSetIdentifier}.
 	 *
 	 * @param projectName
-	 *
 	 * @return
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName,
-			@NotNull String projectName);
+		@NotNull String projectName);
 
-	/**
-	 * @deprecated  not used - remove in 1.15 if it's still not used
-     */
-	@Deprecated
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
 }

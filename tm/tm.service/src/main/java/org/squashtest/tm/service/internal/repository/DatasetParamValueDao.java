@@ -20,18 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
-public interface DatasetParamValueDao extends Repository<DatasetParamValue, Long>{
-
-	@NativeMethodFromJpaRepository
-	void save(DatasetParamValue newValue);
-	
-	@NativeMethodFromJpaRepository
-	void delete(DatasetParamValue value);
-	
-	@UsesTheSpringJpaDsl
+public interface DatasetParamValueDao extends JpaRepository<DatasetParamValue, Long> {
+	/**
+	 * @deprecated use #findOne
+	 */
+	@Deprecated
 	DatasetParamValue findById(Long id);
 }
 

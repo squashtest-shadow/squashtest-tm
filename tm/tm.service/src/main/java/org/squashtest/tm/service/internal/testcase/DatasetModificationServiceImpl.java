@@ -162,7 +162,9 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	@Override
 	public void cascadeDatasetsUpdate(long testCaseId) {
 
-		Collection<Dataset> allDataset = datasetDao.findOwnAndDelegateDatasets(testCaseId);
+		Collection<Dataset> allDataset = datasetDao.findOwnDatasetsByTestCase(testCaseId);
+		allDataset.addAll(datasetDao.findAllDelegateDatasets(testCaseId));
+
 		Collection<Parameter> params = parameterDao.findAllParametersByTestCase(testCaseId);
 
 		for(Dataset dataset : allDataset){

@@ -20,28 +20,28 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import org.squashtest.tm.domain.attachment.Attachment;
 
-public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao{
+import java.util.Set;
 
-    /**
-     * Returns all the attachments that belong to the given AttachmentList
-     */
-    @UsesANamedQueryInPackageInfoOrElsewhere
-    Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
+public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao {
 
-    /**
-     * Same than above, paged version.
-     *
-     */
+	/**
+	 * Returns all the attachments that belong to the given AttachmentList
+	 */
+	@Query
+	Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
 
-    @Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
-    Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
+	/**
+	 * Same than above, paged version.
+	 *
+	 */
+
+	@Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
+	Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
 }

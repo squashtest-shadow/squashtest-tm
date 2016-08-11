@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -35,19 +33,13 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface BugTrackerDao extends JpaRepository<BugTracker, Long> {
-
-
-	/**
-	 * @return number of all bugtrackers in squash database
-	 */
-	@NativeMethodFromJpaRepository
-	long count();
-
 	/**
 	 * @return a page of bugtrackers according to the filter
 	 */
-	@UsesTheSpringJpaDsl
 	Page<BugTracker> findAll(Pageable pageable);
 
 
@@ -55,42 +47,41 @@ public interface BugTrackerDao extends JpaRepository<BugTracker, Long> {
 	 *
 	 * @return the list of distinct BugTrackers concerned by the given projects;
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<BugTracker> findDistinctBugTrackersForProjects(@Param("projects") List<Long> projectIds);
 
 	/**
 	 * Given its name, returns a bugtracker
 	 */
-	@UsesTheSpringJpaDsl
 	BugTracker findByName(String bugtrackerName);
 
 	/**
 	 *
 	 * @return the bugtracker bound to the campaign's project
-     */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	 */
+	@Query
 	BugTracker findByCampaignLibraryNode(@Param("node") CampaignLibraryNode node);
 
 	/**
 	 *
 	 * @return the bugtracker bound to the excution's project
-     */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	 */
+	@Query
 	BugTracker findByExecution(@Param("execution") Execution execution);
 
 	/**
 	 *
-     * @return the bugtracker bound to the iteration's project
-     */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	 * @return the bugtracker bound to the iteration's project
+	 */
+	@Query
 	BugTracker findByIteration(@Param("iteration") Iteration iteration);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	BugTracker findByTestSuite(@Param("testSuite") TestSuite testSuite);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<Pair<Execution, BugTracker>> findAllPairsByExecutions(@Param("executions") Collection<Execution> executions);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	BugTracker findByExecutionStep(@Param("step") ExecutionStep executionStep);
 }

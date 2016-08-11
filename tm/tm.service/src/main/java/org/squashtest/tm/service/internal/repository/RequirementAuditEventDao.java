@@ -26,11 +26,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 
 public interface RequirementAuditEventDao extends JpaRepository<RequirementAuditEvent, Long> {
-
-	@NativeMethodFromJpaRepository
 	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderByDateDesc(long requirementVersionId, Pageable paging);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
 	long countByRequirementVersionId(long requirementVersionId);
 
 }

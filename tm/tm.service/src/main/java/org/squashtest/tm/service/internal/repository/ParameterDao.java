@@ -20,32 +20,25 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
+import java.util.List;
 
-public interface ParameterDao extends Repository<Parameter, Long>, CustomParameterDao {
 
-	@NativeMethodFromJpaRepository
-	void save(Parameter parameter);
-
-	@NativeMethodFromJpaRepository
-	void delete(Parameter parameter);
-
-	@UsesTheSpringJpaDsl
+public interface ParameterDao extends JpaRepository<Parameter, Long>, CustomParameterDao {
 	Parameter findById(Long id);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> removeAllByTestCaseIds);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
@@ -53,18 +46,16 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	/**
 	 * Given a test case ID, returns the list of parameters that directly belong to that test case
 	 * (inherited parameters are ignored).
-	 *
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	// corresponds to JPA dsl : findByTestCaseIdOrderByNameAndTestCaseNameAsc, but this would be less expressive
 	List<Parameter> findOwnParametersByTestCase(@Param("testCaseId") Long testcaseId);
 
 	/**
 	 * For a given test case, finds the parameter bearing the given name. Note that the test case must
 	 * own the parameter, ie the query wont search for delegated parameters.
-	 *
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	// corresponds to JPA dsl : findByNameAndTestCaseId, but this would be less expressive
 	Parameter findOwnParameterByNameAndTestCase(@Param("name") String name, @Param("testCaseId") Long testcaseId);
 

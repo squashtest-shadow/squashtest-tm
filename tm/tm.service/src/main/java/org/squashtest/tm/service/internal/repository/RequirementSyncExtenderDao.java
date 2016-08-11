@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
@@ -29,28 +30,25 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
 
-public interface RequirementSyncExtenderDao extends Repository<RequirementSyncExtender, Long> {
-
-	@NativeMethodFromJpaRepository
-	void save(RequirementSyncExtender extender);
-
-	@UsesANamedQueryInPackageInfoOrElsewhere
+/**
+ * /!\ I (GRF) AM PRETTY SURE THIS CLASS IS USED AS AN API BY SOME PLUGIN - DON'T REMOVE ANY UNUSED METHOD !
+ * TODO Move this to some place which explicitly tells this is used as an API
+ */
+public interface RequirementSyncExtenderDao extends JpaRepository<RequirementSyncExtender, Long> {
+	@Query
 	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId, @Param("pId") Long projectId);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	@EmptyCollectionGuard
 	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId, @Param("pId") Long projectId);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("remotePId") String remoteProjectId, @Param("filter") String filterName, @Param("pId") Long projectId);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	Collection<RequirementSyncExtender> retrieveAllByServer(@Param("serverId") Long serverId);
 
-	@NativeMethodFromJpaRepository
-	void delete(RequirementSyncExtender extender);
-
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	@Modifying
 	@Transactional
 	void deleteAllByServer(@Param("serverId") Long serverId);

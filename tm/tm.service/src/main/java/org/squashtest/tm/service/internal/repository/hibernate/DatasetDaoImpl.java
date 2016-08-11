@@ -20,36 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.*;
 
 
-import org.hibernate.type.LongType;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
-
-
-public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
+public class DatasetDaoImpl implements CustomDatasetDao {
 
 	@PersistenceContext
 	private EntityManager em;
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Dataset> findOwnDatasetsByTestCase(Long testCaseId) {
-		Query query = em.createNamedQuery("Dataset.findOwnDatasetsByTestCase");
-		query.setParameter("testCaseId", testCaseId);
-		return query.getResultList();
-	}
-
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -65,17 +48,6 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 
 	@Override
-	public List<Dataset> findImmediateDelegateDatasets(Long testCaseId) {
-
-		Query q = em.createNamedQuery("Dataset.findTestCasesThatInheritParameters");
-		q.setParameter("srcIds", LongType.INSTANCE);
-
-		List<Long> tcids = q.getResultList();
-
-		return findOwnDatasetsByTestCases(tcids);
-	}
-
-	@Override
 	public List<Dataset> findAllDelegateDatasets(Long testCaseId) {
 		List<Dataset> allDatasets = new LinkedList<>();
 
@@ -87,13 +59,13 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 		srcTc.add(testCaseId);
 
-		while(! srcTc.isEmpty()){
+		while (!srcTc.isEmpty()) {
 
 			next.setParameter("srcIds", srcTc);
 			destTc = next.getResultList();
 
-			if (! destTc.isEmpty()){
-				allDatasets.addAll( findOwnDatasetsByTestCases(destTc) );
+			if (!destTc.isEmpty()) {
+				allDatasets.addAll(findOwnDatasetsByTestCases(destTc));
 			}
 
 			exploredTc.addAll(srcTc);
@@ -104,16 +76,6 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 		return allDatasets;
 	}
-
-
-	@Override
-	public List<Dataset> findOwnAndDelegateDatasets(Long testCaseId) {
-		List<Dataset> allDatasets = findOwnDatasetsByTestCase(testCaseId);
-		allDatasets.addAll(findAllDelegateDatasets(testCaseId));
-		return allDatasets;
-	}
-
-
 
 	@Override
 	public void removeDatasetFromTestPlanItems(Long datasetId) {

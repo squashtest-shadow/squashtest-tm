@@ -20,43 +20,38 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
+import java.util.List;
 
-public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
+
+public interface TestSuiteDao extends JpaRepository<TestSuite, Long>, CustomTestSuiteDao {
 
 	@Override
-	@UsesTheSpringJpaDsl
 	TestSuite findById(long id);
 
-	@NativeMethodFromJpaRepository
-	 void save(TestSuite ts);
-
-	@UsesTheSpringJpaDsl
 	List<TestSuite> findAllByIterationId(long iterationId);
 
-
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findTestPlanPartition(@Param("suiteId") long testSuiteId, @Param("itemIds") List<Long> testPlanItemIds);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	long findProjectIdBySuiteId(long suiteId);
 
 
 	/**
 	 * Will find the distinct ids of the test cases referenced in the suite matching the given id
 	 *
-	 * @param suiteId
-	 *            : the id of the concerned TestSuite
+	 * @param suiteId : the id of the concerned TestSuite
 	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<Long> findPlannedTestCasesIds(Long suiteId);
 }

@@ -20,58 +20,40 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.domain.testcase.Dataset;
+
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.Repository;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
-
-public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao{
-
-	@NativeMethodFromJpaRepository
-	void save(Dataset newValue);
-
-	@UsesTheSpringJpaDsl
+public interface DatasetDao extends JpaRepository<Dataset, Long>, CustomDatasetDao {
 	Dataset findById(Long id);
 
 
 	/**
 	 * Will return the dataset matching the given name and belonging to the test case matchine the given id.
-	 * 
+	 *
 	 * @param testCaseId : the id of the concerned test case
-	 * @param name : the name of the dataset to find
+	 * @param name       : the name of the dataset to find
 	 * @return the test case's dataset matching the given id or <code>null</code>
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	// note : this name is a valid jpa dsl expression, but to be fully ok with the named query it should be 
+	@Query
+	// note : this name is a valid jpa dsl expression, but to be fully ok with the named query it should be
 	// findByTestCaseIdAndNameOrderByNameAsc, which is less cool
 	Dataset findByTestCaseIdAndName(@Param("testCaseId") Long testCaseId, @Param("name") String name);
 
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	@Modifying
-	@EmptyCollectionGuard
-	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
-
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	@Modifying
-	@EmptyCollectionGuard
-	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
-	
-	/**
-	 * Simply remove the given dataset
-	 * 
-	 * @param dataset : the dataset to remove
-	 */
-	@NativeMethodFromJpaRepository
-	void delete(Dataset dataset);
-
-	@UsesTheSpringJpaDsl
 	Collection<Dataset> findAllByTestCaseId(Long testCaseId);
-	
-	
+
+	/**
+	 * Will return all datasets for the given test case.
+	 *
+	 * @param testCaseId
+	 * @return the list of all test cases's datasets.
+	 */
+	List<Dataset> findOwnDatasetsByTestCase(@Param("testCaseId") Long testCaseId);
+
 }
