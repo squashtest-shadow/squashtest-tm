@@ -320,7 +320,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public Party findPartyById(long partyId) {
-		return partyDao.findById(partyId);
+		return partyDao.findOne(partyId);
 	}
 
 	// ********************************** Test automation section
