@@ -23,9 +23,9 @@
     <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
     <dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
+    <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
 
     <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
-    <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
@@ -365,8 +365,8 @@
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.MySQLEnhancedDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
       </properties>
 
       <build>
@@ -415,8 +415,8 @@
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.PostgresEnhancedDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
       </properties>
 
       <build>
@@ -463,21 +463,21 @@
         <plugins>
           <!-- Create and populate a database integration tests -->
           <!--<plugin>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>aspectj-maven-plugin</artifactId>-->
-            <!--<configuration>-->
-              <!--<showWeaveInfo>${verbose.compiler}</showWeaveInfo>-->
-              <!--<source>${java.version}</source>-->
-              <!--<target>${java.version}</target>-->
-              <!--<complianceLevel>${java.version}</complianceLevel>-->
-              <!--<aspectLibraries>-->
-                <!--<aspectLibrary>-->
-                  <!--&lt;!&ndash; For @Configurable. Not sure we need it in this module &ndash;&gt;-->
-                  <!--<groupId>org.springframework</groupId>-->
-                  <!--<artifactId>org.springframework.aspects</artifactId>-->
-                <!--</aspectLibrary>-->
-              <!--</aspectLibraries>-->
-            <!--</configuration>-->
+          <!--<groupId>org.codehaus.mojo</groupId>-->
+          <!--<artifactId>aspectj-maven-plugin</artifactId>-->
+          <!--<configuration>-->
+          <!--<showWeaveInfo>${verbose.compiler}</showWeaveInfo>-->
+          <!--<source>${java.version}</source>-->
+          <!--<target>${java.version}</target>-->
+          <!--<complianceLevel>${java.version}</complianceLevel>-->
+          <!--<aspectLibraries>-->
+          <!--<aspectLibrary>-->
+          <!--&lt;!&ndash; For @Configurable. Not sure we need it in this module &ndash;&gt;-->
+          <!--<groupId>org.springframework</groupId>-->
+          <!--<artifactId>org.springframework.aspects</artifactId>-->
+          <!--</aspectLibrary>-->
+          <!--</aspectLibraries>-->
+          <!--</configuration>-->
           <!--</plugin>-->
 
           <plugin>
