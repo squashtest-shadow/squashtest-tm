@@ -20,18 +20,23 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.users.UsersGroup;
 
-public interface UsersGroupDao extends EntityDao<UsersGroup> {
+import java.util.List;
+
+public interface UsersGroupDao extends JpaRepository<UsersGroup, Long> {
 
 	/**
 	 * 
 	 * @return all UsersGroups with no restriction, ordered by {@linkplain UsersGroup#getQualifiedName()}
 	 */
+	@Query(name="UsersGroup.findAllGroups")
 	List<UsersGroup> findAllGroupsOrderedByQualifiedName();
 
-	UsersGroup findByQualifiedName(String qualifiedName);
+	@Query
+	UsersGroup findByQualifiedName(@Param("qualifiedName") String qualifiedName);
 
 }

@@ -58,7 +58,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup group = new UsersGroup()
-		groupDao.findById(1) >> group
+		groupDao.findOne(1) >> group
 
 
 		when:
@@ -110,7 +110,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		then:
 		1 * groupDao.findByQualifiedName("squashtest.authz.group.core.Admin") >> admin
-		1 * groupDao.findById(_) >> admin
+		1 * groupDao.findOne(_) >> admin
 		res.group == admin
 
 	}

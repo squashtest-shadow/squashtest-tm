@@ -207,7 +207,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void setUserGroupAuthority(long userId, long groupId) {
-		UsersGroup group = groupDao.findById(groupId);
+		UsersGroup group = groupDao.findOne(groupId);
 		User user = userDao.findOne(userId);
 		user.setGroup(group);
 	}
@@ -457,7 +457,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void createUserWithoutCredentials(User user, long groupId) {
 		checkLoginAvailability(user.getLogin());
 
-		UsersGroup group = groupDao.findById(groupId);
+		UsersGroup group = groupDao.findOne(groupId);
 		user.setGroup(group);
 
 		userDao.save(user);
