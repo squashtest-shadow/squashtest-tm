@@ -20,38 +20,48 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.users.User;
 
-public interface UserDao extends EntityDao<User> {
+import java.util.List;
 
+public interface UserDao extends JpaRepository<User, Long>, CustomUserDao {
+
+	@Query
 	List<User> findAllUsersOrderedByLogin();
 
+	@Query
 	List<User> findAllActiveUsersOrderedByLogin();
 
-	List<User> findAllUsers(PagingAndSorting sorter, Filtering filter);
+	@Query
+	User findUserByLogin(@Param("userLogin") String login);
 
-	User findUserByLogin(String login);
+	@Query
+	List<User> findUsersByLoginList(@Param("logins") List<String> loginList);
 
-	List<User> findUsersByLoginList(List<String> loginList);
+	@Query
+	List<User> findAllNonTeamMembers(@Param("teamId") long teamId);
 
-	List<User> findAllNonTeamMembers(long teamId);
 
-	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
-
-	int countAllTeamMembers(long teamId);
-
-	void unassignUserFromAllTestPlan(long userId);
-
-	List<User> findAllAdminOrManager();
+	@Query
+	int countAllTeamMembers(@Param("teamId") long teamId);
 
 	/**
 	 * Finds a user by her login using case-insensitive search
 	 * @param login
 	 * @return
 	 */
-	User findUserByCiLogin(String login);
+	@Query
+	User findUserByCiLogin(@Param("userLogin") String login);
+
+	@Query
+	@Modifying
+	void unassignFromAllCampaignTestPlan(@Param("userId") long userId);
+
+	@Query
+	@Modifying
+	void unassignFromAllIterationTestPlan(@Param("userId") long userId);
 }

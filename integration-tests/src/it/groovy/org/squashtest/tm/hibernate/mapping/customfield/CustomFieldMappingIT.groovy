@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.customfield
 
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldOption
@@ -42,7 +42,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		when:
 		persistFixture cf
 		def res = doInTransaction {it.get(CustomField, cf.id) }
-	
+
 
 		then:
 		res != null
@@ -61,7 +61,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		when:
 		persistFixture cf
 		def res = doInTransaction  { it.get(CustomField, cf.id) }
-		
+
 
 		then:
 		res != null
@@ -86,7 +86,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 			r.options.each { it.label }
 			return r
 		}
-		
+
 
 		then:
 		res.options*.label == ["leatherpants", "batarang"]
@@ -119,7 +119,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 
 		doInTransaction removeOption
 		def res = doInTransaction(loadFixture)
-		
+
 
 		then:
 		res.options*.label == ["leatherpants"]

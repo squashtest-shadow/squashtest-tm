@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.users
 
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.users.Team
 
@@ -37,11 +37,11 @@ class TeamMappingIT extends DbunitMappingSpecification {
 		when:
 		persistFixture team
 		def res = doInTransaction { it.get(Team, team.id) }
-		
+
 
 		then:
 		res != null
-		
+
 		cleanup :
 		deleteFixture(team)
 

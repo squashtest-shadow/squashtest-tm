@@ -34,8 +34,8 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
 import static org.squashtest.tm.core.foundation.collection.SortOrder.*;

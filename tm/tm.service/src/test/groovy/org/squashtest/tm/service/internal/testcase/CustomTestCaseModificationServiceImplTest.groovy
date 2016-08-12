@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase

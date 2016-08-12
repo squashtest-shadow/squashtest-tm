@@ -20,15 +20,13 @@
  */
 package org.squashtest.tm.web.internal.model.json
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.event.RequirementLargePropertyChange.Builder;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 

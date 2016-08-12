@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-core</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <artifactId>squash-tm-core</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <artifactId>core.bugtracker.api</artifactId>
   <packaging>jar</packaging>
@@ -88,7 +88,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -105,12 +105,14 @@
 
   <build>
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
     <testResources>
       <testResource>
         <filtering>true</filtering>
         <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -20,60 +20,34 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 
-public interface InfoListItemDao extends EntityDao<InfoListItem>{
+public interface InfoListItemDao extends CustomInfoListItemDao, JpaRepository<InfoListItem, Long> {
 
+	@Query(name = "systemListItem.getSystemRequirementCategory")
 	SystemListItem getSystemRequirementCategory();
 
+	@Query(name = "systemListItem.getSystemTestCaseNature")
 	SystemListItem getSystemTestCaseNature();
 
+	@Query(name = "systemListItem.getSystemTestCaseType")
 	SystemListItem getSystemTestCaseType();
 
-	InfoListItem findByCode(String code);
+	@Query
+	InfoListItem findByCode(@Param("code") String code);
 
-	InfoListItem findReference(ListItemReference reference);
+	@Query
+	InfoListItem findDefaultRequirementCategory(@Param("projectId") long projectId);
 
-	InfoListItem findDefaultRequirementCategory(long projectId);
+	@Query
+	InfoListItem findDefaultTestCaseNature(@Param("projectId") long projectId);
 
-	InfoListItem findDefaultTestCaseNature(long projectId);
+	@Query
+	InfoListItem findDefaultTestCaseType(@Param("projectId") long projectId);
 
-	InfoListItem findDefaultTestCaseType(long projectId);
-
-	/**
-	 * Tells whether the given item belongs to the categories assigned to this project
-	 * 
-	 * @param projectId
-	 * @param itemCode
-	 * @return
-	 */
-	boolean isCategoryConsistent(long projectId, String itemCode);
-
-	/**
-	 * Tells whether the given item belongs to the natures assigned to this project
-	 * 
-	 * @param projectId
-	 * @param itemCode
-	 * @return
-	 */
-	boolean isNatureConsistent(long projectId, String itemCode);
-
-	/**
-	 * Tells whether the given item belongs to the types assigned to this project
-	 * 
-	 * @param projectId
-	 * @param itemCode
-	 * @return
-	 */
-	boolean isTypeConsistent(long projectId, String itemCode);
-
-	void unbindFromLibraryObjects(long infoListId);
-
-	boolean isUsed(long infoListItemId);
-	
-	void removeInfoListItem (long infoListItemId, InfoListItem defaultItem);
-	
 
 }

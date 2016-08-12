@@ -602,7 +602,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		//redirect to level 2 interface Calling Test Case with proper url formatting
 		var ctxUrl = settings.basic.testCaseUrl;
-		document.location.href = ctxUrl + "/call/" + stepTargetIndex;
+		document.location.href = ctxUrl + "/called-test-cases/manager";
 	}
 
 	function initCallTestCaseLink(settings) {
@@ -859,6 +859,11 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		//init the link for calling a test case
 		initCallTestCaseLink(settings);
+		
+		// listen to call steps events
+		eventBus.onContextual('call-test-case', function(){
+			$("#test-steps-table-"+conf.testCaseId).squashTable().refresh();
+		});
 	}
 
 	return {

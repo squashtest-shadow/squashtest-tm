@@ -21,15 +21,10 @@
 package org.squashtest.tm.web.internal.controller.requirement
 
 import com.google.common.base.Optional
-import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-
-import javax.inject.Provider
-
 import org.springframework.context.MessageSource;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;

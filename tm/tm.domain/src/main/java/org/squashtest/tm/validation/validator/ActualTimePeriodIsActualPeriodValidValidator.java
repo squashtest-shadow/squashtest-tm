@@ -24,9 +24,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.squashtest.tm.domain.campaign.ActualTimePeriod;
-import org.squashtest.tm.domain.campaign.ScheduledTimePeriod;
 import org.squashtest.tm.validation.constraint.IsActualPeriodValid;
-import org.squashtest.tm.validation.constraint.IsScheduledPeriodValid;
 
 /**
  * @author Alix Pierre

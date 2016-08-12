@@ -24,24 +24,19 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 /**
  * This {@link DynamicComponentInvocationHandler} handles any method which signature matches
  * <code>List findAll*(..)</code> by looking up a Hibernate Named Query which name matches the method's name and
  * returning its results.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ListOfEntitiesFinderNamedQueryHandler<ENTITY> extends
 		AbstractNamedQueryHandler<ENTITY> {
 
-	/**
-	 * @param entityType
-	 * @param em
-	 */
 	public ListOfEntitiesFinderNamedQueryHandler(Class<ENTITY> entityType, EntityManager em) {
 		super(entityType, em);
 	}
@@ -54,10 +49,6 @@ public class ListOfEntitiesFinderNamedQueryHandler<ENTITY> extends
 		return matchesHandledMethodName(method) && matchesHandledReturnType(method);
 	}
 
-	/**
-	 * @param method
-	 * @return
-	 */
 	private boolean matchesHandledMethodName(Method method) {
 		return method.getName().startsWith("findAll");
 	}
@@ -67,12 +58,9 @@ public class ListOfEntitiesFinderNamedQueryHandler<ENTITY> extends
 		return List.class.isAssignableFrom(returnType);
 	}
 
-	/**
-	 * @see org.squashtest.csp.core.infrastructure.dynamicmanager.AbstractFinderNamedQueryHandler#executeQuery(org.hibernate.Query)
-	 */
 	@Override
 	protected Object executeQuery(Query query) {
-		return query.list();
+		return query.getResultList();
 	}
 
 }

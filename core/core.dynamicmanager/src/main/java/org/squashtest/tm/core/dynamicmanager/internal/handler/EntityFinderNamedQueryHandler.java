@@ -20,28 +20,22 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 
-import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.Query;
 
 /**
  * This {@link DynamicComponentInvocationHandler} handles any method of signature <code>ENTITY find*(..)</code> by
  * looking up a Hibernate Named Query which name matches the method's name and returning its results.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class EntityFinderNamedQueryHandler<ENTITY> extends AbstractNamedQueryHandler<ENTITY> {
 	private final Class<ENTITY> entityType;
 
-	/**
-	 * @param em
-	 * @param entityType
-	 * @param queryNamespace
-	 */
 	public EntityFinderNamedQueryHandler(Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super(entityType, em);
 		this.entityType = entityType;
@@ -49,7 +43,7 @@ public class EntityFinderNamedQueryHandler<ENTITY> extends AbstractNamedQueryHan
 
 	@Override
 	protected Object executeQuery(Query query) {
-		return query.uniqueResult();
+		return query.getSingleResult();
 	}
 
 	/**
@@ -60,18 +54,10 @@ public class EntityFinderNamedQueryHandler<ENTITY> extends AbstractNamedQueryHan
 		return matchesHandledMethodName(method) && matchesHandledReturnType(method);
 	}
 
-	/**
-	 * @param method
-	 * @return
-	 */
 	private boolean matchesHandledReturnType(Method method) {
 		return entityType.equals(method.getReturnType());
 	}
 
-	/**
-	 * @param method
-	 * @return
-	 */
 	private boolean matchesHandledMethodName(Method method) {
 		return method.getName().startsWith("find");
 	}

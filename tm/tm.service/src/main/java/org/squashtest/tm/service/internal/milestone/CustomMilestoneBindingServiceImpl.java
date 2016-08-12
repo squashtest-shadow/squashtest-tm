@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
@@ -44,6 +37,12 @@ import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
@@ -108,7 +107,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	@Override
 	public void bindMilestonesToProject(List<Long> milestoneIds, Long projectId) {
 		GenericProject project = projectDao.findById(projectId);
-		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		List<Milestone> milestones = milestoneDao.findAll(milestoneIds);
 		project.bindMilestones(milestones);
 		for (Milestone milestone : milestones) {
 			milestone.addProjectToPerimeter(project);
@@ -118,7 +117,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	@Override
 	public void bindProjectsToMilestone(List<Long> projectIds, Long milestoneId) {
 		List<GenericProject> projects = projectDao.findAll(projectIds);
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		milestone.bindProjects(projects);
 		milestone.addProjectsToPerimeter(projects);
 	}
@@ -135,7 +134,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);
 		List<GenericProject> allProjects = projectDao.findAll(new Sort(Direction.ASC, "name"));
 
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		if (milestone.getRange() == MilestoneRange.RESTRICTED) {
 			allProjects.removeAll(projectTemplateDao.findAll());
 		}
@@ -146,7 +145,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Override
 	public List<GenericProject> getAllProjectForMilestone(Long milestoneId) {
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		List<GenericProject> bindedProject;
 		if (milestone.getRange() == MilestoneRange.GLOBAL) {
 			bindedProject = milestone.getProjects();
@@ -162,7 +161,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	public void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId) {
 
 		GenericProject project = projectDao.findById(projectId);
-		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		List<Milestone> milestones = milestoneDao.findAll(milestoneIds);
 		unbindMilestonesFromProject(project, milestones);
 	}
 
@@ -201,7 +200,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Override
 	public void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId) {
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		List<GenericProject> projects = projectDao.findAll(projectIds);
 		milestone.unbindProjects(projects);
 		milestone.removeProjectsFromPerimeter(projects);
@@ -294,7 +293,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Override
 	public void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId) {
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		List<GenericProject> projects = projectDao.findAll(projectIds);
 		milestone.unbindProjects(projects);
 		milestoneDao.unbindAllObjectsForProjects(milestoneId, projectIds);
@@ -302,7 +301,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Override
 	public void unbindTemplateFrom(Long milestoneId) {
-		Milestone milestone = milestoneDao.findById(milestoneId);
+		Milestone milestone = milestoneDao.findOne(milestoneId);
 		milestone.removeTemplates();
 	}
 

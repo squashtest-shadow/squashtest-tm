@@ -94,7 +94,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 		Attachment attachment = new Attachment();
 
-		AttachmentList list = attachmentListDao.findById(attachmentListId);
+		AttachmentList list = attachmentListDao.findOne(attachmentListId);
 		list.addAttachment(attachment);
 
 		attachment.setContent(content);
@@ -133,7 +133,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private Attachment findById(Long attachmentId) {
-		return attachmentDao.findById(attachmentId);
+		return attachmentDao.findOne(attachmentId);
 	}
 
 	@Override
@@ -143,8 +143,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) {
-		AttachmentList list = attachmentListDao.findById(attachmentListId);
-		Attachment attachment = attachmentDao.findById(attachmentId);
+		AttachmentList list = attachmentListDao.findOne(attachmentListId);
+		Attachment attachment = attachmentDao.findOne(attachmentId);
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
@@ -155,7 +155,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) {
 
-		Iterator<Attachment> iterAttach = attachmentListDao.findById(attachmentListId).getAllAttachments().iterator();
+		Iterator<Attachment> iterAttach = attachmentListDao.findOne(attachmentListId).getAllAttachments().iterator();
 
 		while (iterAttach.hasNext()) {
 			Attachment att = iterAttach.next();
@@ -181,7 +181,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void renameAttachment(long attachmentId, String newName) {
-		Attachment attachment = attachmentDao.findById(attachmentId);
+		Attachment attachment = attachmentDao.findOne(attachmentId);
 		attachment.setShortName(newName);
 	}
 

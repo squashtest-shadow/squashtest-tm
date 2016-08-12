@@ -20,43 +20,28 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import org.squashtest.tm.domain.attachment.Attachment;
 
-public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao{
+import java.util.Set;
 
-    @UsesTheSpringJpaDsl
-    Attachment findById(long attachmentId);
+public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao {
 
-    /**
-     * Returns an attachment given its ID, with payload (the blob)
-     * initialized
-     *
-	 * @deprecated  not used - remove in 1.15 if it's still not used
+	/**
+	 * Returns all the attachments that belong to the given AttachmentList
 	 */
-	@Deprecated
-    @UsesANamedQueryInPackageInfoOrElsewhere
-    Attachment findAttachmentWithContent(@Param("id") Long attachmentId);
+	@Query
+	Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
 
-    /**
-     * Returns all the attachments that belong to the given AttachmentList
-     * @param attachmentListId
-     * @return
-     */
-    @UsesANamedQueryInPackageInfoOrElsewhere
-    Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
+	/**
+	 * Same than above, paged version.
+	 *
+	 */
 
-    /**
-     * Same than above, paged version.
-     *
-     */
-
-    @Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
-    Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
+	@Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
+	Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
 }

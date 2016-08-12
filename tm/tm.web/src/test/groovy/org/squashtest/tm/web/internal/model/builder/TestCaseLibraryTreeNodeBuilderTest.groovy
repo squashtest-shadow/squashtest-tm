@@ -22,14 +22,13 @@ package org.squashtest.tm.web.internal.model.builder
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State

@@ -3,19 +3,40 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-parent-pom</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
-    <relativePath>../parent-pom</relativePath>
+    <artifactId>squash-tm</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <groupId>org.squashtest.tm</groupId>
-  <artifactId>squashtest-csp-tm</artifactId>
+  <artifactId>squash-tm-tm</artifactId>
   <packaging>pom</packaging>
-  <name>squashtest-csp-tm</name>
-  <description>Umbrella project for the CSP Test Management module</description>
+  <name>squash-tm-tm</name>
+  <description>This module builds the Squash TM webapp</description>
 
   <modules>
     <module>tm.domain</module>
     <module>tm.service</module>
     <module>tm.web</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- Required to add license headers -->
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-license-to-jar</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

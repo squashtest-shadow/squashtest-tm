@@ -23,16 +23,13 @@ package org.squashtest.tm.web.internal.model.builder
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
-
-import spock.lang.Specification
 
 class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(permissionEvaluator())

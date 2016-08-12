@@ -54,7 +54,7 @@ class AdministrationServiceImplTest extends Specification {
 	def "shoud add a group to a specific user" (){
 		given:
 		User user = new User()
-		userDao.findById(10) >> user
+		userDao.findOne(10) >> user
 
 		and:
 		UsersGroup group = new UsersGroup()

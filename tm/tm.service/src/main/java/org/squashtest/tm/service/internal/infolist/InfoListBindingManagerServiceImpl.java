@@ -43,7 +43,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectReqCategory(long infoListId, long projectId) {
 		GenericProject project = projectDao.findById(projectId);
-		InfoList infoList = infoListDao.findById(infoListId);
+		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();	
 		project.setRequirementCategories(infoList);
 		infoListDao.setDefaultCategoryForProject(projectId, defaultItem);
@@ -52,7 +52,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectTcNature(long infoListId, long projectId) {
 		GenericProject project = projectDao.findById(projectId);
-		InfoList infoList = infoListDao.findById(infoListId);
+		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseNatures(infoList);
 		infoListDao.setDefaultNatureForProject(projectId, defaultItem);
@@ -61,7 +61,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	@Override
 	public void bindListToProjectTcType(long infoListId, long projectId) {
 		GenericProject project = projectDao.findById(projectId);
-		InfoList infoList = infoListDao.findById(infoListId);
+		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseTypes(infoList);
 		infoListDao.setDefaultTypeForProject(projectId, defaultItem);

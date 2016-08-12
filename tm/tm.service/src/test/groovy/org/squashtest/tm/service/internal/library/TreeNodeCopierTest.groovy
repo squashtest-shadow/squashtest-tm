@@ -26,7 +26,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDao
+
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
@@ -40,14 +40,12 @@ public class TreeNodeCopierTest extends Specification{
 	private PrivateCustomFieldValueService customFieldValueManagerService = Mock()
 	private PermissionEvaluationService permissionService = Mock()
 	private RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
-	private HibernateObjectDao genericDao = Mock();
 
 
 	MockFactory mockFactory = new MockFactory()
 
 
 	def setup(){
-		copier.genericDao = genericDao
 		copier.testCaseDao = testCaseDao;
 		copier.testCaseFolderDao = testCaseFolderDao
 		copier.customFieldValueManagerService = customFieldValueManagerService

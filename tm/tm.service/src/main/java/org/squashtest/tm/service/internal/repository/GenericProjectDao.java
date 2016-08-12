@@ -20,67 +20,44 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
+import java.util.List;
+
 /**
  * @author Gregory Fouquet
- * 
  */
-public interface GenericProjectDao extends Repository<GenericProject, Long>,  CustomGenericProjectDao {
+public interface GenericProjectDao extends JpaRepository<GenericProject, Long>, CustomGenericProjectDao {
 
-	@UsesTheSpringJpaDsl
 	long countByName(String name);
-	
-	@NativeMethodFromJpaRepository
-	long count();
-
-	@NativeMethodFromJpaRepository
-	List<GenericProject> findAll();
-
-	@NativeMethodFromJpaRepository
-	@EmptyCollectionGuard
-	List<GenericProject> findAll(Iterable<Long> ids);
-		
-	@NativeMethodFromJpaRepository
-	List<GenericProject> findAll(Sort sorting);
-	
-	@UsesTheSpringJpaDsl
-	GenericProject findById(long projectId);
 
 	/**
-	 * Simply remove entity
-	 * @param project : the {@link GenericProject} to remove
+	 * @deprecated use findOne
 	 */
-	@NativeMethodFromJpaRepository
-	void delete(GenericProject project);
+	@Deprecated
+	GenericProject findById(long projectId);
 
-	
-	// ************************* test automation section **********************
-
-	
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<TestAutomationProject> findBoundTestAutomationProjects(@Param(ParameterNames.PROJECT_ID) long id);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<String> findBoundTestAutomationProjectJobNames(@Param(ParameterNames.PROJECT_ID) long id);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<String> findBoundTestAutomationProjectLabels(@Param(ParameterNames.PROJECT_ID) long projectId);
 
-	@UsesTheSpringJpaDsl
 	@EmptyCollectionGuard
 	List<GenericProject> findAllByIdIn(List<Long> idList, Sort sorting);
 
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	TestAutomationServer findTestAutomationServer(@Param(ParameterNames.PROJECT_ID) long projectId);
-	
+
 
 }

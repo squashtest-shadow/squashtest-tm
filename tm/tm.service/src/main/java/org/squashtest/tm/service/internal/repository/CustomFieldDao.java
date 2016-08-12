@@ -32,12 +32,11 @@ import java.util.List;
 
 public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
-	@UsesTheSpringJpaDsl
 	CustomField findById(long id);
 
 
 	/**
-	 * This is a downcast-version of #findById
+	 * This is a downcast-version of #findOne
 	 * will find the {@link SingleSelectField} of the given id
 	 * @param customFieldId the id of the wanted {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>
@@ -54,7 +53,7 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 * @param bindableEntity
 	 * @return
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<CustomField> findAllBindableCustomFields(Long projectId, BindableEntity bindableEntity);
 
 
@@ -65,7 +64,7 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 * @param bindableEntity
 	 * @return
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<CustomField> findAllBoundCustomFields(Long projectId, BindableEntity bindableEntity);
 
 
@@ -75,7 +74,6 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 * @param name
 	 * @return
 	 */
-	@UsesTheSpringJpaDsl
 	CustomField findByName(@NotNull String name);
 
 	/**
@@ -83,7 +81,6 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 *
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
-	@UsesTheSpringJpaDsl
 	// note : the extra 'By' in 'findAllByOrderBy' is necessary, see http://stackoverflow.com/questions/19733464/order-by-date-desc-with-spring-data
 	List<CustomField> findAllByOrderByNameAsc();
 
@@ -94,8 +91,6 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 * @param code
 	 * @return the {@link CustomField} matching the code param.
 	 */
-	@UsesTheSpringJpaDsl
 	CustomField findByCode(@NotNull String code);
-
 
 }

@@ -418,8 +418,6 @@
 	@NamedQuery(name = "Dataset.findOwnDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
 	@NamedQuery(name = "Dataset.findOwnDatasetsByTestCases", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id in (:testCaseIds) order by dataset.name "),
 	@NamedQuery(name = "Dataset.findByTestCaseIdAndName", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId and dataset.name = :name order by dataset.name "),
-	@NamedQuery(name = "Dataset.removeAllByTestCaseIds", query = "delete Dataset ds where ds.testCase.id in (:testCaseIds)"),
-	@NamedQuery(name = "Dataset.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.dataset in (select ds from Dataset ds where ds.testCase.id in (:testCaseIds))"),
 	@NamedQuery(name = "dataset.removeDatasetFromItsIterationTestPlanItems", query = "update IterationTestPlanItem set referencedDataset = null where referencedDataset in (from Dataset dataset where dataset.id = :datasetId) "),
 	@NamedQuery(name = "dataset.removeDatasetFromItsCampaignTestPlanItems", query = "update CampaignTestPlanItem set referencedDataset = null where referencedDataset in (from Dataset dataset where dataset.id = :datasetId) "),
 	@NamedQuery(name = "dataset.excelExport", query = "select tc.id, ds.id, ds.name, tcown.id, param.name, pvalue.paramValue from TestCase tc "
@@ -480,9 +478,8 @@
 	@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
 	@NamedQuery(name = "attachment.removeAttachments", query = "delete Attachment at where at.id in (:attachIds)"),
 	@NamedQuery(name = "attachment.deleteAttachmentLists", query = "delete AttachmentList al where al.id in (:listIds)"),
-        @NamedQuery(name = "Attachment.findAttachmentWithContent", query = "from Attachment att join fetch att.content where att.id = :id"),
         @NamedQuery(name = "Attachment.findAllAttachments", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
-     
+
 	//ProjectFilter
 	@NamedQuery(name = "projectFilter.findByUserLogin", query = "from ProjectFilter where userLogin = :givenUserLogin"),
 
@@ -515,15 +512,15 @@
 	@NamedQuery(name = "usersGroup.findByQualifiedName", query = "from UsersGroup where qualifiedName = :qualifiedName"),
 
 	//User
-	@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),
-	@NamedQuery(name = "user.findAllActiveUsers", query = "from User fetch all properties where active = true order by login"),
-	@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
-	@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
+	@NamedQuery(name = "User.findAllUsersOrderedByLogin", query = "from User fetch all properties order by login"),
+	@NamedQuery(name = "User.findAllActiveUsersOrderedByLogin", query = "from User fetch all properties where active = true order by login"),
+	@NamedQuery(name = "User.findUsersByLoginList", query = "from User fetch all properties where login in (:logins)"),
+	@NamedQuery(name = "User.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 	@NamedQuery(name = "User.findUserByCiLogin", query = "from User fetch all properties where lower(login) = lower(:userLogin)"),
-	@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
-	@NamedQuery(name = "user.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
-	@NamedQuery(name = "user.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
-	@NamedQuery(name = "user.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
+	@NamedQuery(name = "User.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
+	@NamedQuery(name = "User.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
+	@NamedQuery(name = "User.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
+	@NamedQuery(name = "User.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
 	@NamedQuery(name = "User.findAllDuplicateLogins", query = "select lower(u.login) from User u group by lower(u.login) having count(u.login) > 1"),
 	@NamedQuery(name = "User.findCaseAwareLogin", query = "select u.login from User u where lower(u.login) = lower(:login)"),
 
@@ -619,7 +616,6 @@
 
 	//AutomatedExecution
 	@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ?1 and ex.automatedTest.name = ?2 and ex.automatedTest.project.jobName = ?3"),
-	@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndProjectId", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ?1 and ex.automatedTest.project.id = ?2"),
 
 	//AutomatedTest
 	@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
@@ -683,6 +679,10 @@
 
 	//Administration
 	@NamedQuery(name = "administration.findAdministrationStatistics", query = "select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User u where u.active = true"),
+
+	// Requirement Statistics
+	@NamedQuery(name = "RequirementStatistics.statusesStatistics", query = "select reqVer.status, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.status"),
+	@NamedQuery(name = "RequirementStatistics.criticalityStatistics", query = "select reqVer.criticality, count(reqVer) from RequirementVersion reqVer where reqVer.requirement.resource = reqVer and reqVer.requirement.id in (:requirementIds) group by reqVer.criticality"),
 
 	//Test Case Statistics
 	@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
@@ -776,8 +776,8 @@
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
 	@NamedQuery(name = "milestone.countBoundObject", query = "select mil.testCases.size + mil.requirementVersions.size + mil.campaigns.size from Milestone mil where mil.id = :milestoneId"),
-	@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
-	@NamedQuery(name = "milestone.findAssociableMilestonesForUser", query = "select milestone from Milestone milestone"),
+	@NamedQuery(name = "Milestone.findByLabel", query = "from Milestone where label = :label "),
+	@NamedQuery(name = "Milestone.findAssociableMilestonesForUser", query = "select milestone from Milestone milestone"),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForTestCase",
 	query = "select milestone from TestCase tc join tc.project p join p.milestones milestone "
 	+ "where tc.id = :testCaseId and milestone.status in (:validStatus) and milestone not in ( "
@@ -798,23 +798,23 @@
 	"join cov.verifiedRequirementVersion version " +
 	"join version.milestones milestones " +
 	"where tc.id = :testCaseId"),
-	@NamedQuery(name = "milestone.findRequirementVersionMilestones", query="select milestones from RequirementVersion version join version.milestones milestones where version.id = :versionId"),
-	@NamedQuery(name = "milestone.findCampaignMilestones", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
-	@NamedQuery(name = "milestone.findIterationMilestones", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterId"),
-	@NamedQuery(name = "milestone.findTestSuiteMilestones", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :tsId"),
+	@NamedQuery(name = "Milestone.findMilestonesForRequirementVersion", query="select milestones from RequirementVersion version join version.milestones milestones where version.id = :versionId"),
+	@NamedQuery(name = "Milestone.findMilestonesForCampaign", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
+	@NamedQuery(name = "Milestone.findMilestonesForIteration", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterationId"),
+	@NamedQuery(name = "Milestone.findMilestonesForTestSuite", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :testSuiteId"),
     @NamedQuery(name = "milestone.findLastNonObsoleteReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId  and rv.versionNumber = (select max(reqV.versionNumber) from RequirementVersion reqV where reqV.requirement.id = r.id and reqV.status != 'OBSOLETE')"),
 	@NamedQuery(name = "milestone.findAllTestCasesForProjectAndMilestone", query = "select tc from TestCase tc join tc.milestones m where tc.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllRequirementVersionsForProjectAndMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where r.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllCampaignsForProjectAndMilestone", query = "select c from Campaign c join c.milestones m  where c.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.countCampaignsForProjectAndMilestone", query = "select count(c) from Campaign c join c.milestones m  where c.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "Milestone.findExistingNames", query = "select m.label from Milestone m where m.label in (:names)"),
-	@NamedQuery(name = "milestone.findCampaignByMilestones", query="select c from Campaign c join c.milestones m where m.id = :milestoneId"),
+	@NamedQuery(name = "Milestone.findCampaignsForMilestone", query="select c from Campaign c join c.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Milestone.findInProgressExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status = 'IN_PROGRESS'"),
 	@NamedQuery(name = "Milestone.findBindableExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status in (:status)"),
 	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
 	@NamedQuery(name = "milestone.otherRequirementVersionBindToOneMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join r.versions versions join rv.milestones m where versions.id in (:reqVIds) and rv.id not in (:reqVIds) and m.id in (:milestoneIds)"),
 	@NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),
-  	@NamedQuery(name = "milestone.countMilestonesForUsers", query = "select count(milestone) from Milestone milestone where milestone.owner.id in (:userIds)"),
+  	@NamedQuery(name = "Milestone.countMilestonesForUsers", query = "select count(milestone) from Milestone milestone where milestone.owner.id in (:userIds)"),
 
 	@NamedQuery(name = "TestCase.findAllBoundToMilestone", query = "select tc from TestCase tc join tc.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllBoundToMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where m.id = :milestoneId"),
@@ -823,19 +823,18 @@
 
 
    //InfoList
-	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
+	@NamedQuery(name = "InfoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
-	@NamedQuery(name = "infoList.findAllOrdered", query = "from InfoList order by label"),
-	@NamedQuery(name = "infoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
-	@NamedQuery(name = "infoList.findAllUnbound", query = "from InfoList il where not exists (from Project p  where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
-	@NamedQuery(name = "infoList.findAllWithBoundProjectsCount", query = "from InfoList, Project rc, Project tcn, Project  "),
+	@NamedQuery(name = "InfoList.findAllOrdered", query = "from InfoList order by label"),
+	@NamedQuery(name = "InfoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
+	@NamedQuery(name = "InfoList.findAllUnbound", query = "from InfoList il where not exists (from Project p  where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
 
 
 	//InfoListItem
-	@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
-	@NamedQuery(name="infoListItem.findDefaultRequirementCategoryForProject", query="select item from GenericProject p join p.requirementCategories categories join categories.items item where p.id = :projectId and item.isDefault is true"),
-	@NamedQuery(name="infoListItem.findDefaultTestCaseNatureForProject", query="select item from GenericProject p join p.testCaseNatures natures join natures.items item where p.id = :projectId and item.isDefault is true"),
-	@NamedQuery(name="infoListItem.findDefaultTestCaseTypeForProject", query="select item from GenericProject p join p.testCaseTypes types join types.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findByCode", query="from InfoListItem where code = :code"),
+	@NamedQuery(name="InfoListItem.findDefaultRequirementCategory", query="select item from GenericProject p join p.requirementCategories categories join categories.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findDefaultTestCaseNature", query="select item from GenericProject p join p.testCaseNatures natures join natures.items item where p.id = :projectId and item.isDefault is true"),
+	@NamedQuery(name="InfoListItem.findDefaultTestCaseType", query="select item from GenericProject p join p.testCaseTypes types join types.items item where p.id = :projectId and item.isDefault is true"),
 	@NamedQuery(name="infoListItem.foundCategoryInProject", query="select count(item) from GenericProject p join p.requirementCategories categories join categories.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundNatureInProject", query="select count(item) from GenericProject p join p.testCaseNatures natures join natures.items item where item.code = :itemCode and p.id = :projectId"),
 	@NamedQuery(name="infoListItem.foundTypeInProject", query="select count(item) from GenericProject p join p.testCaseTypes types join types.items item where item.code = :itemCode and p.id = :projectId"),
@@ -862,9 +861,9 @@
 	@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
 
 	//set InfoListItem of a project to default value
-	@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
-	@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
-	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
+	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :projectId) "),
+	@NamedQuery(name="InfoList.setDefaultNatureForProject", query = "update TestCase tc set tc.nature = :defaultItem where tc.project.id = :projectId"),
+	@NamedQuery(name="InfoList.setDefaultTypeForProject", query = "update TestCase tc set tc.type = :defaultItem where tc.project.id = :projectId"),
 
 	// ChartDefinition
 	@NamedQuery(name="ChartDefinition.selectChartsOwnedByUsers",query="from ChartDefinition chart join chart.owner user where user.id in (:userIds)"),

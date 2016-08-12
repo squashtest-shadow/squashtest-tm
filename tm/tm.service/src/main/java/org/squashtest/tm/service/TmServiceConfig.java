@@ -66,7 +66,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignLibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -135,9 +134,6 @@ public class TmServiceConfig {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-
-	@Inject
-	private HibernateObjectDao hibernateObjectDao;
 
 	@Inject
 	private RequirementAuditor statusBasedRequirementAuditor;
@@ -234,12 +230,7 @@ public class TmServiceConfig {
 		PasteStrategy<TestCaseFolder, TestCaseLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(testCaseFolderDao);
 		paster.setNodeDao(testCaseLibraryNodeDao);
-		configure(paster);
 		return paster;
-	}
-
-	private void configure(PasteStrategy<?, ?> paster) {
-		paster.setGenericDao(hibernateObjectDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
@@ -248,7 +239,6 @@ public class TmServiceConfig {
 		PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(testCaseLibraryDao);
 		paster.setNodeDao(testCaseLibraryNodeDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -258,7 +248,6 @@ public class TmServiceConfig {
 		PasteStrategy<RequirementFolder, RequirementLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(requirementFolderDao);
 		paster.setNodeDao(requirementLibraryNodeDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -268,7 +257,6 @@ public class TmServiceConfig {
 		PasteStrategy<RequirementLibrary, RequirementLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(requirementLibraryDao);
 		paster.setNodeDao(requirementLibraryNodeDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -278,7 +266,6 @@ public class TmServiceConfig {
 		PasteStrategy<Requirement, Requirement> paster = new PasteStrategy<>();
 		paster.setContainerDao(requirementDao);
 		paster.setNodeDao(requirementDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -288,7 +275,6 @@ public class TmServiceConfig {
 		PasteStrategy<CampaignFolder, CampaignLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(campaignFolderDao);
 		paster.setNodeDao(campaignLibraryNodeDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -298,7 +284,6 @@ public class TmServiceConfig {
 		PasteStrategy<CampaignLibrary, CampaignLibraryNode> paster = new PasteStrategy<>();
 		paster.setContainerDao(campaignLibraryDao);
 		paster.setNodeDao(campaignLibraryNodeDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -308,7 +293,6 @@ public class TmServiceConfig {
 		PasteStrategy<Campaign, Iteration> paster = new PasteStrategy<>();
 		paster.setContainerDao(campaignDao);
 		paster.setNodeDao(iterationDao);
-		configure(paster);
 		return paster;
 	}
 
@@ -318,7 +302,6 @@ public class TmServiceConfig {
 		PasteStrategy<Iteration, TestSuite> paster = new PasteStrategy<>();
 		paster.setContainerDao(iterationDao);
 		paster.setNodeDao(testSuiteDao);
-		configure(paster);
 		return paster;
 	}
 

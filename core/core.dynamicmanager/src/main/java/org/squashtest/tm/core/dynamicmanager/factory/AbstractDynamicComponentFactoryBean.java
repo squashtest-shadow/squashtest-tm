@@ -60,7 +60,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	private BeanFactory beanFactory;
 
 	@PersistenceContext
-	protected EntityManager em;
+	protected EntityManager entityManager;
 
 	/**
 	 * Type of Manager service interface which should be instanciated. Should be configured by Spring.

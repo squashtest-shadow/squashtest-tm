@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.Session;
 import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
 
@@ -88,7 +87,7 @@ public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocation
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what
 																						// JDK interfaces throw
-		ENTITY entity = (ENTITY)  em.unwrap(Session.class).load(entityType, (Long) args[0]);
+		ENTITY entity = em.getReference(entityType, args[0]);
 
 		String prop = extractModifiedPropertyName(method);
 		Method setter = findSetter(prop, method.getParameterTypes()[1]);
@@ -118,11 +117,6 @@ public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocation
 		return setter;
 	}
 
-	/**
-	 * @param property
-	 * @param paramType
-	 * @return
-	 */
 	private Method findPrimitiveTypeSetter(String setterName, Class<?> paramType) {
 		if (PrimitiveTypeUtils.isPrimitiveWrapper(paramType)) {
 			Class<?> primitiveClass = PrimitiveTypeUtils.wrapperToPrimitive(paramType);

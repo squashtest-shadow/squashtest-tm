@@ -23,13 +23,9 @@ package org.squashtest.tm.domain.requirement
 import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
 import org.squashtest.tm.domain.requirement.Requirement

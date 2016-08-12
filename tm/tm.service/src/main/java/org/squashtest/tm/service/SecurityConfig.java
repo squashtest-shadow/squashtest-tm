@@ -73,7 +73,9 @@ import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNam
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
 
 /**
- * Partial Spring Sec config. should be with the rest of spring sec's config now that we dont have osgi bundles segregation
+ * Partial Spring Sec config. Should be with the rest of spring sec's config now that we dont have osgi bundles segregation
+ *
+ *
  *
  * @author Gregory Fouquet
  * @since 1.13.0

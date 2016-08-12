@@ -20,66 +20,31 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
-import org.hibernate.engine.spi.EntityKey;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.library.Copiable;
-import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionStepCollector;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
-import org.squashtest.tm.service.internal.repository.EntityDao;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Component
 @Scope("prototype")
@@ -114,11 +79,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 
 
-	@Inject
-	private HibernateObjectDao genericDao;
-
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 	private NodeContainer<? extends TreeNode> destination;
 
@@ -245,27 +207,11 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			//cleanSomeCache(RequirementLibraryNode.class);
-			em.flush();
+			entityManager.flush();
 		}
 
 	}
 
-	private <T> void cleanSomeCache(Class<T> c) {
-
-		em.flush();
-		Collection<Object> entities = new ArrayList<>();
-		for (Object obj : em.unwrap(Session.class).getStatistics().getEntityKeys()) {
-			EntityKey key = (EntityKey) obj;
-			Object entity = em.unwrap(Session.class).get(key.getEntityName(), key.getIdentifier());
-			if (!c.isAssignableFrom(entity.getClass())) {
-				entities.add(entity);
-			}
-		}
-
-		genericDao.clearFromCache(entities);
-		em.flush();
-	}
 
 	@Override
 	public void visit(TestCase source) {
@@ -276,8 +222,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			//cleanSomeCache(TestCaseLibraryNode.class);
-			em.flush();
+			entityManager.flush();
 		}
 	}
 
@@ -431,7 +376,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	 *
 	 */
 	private void flush() {
-		em.unwrap(Session.class).flush();
+		entityManager.flush();
 	}
 
 	@Override

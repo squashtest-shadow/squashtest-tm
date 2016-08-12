@@ -21,14 +21,15 @@
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.squashtest.tm.core.foundation.collection.Paging;
+
+import javax.persistence.Query;
 
 /**
  * Utility clas for paging queries.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class PagingUtils {
 	private PagingUtils() {
@@ -41,7 +42,6 @@ final class PagingUtils {
 			query.setFirstResult(paging.getFirstItemIndex());
 		}
 	}
-
 	public static void addPaging(Criteria criteria, Paging paging) {
 		if (! paging.shouldDisplayAll()){
 			criteria.setMaxResults(paging.getPageSize());

@@ -18,16 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.generic;
+package org.squashtest.tm.web.internal.controller.generic
 
-import org.apache.commons.collections.MultiMap;
-import org.springframework.stereotype.Controller;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController;
-import org.squashtest.tm.web.internal.controller.report.ReportWorkspaceController;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController
 import org.squashtest.tm.web.internal.controller.requirement.RequirementWorkspaceController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseWorkspaceController;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;

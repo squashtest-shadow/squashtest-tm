@@ -3,12 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-core</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <artifactId>squash-tm-core</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
   <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
+
+  <description>This module contains the annotation to be used to define a dynamic manager and these managers' implementation</description>
 
   <properties />
 
@@ -30,7 +32,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-    <!-- ====== /DEPENDENCY POMS ====== -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -54,7 +55,7 @@
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -70,6 +71,7 @@
 
   <build>
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -90,12 +92,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
     </plugins>
   </build>
   <url>http://www.squashtest.org</url>

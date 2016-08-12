@@ -20,26 +20,21 @@
  */
 package org.squashtest.tm.core.dynamicmanager.factory
 
-import org.hibernate.SessionFactory
-
 import javax.persistence.EntityManager;
-
-import org.hibernate.Session
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
  * Superclass for testing the interface of a Dynamic Manager.
- * It tests that "change" methods of the dynamic manager are consistent with the enties they modify.  
- * 
- * Subclasses should have the following properties : 
+ * It tests that "change" methods of the dynamic manager are consistent with the enties they modify.
+ *
+ * Subclasses should have the following properties :
  * <code>@Shared Class managerType = <type of tested dynamic manager interface></code>
  * <code>@Shared Class entityType = <type of entity modified by the interface></code>
  * <code>@Shared List changeServiceCalls = [ { service -> service.changeFoo(id, value) }, { service -> service.changeBar(id, value) } ]</code>
  * ... and that's it
- * 
+ *
  * @author Gregory Fouquet
  *
  */
@@ -51,16 +46,14 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 		factory.componentType = managerType
 		factory.entityType = entityType
 
-		Session session = Mock()
-		session.load(entityType, _) >> entityInstance()
+		EntityManager entityManager = Mock()
+		entityManager.getReference(entityType, _) >> entityInstance()
 
-		EntityManager em = Mock()
-		em.unwrap(_) >> session
-		factory.em = em
+		factory.entityManager = entityManager
 
 		factory.initializeFactory()
 	}
-	
+
 	def entityInstance() {
 		entityType.newInstance()
 	}
@@ -69,7 +62,7 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 	def "should not fail to modify entity"() {
 		given:
 		def service = factory.object
-		
+
 		when:
 		modifier.call(service)
 

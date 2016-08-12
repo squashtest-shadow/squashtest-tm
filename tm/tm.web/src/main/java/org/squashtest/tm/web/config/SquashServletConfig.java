@@ -59,7 +59,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 
 /**
- * Servlet context config (mostly). Not in SquashServletInitializer becauses it delays the servlet context initialization for
+ * Servlet context config (mostly). Not in SquashServletInitializer because it delays the servlet context initialization for
  * too long.
  *
  * @author Gregory Fouquet

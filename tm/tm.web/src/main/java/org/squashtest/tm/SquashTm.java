@@ -40,6 +40,8 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * Important : @EnableWebSecurity should be here and not on spring-sec config class, otherwise the servlet context is
  * initialized *after* ServletContextAware components, leading to the app to crash.
  *
+ * TODO : cant we now use jpa auto config ?
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */

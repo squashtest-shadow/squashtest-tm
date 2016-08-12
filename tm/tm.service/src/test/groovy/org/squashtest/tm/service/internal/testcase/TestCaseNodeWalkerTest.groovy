@@ -23,13 +23,12 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.testutils.MockFactory;
 
 import spock.lang.Specification
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 
 class TestCaseNodeWalkerTest extends Specification {
 

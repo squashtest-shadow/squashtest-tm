@@ -66,7 +66,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	}
 
 	private SessionFactory getSessionFactory() {
-		return ((HibernateEntityManagerFactory)em.getEntityManagerFactory()).getSessionFactory();
+		return em.getEntityManagerFactory().unwrap(SessionFactory.class);
 	}
 
 	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,

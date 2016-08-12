@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <artifactId>squash-tm-tm</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.service</artifactId>
@@ -197,7 +197,6 @@
       <artifactId>spring-security-oauth2</artifactId>
     </dependency>
 
-    <!--======= SQUASHTEST MODULES ======== -->
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>tm.domain</artifactId>
@@ -205,7 +204,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -248,6 +247,8 @@
         </configuration>
         <dependencies>
           <dependency>
+            <!-- This dependency triggers DynamicManager anotations processing through APT -->
+            <!-- TODO assess if we really need this in tm.domain -->
             <groupId>org.squashtest.tm</groupId>
             <artifactId>tools.annotation.processor</artifactId>
             <version>${project.version}</version>

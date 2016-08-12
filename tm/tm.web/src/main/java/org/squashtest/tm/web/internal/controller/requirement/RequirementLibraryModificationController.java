@@ -49,7 +49,7 @@ public class RequirementLibraryModificationController {
 
 		RequirementLibrary lib = requirementLibraryNavigationService.findLibrary(libraryId);
 
-		ModelAndView mav = new ModelAndView("fragment/libraries/library");
+		ModelAndView mav = new ModelAndView("fragment/requirements/requirement-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 
 		mav.addObject("library", lib);

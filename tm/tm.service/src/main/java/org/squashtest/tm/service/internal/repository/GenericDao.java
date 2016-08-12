@@ -20,25 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
 
 public interface GenericDao<ENTITY_TYPE> {
 
 	void persist(ENTITY_TYPE transientEntity);
-	
+
 	void persist(List<ENTITY_TYPE> transientEntities);
 
 	void remove(ENTITY_TYPE entity);
-	
+
 	void removeAll(List<ENTITY_TYPE> entities);
-	
-	void clearFromCache(ENTITY_TYPE entity);
-	
-	void clearFromCache(Collection<ENTITY_TYPE> entities);
-	
-	// FIXME hibernate should not appear in dao interface. 
+
+	// FIXME hibernate should not appear in dao interface.
 	@Deprecated
 	void flush();
 }

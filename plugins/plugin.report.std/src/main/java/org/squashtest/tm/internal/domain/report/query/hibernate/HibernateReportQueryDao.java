@@ -37,10 +37,10 @@ import java.util.List;
 public class HibernateReportQueryDao implements ReportQueryDao {
 
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 	private Session currentSession() {
-		return em.unwrap(Session.class);
+		return entityManager.unwrap(Session.class);
 	}
 
 	private final ReportQueryFlavor flavor = new HibernateQueryFlavor();

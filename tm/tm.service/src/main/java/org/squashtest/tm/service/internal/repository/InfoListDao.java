@@ -22,35 +22,36 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 
-public interface InfoListDao  extends EntityDao<InfoList>{
+public interface InfoListDao  extends JpaRepository<InfoList, Long>, CustomInfoListDao {
 
-	@Override
-	InfoList findById(long id);
+	@Query
+	InfoList findByCode(@Param("code") String code);
 
-	InfoList findByCode(String code);
-
-	boolean isUsedByOneOrMoreProject(long infoListId);
-
-
-	void unbindFromProject(long infoListId);
-
+	@Query
 	List<InfoList> findAllOrdered();
 
-	void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem);
-	void setDefaultNatureForProject(long projectId, InfoListItem defaultItem);
-	void setDefaultTypeForProject(long projectId, InfoListItem defaultItem);
+	@Modifying @Query
+	void setDefaultCategoryForProject(@Param("projectId") long projectId, @Param("defaultItem") InfoListItem defaultItem);
+
+	@Modifying @Query
+	void setDefaultNatureForProject(@Param("projectId") long projectId, @Param("defaultItem") InfoListItem defaultItem);
+
+	@Modifying @Query
+	void setDefaultTypeForProject(@Param("projectId") long projectId, @Param("defaultItem") InfoListItem defaultItem);
 
 	/**
 	 * Fetches all InfoLists bound to at least 1 Project in their natural order
-	 * @return
 	 */
 	List<InfoList> findAllBound();
 	/**
 	 * Fetches all InfoLists which are not bound to any Project in their natural order
-	 * @return
 	 */
 	List<InfoList> findAllUnbound();
 }

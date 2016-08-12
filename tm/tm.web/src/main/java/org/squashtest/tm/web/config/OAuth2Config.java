@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.config;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +35,12 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 
 /**
  * @author Gregory Fouquet
@@ -100,8 +100,7 @@ public class OAuth2Config {
 
 	@Configuration
 	@EnableResourceServer
-	public static class ResourceServerConfig extends
-		ResourceServerConfigurerAdapter {
+	public static class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		@Inject
 		TokenStore tokenStore;
 

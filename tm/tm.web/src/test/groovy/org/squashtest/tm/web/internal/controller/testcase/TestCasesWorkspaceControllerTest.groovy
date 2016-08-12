@@ -22,17 +22,13 @@ package org.squashtest.tm.web.internal.controller.testcase
 
 import com.google.common.base.Optional
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-
-import javax.inject.Provider
-
 import org.springframework.ui.Model
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.service.project.ProjectFinder
-import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 

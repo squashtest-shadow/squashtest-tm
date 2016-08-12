@@ -23,6 +23,9 @@ package org.squashtest.tm.web.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * This class receives properties from the "spring.messages" namespace. They are used to configure Squash TM custom
+ * message sources
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */

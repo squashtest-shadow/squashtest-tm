@@ -21,24 +21,22 @@
 package org.squashtest.tm.service.internal.repository;
 
 
-import java.net.URL;
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
-public interface TestAutomationServerDao extends JpaRepository<TestAutomationServer, Long>, CustomTestAutomationServerDao {
+import java.net.URL;
+import java.util.List;
 
+public interface TestAutomationServerDao extends JpaRepository<TestAutomationServer, Long>, CustomTestAutomationServerDao {
 
 	/**
 	 * Will find all occurrences of {@link TestAutomationServer} in the database ordered by their name.
 	 *
 	 * @return : all {@link TestAutomationServer} ordered by their name
 	 */
-	@UsesTheSpringJpaDsl
 	List<TestAutomationServer> findAllByOrderByNameAsc();
-
 
 	/**
 	 * Find the {@linkplain TestAutomationServer} by it's name.
@@ -46,21 +44,16 @@ public interface TestAutomationServerDao extends JpaRepository<TestAutomationSer
 	 * @param serverName : the name of the entity to find
 	 * @return : the entity matching the given name (must be only one or database is corrupted) or <code>null</code>.
 	 */
-	@UsesTheSpringJpaDsl
 	TestAutomationServer findByName(String serverName);
 
 	/**
 	 *
 	 * Find the {@linkplain TestAutomationServer} using its URL and the login used to log on it. There is indeed a
 	 * unique constraint on it (one can log on a given server only once with a given account).
-	 *
-	 * @param url
-	 * @param login
-	 * @return
 	 */
 	// tech note : because of the name of the property baseURL, I'd rather not rely on
 	// the spring jpa dsl (I don't know how it will handle the case)
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	TestAutomationServer findByUrlAndLogin(@Param("url") URL url, @Param("login") String login);
 
 

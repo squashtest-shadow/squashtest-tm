@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 import spock.lang.Specification;

@@ -20,34 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.squashtest.tm.domain.testcase.Dataset;
+
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.testcase.Dataset;
 /**
- * 
+ *
  * @author flaurens, mpagnon, bsiri
  *
  */
 public interface CustomDatasetDao {
-
-	
-	
-	/**
-	 * Will return all datasets for the given test case.
-	 * @param testCaseId
-	 * 
-	 * @return the list of all test cases's datasets.
-	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	List<Dataset> findOwnDatasetsByTestCase(@Param("testCaseId") Long testCaseId);
-
-	
-	
-
 	/**
 	 * Will return all datasets found for the given test cases ids.
-	 * 
+	 *
 	 * @param testCaseIds : the concerned test cases ids.
 	 * @return the list of all given test cases's datasets
 	 */
@@ -55,35 +40,14 @@ public interface CustomDatasetDao {
 
 
 	/**
-	 * Given a test case TC, will return all the datasets that directly inherits
-	 * from parameters of this test case.
-	 * Note that the datasets that belong to this TC are NOT included.
-	 * 
-	 * @param testCaseId
-	 * @return
-	 */
-	List<Dataset> findImmediateDelegateDatasets(Long testCaseId);
-
-	/**
 	 * Given a test case TC, will return all the datasets
 	 * that inherits directly and transitively some parameters from TC.
 	 * Note that the datasets that belong to this TC are NOT included.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @return
 	 */
 	List<Dataset> findAllDelegateDatasets(Long testCaseId);
-
-	/**
-	 * equivalent to findOwnDatasetsByTestCase(id) + findAllDelegateDatasets(id)
-	 * 
-	 * @param testCaseId
-	 * @return
-	 */
-	List<Dataset> findOwnAndDelegateDatasets(Long testCaseId);
-
-
-
 
 	/**
 	 * TODO

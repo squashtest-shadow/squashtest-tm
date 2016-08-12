@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 

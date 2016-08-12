@@ -20,93 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldBindingDao;
+
+import javax.persistence.Query;
+import java.util.List;
 
 
 public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
-
-	@Override
-	public List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity,
-			Paging paging) {
-		Query q = currentSession().getNamedQuery("CustomFieldBinding.findAllForProjectAndEntity");
-		q.setParameter("projectId", projectId);
-		q.setParameter("entityType", boundEntity);
-
-		PagingUtils.addPaging(q, paging);
-		return q.list();
-	}
-
-
-	@Override
-	public void removeCustomFieldBindings(List<Long> bindingIds) {
-
-		if (!bindingIds.isEmpty()){
-
-			executeUpdateListQuery("CustomFieldBinding.removeCustomFieldBindings", new SetBindingIdsParameterCallback(bindingIds));
-
-			List<NewBindingPosition> newPositions = recomputeBindingPositions();
-			updateBindingPositions(newPositions);
-
-		}
-	}
-
-
-
-	@SuppressWarnings("unchecked")
-	protected List<NewBindingPosition> recomputeBindingPositions(){
-
-		Session session = currentSession();
-		Query q = session.getNamedQuery("CustomFieldBinding.recomputeBindingPositions");
-		q.setResultTransformer(Transformers.aliasToBean(NewBindingPosition.class));
-
-		return q.list();
-
-	}
-
-
-	protected void updateBindingPositions(List<NewBindingPosition> newPositions){
-
-		Query q = currentSession().getNamedQuery("CustomFielBinding.updateBindingPosition");
-
-		for (NewBindingPosition newPos : newPositions){
-			if (newPos.needsUpdate()){
-				q.setInteger("newPos", newPos.getNewPosition());
-				q.setLong("id", newPos.getBindingId());
-				q.executeUpdate();
-			}
-		}
-
-	}
-
-
-
-	// ********************** static classes ******************************
-
-
-	private static final class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
-
-		private List<Long> ids;
-
-		private SetBindingIdsParameterCallback(List<Long> ids) {
-			this.ids = ids;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameterList("cfbIds", ids);
-		}
-	}
-
-
 	public static class NewBindingPosition {
 
 		private Long bindingId;
@@ -140,10 +66,61 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 			this.newPosition = newPosition.intValue();
 		}
 
-		public boolean needsUpdate(){
-			return formerPosition!=newPosition;
+		public boolean needsUpdate() {
+			return formerPosition != newPosition;
 		}
 
 	}
+
+	@Override
+	public List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity,
+		Paging paging) {
+		Query q = entityManager.createNamedQuery("CustomFieldBinding.findAllForProjectAndEntity");
+		q.setParameter("projectId", projectId);
+		q.setParameter("entityType", boundEntity);
+
+		JpaPagingUtils.addPaging(q, paging);
+		return q.getResultList();
+	}
+
+
+	@Override
+	public void removeCustomFieldBindings(List<Long> bindingIds) {
+
+		if (!bindingIds.isEmpty()) {
+			entityManager.createNamedQuery("CustomFieldBinding.removeCustomFieldBindings")
+				.setParameter("cfbIds", bindingIds)
+				.executeUpdate();
+
+			List<NewBindingPosition> newPositions = recomputeBindingPositions();
+			updateBindingPositions(newPositions);
+
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	protected List<NewBindingPosition> recomputeBindingPositions() {
+
+		return entityManager.unwrap(Session.class).getNamedQuery("CustomFieldBinding.recomputeBindingPositions")
+			.setResultTransformer(Transformers.aliasToBean(NewBindingPosition.class))
+			.list();
+	}
+
+
+	protected void updateBindingPositions(List<NewBindingPosition> newPositions) {
+
+		Query q = entityManager.createNamedQuery("CustomFielBinding.updateBindingPosition");
+
+		for (NewBindingPosition newPos : newPositions) {
+			if (newPos.needsUpdate()) {
+				q.setParameter("newPos", newPos.getNewPosition());
+				q.setParameter("id", newPos.getBindingId());
+				q.executeUpdate();
+			}
+		}
+
+	}
+
 
 }

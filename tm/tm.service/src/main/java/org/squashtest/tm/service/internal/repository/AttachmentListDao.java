@@ -24,7 +24,8 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
-public interface AttachmentListDao extends EntityDao<AttachmentList> {
+public interface AttachmentListDao {
+	AttachmentList findOne(Long id);
 
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
 	

@@ -4,14 +4,14 @@
 
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-parent-pom</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
-    <relativePath>../parent-pom/pom.xml</relativePath>
+    <artifactId>squash-tm</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>database.h2.fragment</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>H2 fragment - triggers</description>
+
+  <description>Implementation of H2 triggers required by Squash TM</description>
 
   <properties>
     <bundle.hostname>org.h2</bundle.hostname>
@@ -67,6 +67,23 @@
           <!-- There are no junit tests -->
           <skip>true</skip>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-license-to-jar</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

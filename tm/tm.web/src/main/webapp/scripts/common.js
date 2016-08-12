@@ -72,6 +72,12 @@ requirejs.config({
             name: 'projects-manager',
             main: 'projects-manager-main'
         },
+        {	name: 'requirement-folder-management',
+        	main: 'rf-management-main'
+        },
+        {	name: 'requirement-library-management',
+        	main:'rl-management-main'
+        },
         {
             name: 'test-case-management',
             main: 'tc-management-main'

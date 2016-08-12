@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.mockito.Mock
 import org.squashtest.tm.domain.chart.DataType
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.UserListItem

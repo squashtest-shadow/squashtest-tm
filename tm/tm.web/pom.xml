@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <artifactId>squash-tm-tm</artifactId>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -328,7 +328,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -632,6 +632,9 @@
                   <goal>npm</goal>
                 </goals>
                 <phase>generate-resources</phase>
+                <configuration>
+                  <arguments>install --no-optional</arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -780,6 +783,15 @@
                 </goals>
                 <phase>generate-resources</phase>
                 <configuration>
+                  <!--
+                    IMPORTANT : without - -no-optional, spritesmith pulls optional deps which fail to be properly installed (gmsmith and node-gyp).
+                    This _sometimes_ break the npm install task and as a result breaks the build. The solution is :
+                    1. don't pull opional deps
+                    2. enforce spritesmith's default engine ("pixelsmith" and "pngsmith" dependencies) in package.json because they are declared optional
+
+                    When you have problems, try to delete both ./node_modules and ./node folders and rebuild.
+                  -->
+                  <arguments>install --no-optional</arguments>
                   <skip>${npm.skip}</skip>
                 </configuration>
               </execution>
@@ -799,7 +811,6 @@
           </plugin>
 
           <plugin>
-            <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <groupId>com.github.bringking</groupId>
             <artifactId>requirejs-maven-plugin</artifactId>
@@ -860,47 +871,5 @@
       </build>
     </profile>
 
-    <profile>
-      <id>jasmine</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.searls</groupId>
-            <artifactId>jasmine-maven-plugin</artifactId>
-            <version>2.0-alpha-01</version>
-            <configuration>
-              <!-- <debug>true</debug> -->
-              <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-              <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
-              <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
-              <webDriverClassName>${jasmine.webdriver.classname}</webDriverClassName>
-              <preloadSources>
-                <source>scripts/require.js</source>
-                <source>scripts/sinon.js</source>
-                <source>scripts/lib/jquery/jquery-2.1.1.js</source>
-                <source>scripts/lib/underscore/underscore-1.4.4.js</source>
-                <source>scripts/lib/backbone/backbone-1.0.0.js</source>
-              </preloadSources>
-              <specIncludes>
-                <include>spec/*</include>
-              </specIncludes>
-            </configuration>
-            <executions>
-              <execution>
-                <id>js-tests</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>

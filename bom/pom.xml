@@ -5,11 +5,16 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm-bom</artifactId>
   <packaging>pom</packaging>
+
+  <description>This module defines the preferred dependencies and their version to be used throughout the project. To declare a
+    dependency, another module should :
+    1. include this artefact in the dependencyManagement section with the "import" scope
+    2. declare the required dependency in the dependencies section **without** a version number</description>
 
   <properties>
     <!-- jasperreports.version defined in parent pom because it's used in plugin mgt -->
@@ -218,12 +223,6 @@
         <groupId>com.querydsl</groupId>
         <artifactId>querydsl-jpa</artifactId>
         <version>${querydsl.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-configuration-processor</artifactId>
-        <optional>true</optional>
       </dependency>
 
       <dependency>

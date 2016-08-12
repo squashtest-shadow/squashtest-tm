@@ -63,12 +63,38 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	
 	function loadFragment(tree){
 		var selected =  tree.jstree("get_selected");
-		if (selected.length == 1){
+		
+		switch (selected.length){
+
+		//nothing selected : nothing is displayed
+		case 0 :
+			ctxcontent.unload();
+			break;
+		//exactly one element is selected : display it
+		case 1 :
 			ctxcontent.loadWith(selected.getResourceUrl());
-		}
-		else{
-			ctxcontent.unload();				
-		}
+			break;
+
+		//mode than 1 element is selected : display the dashboard
+		default :
+
+			var libIds = selected.filter(":library").map(function(i,e){
+				return $(e).attr("resid");
+			}).get();
+
+			var nodeIds = selected.not(":library").map(function(i,e){
+				return $(e).attr("resid");
+			}).get();
+
+			params = {
+				libraries : libIds.join(","),
+				nodes : nodeIds.join(",")
+			};
+
+			ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard", params);
+
+			break;
+	}
 	}
 	
 	return {

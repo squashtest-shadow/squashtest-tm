@@ -4,13 +4,15 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.15.0.MIGR-SBOOT-14</version>
+    <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
   <packaging>pom</packaging>
   <name>squash-tm-integration-tests</name>
-  <description>Squashtest TM - Integration tests module</description>
+
+  <description>Library of Squash TM integration tests. This module is not supposed to be part of the main build i.e. you have to
+    run it explicitely</description>
 
   <properties>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
@@ -29,6 +31,8 @@
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
+
+    <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
 
@@ -105,7 +109,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -248,7 +252,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.5</version>
         <executions>
           <!-- Adds more source directories to the pom -->
           <execution>

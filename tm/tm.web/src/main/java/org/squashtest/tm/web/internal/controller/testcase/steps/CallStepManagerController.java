@@ -57,8 +57,8 @@ public class CallStepManagerController {
 		this.callStepManagerService = callStepManagerService;
 	}
 
-	@RequestMapping(value = "/test-cases/{testCaseId}/call/{stepIndex}", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long testCaseId, @PathVariable int stepIndex) {
+	@RequestMapping(value = "/test-cases/{testCaseId}/called-test-cases/manager", method = RequestMethod.GET)
+	public ModelAndView showManager(@PathVariable long testCaseId) {
 		TestCase testCase = callStepManagerService.findTestCase(testCaseId);
 		List<TestCaseLibrary> linkableLibraries = testCaseLibraryFinder.findLinkableTestCaseLibraries();
 
@@ -66,22 +66,18 @@ public class CallStepManagerController {
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-call-step-manager");
 		mav.addObject("testCase", testCase);
-		mav.addObject("stepIndex", stepIndex);
 		mav.addObject("rootModel", linkableLibrariesModel);
 
 		return mav;
 	}
 
-	@RequestMapping(value = "/test-cases/{callingTestCaseId}/call/{stepIndex}", method = RequestMethod.POST, params = "called-test-case")
+	@RequestMapping(value = "/test-cases/{callingTestCaseId}/called-test-cases", method = RequestMethod.POST, params = "called-test-case[]")
 	@ResponseBody
-	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId, @PathVariable int stepIndex,
-			@RequestParam("called-test-case") long calledTestCaseId) {
-		if (stepIndex > 0) {
-			callStepManagerService.addCallTestStep(callingTestCaseId, calledTestCaseId, stepIndex);
-		}
-		else {
-			callStepManagerService.addCallTestStep(callingTestCaseId, calledTestCaseId);
-		}
+	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId,
+			@RequestParam("called-test-case[]") List<Long> calledTestCaseIds) {
+		
+			callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds);
+		
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {

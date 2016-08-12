@@ -27,7 +27,7 @@ import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecificati
 import javax.inject.Provider
 
 import org.springframework.context.MessageSource;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance;

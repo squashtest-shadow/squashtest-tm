@@ -188,13 +188,13 @@ gulp.task('sprites',function(){
     var imgStream = spriteOutput.img
     .pipe(plumber())
     .pipe(gulp.dest(wro4jDestination + '/images'));
- 
+
     var cssStream = spriteOutput.css
     .pipe(plumber())
     .pipe(gulp.dest(styleDestination));
- 
+
     return merge(imgStream, cssStream);
-    
+
 });
 //###################################### /PROCESSING ICON IMAGES ####################################
 
@@ -221,6 +221,6 @@ gulp.task('watch', function() {
 	var toWatch =  styleSource + '/*';
     gulp.watch(toWatch, function () {
         runSequence('copyCssToProdDirectory','css');
-    });  
+    });
 });
 //###################################### /WATCHER FOR CSS ###########################################

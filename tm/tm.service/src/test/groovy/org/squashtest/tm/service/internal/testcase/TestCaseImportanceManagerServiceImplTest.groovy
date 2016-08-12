@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.testcase
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
 import static RequirementCriticality.*
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase

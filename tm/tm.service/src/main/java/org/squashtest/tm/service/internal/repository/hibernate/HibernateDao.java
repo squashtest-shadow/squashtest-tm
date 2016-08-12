@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -57,12 +56,18 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * the domain class they must deal with.
 	 */
 	@PersistenceContext
-	protected EntityManager em;
+	protected EntityManager entityManager;
 
 	// transitional method, replace underlying code by direct uses of the
 	// EntityManager when possible.
+
+	/**
+	 * @deprecated YOU SHOULD NOT USE SESSION UNLESS THERE IS NO JPA WAY. IN THIS CASE, PLEASE UNLINE entityManager.unwrap SO THAT YOUR INTENTION IS CLEAR !
+	 * @return
+	 */
+	@Deprecated
 	protected /*final*/ Session currentSession() {
-		return em.unwrap(Session.class);
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override
@@ -84,29 +89,16 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	@Override
 	public /*final*/ void flush() {
-		currentSession().flush();
-	}
-
-	@Override
-	public void clearFromCache(ENTITY_TYPE entity) {
-		currentSession().evict(entity);
-
-	}
-
-	@Override
-	public void clearFromCache(Collection<ENTITY_TYPE> entities) {
-		for (ENTITY_TYPE entity : entities) {
-			clearFromCache(entity);
-		}
+		entityManager.flush();
 	}
 
 	@SuppressWarnings("unchecked")
 	protected /*final*/ ENTITY_TYPE getEntity(long objectId) {
-		return (ENTITY_TYPE) currentSession().get(entityType, objectId);
+		return entityManager.find(entityType, objectId);
 	}
 
 	protected /*final*/ void persistEntity(Object entity) {
-		currentSession().persist(entity);
+		entityManager.persist(entity);
 	}
 
 	/**
@@ -118,7 +110,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 */
 	@SuppressWarnings("unchecked")
 	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName) {
-		return currentSession().getNamedQuery(queryName).list();
+		return entityManager.createNamedQuery(queryName).getResultList();
 	}
 
 	/**
@@ -130,6 +122,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Session session = currentSession();
 
@@ -152,10 +145,8 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 */
 	@SuppressWarnings("unchecked")
 	protected /*final*/ <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
-			@NotNull Paging filter) {
-		Session session = currentSession();
-
-		Query q = session.getNamedQuery(queryName);
+		@NotNull Paging filter) {
+		javax.persistence.Query q = entityManager.createNamedQuery(queryName);
 		q.setParameter(0, queryParam);
 
 		if (!filter.shouldDisplayAll()) {
@@ -163,32 +154,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 			q.setMaxResults(filter.getPageSize());
 		}
 
-		return q.list();
-	}
-
-	/**
-	 * Executes a named query with parameters. The parameters should be set by the callback object.
-	 *
-	 * @param <R>
-	 * @param queryName
-	 * @param setParams
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams,
-			Paging paging) {
-
-		Session session = currentSession();
-
-		Query q = session.getNamedQuery(queryName);
-		setParams.setQueryParameters(q);
-
-		if (!paging.shouldDisplayAll()) {
-			q.setFirstResult(paging.getFirstItemIndex());
-			q.setMaxResults(paging.getPageSize());
-		}
-
-		return q.list();
+		return q.getResultList();
 	}
 
 	/**
@@ -205,12 +171,13 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 */
 	@SuppressWarnings("unchecked")
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, String paramName, Object paramValue) {
-		Query q = currentSession().getNamedQuery(queryName);
-		q.setParameter(paramName, paramValue);
-		return (R) q.uniqueResult();
+		return (R) entityManager.createNamedQuery(queryName)
+			.setParameter(paramName, paramValue)
+			.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Query q = currentSession().getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
@@ -219,18 +186,11 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	@SuppressWarnings("unchecked")
 	protected /*final*/ <R> R executeEntityNamedQuery(String queryName) {
-		Query q = currentSession().getNamedQuery(queryName);
-		return (R) q.uniqueResult();
-	}
-
-	protected /*final*/ void executeUpdateListQuery(String queryName, SetQueryParametersCallback params) {
-		Query q = currentSession().getNamedQuery(queryName);
-		params.setQueryParameters(q);
-		q.executeUpdate();
+		return (R) entityManager.createNamedQuery(queryName).getSingleResult();
 	}
 
 	protected /*final*/ void removeEntity(ENTITY_TYPE entity) {
-		currentSession().delete(entity);
+		entityManager.remove(entity);
 	}
 
 	@Override

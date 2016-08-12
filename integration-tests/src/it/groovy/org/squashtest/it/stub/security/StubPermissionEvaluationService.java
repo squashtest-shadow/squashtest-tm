@@ -22,6 +22,7 @@ package org.squashtest.it.stub.security;
 
 import java.util.*;
 
+import org.hibernate.Hibernate;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
@@ -48,7 +49,7 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
 		Identified identified = (Identified) object;
-		return hasPermissionOnObject(permission, identified.getId(), object.getClass().getName());
+		return hasPermissionOnObject(permission, identified.getId(), Hibernate.getClass(object).getName());
 	}
 
 	@Override

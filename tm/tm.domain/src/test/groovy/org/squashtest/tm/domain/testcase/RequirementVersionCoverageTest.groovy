@@ -22,19 +22,10 @@ package org.squashtest.tm.domain.testcase
 
 import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.CallTestStep
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException

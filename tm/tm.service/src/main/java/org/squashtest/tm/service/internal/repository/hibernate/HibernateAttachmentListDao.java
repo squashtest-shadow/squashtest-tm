@@ -20,35 +20,46 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.criterion.Restrictions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sun.org.apache.xml.internal.serializer.utils.AttList;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Repository
-public class HibernateAttachmentListDao extends HibernateEntityDao<AttachmentList> implements AttachmentListDao {
+public class HibernateAttachmentListDao implements AttachmentListDao {
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@Override
+	public AttachmentList findOne(Long id) {
+		return entityManager.getReference(AttachmentList.class, id);
+	}
 
 	@Override
 	public TestCase findAssociatedTestCaseIfExists(Long attachmentListId) {
+		final QTestCase testCase = QTestCase.testCase;
 
-		TestCase testCase = (TestCase) currentSession().createCriteria(TestCase.class)
-				.createCriteria("attachmentList")
-				.add(Restrictions.eq("id",attachmentListId))
-				.uniqueResult();
-		
-		return testCase;
+		return new JPAQueryFactory(entityManager)
+			.selectFrom(testCase)
+			.where(testCase.attachmentList.id.eq(attachmentListId))
+			.fetchOne();
 	}
 
 	@Override
 	public RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId) {
+		final QRequirementVersion req = QRequirementVersion.requirementVersion;
 
-		RequirementVersion requirementVersion = (RequirementVersion) currentSession().createCriteria(RequirementVersion.class)
-				.createCriteria("attachmentList")
-				.add(Restrictions.eq("id",attachmentListId))
-				.uniqueResult();
-		
-		return requirementVersion;
+		return new JPAQueryFactory(entityManager)
+			.selectFrom(req)
+			.where(req.attachmentList.id.eq(attachmentListId))
+			.fetchOne();
 	}
 }

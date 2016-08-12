@@ -20,88 +20,47 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.squashtest.tm.domain.users.Team;
+
 import java.util.List;
 
-import org.springframework.data.repository.Repository;
-import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
-
 /**
- * Data access methods for {@link Team}s. 
- * 
+ * Data access methods for {@link Team}s.
+ *
  * @author mpagnon
- * 
  */
 
-public interface TeamDao extends Repository<Team, Long>,  CustomTeamDao{
-	/**
-	 * Will persist a new team.
-	 * 
-	 * @param team
-	 *            : the new team to persist
-	 */
-	@NativeMethodFromJpaRepository
-	void save(Team team);
-
+public interface TeamDao extends JpaRepository<Team, Long>, CustomTeamDao {
 	/**
 	 * Simply retrieve the {@link Team} of the given id
-	 * 
-	 * @param teamId
-	 * @return
 	 */
 	@Override
-	@UsesTheSpringJpaDsl
 	Team findById(long teamId);
 
 	/**
-	 * Simply delete the given {@link Team}
-	 * 
-	 * @param team
-	 */
-	@NativeMethodFromJpaRepository
-	void delete(Team team);
-
-	/**
 	 * Find all teams with name equals to the given name param.
-	 * 
-	 * @param name
+	 *
 	 * @return list of team with same name as param
 	 */
-	@UsesTheSpringJpaDsl
 	List<Team> findAllByName(String name);
 
 	/**
-	 * Simply count all Teams
-	 * 
-	 * @return amount of {@link Team} in database
-	 */
-	@NativeMethodFromJpaRepository
-	long count();
-	
-	/**
-	 * Find all teams matching the given ids
-	 * 
-	 * @param teamIds : ids of {@link Team}s to return
-	 * @return List of matching {@link Team}s.
-	 */
-	@UsesTheSpringJpaDsl
-	@EmptyCollectionGuard
-	List<Team> findAllByIdIn(List<Long> teamIds);
-	
-	/**
 	 * Will count the number of Teams where the concerned user is member.
+	 *
 	 * @param userId : id of the concerned user
 	 * @return the total number of teams associated to the user
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	long countAssociatedTeams(long userId);
-	
+
 	/**
 	 * Will return all {@link Team}s that don't have the concerned user as a member.
+	 *
 	 * @param userId : the id of the concerned user
-	 * @return
 	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
+	@Query
 	List<Team> findAllNonAssociatedTeams(long userId);
 
 }

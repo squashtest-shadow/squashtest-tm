@@ -72,7 +72,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	/**
 	 * @see CustomTeamModificationService#deleteTeam(long)
-         * 
+         *
          * @param teamId the id of the team
 	 */
 	@Override
@@ -135,7 +135,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Override
 	public void removeMember(long teamId, long memberId) {
-		User user = userDao.findById(memberId);
+		User user = userDao.findOne(memberId);
 		Team team = teamDao.findById(teamId);
 		team.removeMember(user);
 		aclService.updateDerivedPermissions(memberId);
@@ -148,7 +148,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	}
 
 	private void removeMembers(Team team , List<Long> memberIds){
-		List<User> users = userDao.findAllByIds(memberIds);
+		List<User> users = userDao.findAll(memberIds);
 		team.removeMember(users);
 		for (Long id : memberIds) {
 			aclService.updateDerivedPermissions(id);
@@ -165,7 +165,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Override
 	public void removeMemberFromAllTeams(long memberId) {
-		User user = userDao.findById(memberId);
+		User user = userDao.findOne(memberId);
 		List<Long> teamIds = new ArrayList<>();
 		Set<Team> teams = user.getTeams();
 		for (Team team : teams) {

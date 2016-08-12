@@ -125,6 +125,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 	/*
 	 * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized which
 	 * needs to post-check.
+	 * This method check only for the move in the tree.
 	 * 
 	 * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
 	 * 
@@ -135,6 +136,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		if (! this.__call_old()){
 			return false;
 		}
+		
 		
 		//now apply our own.
 		var rules = this._getRules();

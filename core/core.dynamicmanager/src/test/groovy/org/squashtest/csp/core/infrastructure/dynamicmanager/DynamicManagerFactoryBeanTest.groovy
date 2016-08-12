@@ -23,32 +23,26 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.Query
-import org.hibernate.SessionFactory
-import org.hibernate.Session
 import org.springframework.beans.factory.BeanFactory
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException
-import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
 import spock.lang.Specification
 
+import javax.persistence.Query
+
 class DynamicManagerFactoryBeanTest extends Specification{
-	
+
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
 	EntityManager em = Mock()
-	Session currentSession = Mock()
 	BeanFactory beanFactory = Mock()
 
 	def setup() {
-		em.unwrap(_) >> currentSession
-		
 		factory.beanFactory = beanFactory
 		factory.lookupCustomImplementation = false
 		factory.componentType = DummyManager
 		factory.entityType = DummyEntity
-		factory.em = em		
+		factory.entityManager = em
 	}
 
 	def "factory should create a unique dynamic DummyManager"() {
@@ -64,7 +58,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should fetch dummy entity by id and change its style"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, style: "mod")
-		currentSession.load(DummyEntity, 10L) >> dummy
+		em.getReference(DummyEntity, 10L) >> dummy
 
 		when:
 		factory.initializeFactory()
@@ -109,7 +103,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should fetch dummy entity by id and change its shoes"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, shoes: "creepers")
-		currentSession.load(DummyEntity, 10L) >> dummy
+		em.getReference(DummyEntity, 10L) >> dummy
 
 		when:
 		factory.initializeFactory()
@@ -122,7 +116,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should fetch dummy entity by id and change its boolean coolness"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, cool: false)
-		currentSession.load(DummyEntity, 10L) >> dummy
+		em.getReference(DummyEntity, 10L) >> dummy
 
 		when:
 		factory.initializeFactory()
@@ -131,7 +125,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		then:
 		dummy.isCool()
 	}
-	
+
 	def "should lookup the delegate manager in spring factory"() {
 		given:
 		CustomDummyManager delegateManager = Mock()
@@ -147,12 +141,12 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		then:
 		1 * delegateManager.changeSomething(10L, "cool stuff")
 	}
-	
+
 	def "should unwrap propagated reflection exceptions"() {
 		given:
 		DummyEntity dummy = Mock()
-		currentSession.load(DummyEntity, 10L) >> dummy
-		
+		em.getReference(DummyEntity, 10L) >> dummy
+
 		and:
 		dummy.setStyle(_) >> {throw new IllegalArgumentException()}
 
@@ -167,7 +161,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should fetch dummy entity by id and nullify its style"() {
 		given:
 		DummyEntity dummy = new DummyEntity(id: 10L, style: "mod")
-		currentSession.load(DummyEntity, 10L) >> dummy
+		em.getReference(DummyEntity, 10L) >> dummy
 
 		when:
 		factory.initializeFactory()
@@ -176,11 +170,11 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		then:
 		dummy.style == null
 	}
-	
+
 	def "should dynamically find an entity by its id"() {
 		given:
 		DummyEntity entity = new DummyEntity()
-		currentSession.load(DummyEntity, 10L) >> entity
+		em.getReference(DummyEntity, 10L) >> entity
 
 		when:
 		factory.initializeFactory()
@@ -193,11 +187,11 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "finder method should trigger an entity named query"() {
 		given:
 		Query query = Mock()
-		currentSession.getNamedQuery("DummyEntity.findByNameAndSuperpower") >> query
+		em.createNamedQuery("DummyEntity.findByNameAndSuperpower") >> query
 
 		and:
 		DummyEntity entity = new DummyEntity()
-		query.uniqueResult() >> entity
+		query.getSingleResult() >> entity
 
 		when:
 		factory.initializeFactory()
@@ -212,11 +206,11 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "finder method should trigger an entity list named query"() {
 		given:
 		Query query = Mock()
-		currentSession.getNamedQuery("DummyEntity.findAllByNameAndSuperpower") >> query
+		em.createNamedQuery("DummyEntity.findAllByNameAndSuperpower") >> query
 
 		and:
 		DummyEntity entity = new DummyEntity()
-		query.list() >> [entity]
+		query.getResultList() >> [entity]
 
 		when:
 		factory.initializeFactory()

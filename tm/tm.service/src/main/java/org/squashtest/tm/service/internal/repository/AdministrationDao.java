@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import org.squashtest.tm.domain.AdministrationStatistics;
 
 
-public interface AdministrationDao extends GenericDao<Object> {
+public interface AdministrationDao {
 	/**
 	 * will count, regardless of any right,  all projects, users, requirement, test-cases, campaigns, iterations, executions, and return them in the {@linkplain AdministrationStatistics} bean.
 	 * @return a filled {@link AdministrationStatistics} bean

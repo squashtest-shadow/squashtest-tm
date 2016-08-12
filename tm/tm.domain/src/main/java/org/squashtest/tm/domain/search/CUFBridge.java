@@ -126,7 +126,7 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			}
 
 			// TODO use the correct API
-			if (val != null && inputType == InputType.NUMERIC) {
+			if (StringUtils.isNotBlank(val) && inputType == InputType.NUMERIC) {
 				NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe
 				Double doubleValue = numericCustomFieldValue.getNumericValue().doubleValue();
 				Field field = new DoubleField(code, doubleValue, luceneOptions.getStore());

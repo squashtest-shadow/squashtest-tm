@@ -63,14 +63,14 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeCode(long infoListItemId, String newCode) {
 
-		InfoListItem item = itemDao.findById(infoListItemId);
+		InfoListItem item = itemDao.findOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setCode(newCode);
 	}
 
 	@Override
 	public void changeLabel(long infoListItemId, String newLabel) {
-		InfoListItem item = itemDao.findById(infoListItemId);
+		InfoListItem item = itemDao.findOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setLabel(newLabel);
 	}
@@ -78,7 +78,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeDefault(long infoListItemId) {
 
-		InfoListItem changedItem = itemDao.findById(infoListItemId);
+		InfoListItem changedItem = itemDao.findOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(changedItem);
 		List<InfoListItem> items = changedItem.getInfoList().getItems();
 		for(InfoListItem item : items){
@@ -91,7 +91,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void changeIcon(long infoListItemId, String icon) {
-		InfoListItem item = itemDao.findById(infoListItemId);
+		InfoListItem item = itemDao.findOne(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setIconName(icon);
 
@@ -108,7 +108,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 			item.setDefault(true);
 		}
 		item.setInfoList(infoList);
-		itemDao.persist(item);
+		itemDao.save(item);
 		infoList.addItem(item);
 	}
 
@@ -119,7 +119,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public InfoListItem findById(Long id){
-		return itemDao.findById(id);
+		return itemDao.findOne(id);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public InfoListItem findReference(ListItemReference reference){
-		return itemDao.findReference(reference);
+		return itemDao.findByCode(reference.getCode());
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 		infoList.removeItem(item);
 		itemDao.removeInfoListItem(infoListItemId, defaultItem);
-		itemDao.remove(item);
+		itemDao.delete(item);
 	}
 
 }

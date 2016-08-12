@@ -38,7 +38,7 @@ import javax.inject.Provider;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 /**
- * Spring configuration for web layer
+ * Spring configuration for tree node builders
  *
  * @author Gregory Fouquet
  * @since 1.13.0

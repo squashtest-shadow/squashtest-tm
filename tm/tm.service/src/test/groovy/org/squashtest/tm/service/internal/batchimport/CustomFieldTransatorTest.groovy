@@ -31,7 +31,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.domain.customfield.MultiSelectField

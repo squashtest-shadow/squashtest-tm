@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
@@ -34,8 +32,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao
-
 import spock.lang.Specification
 
 

@@ -4,19 +4,17 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.15.0.MIGR-SBOOT-14</version>
+  <version>1.15.0.IT2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
   <description>Squash Test Manager - Test repository management application</description>
 
   <modules>
-    <!-- bom is used almost everywhere, we build it first -->
+    <!-- bom is used almost everywhere, we build it early -->
     <module>bom</module>
-    <!-- tools is a parent-pom dep so it needs to build first -->
+    <!-- tools are used by the actual app, we build it early -->
     <module>tools</module>
-    <module>parent-pom</module>
-    <module>dependencies</module>
     <module>database.h2.fragment</module>
     <module>database</module>
     <module>core</module>
@@ -53,6 +51,8 @@
       This POM should only declare plugin mgt and plugins.
       It should not declare dependency mgt (they should be in squash-tm-bom)
       It should not declare dependencies
+      If you need any of these plgins in a submodule, simply declare it in the plugins section without version. You
+      probably don't need to reconfigure the plugin either.
     -->
     <pluginManagement>
       <plugins>
@@ -61,6 +61,7 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.3</version>
           <configuration>
+            <!-- Std java compiler plugin is configured to compile groovy using groovy-eclipse-compiler -->
             <source>${java.version}</source>
             <target>${java.version}</target>
             <compilerId>groovy-eclipse-compiler</compilerId>
@@ -138,6 +139,7 @@
           </executions>
         </plugin>
         <plugin>
+          <!-- Mostly the same as surefire, but used for integration tests -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven-failsafe-plugin.version}</version>
@@ -200,12 +202,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>2.6.1</version>
-        </plugin>
-
-        <plugin>
           <artifactId>maven-remote-resources-plugin</artifactId>
           <version>1.5</version>
         </plugin>
@@ -216,6 +212,7 @@
         </plugin>
 
         <plugin>
+          <!-- wro4j processes some web assets such as less CSS -->
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>
           <version>${wro4j.version}</version>
@@ -235,6 +232,10 @@
         </plugin>
 
         <plugin>
+          <!--
+            this plugin installs a node which can be used by requirejs maven plugin
+            TODO assess : since frontend plugin also installs node maybe this one is no longer needed
+          -->
           <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
           <artifactId>nodejs-maven-plugin</artifactId>
           <version>1.0.5-node-0.10.25</version>
@@ -297,6 +298,7 @@
         </plugin>
 
         <plugin>
+          <!-- This is used to run groovy scripts during the build (not to compile groovy sources, see maven-compiler-plugin) -->
           <groupId>org.codehaus.gmaven</groupId>
           <artifactId>gmaven-plugin</artifactId>
           <version>1.5</version>
@@ -312,11 +314,13 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.4.1</version>
         </plugin>
+
       </plugins>
     </pluginManagement>
 
     <plugins>
       <plugin>
+        <!-- This plugin sorts the poms so that they are simpler to manage and merge -->
         <groupId>com.google.code.sortpom</groupId>
         <artifactId>maven-sortpom-plugin</artifactId>
         <version>2.2.1</version>
@@ -595,20 +599,6 @@
     </profile>
 
     <profile>
-      <id>add-eclipse-formatter</id>
-      <activation>
-        <file>
-          <!-- mvn appplies OR so criterion below is deactivated -->
-          <!-- <exists>${basedir}\.project</exists> -->
-          <missing>${basedir}\.settings\.sqfmt12</missing>
-        </file>
-      </activation>
-      <build>
-        <plugins />
-      </build>
-    </profile>
-
-    <profile>
       <id>eclipse</id>
       <activation>
         <file>
@@ -717,6 +707,7 @@
     </profile>
 
     <profile>
+      <!-- Configuration for sonar / code coverage measurement using jacoco -->
       <id>code.analysis</id>
       <activation>
         <property>

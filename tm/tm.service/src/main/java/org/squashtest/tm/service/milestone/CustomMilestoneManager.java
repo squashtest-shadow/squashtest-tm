@@ -68,7 +68,6 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	/**
 	 * Throw exception if the user try do edit milestone range and can't
 	 *
-	 * @param milestoneId
 	 *            the id of the milestone
 	 */
 	void verifyCanEditMilestoneRange();
@@ -118,7 +117,7 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	void unbindAllObjects(long milestoneId);
 
 	boolean hasMilestone(List<Long> userdIds);
-	
+
 	boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, GenericProject project);
 
 }

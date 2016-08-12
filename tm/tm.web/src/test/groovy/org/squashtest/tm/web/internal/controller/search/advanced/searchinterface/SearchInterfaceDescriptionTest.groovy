@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.controller.search.advanced.searchinterfac
 
 import javax.inject.Provider
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInterfaceDescription.OptionBuilder
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
