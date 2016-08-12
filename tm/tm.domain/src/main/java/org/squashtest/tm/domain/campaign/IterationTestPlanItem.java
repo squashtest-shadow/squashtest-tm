@@ -52,6 +52,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Persister;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
@@ -76,6 +77,7 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.infrastructure.hibernate.FixIterationToItemPersister;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 @NamedQueries({
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query="select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
@@ -85,6 +87,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Indexed
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
+@Persister(impl=FixIterationToItemPersister.class)
 public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;

@@ -59,8 +59,7 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 	def "should copy a folder and it's content"(){
 
 		when:
-		JpaTransactionManager jpaTransactionManager = applicationContext.getBean(JpaTransactionManager.class);
-		jpaTransactionManager.getEntityManagerFactory().unwrap();
+
 		def result = service.copyNodes([-10L], -2L);
 		em.flush()
 		em.clear()

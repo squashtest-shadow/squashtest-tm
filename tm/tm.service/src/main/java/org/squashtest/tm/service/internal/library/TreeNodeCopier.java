@@ -312,7 +312,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	}
 
 	private void bindTestPlanOfCopiedTestSuite(Iteration iterationCopy,
-											   Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, TestSuite testSuiteCopy) {
+			Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, 
+                        TestSuite testSuiteCopy) {
 		List<Integer> testSuiteTpiIndexesInIterationList = testSuitePastableCopyEntry.getValue();
 		List<IterationTestPlanItem> testPlanItemsToBind = new ArrayList<>();
 		List<IterationTestPlanItem> iterationTestPlanCopy = iterationCopy.getTestPlans();

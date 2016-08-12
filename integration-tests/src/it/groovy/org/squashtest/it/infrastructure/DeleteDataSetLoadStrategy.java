@@ -27,23 +27,20 @@ import java.sql.SQLException;
 import org.dbunit.dataset.IDataSet;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.jdbc.Work;
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy;
 import org.unitils.dbunit.util.DbUnitDatabaseConnection;
 
 public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
 
-	public Connection getConnection(Session session) {  
-		try {
-			SessionFactoryImplementor sfi = (SessionFactoryImplementor) session.getSessionFactory();
-	    	ConnectionProvider cp = sfi.getConnectionProvider();
-	    	return cp.getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-    }
+        private void commit(Session session){
+           session.doWork(new Work(){
+               public void execute(Connection connection) throws SQLException{
+                   connection.commit();
+               }
+           });
+        }
+	
 	
 	public void delete(Session session, IDataSet dataSet){
 		try{
@@ -57,7 +54,7 @@ public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
 			
 			query.executeUpdate();
 	
-			getConnection(session).commit();
+			commit(session);
 			
 			
 		}catch(Exception e){

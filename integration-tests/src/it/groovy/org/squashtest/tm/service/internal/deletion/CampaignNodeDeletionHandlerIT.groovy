@@ -316,33 +316,35 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	def "should remove iteration test plan item and its executions"(){
 		given :
 		IterationTestPlanItem item = findEntity(IterationTestPlanItem.class, -111L)
+                Iteration iter = findEntity(Iteration.class, -11)
+                
 		when :
-
+                iter.removeItemFromTestPlan(item)                
 		deletionHandler.deleteIterationTestPlanItem(item)
-
+                em.flush()
 
 		then :
-
-		allDeleted("AttachmentList", [-1111L, -1112L])
-		allDeleted("IssueList", [-1111L, -1112L])
-		allDeleted("Execution", [-1111L, -1112L])
-		allDeleted("IterationTestPlanItem", [-111L])
-
-		and :
-		allNotDeleted("AttachmentList", [
-			-11L,-12L,
-			-1211L,
-			-1212L,
-			-1221L,
-			-1222L,
-			-1121L,
-			-1122L
+                
+		allNotDeleted("Iteration", [-12L, -11L])
+                allNotDeleted("AttachmentList", [
+                    -11L,-12L,
+                    -1211L,
+                    -1212L,
+                    -1221L,
+                    -1222L,
+                    -1121L,
+                    -1122L
 		])
 		allNotDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
 		allNotDeleted("Execution", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
 		allNotDeleted("IterationTestPlanItem", [-121L, -122L, -112L])
-		allNotDeleted("Iteration", [-12L, -11L])
+                
+                and :
 
+		allDeleted("IterationTestPlanItem", [-111L])
+		allDeleted("AttachmentList", [-1111L, -1112L])
+		allDeleted("IssueList", [-1111L, -1112L])
+		allDeleted("Execution", [-1111L, -1112L])
 
 	}
 

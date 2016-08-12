@@ -236,8 +236,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public void persistIterationAndTestPlan(Iteration iteration) {
-		persistTestPlan(iteration);
 		persist(iteration);
+		//persistTestPlan(iteration);
 
 	}
 

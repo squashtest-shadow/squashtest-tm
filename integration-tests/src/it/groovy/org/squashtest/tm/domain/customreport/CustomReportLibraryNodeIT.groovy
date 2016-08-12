@@ -126,7 +126,7 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		
 	}
 	
-	def "should find binded entity"(){
+	def "should find bound entity"(){
 		given :
 		
 		
@@ -150,7 +150,7 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		-5L				||				-3L			|		"Chart3"
 	}
 	
-	def "should find binded charts in dashboard"(){
+	def "should find bound charts in dashboard"(){
 		given :
 		CustomReportDashboard crd = findEntity(CustomReportDashboard.class, -1L)
 		

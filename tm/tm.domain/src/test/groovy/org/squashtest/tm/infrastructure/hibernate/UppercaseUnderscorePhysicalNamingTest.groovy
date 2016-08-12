@@ -61,6 +61,15 @@ class UppercaseUnderscorePhysicalNamingTest extends Specification{
             ident.text == "BOB_MIKE"        
         }
         
+        def "should process names that ends with an uppercase"(){
+        
+        when :
+            def ident = strategy.toPhysicalTableName(id("bobX"), null)
+
+        then :
+            ident.text == "BOB_X"  
+        }
+    
         def "should also process names that ends with an uppercase acronyms"(){
         when :
             def ident = strategy.toPhysicalTableName(id("bobMIKE"), null)
@@ -68,6 +77,7 @@ class UppercaseUnderscorePhysicalNamingTest extends Specification{
         then :
             ident.text == "BOB_MIKE"                 
         }
+        
         
     @Unroll
     def "should not add extra underscores when the name is rich on them"(){

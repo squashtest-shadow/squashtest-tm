@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.15.0.IT2-SNAPSHOT</version>
+    <version>1.15.0.MIGR-SBOOT-14</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
@@ -24,7 +24,8 @@
       props should be overridden with absolute paths (which don't work under windows...) -->
     <dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
 
-    <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+    <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
+    <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
@@ -364,8 +365,8 @@
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-
-        <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
+        <hibernate.dialect>org.squashtest.tm.domain.jpql.MySQLEnhancedDialect</hibernate.dialect>
       </properties>
 
       <build>
@@ -414,7 +415,8 @@
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <hibernate.dialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
+        <hibernate.dialect>org.squashtest.tm.domain.jpql.PostgresEnhancedDialect</hibernate.dialect>
       </properties>
 
       <build>

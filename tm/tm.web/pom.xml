@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.15.0.IT2-SNAPSHOT</version>
+    <version>1.15.0.MIGR-SBOOT-14</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -13,6 +13,7 @@
   <description>Squash TM webapp - Provides web frontend</description>
 
   <properties>
+    <appserver.scope>compile</appserver.scope>
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
     <jasperreports.outputDir>${project.build.directory}/jasperreports-plugin/reports</jasperreports.outputDir>
@@ -43,7 +44,6 @@
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
-    <appserver.scope>compile</appserver.scope>
   </properties>
 
   <dependencyManagement>

@@ -86,6 +86,13 @@ implements PhysicalNamingStrategy{
 				text.insert(i++, '_');
 			}
 		}
+                // handle the last two characters separately because 
+                // the loop above ends early (there are good reasons for that)
+                int c = text.length() -1;
+                if (isUnderscoreRequired(text.charAt(c-1), text.charAt(c))){
+                    text.insert(c, '_');
+                }
+                
 		return new Identifier(text.toString().toUpperCase(Locale.ROOT), name.isQuoted());
 	
 	}
@@ -94,6 +101,12 @@ implements PhysicalNamingStrategy{
 		return (before != '_' &&
                         Character.isLowerCase(before) && Character.isUpperCase(current) ||
 			Character.isUpperCase(current) && Character.isLowerCase(after));
+        }
+        
+        private boolean isUnderscoreRequired(char before, char current){
+            return (before != '_' &&
+                    Character.isLowerCase(before) && Character.isUpperCase(current)
+                    );
         }
     
 }

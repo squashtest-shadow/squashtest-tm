@@ -240,8 +240,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
-			iterationTestPlanDao.save(itp);
 			iteration.addTestPlan(itp);
+			iterationTestPlanDao.save(itp);
 		}
 	}
 
