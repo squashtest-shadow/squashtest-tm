@@ -505,7 +505,7 @@
 	@NamedQuery(name = "BugTracker.findByExecutionStep", query = "select bt from ExecutionStep s join s.execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where s = :step"),
 
 	//BugTrackerBinding
-	@NamedQuery(name = "bugTrackerBinding.findByBugtrackerId", query = "from BugTrackerBinding where bugtracker_id= :bugtrackerId"),
+	@NamedQuery(name = "BugTrackerBinding.findByBugtrackerId", query = "from BugTrackerBinding where bugtracker_id= :bugtrackerId"),
 
 	//UsersGroup
 	@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),

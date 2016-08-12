@@ -482,7 +482,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
 			project.removeBugTrackerBinding();
-			bugTrackerBindingDao.remove(bugtrackerBinding);
+			bugTrackerBindingDao.delete(bugtrackerBinding);
 		}
 	}
 
