@@ -487,12 +487,28 @@
 	@NamedQuery(name = "issueList.countIssues", query = "select count(issues) from IssueList issueList join issueList.issues issues where issueList.id in (:issueListIds)"),
 	@NamedQuery(name = "issueList.countIssuesByTracker", query = "select count(issues) from IssueList issueList join issueList.issues issues join issues.bugtracker bugTracker where issueList.id in (:issueListIds) and bugTracker.id = :bugTrackerId"),
 
-	@NamedQuery(name = "issue.countByCampaignFolder", query = "select count(ish) from Execution ex join ex.issues ish where ex.testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :folderId)"),
-	@NamedQuery(name = "issue.countByCampaign", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :campaign"),
-	@NamedQuery(name = "issue.countByIteration", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues ish  where i = :iteration"),
-	@NamedQuery(name = "issue.countByTestSuite", query = "select count(ish) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues ish  where ts = :testSuite"),
-	@NamedQuery(name = "issue.countByExecutionAndSteps", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
-	@NamedQuery(name = "issue.countByTestCase", query = "select count(ish) from Execution ex join ex.issues ish join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase"),
+	@NamedQuery(name = "Issue.countByCampaignFolder", query = "select count(ish) from Execution ex join ex.issues ish where ex.testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe, CampaignFolder cf where cpe.ancestorId = cf.id and cf = :folder)"),
+	@NamedQuery(name = "Issue.countByCampaign", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :campaign"),
+	@NamedQuery(name = "Issue.countByIteration", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues ish  where i = :iteration"),
+	@NamedQuery(name = "Issue.countByTestSuite", query = "select count(ish) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues ish  where ts = :testSuite"),
+	@NamedQuery(name = "Issue.countByExecutionAndSteps", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
+	@NamedQuery(name = "Issue.countByTestCase", query = "select count(ish) from Execution ex join ex.issues ish join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase"),
+	@NamedQuery(name = "Issue.countIssuesfromExecutionSteps",
+		query = "select count(Issue) from Issue Issue where Issue.id in ( " +
+			"select isStep.id from ExecutionStep estep inner join estep.issueList ils inner join ils.issues isStep where estep.id in (:executionStepsIds) " +
+		") and Issue.bugtracker.id in (" +
+			"select bt.id from ExecutionStep estep inner join estep.execution exec inner join exec.testPlan tp inner join tp.iteration it inner join it.campaign cp inner join cp.project proj inner join proj.bugtrackerBinding binding inner join binding.bugtracker bt where estep.id in (:executionStepsIds) " +
+		")"),
+	@NamedQuery(name = "Issue.countIssuesfromExecutionAndExecutionSteps",
+		query="select count(Issue) from Issue Issue where (	 " +
+			"Issue.id in ( 	 " +
+				"select isExec.id 	 from Execution exec 	 inner join exec.issueList ile 	 inner join ile.issues isExec 	 where exec.id in (:executionsIds) 	 " +
+			") 	 or Issue.id in (	 " +
+				"select isStep.id 	 from ExecutionStep estep 	 inner join estep.issueList ils 	 inner join ils.issues isStep 	 where estep.id in (:executionStepsIds) 	 " +
+			") 	 " +
+		") and Issue.bugtracker.id in (	 " +
+			"select bt.id 	 from ExecutionStep estep 	 inner join estep.execution exec 	 inner join exec.testPlan tp 	 inner join tp.iteration it 	 inner join it.campaign cp 	 inner join cp.project proj 	 inner join proj.bugtrackerBinding binding 	 inner join binding.bugtracker bt 	 where estep.id in (:executionStepsIds) " +
+		") "),
 
 
 	//BugTrackersEntities

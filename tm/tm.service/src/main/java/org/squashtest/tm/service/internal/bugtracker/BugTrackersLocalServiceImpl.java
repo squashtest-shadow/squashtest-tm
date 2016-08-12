@@ -183,7 +183,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		list.addIssue(sqIssue);
 
-		issueDao.persist(sqIssue);
+		issueDao.save(sqIssue);
 
 		TestCase testCase = this.findTestCaseRelatedToIssue(sqIssue.getId());
 		this.indexationService.reindexTestCase(testCase.getId());
@@ -277,7 +277,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issue.setBugtracker(bugged.getBugTracker());
 			issue.setRemoteIssueId(test.getId());
 			issueList.addIssue(issue);
-			issueDao.persist(issue);
+			issueDao.save(issue);
 
 			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 			this.indexationService.reindexTestCase(testCase.getId());
@@ -292,9 +292,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
 
-		Issue issue = issueDao.findById(id);
+		Issue issue = issueDao.findOne(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
-		issueDao.remove(issue);
+		issueDao.delete(issue);
 		this.indexationService.reindexTestCase(testCase.getId());
 	}
 
@@ -466,7 +466,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public Issue findIssueById(Long id) {
-		return issueDao.findById(id);
+		return issueDao.findOne(id);
 	}
 
 	@Override

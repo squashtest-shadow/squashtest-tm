@@ -61,7 +61,7 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         then :
         5 * bugTrackerDao.delete(_)
         10 * genericProjectManagerService.removeBugTracker(_)
-        15 * issueDao.remove(_)
+        15 * issueDao.delete(_)
 		5 * syncreqDao.deleteAllByServer(_)
     }
 }

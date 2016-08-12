@@ -44,7 +44,8 @@ class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 	def "should delete bugtrackerProject but not Project" () {
 		
 		when:
-		bugtrackerBindingDao.remove(findEntity(BugTrackerBinding.class, -1L));
+		BugTrackerBinding binding = findEntity(BugTrackerBinding.class, -1L)
+		bugtrackerBindingDao.delete(binding);
 
 		then:
 		!found(BugTrackerBinding.class, -1L);

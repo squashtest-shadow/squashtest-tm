@@ -142,7 +142,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 		final List<Issue> issues = issueDao.getAllIssueFromBugTrackerId(bugtrackerId);
 
 		for (final Issue issue : issues) {
-			issueDao.remove(issue);
+			issueDao.delete(issue);
 		}
 	}
 

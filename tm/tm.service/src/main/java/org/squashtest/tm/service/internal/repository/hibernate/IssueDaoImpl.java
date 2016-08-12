@@ -20,18 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.bugtracker.QIssue;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -42,17 +42,21 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
+import org.squashtest.tm.service.internal.repository.CustomIssueDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 
-@Repository
-public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class IssueDaoImpl implements CustomIssueDao {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IssueDaoImpl.class);
 
 	private static final String SELECT_ISSUES_INTRO =
 			"select Issue from Issue Issue ";
-
-
-	private static final String COUNT_ISSUES_INTRO =
-			"select count(Issue) from Issue Issue ";
 
 
 	private static final String SELECT_ISSUES_OUTRO =
@@ -89,69 +93,18 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			") " +
 			") ";
 
-	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP =
-			"where Issue.id in (" +
-					"select isStep.id " +
-					"from ExecutionStep estep " +
-					"inner join estep.issueList ils " +
-					"inner join ils.issues isStep " +
-					"where estep.id in (:executionStepsIds) " +
-					") ";
+	@PersistenceContext
+	private EntityManager entityManager;
 
-	/**
-	 *
-	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.List)
-	 */
-	@Override
-	public Integer countIssuesfromIssueList(final List<Long> issueListIds) {
-
-		if (!issueListIds.isEmpty()) {
-			Query query = currentSession().getNamedQuery("issueList.countIssues");
-			query.setParameterList("issueListIds", issueListIds);
-			Long result = (Long) query.uniqueResult();
-
-			return result.intValue();
-		} else {
-			return 0;
-		}
-
-	}
-
-	/**
-	 *
-	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.Collection,
-	 *      java.lang.Long)
-	 */
-	@Override
-	public Integer countIssuesfromIssueList(Collection<Long> issueListIds, Long bugTrackerId) {
-		if (!issueListIds.isEmpty()) {
-			Query query = currentSession().getNamedQuery("issueList.countIssuesByTracker");
-			query.setParameterList("issueListIds", issueListIds);
-			query.setParameter("bugTrackerId", bugTrackerId);
-			Long result = (Long) query.uniqueResult();
-
-			return result.intValue();
-		} else {
-			return 0;
-		}
-	}
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues Issue where c = :camp", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("camp", campaign);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("camp", campaign);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
-
-
-	@Override
-	public long countByCampaign(Campaign campaign) {
-		return (long) currentSession().getNamedQuery("issue.countByCampaign")
-			.setParameter("campaign", campaign)
-			.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -163,7 +116,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			return Collections.emptyList();
 		}
 
-		Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
+		Criteria crit = entityManager.unwrap(Session.class).createCriteria(Issue.class, "Issue")
 				.add(Restrictions.in("Issue.issueList.id", issueListIds))
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
 
@@ -187,7 +140,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 			queryString += " order by " + sorter.getSortedAttribute() + " " + sorter.getSortOrder().getCode();
 
-			Query query = currentSession().createQuery(queryString);
+			Query query = entityManager.unwrap(Session.class).createQuery(queryString);
 			query.setParameterList("executionsIds", executionsIds);
 			query.setParameterList("executionStepsIds", executionStepsIds);
 
@@ -203,56 +156,26 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
-	public Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds) {
-		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
-
-			String queryString = COUNT_ISSUES_INTRO + WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP + SELECT_ISSUES_OUTRO;
-
-			Query query = currentSession().createQuery(queryString);
-			query.setParameterList("executionsIds", executionsIds);
-			query.setParameterList("executionStepsIds", executionStepsIds);
-
-			Long result = (Long) query.uniqueResult();
-			return result.intValue();
-
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds) {
-		if (!executionStepsIds.isEmpty()) {
-			String queryString = COUNT_ISSUES_INTRO + WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP + SELECT_ISSUES_OUTRO;
-			Query query = currentSession().createQuery(queryString);
-			query.setParameterList("executionStepsIds", executionStepsIds);
-			Long result = (Long) query.uniqueResult();
-			return result.intValue();
-
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public List<Issue> findAllForIteration(Long id) {
-		return executeListNamedQuery("Issue.findAllForIteration", new SetIdParameter("id", id));
-
-	}
-
-	@Override
-	public List<Issue> findAllForTestSuite(Long id) {
-		return executeListNamedQuery("Issue.findAllForTestSuite", new SetIdParameter("id", id));
-	}
-
-	@Override
 	public IssueDetector findIssueDetectorByIssue(long id) {
-		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
-		if (exec != null) {
-			return exec;
-		} else {
-			return executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
+		IssueDetector res;
+		try {
+			res = findExecutionByIssue(id);
+		} catch (NoResultException e) {
+			res = findExecutionStepByIssue(id);
 		}
+		return res;
+	}
+
+	private Execution findExecutionByIssue(long issueId) throws NoResultException {
+		return (Execution) entityManager.createNamedQuery("Issue.findExecution")
+			.setParameter("id", issueId)
+			.getSingleResult();
+	}
+
+	private ExecutionStep findExecutionStepByIssue(long issueId) throws NoResultException {
+		return (ExecutionStep) entityManager.createNamedQuery("Issue.findExecutionStep")
+			.setParameter("id", issueId)
+			.getSingleResult();
 	}
 
 	@Override
@@ -260,13 +183,21 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 		TestCase testCase = null;
 
-		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
-		if (exec != null) {
+		try {
+			Execution exec = findExecutionByIssue(id);
 			testCase = exec.getReferencedTestCase();
-		} else {
-			ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
-			if (step != null && step.getExecution() != null) {
+
+		} catch (NoResultException e) {
+			try {
+				ExecutionStep step = findExecutionStepByIssue(id);
+
+				if (step.getExecution() != null) {
 				testCase = step.getExecution().getReferencedTestCase();
+			}
+
+			} catch (NoResultException ex) {
+				// NOOP - not too sure if this can happen, former hibernate based code would return null in this case
+				LOGGER.warn("Could not find execution step for issue id {}", id, ex);
 			}
 		}
 
@@ -275,33 +206,45 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
     @Override
     public Execution findExecutionRelatedToIssue(long id) {
-    	 Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
-         if (exec == null) {
-        	 ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
-        	 if (step != null && step.getExecution() != null) {
+		Execution exec = null;
+
+		try {
+			exec = findExecutionByIssue(id);
+
+		} catch (NoResultException e) {
+			try {
+				ExecutionStep step = findExecutionStepByIssue(id);
+
+				if (step.getExecution() != null) {
         		 exec = step.getExecution();
         	 }
+			} catch (Exception ex) {
+				// NOOP - not too sure if this can happen, former hibernate based code would return null in this case
+				LOGGER.warn("Could not find execution step for issue id {}", id, ex);
          }
+		}
+
          return exec;
     }
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId) {
-		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
-				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
-
-		return crit.list();
+		return new JPAQueryFactory(entityManager)
+			.selectFrom(QIssue.issue)
+			.where(QIssue.issue.bugtracker.id.eq(bugtrackerId))
+			.fetch();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker) {
-		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
-				.add(Restrictions.eq("Issue.remoteIssueId", remoteid))
-				.add(Restrictions.eq("Issue.bugtracker.id", bugtracker.getId()));
-
-		return crit.list();
+		return new JPAQueryFactory(entityManager)
+			.selectFrom(QIssue.issue)
+			.where(
+				QIssue.issue.bugtracker.eq(bugtracker)
+				.and(QIssue.issue.remoteIssueId.eq(remoteid))
+			).fetch();
 	}
 
 	@Override
@@ -309,53 +252,32 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<Pair<Execution, Issue>> findAllDeclaredExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issueList il join il.issues Issue where ex = :execution", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("execution", execution);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("execution", execution);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
 }
-
-	@Override
-	public long countByExecutionAndSteps(Execution execution) {
-		return (long) currentSession().getNamedQuery("issue.countByExecutionAndSteps")
-			.setParameter("execution", execution)
-			.uniqueResult();
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues Issue where i = :iteration", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("iteration", iteration);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("iteration", iteration);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
 }
 
 	@Override
-	public long countByIteration(Iteration iteration) {
-		return (long) currentSession().getNamedQuery("issue.countByIteration")
-			.setParameter("iteration", iteration)
-			.uniqueResult();
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues Issue where ts = :testSuite", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("testSuite", testSuite);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("testSuite", testSuite);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
-
-	@Override
-	public long countByTestSuite(TestSuite testSuite) {
-		return (long) currentSession().getNamedQuery("issue.countByTestSuite")
-			.setParameter("testSuite", testSuite)
-			.uniqueResult();
 	}
 
 	@Override
@@ -363,17 +285,10 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex.testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :folderId)", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("folderId", folder.getId());
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("folderId", folder.getId());
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
-	}
-
-	@Override
-	public long countByCampaignFolder(CampaignFolder folder) {
-		return (long) currentSession().getNamedQuery("issue.countByCampaignFolder")
-			.setParameter("folderId", folder.getId())
-			.uniqueResult();
 	}
 
 	@Override
@@ -381,24 +296,17 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("testCase", testCase);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("testCase", testCase);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
 	}
 
 	@Override
-	public long countByTestCase(TestCase testCase) {
-		return (long) currentSession().getNamedQuery("issue.countByTestCase")
-			.setParameter("testCase", testCase)
-			.uniqueResult();
-	}
-
-	@Override
 	public List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select Issue from ExecutionStep s join s.issueList il join il.issues Issue where s = :step", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("step", executionStep);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("step", executionStep);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
@@ -408,7 +316,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<Pair<ExecutionStep, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(s, Issue) from ExecutionStep s join s.issueList il join il.issues Issue join s.execution ex where ex = :execution", sorter);
 
-		Query query = currentSession().createQuery(hql).setParameter("execution", execution);
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("execution", execution);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();

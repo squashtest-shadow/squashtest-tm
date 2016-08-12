@@ -59,7 +59,7 @@ abstract class DbunitDaoSpecification extends DatasourceDependantSpecification {
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {
-		em.getReference(entityClass, id)
+		return em.getReference(entityClass, id)
 	}
 
 	protected boolean found(String tableName, String idColumnName, Long id) {

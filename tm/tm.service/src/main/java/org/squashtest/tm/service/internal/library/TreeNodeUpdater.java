@@ -182,7 +182,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 			if (project != null
 					&& (project.getBugtrackerBinding() == null || !issue.getBugtracker().getId()
 							.equals(project.getBugtrackerBinding().getBugtracker().getId()))) {
-				issueDao.remove(issue);
+				issueDao.delete(issue);
 			}
 		}
 	}

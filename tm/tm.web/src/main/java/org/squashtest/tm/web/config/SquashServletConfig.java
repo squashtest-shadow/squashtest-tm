@@ -23,7 +23,9 @@ package org.squashtest.tm.web.config;
 import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
