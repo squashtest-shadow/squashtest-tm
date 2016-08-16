@@ -107,9 +107,6 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	@Override
 	public void persistTestCaseAndSteps(TestCase testCase) {
-		/*for (TestStep step : testCase.getSteps()) {
-			persistEntity(step);
-		}*/
 		persistEntity(testCase);
 	}
 

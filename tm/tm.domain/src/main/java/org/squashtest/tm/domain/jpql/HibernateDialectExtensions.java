@@ -23,9 +23,6 @@ package org.squashtest.tm.domain.jpql;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.hibernate.boot.SessionFactoryBuilder;
-
-import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.DoubleType;
@@ -88,6 +85,13 @@ import org.hibernate.type.Type;
  */
 public class HibernateDialectExtensions {
 
+        // SONAR is now happy
+        private HibernateDialectExtensions(){
+            super();
+        }
+    
+    
+    
 	public static final String FN_NAME_GROUP_CONCAT = "group_concat";
 	public static final String FN_NAME_WEEK = "week";
 

@@ -34,10 +34,11 @@ import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.persister.spi.PersisterCreationContext;
 
 /*
-Ripped from TestStepPersister. Fiddling with Hibernate mappings every time you upgrade it is growing 
-tiresome.
+    ABOUT SONAR : it says this class has been copypasted from TestStepPersister, 
+and should be refactored. Sure, go ahdead. I'm watching.
 */
-public class FixIterationToItemPersister extends SingleTableEntityPersister {
+
+public class IterationTestPlanItemPersister extends SingleTableEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "ITEM_TEST_PLAN_LIST";
 	private static final String NONFORMATTED_COLUMN_NAME = "ITEM_TEST_PLAN_ID";
@@ -55,7 +56,7 @@ public class FixIterationToItemPersister extends SingleTableEntityPersister {
 	private int _cachedIndex=-1;
 
       
-	public FixIterationToItemPersister(PersistentClass persistentClass,
+	public IterationTestPlanItemPersister(PersistentClass persistentClass,
 			EntityRegionAccessStrategy cacheAccessStrategy,
 			NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
 			PersisterCreationContext creationContext)
@@ -70,10 +71,10 @@ public class FixIterationToItemPersister extends SingleTableEntityPersister {
 
 	/*
 	 * This override is the very reason of that class
-	 * @see org.hibernate.persister.entity.JoinedSubclassEntityPersister#getSubclassTableKeyColumns(int)
+	 * @see org.hibernate.persister.entity.SingleTableEntityPersister#getSubclassTableKeyColumns(int)
 	 */
 	@Override
-	protected String[] getSubclassTableKeyColumns(int j) {
+	public String[] getSubclassTableKeyColumns(int j) {
 		if (isTheJoinTable(j)){
 			return formattedColumnName;
 		}

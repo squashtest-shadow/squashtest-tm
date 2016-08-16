@@ -27,6 +27,7 @@ package org.squashtest.tm.web.config;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TomcatContainerConfig {
     
+    /**
+     * This method defines a modified servlet container that will run Squash TM when deployed as a standalone application.
+     * If Squash TM is deployed as a war, the prefered way to configure the container is via the standard file server.xml.
+     * Therefore you should turn this method off by setting the property squash.run-as-war to "true".
+     * 
+     * @return 
+     */
     @Bean
+    @ConditionalOnProperty(prefix="squash", name="run-as-war", havingValue = "false", matchIfMissing = true)
     public TomcatEmbeddedServletContainerFactory containerFactory(){
         return new TomcatEmbeddedServletContainerFactory(){
             @Override

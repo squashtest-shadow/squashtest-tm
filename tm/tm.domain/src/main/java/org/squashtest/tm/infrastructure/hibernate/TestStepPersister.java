@@ -25,7 +25,6 @@ import java.util.Iterator;
 import org.hibernate.HibernateException;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
-import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Join;
@@ -118,6 +117,11 @@ import org.hibernate.persister.spi.PersisterCreationContext;
  *
  *
  */
+
+/*
+    ABOUT SONAR : it says this class has been copypasted into IterationTestPlanItemPersister, 
+and should be refactored. Sure, go ahdead. I'm watching.
+*/
 public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "TEST_CASE_STEPS";

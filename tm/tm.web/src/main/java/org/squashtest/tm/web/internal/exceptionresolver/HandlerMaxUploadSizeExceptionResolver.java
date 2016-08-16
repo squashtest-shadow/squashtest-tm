@@ -51,7 +51,8 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 
 	private static final int NB_BYTES_PER_MBYTES = 1048576;
         
-        private static final Logger LOGGER = LoggerFactory.getLogger(HandlerMaxUploadSizeExceptionResolver.class);
+        // SONAR made me rename the logger in order to avoid nameclash with the logger in the supperclass
+        private static final Logger THIS_LOGGER = LoggerFactory.getLogger(HandlerMaxUploadSizeExceptionResolver.class);
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -64,11 +65,11 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
         @ExceptionHandler(value = {MaxUploadSizeExceededException.class})
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 	                                          Exception ex) {
-                LOGGER.trace("received exception, testing whether it should be handled");
+                THIS_LOGGER.trace("received exception, testing whether it should be handled");
             
 		if (exceptionIsHandled(ex)) {
 
-                        LOGGER.trace("exception is being handled");
+                        THIS_LOGGER.trace("exception is being handled");
                     
 			response.setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 
@@ -76,23 +77,23 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 			// earlier
 
 			if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
-                                LOGGER.trace("MIME type is application/json, returning response as json");
+                                THIS_LOGGER.trace("MIME type is application/json, returning response as json");
 				return handleAsJson(mex);
 			} else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
-                            LOGGER.trace("MIME type is text/plain, returning response as plain text");
+                            THIS_LOGGER.trace("MIME type is text/plain, returning response as plain text");
 				return handleAsText(mex);
 			} else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_HTML)) {
-                            LOGGER.trace("MIME type is text/html, returning response as html");
+                            THIS_LOGGER.trace("MIME type is text/html, returning response as html");
 				return handleAsHtml(mex);
 			}
 			// special delivery for IE
 			else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.ANYTHING)) {
-                            LOGGER.trace("MIME type is */*, returning response as plain text");
+                            THIS_LOGGER.trace("MIME type is */*, returning response as plain text");
 				return handleAsText(mex);
 			}
 		}
 
-                LOGGER.trace("the exception was not processed because it was not a valid target");
+                THIS_LOGGER.trace("the exception was not processed because it was not a valid target");
 		return null;
 	}
 

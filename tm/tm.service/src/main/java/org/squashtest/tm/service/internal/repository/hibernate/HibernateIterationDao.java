@@ -224,18 +224,23 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			.getSingleResult();
 	}
 
+
+        /**
+         * <p>Will persist a new Iteration, if its test plan contains transient test plan items they will be persisted too.</p>
+         * <p>
+         * Deprecation notice : As of TM 1.15 the simpler method {@link #persist(org.​squashtest.​tm.​domain.​campaign.Iteration) will just 
+         * do the same.
+         * </p>
+         * 
+         * @param iteration
+         * @deprecated
+         */
 	@Override
+        @Deprecated        
 	public void persistIterationAndTestPlan(Iteration iteration) {
-		persist(iteration);
-		//persistTestPlan(iteration);
-
+            persist(iteration);
 	}
 
-	private void persistTestPlan(Iteration iteration) {
-		for (IterationTestPlanItem iterationTestPlanItem : iteration.getTestPlans()) {
-			entityManager.persist(iterationTestPlanItem);
-		}
-	}
 
 	@Override
 	public List<Execution> findAllExecutionByIterationId(long iterationId) {
