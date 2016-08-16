@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
@@ -45,7 +46,10 @@ public class JsonParser {
 
 	private ObjectMapper objMapper = new ObjectMapper();
 
-
+        public JsonParser(){
+            super();
+            objMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        }
 
 	public Collection<TestAutomationProject> readJobListFromJson(String json){
 

@@ -72,8 +72,8 @@ public class HttpClientProvider {
 				HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
 				Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
 				if (creds == null) {
-                    throw new HttpException("No credentials for preemptive authentication");
-                }
+                                    throw new HttpException("No credentials for preemptive authentication");
+                                }
 				authState.setAuthScheme(authScheme);
 				authState.setCredentials(creds);
 			}
