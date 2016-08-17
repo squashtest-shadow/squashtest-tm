@@ -13,7 +13,7 @@
   <description>Squash TM webapp - Provides web frontend</description>
 
   <properties>
-    <appserver.scope>compile</appserver.scope>
+    <appserver.scope>provided</appserver.scope>
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
     <jasperreports.outputDir>${project.build.directory}/jasperreports-plugin/reports</jasperreports.outputDir>
@@ -746,7 +746,7 @@
       </activation>
       <properties>
         <!-- intellij requires that appserver has a runtime scope to start the app -->
-        <appserver.scope>runtime</appserver.scope>
+        <appserver.scope>provided</appserver.scope>
       </properties>
     </profile>
 
