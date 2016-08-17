@@ -49,8 +49,7 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	@Column(name = "MEASURE_OPERATION")
 	private Operation operation;
 
-	@Size(min = 0, max = 30)
-	private String cufCode;
+	private Long cufId;
 
 	@Override
 	public ColumnPrototype getColumn() {
@@ -93,11 +92,20 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		return getColumn().getDataType();
 	}
 
-	public String getCufCode() {
-		return cufCode;
+	@Override
+	public Long getCufId() {
+		return cufId;
 	}
 
-	public void setCufCode(String cufCode) {
-		this.cufCode = cufCode;
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
+
+	public MeasureColumn createCopy(){
+		MeasureColumn copy = new MeasureColumn();
+		copy.setColumn(this.getColumn());
+		copy.setOperation(this.getOperation());
+		copy.setCufId(this.getCufId());
+		return copy;
 	}
 }

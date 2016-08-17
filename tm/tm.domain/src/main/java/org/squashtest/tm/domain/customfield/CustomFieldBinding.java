@@ -144,6 +144,7 @@ public class CustomFieldBinding {
 		}
 		value.setBinding(this);
 		value.setValue(customField.getDefaultValue());
+		value.setCufId(customField.getId());
 		return value;
 	}
 

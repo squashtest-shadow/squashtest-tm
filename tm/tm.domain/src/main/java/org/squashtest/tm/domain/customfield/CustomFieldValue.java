@@ -60,6 +60,9 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Size(min = 0, max = MAX_SIZE)
 	protected String value;
 
+	@Column(name = "CF_ID")
+	protected Long cufId;
+
 	public CustomFieldValue() {
 		super();
 	}
@@ -68,6 +71,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		super();
 		this.boundEntityId = boundEntityId;
 		this.binding = binding;
+		this.cufId = binding.getCustomField().getId();
 		doSetBoundEntityType(boundEntityType);
 		doSetValue(value);
 	}
@@ -131,6 +135,14 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		return boundEntityId;
 	}
 
+	public Long getCufId() {
+		return cufId;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
+
 	public BindableEntity getBoundEntityType() {
 		return boundEntityType;
 	}
@@ -154,6 +166,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		CustomFieldValue copy = new CustomFieldValue();
 		copy.setBinding(binding);
 		copy.setValue(this.value);
+		copy.setCufId(this.getCufId());
 		return copy;
 	}
 

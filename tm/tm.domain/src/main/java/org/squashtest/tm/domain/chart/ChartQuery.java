@@ -167,8 +167,7 @@ public class ChartQuery {
 	}
 
 	/**
-	 * Returns which entities are covered by this chart, sorted by roles
-	 *
+	 * Returns which entities are covered by this chart, sorted by roles.
 	 * @return
 	 */
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
@@ -201,8 +200,8 @@ public class ChartQuery {
 
 	public ChartQuery createCopy() {
 		ChartQuery copy = new ChartQuery();
-		copy.getAxis().addAll(this.getAxis());
-		copy.getMeasures().addAll(this.getMeasures());
+		copy.getAxis().addAll(this.copyAxis());
+		copy.getMeasures().addAll(this.copyMeasures());
 		copy.getFilters().addAll(this.copyFilters());
 		copy.setJoinStyle(this.getJoinStyle());
 		copy.setStrategy(this.getStrategy());
@@ -213,6 +212,22 @@ public class ChartQuery {
 		List<Filter> copy = new ArrayList<>();
 		for (Filter filter : getFilters()) {
 			copy.add(filter.createCopy());
+		}
+		return copy;
+	}
+
+	private List<AxisColumn> copyAxis() {
+		List<AxisColumn> copy = new ArrayList<>();
+		for (AxisColumn axis : getAxis()) {
+			copy.add(axis.createCopy());
+		}
+		return copy;
+	}
+
+	private List<MeasureColumn> copyMeasures() {
+		List<MeasureColumn> copy = new ArrayList<>();
+		for (MeasureColumn measureColumn : getMeasures()) {
+			copy.add(measureColumn.createCopy());
 		}
 		return copy;
 	}

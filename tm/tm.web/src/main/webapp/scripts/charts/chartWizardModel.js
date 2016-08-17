@@ -131,9 +131,10 @@ return Backbone.Model.extend({
 						var newColumn = _.clone(filter.column);
 						newColumn.id = filter.column.originalPrototypeId;
 						newFilter.column = newColumn;
-						newFilter.cufCode = filter.column.code;
+						newFilter.cufId = filter.column.cufId;
 					}
-					return newFilter;})
+					return newFilter;
+				})
 			},
 			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
@@ -149,7 +150,7 @@ return Backbone.Model.extend({
 					var newColumn = _.clone(axis.column);
 					newColumn.id = axis.column.originalPrototypeId;
 					newAxis.column = newColumn;
-					newAxis.cufCode = axis.column.code;
+					newAxis.cufId = axis.column.cufId;
 					return newAxis;
 				}
 				else{
@@ -166,7 +167,7 @@ return Backbone.Model.extend({
 					var newColumn = _.clone(measure.column);
 					newColumn.id = measure.originalPrototypeId;
 					newMeasure.column= newColumn;
-					newMeasure.cufCode = axis.column.code;
+					newMeasure.cufId = measure.column.cufId;
 					return newMeasure;
 				}
 				else{

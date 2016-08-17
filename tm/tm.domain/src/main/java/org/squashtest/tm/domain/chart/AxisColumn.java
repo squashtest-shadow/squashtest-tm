@@ -49,9 +49,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	@Column(name ="AXIS_OPERATION")
 	private Operation operation;
 
-	@Size(min = 0, max = 30)
-	private String cufCode;
-
+	private Long cufId;
 
 	public String getLabel() {
 		return label;
@@ -94,11 +92,21 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		return getColumn().getDataType();
 	}
 
-	public String getCufCode() {
-		return cufCode;
+	@Override
+	public Long getCufId() {
+		return cufId;
 	}
 
-	public void setCufCode(String cufCode) {
-		this.cufCode = cufCode;
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
 	}
+
+	public AxisColumn createCopy(){
+		AxisColumn copy = new AxisColumn();
+		copy.setColumn(this.getColumn());
+		copy.setOperation(this.getOperation());
+		copy.setCufId(this.getCufId());
+		return copy;
+	}
+
 }

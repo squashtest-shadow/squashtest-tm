@@ -30,8 +30,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			data.name = "attributes";
 			this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 			this._initialize(data, wizrouter);
-			
-
 		},
 		
 		events : {
@@ -44,23 +42,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		updateModel : function() {
 
 			var self = this;
-			
-			var selectedAttributes = _.map($('[id^="attributes-selection-"]').filter(":checked"),function (attribute) {
-				return {id:attribute.name, cufBindingId:attribute.getAttribute("data-cuf-binding-id")};
-			});
-
 
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
 			
 			this.model.set({selectedAttributes : ids});
-			/*
-			var filtered = 	_(['filters', 'axis', 'measures', 'operations'])
-			.reduce(function(memo, val){ 
-				memo[val] = self.filterWithValidIds(self.model.get(val)); 
-				return memo; }, {});
-			
-			this.model.set(filtered);
-			*/
 			
 		},
 		

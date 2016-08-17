@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -59,13 +61,13 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 /**
  * This enum extends {@link EntityType} and includes table real names and hidden tables that aren't officially
  * disclosed to the end user. Internal usage only.
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
 enum InternalEntityType {
-	
+
 	// @formatter:off
 	REQUIREMENT(Requirement.class , QRequirement.requirement){
 		@Override
@@ -80,7 +82,7 @@ enum InternalEntityType {
 			return new QRequirementVersion(alias);
 		}
 	},
-	
+
 	REQUIREMENT_VERSION_COVERAGE(RequirementVersionCoverage.class, QRequirementVersionCoverage.requirementVersionCoverage){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
@@ -173,7 +175,7 @@ enum InternalEntityType {
 			return new QMilestone(alias);
 		}
 
-	}, 
+	},
 	AUTOMATED_TEST(AutomatedTest.class, QAutomatedTest.automatedTest){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
@@ -181,7 +183,6 @@ enum InternalEntityType {
 		}
 
 	},
-
 
 	AUTOMATED_EXECUTION_EXTENDER(AutomatedExecutionExtender.class, QAutomatedExecutionExtender.automatedExecutionExtender){
 		@Override
@@ -192,9 +193,9 @@ enum InternalEntityType {
 	};
 
 	// @formatter:on
-	
 
-	
+
+
 	private Class<?> entityClass;
 	private EntityPathBase<?> qBean;
 
@@ -202,8 +203,8 @@ enum InternalEntityType {
 		this.entityClass = entityClass;
 		this.qBean = qBean;
 	}
-	
-	
+
+
 	Class<?> getEntityClass(){
 		return entityClass;
 	}
@@ -218,8 +219,12 @@ enum InternalEntityType {
 
 	static InternalEntityType fromSpecializedType(SpecializedEntityType domainType){
 		String name =  domainType.getEntityType().name();
-		if (domainType.getEntityRole() != null) {
-			name = domainType.getEntityRole().name();
+		SpecializedEntityType.EntityRole entityRole = domainType.getEntityRole();
+		if (entityRole != null && entityRole != SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+			name = entityRole.name();
+		}
+		if (entityRole != null && entityRole == SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+			name = domainType.getEntityType().name();
 		}
 		try{
 			return InternalEntityType.valueOf(name);

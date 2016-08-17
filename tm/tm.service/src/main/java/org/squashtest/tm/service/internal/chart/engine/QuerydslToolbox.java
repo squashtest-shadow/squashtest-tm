@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.querydsl.core.types.dsl.*;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartQuery;
@@ -44,6 +45,10 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomField;
+import org.squashtest.tm.domain.customfield.QCustomFieldBinding;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
@@ -64,12 +69,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.DateOperation;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.SimpleExpression;
 
 class QuerydslToolbox {
 
@@ -161,6 +160,10 @@ class QuerydslToolbox {
 
 	String getAlias(EntityPathBase<?> path) {
 		return path.getMetadata().getName();
+	}
+
+	String getCustomFieldColumnAlias(ColumnPrototype columnPrototype, Long cufId) {
+		return columnPrototype.getLabel() + "_" + cufId;
 	}
 
 
@@ -278,12 +281,18 @@ class QuerydslToolbox {
 				predicate = createSubqueryPredicate(filter);
 				break;
 
+			case CUF:
+				predicate = createCufPredicate(filter);
+				break;
+
 			default:
 				throw new IllegalArgumentException("columns of column type '" + proto.getColumnType() + "' are not yet supported");
 		}
 
 		return predicate;
 	}
+
+
 
 
 	// ********************* low level API *********************
@@ -431,11 +440,61 @@ class QuerydslToolbox {
 				throw new IllegalArgumentException(
 					"Attempted to create a subquery for column '" + filter.getColumn().getLabel() +
 						"' from what appears to be a main query. " +
-						"This is probably due to an ill-inserted entry in the database, please report this to the suppport.");
+						"This is probably due to an ill-inserted entry in the database, please report this to the support.");
 		}
 
 
 		return predicate;
+	}
+
+	/**
+	 * Creates an expression fit for a "where" or "having" clause. Dedicated to CUF column prototype.
+	 * @param filter
+	 * @return
+     */
+	//TODO make predicate for different data types
+	private BooleanExpression createCufPredicate(Filter filter) {
+		ColumnPrototype columnPrototype = filter.getColumn();
+		DataType dataType = columnPrototype.getDataType();
+		Long cufId = filter.getCufId();
+		String alias = getCustomFieldColumnAlias(columnPrototype, cufId);
+		Operation operation = filter.getOperation();
+
+		// convert the operands
+		List<Expression<?>> valExpr = makeOperands(operation, dataType, filter.getValues());
+		Expression<?>[] operands = valExpr.toArray(new Expression[valExpr.size()]);
+		Expression<?> attrExpr;
+
+
+		switch (dataType){
+			case STRING:
+			case BOOLEAN_AS_STRING:
+			case DATE_AS_STRING:
+				//make a path for the cuf value
+				attrExpr = makePathForValueCFV(alias);
+				break;
+			case NUMERIC:
+				attrExpr = makePathForNumericValueCFV(alias);
+				break;
+			default:
+				throw new IllegalArgumentException("The datatype " + dataType.name() + " is not handled by custom report engine");
+		}
+		return createPredicate(operation, attrExpr, dataType, operands);
+	}
+
+	private Expression<?> makePathForNumericValueCFV(String alias) {
+		return makePath(CustomFieldValue.class, alias, String.class, "numericValue");
+	}
+
+
+	/**
+	 * Make the entity path for a standard {@link CustomFieldValue}. The returned path will be :
+	 * alias.value
+	 * @param alias
+	 * @return
+     */
+	private PathBuilder makePathForValueCFV(String alias) {
+		return makePath(CustomFieldValue.class, alias, String.class, "value");
 	}
 
 	/*
@@ -448,7 +507,6 @@ class QuerydslToolbox {
 	 * Also, the case construct is a custom BOOLEAN_CASE and correctly generate 'case when (predicate) then true else false',
 	 * because the standard querysdl case builder would generate 'case when (predicate) then ?1 else false',
 	 * and then Hibernate complains because it can't determine the type of the overall expression.
-	 *
 	 */
 	SimpleExpression<?> applyOperation(Operation operation, Expression<?> baseExp, Expression... operands) {
 
@@ -473,11 +531,8 @@ class QuerydslToolbox {
 
 	/**
 	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ...
-	 *
-	 * @param filter
 	 * @return
 	 */
-
 	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, DataType datatype,
 									  Expression... operands) {
 

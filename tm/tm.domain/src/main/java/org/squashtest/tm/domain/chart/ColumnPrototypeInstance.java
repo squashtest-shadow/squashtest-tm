@@ -34,4 +34,5 @@ public interface ColumnPrototypeInstance {
 
 	Operation getOperation();
 
+	Long getCufId();
 }

@@ -63,8 +63,7 @@ public class Filter implements ColumnPrototypeInstance {
 	@Column(name="FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
 
-	@Size(min = 0, max = 30)
-	private String cufCode;
+	private Long cufId;
 
 	@Override
 	public Operation getOperation() {
@@ -107,19 +106,22 @@ public class Filter implements ColumnPrototypeInstance {
 		return getColumn().getDataType();
 	}
 
-	public String getCufCode() {
-		return cufCode;
+	@Override
+	public Long getCufId() {
+		return cufId;
 	}
 
-	public void setCufCode(String cufCode) {
-		this.cufCode = cufCode;
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
 	}
+
 
 	public Filter createCopy(){
 		Filter copy = new Filter();
 		copy.setColumn(this.getColumn());
 		copy.setOperation(this.getOperation());
 		copy.getValues().addAll(this.getValues());
+		copy.setCufId(this.getCufId());
 		return copy;
 	}
 }

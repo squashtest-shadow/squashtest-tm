@@ -20,20 +20,27 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
+import com.querydsl.core.types.dsl.*;
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.campaign.QCampaign;
+import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.chart.ChartQuery.NaturalJoinStyle;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.QCustomFieldBinding;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
 
 /**
  * <p>
@@ -120,7 +127,7 @@ class QueryPlanner {
 	 * the root entity, where the join should be made between the main query and
 	 * this query
 	 *
-	 * @param existingQuery
+	 * @param
 	 * @return
 	 */
 	QueryPlanner joinRootEntityOn(EntityPathBase<?> axeEntity){
@@ -139,8 +146,11 @@ class QueryPlanner {
 	ExtendedHibernateQuery<?> createQuery(){
 		query = new ExtendedHibernateQuery();
 		doTheJob();
+		appendCufJoins();
 		return query;
 	}
+
+
 
 
 	/**
@@ -290,6 +300,108 @@ class QueryPlanner {
 		Predicate condition = Expressions.booleanOperation(Ops.EQ, destForeignKey, src);
 
 		query.where(condition);
+	}
+
+	private void appendCufJoins() {
+		//1 detecting all the cuf present in chart definition and get the ids of the cufs
+		Map<ColumnPrototype,Set<Long>> cufPrototypesWithIds = extractAllCufPrototype();
+		//2 create a where join (ie a cartesian product with where clause) for each cuf column needed in chart aliased by the column protoLabel and the cuf ID
+		//We have to do it this way because no hibernate mapping exist between an entity and the cuf
+		createCufJoins(cufPrototypesWithIds);
+	}
+
+	/**
+	 * Extract all cuf columns proto in filters, axis and measures
+	 * @return
+     */
+	private Map<ColumnPrototype, Set<Long>> extractAllCufPrototype() {
+		Map<ColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
+		extractCufPrototype(cufPrototypesWithIds, definition.getFilters());
+		extractCufPrototype(cufPrototypesWithIds, definition.getAxis());
+		extractCufPrototype(cufPrototypesWithIds, definition.getMeasures());
+		return cufPrototypesWithIds;
+	}
+
+	private void extractCufPrototype(Map<ColumnPrototype, Set<Long>> cufPrototypesWithIds, List<? extends ColumnPrototypeInstance> prototypes) {
+		for (ColumnPrototypeInstance prototypeInstance : prototypes) {
+			ColumnPrototype columnPrototype = prototypeInstance.getColumn();
+			if (columnPrototype.getColumnType() == ColumnType.CUF) {
+				Set<Long> cufIds = cufPrototypesWithIds.get(columnPrototype);
+				if (cufIds == null) {
+					Set<Long> ids = new HashSet<>();
+					ids.add(prototypeInstance.getCufId());
+					cufPrototypesWithIds.put(columnPrototype,ids);
+				}else{
+					cufIds.add(prototypeInstance.getCufId());
+				}
+			}
+		}
+	}
+
+	private void createCufJoins(Map<ColumnPrototype, Set<Long>> cufPrototypes) {
+		for (ColumnPrototype columnPrototype : cufPrototypes.keySet()) {
+			Set<Long> cufIds = cufPrototypes.get(columnPrototype);
+			for (Long cufId : cufIds) {
+				String alias = utils.getCustomFieldColumnAlias(columnPrototype, cufId);
+				//now we join as cartesian product because we have no hibernate mapping between entities
+				QCustomFieldValue qCustomFieldValue = new QCustomFieldValue(alias);
+				QCustomFieldBinding qCustomFieldBinding = QCustomFieldBinding.customFieldBinding;
+				query.from(qCustomFieldValue);
+				//now we need to filter out this ugly cartesian product with three where clause.
+				//but as CUF can be linked to different entity type, we need to create the good clause for our actual cuf.
+				BindableEntity boundEntityType = getBoundEntityType(columnPrototype);
+				query.where(qCustomFieldValue.boundEntityType.eq(boundEntityType));
+				//join clause on cufValue.boundEntity.id = "boundEntity".id
+				query.where(qCustomFieldValue.boundEntityId.eq(getEntityIdForCufValue(columnPrototype)));
+				//now we filter on cuf ID so only the tuples with the good cuf will be kept.
+				query.where(qCustomFieldValue.cufId.eq(cufId));
+			}
+		}
+	}
+
+
+
+	private NumberPath<Long> getEntityIdForCufValue(ColumnPrototype columnPrototype) {
+		EntityType entityType = columnPrototype.getEntityType();
+		switch (entityType){
+			case TEST_CASE:
+				return QTestCase.testCase.id;
+			case REQUIREMENT_VERSION:
+				return QRequirementVersion.requirementVersion.id;
+			case CAMPAIGN:
+				return QCampaign.campaign.id;
+			case ITERATION:
+				return QIteration.iteration.id;
+			case EXECUTION:
+				return QExecution.execution.id;
+			default:
+				throw new IllegalArgumentException("This entity type couldn't have cuf bound to them or can't actually be in custom report chart.");
+		}
+	}
+
+	private BindableEntity getBoundEntityType(ColumnPrototype columnPrototype) {
+		EntityType entityType = columnPrototype.getEntityType();
+		BindableEntity bindableEntity;
+		switch (entityType){
+			case TEST_CASE:
+				bindableEntity = BindableEntity.TEST_CASE;
+				break;
+			case REQUIREMENT_VERSION:
+				bindableEntity = BindableEntity.REQUIREMENT_VERSION;
+				break;
+			case CAMPAIGN:
+				bindableEntity = BindableEntity.CAMPAIGN;
+				break;
+			case ITERATION:
+				bindableEntity = BindableEntity.ITERATION;
+				break;
+			case EXECUTION:
+				bindableEntity = BindableEntity.EXECUTION;
+				break;
+			default:
+				throw new IllegalArgumentException("This entity type couldn't have cuf bound to them or can't actually be in custom report chart.");
+		}
+		return bindableEntity;
 	}
 
 
