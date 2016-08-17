@@ -20,20 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
+
+import javax.persistence.Query;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.hibernate.Query;
-import org.hibernate.type.StringType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 /**
  * @author Gregory Fouquet
@@ -115,7 +114,7 @@ final class TestPlanFilteringHelper {
 		}
 
 		if (columnFiltering.hasFilter(WEIGHT_DATA)) {
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA), StringType.INSTANCE);
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA));
 		}
 
 		if (columnFiltering.hasFilter(DATASET_DATA)) {
@@ -127,7 +126,7 @@ final class TestPlanFilteringHelper {
 		}
 
 		if (columnFiltering.hasFilter(STATUS_DATA)) {
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA), StringType.INSTANCE);
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA));
 		}
 
 		if (columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))) {

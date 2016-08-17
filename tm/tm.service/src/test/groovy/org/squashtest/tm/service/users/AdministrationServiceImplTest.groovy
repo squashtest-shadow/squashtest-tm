@@ -67,7 +67,7 @@ class AdministrationServiceImplTest extends Specification {
 		Team team = Mock()
 		def teams = [team]
 		userDao.findOne(1L)>>user
-		teamDao.findAllByIds([2L])>> teams
+		teamDao.findAll([2L])>> teams
 
 		when :
 		service.associateToTeams(1L, [2L])
@@ -128,7 +128,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findById(10L) >> defaultGroup
+		groupDao.findOne(10L) >> defaultGroup
 
 		when:
 		service.addUser(newUser, 10L, "y2j")
@@ -146,7 +146,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findById(10L) >> defaultGroup
+		groupDao.findOne(10L) >> defaultGroup
 
 		when:
 		service.createUserWithoutCredentials(newUser, 10L)

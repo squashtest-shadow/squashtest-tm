@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.user;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -44,6 +35,14 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamFinderService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 @Service("CustomTeamModificationService")
 @PreAuthorize(HAS_ROLE_ADMIN)
@@ -64,7 +63,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void persist(Team team) {
 		if (teamDao.findAllByName(team.getName()).isEmpty()) {
-			teamDao.persist(team);
+			teamDao.save(team);
 		} else {
 			throw new NameAlreadyInUseException("Team", team.getName());
 		}
@@ -77,7 +76,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	 */
 	@Override
 	public void deleteTeam(long teamId) {
-		Team team = teamDao.findById(teamId);
+		Team team = teamDao.findOne(teamId);
 		List<Long> memberIds = IdentifiedUtil.extractIds(team.getMembers());
 		removeMembers(team, memberIds);
 		aclService.removeAllResponsibilities(teamId);
@@ -108,7 +107,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		if (!teamDao.findAllByName(trimName).isEmpty()) {
 			throw new NameAlreadyInUseException("Team", trimName);
 		}
-		Team team = teamDao.findById(teamId);
+		Team team = teamDao.findOne(teamId);
 		team.setName(trimName);
 
 	}
@@ -121,7 +120,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void addMembers(long teamId, List<String> logins) {
 		List<User> users = userDao.findUsersByLoginList(logins);
-		Team team = teamDao.findById(teamId);
+		Team team = teamDao.findOne(teamId);
 		team.addMembers(users);
 		for (User user : users) {
 			aclService.updateDerivedPermissions(user.getId());
@@ -136,14 +135,14 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void removeMember(long teamId, long memberId) {
 		User user = userDao.findOne(memberId);
-		Team team = teamDao.findById(teamId);
+		Team team = teamDao.findOne(teamId);
 		team.removeMember(user);
 		aclService.updateDerivedPermissions(memberId);
 	}
 
 	@Override
 	public void removeMembers(long teamId, List<Long> memberIds) {
-		Team team = teamDao.findById(teamId);
+		Team team = teamDao.findOne(teamId);
 		removeMembers(team, memberIds);
 	}
 

@@ -34,12 +34,6 @@ import java.util.List;
 
 public interface TeamDao extends JpaRepository<Team, Long>, CustomTeamDao {
 	/**
-	 * Simply retrieve the {@link Team} of the given id
-	 */
-	@Override
-	Team findById(long teamId);
-
-	/**
 	 * Find all teams with name equals to the given name param.
 	 *
 	 * @return list of team with same name as param

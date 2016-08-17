@@ -392,7 +392,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void associateToTeams(long userId, List<Long> teamIds) {
 		User user = userDao.findOne(userId);
-		List<Team> teams = teamDao.findAllByIds(teamIds);
+		List<Team> teams = teamDao.findAll(teamIds);
 		for (Team team : teams) {
 			team.addMember(user);
 			user.addTeam(team);

@@ -50,7 +50,7 @@ class CustomTeamModificationServiceImplTest extends Specification {
 		when: service.persist(team)
 
 
-		then : 1* teamDao.persist(team)
+		then : 1* teamDao.save(team)
 	}
 
 	def "should not persist team because name already in use"(){
@@ -71,7 +71,7 @@ class CustomTeamModificationServiceImplTest extends Specification {
 		team.getId()>> 1L
 		team.getMembers()>>[]
 		userDao.findAll(_)>>[]
-		teamDao.findById(1L)>> team
+		teamDao.findOne(1L)>> team
 		when: service.deleteTeam(1L)
 		then :
 		1* aclService.removeAllResponsibilities(1L)

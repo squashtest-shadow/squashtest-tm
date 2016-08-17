@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.users.User;
 
 import java.util.List;
 
-public interface CustomTeamDao extends EntityDao<Team> {
+public interface CustomTeamDao {
 	List<Team> findSortedTeams(PagingAndSorting paging, Filtering filtering);
 
 	/**

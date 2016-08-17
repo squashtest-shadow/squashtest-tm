@@ -105,13 +105,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	}
 
 
-	protected <X> List<X> collectFromMapList(List<X> hibernateResult, String alias){
-		List<X> collected = new ArrayList<>(hibernateResult.size());
-		for (Map<String, X> result : (List<Map<String, X>>) hibernateResult){
-			collected.add(result.get(alias));
-		}
-		return collected;
-	}
 
 
 }
