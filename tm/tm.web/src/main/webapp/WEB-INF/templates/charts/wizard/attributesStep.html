@@ -46,7 +46,7 @@
   {{!--<![CDATA[--}}
     {{#equal this.columnType "CUF"}}
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf-binding-id="{{cufBindingId}}"
-             {{#if (contains ../../attributes.selectedAttributes.cufBinding cufBinding)}} checked="checked" {{/if}}
+             {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
       />
       {{cuf-label this}}
       {{!--
@@ -54,7 +54,7 @@
       --}}
     {{else}}
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}"
-             {{#if (contains ../../attributes.selectedAttributes.id id)}} checked="checked" {{/if}}
+             {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
       />
     {{i18n this.label prefix="chart.column."}}
     {{/equal}}
