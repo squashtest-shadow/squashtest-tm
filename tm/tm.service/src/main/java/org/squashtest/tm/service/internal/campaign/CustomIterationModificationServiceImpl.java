@@ -272,7 +272,7 @@ IterationTestPlanManager {
 
 	@Override
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
-		suiteDao.persist(suite);
+		suiteDao.save(suite);
 		iteration.addTestSuite(suite);
 		customFieldValueService.createAllCustomFieldValues(suite, suite.getProject());
 	}
@@ -316,7 +316,7 @@ IterationTestPlanManager {
 	@Override
 	@BatchPreventConcurrent(entityType=Iteration.class,coercer=TestSuiteToIterationCoercerForList.class)
 	public OperationReport removeTestSuites(@Ids List<Long> suitesIds) {
-		List<TestSuite> testSuites = suiteDao.findAllByIds(suitesIds);
+		List<TestSuite> testSuites = suiteDao.findAll(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");
 		// proceed

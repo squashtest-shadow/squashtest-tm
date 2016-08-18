@@ -23,10 +23,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -38,11 +36,13 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
+import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
+import javax.persistence.Query;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -185,26 +185,10 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(final long iterationId, final long testPlanId) {
-		return executeListNamedQuery("iteration.findAllExecutionsByTestPlan", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(ParameterNames.ITERATION_ID, iterationId);
-				query.setParameter("testPlanId", testPlanId);
-
-			}
-		});
-	}
-
-	private SetQueryParametersCallback idAndLoginParameter(final long id, final String login) {
-
-		return new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(ParameterNames.ITERATION_ID, id);
-				query.setParameter("userLogin", login);
-			}
-		};
+		return entityManager.createNamedQuery("iteration.findAllExecutionsByTestPlan")
+			.setParameter(ParameterNames.ITERATION_ID, iterationId)
+			.setParameter("testPlanId", testPlanId)
+			.getResultList();
 	}
 
 	@Override
@@ -370,9 +354,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 		Query query = assignParameterValuesToTestPlanQuery(queryString, iterationId, filtering, columnFiltering);
 
-		PagingUtils.addPaging(query, sorting);
+		JpaPagingUtils.addPaging(query, sorting);
 
-		return query.list();
+		return query.getResultList();
 	}
 
 	@Override
@@ -380,14 +364,16 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		if (!filtering.isDefined()) {
 			return (Long) findByIterationId("iteration.countTestPlans", iterationId);
 		} else {
-			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered",
-				idAndLoginParameter(iterationId, filtering.getFilter()));
+			return (Long) entityManager.createNamedQuery("iteration.countTestPlansFiltered")
+				.setParameter(ParameterNames.ITERATION_ID, iterationId)
+				.setParameter("userLogin", filtering.getFilter())
+				.getSingleResult();
 		}
 	}
 
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering,
 		ColumnFiltering columnFiltering) {
-		Query query = entityManager.unwrap(Session.class).createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 		query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
 
@@ -408,7 +394,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), iterationId, filtering,
 			columnFiltering);
 
-		return query.list().size();
+		// TODO this should probably be a count query for better performance. otherwise explain why not possible in comment
+		return query.getResultList().size();
 	}
 
 	@SuppressWarnings("unchecked")

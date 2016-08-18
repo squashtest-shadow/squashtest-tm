@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -34,16 +27,24 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 
-public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteDaoImpl.class);
 
@@ -79,13 +80,15 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 	}
 
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
 
-		Query q = currentSession().getNamedQuery("TestSuite.countStatuses");
+		Query q = entityManager.createNamedQuery("TestSuite.countStatuses");
 		q.setParameter("id", testSuiteId);
-		List<Object[]> result = q.list();
+		List<Object[]> result = q.getResultList();
 
 		return new TestPlanStatistics(result);
 	}
@@ -93,10 +96,10 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
 
-		Query q = currentSession().getNamedQuery("TestSuite.countStatusesForUser");
+		Query q = entityManager.createNamedQuery("TestSuite.countStatusesForUser");
 		q.setParameter("id", testSuiteId);
 		q.setParameter("login", userLogin);
-		List<Object[]> result = q.list();
+		List<Object[]> result = q.getResultList();
 
 		return new TestPlanStatistics(result);
 
@@ -128,7 +131,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
 
-		return query.list().size();
+		return query.getResultList().size();
 	}
 
 
@@ -164,7 +167,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long suiteId, Filtering filtering,
 			ColumnFiltering columnFiltering) {
-		Query query = currentSession().createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 		query.setParameter("suiteId", suiteId);
 		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
 
@@ -186,9 +189,9 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
 
-		PagingUtils.addPaging(query, sorting);
+		JpaPagingUtils.addPaging(query, sorting);
 
-		return query.list();
+		return query.getResultList();
 	}
 
 

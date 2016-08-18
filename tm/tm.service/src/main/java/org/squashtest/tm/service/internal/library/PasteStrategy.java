@@ -87,7 +87,13 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private PasteOperation firstOperation;
 	private PasteOperation nextsOperation;
 	private EntityDao<CONTAINER> containerDao;
-	private EntityDao<NODE> nodeDao;
+	/**
+	 * JPA / spring data migration note : in order to migrate to spring-data, we have to ban the usage of "EntityDao" and use JpaRepository instead.
+	 * In this case, "NODE" can represent lots of types : TCLN, CLN, TestSuite... Migrating all o these DAOs in a single shot would be too many breaking changes
+	 * Since we only perform fetches by ID for these NODE objects, we rely on a lower level approach : entityMgr
+	 * This *could* be changed with appropriate DAOs when they're all migrated
+	 */
+	private Class<NODE> nodeType;
 
 	@Inject
 	private IndexationService indexationService;
@@ -97,10 +103,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	public <R extends EntityDao<CONTAINER>> void setContainerDao(R containerDao) {
 		this.containerDao = containerDao;
-	}
-
-	public void setNodeDao(EntityDao<NODE> nodeDao) {
-		this.nodeDao = nodeDao;
 	}
 
 	public void setNextLayersOperationFactory(Provider<? extends PasteOperation> nextLayersOperationFactory) {
@@ -172,7 +174,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>)container);
 
 		for (Long contentId : list){
-			NODE srcNode = nodeDao.findById(contentId);
+			NODE srcNode = entityManager.find(nodeType, contentId);
 			pairing.addContent(srcNode);
 		}
 		sourceLayer.add(pairing);
@@ -308,4 +310,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	}
 
+	public void setNodeType(Class<NODE> nodeType) {
+		this.nodeType = nodeType;
+}
 }

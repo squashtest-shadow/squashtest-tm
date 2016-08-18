@@ -43,7 +43,7 @@ class TestSuiteIssueFinder extends IssueOwnershipFinderSupport<TestSuite> {
 
 	@Override
 	protected TestSuite findEntity(long id) {
-		return testSuiteDao.findById(id);
+		return testSuiteDao.findOne(id);
 	}
 
 	@Override

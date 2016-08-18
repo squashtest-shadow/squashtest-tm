@@ -30,7 +30,7 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 import java.util.List;
 
-public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
+public interface CustomTestSuiteDao {
 
 
 	/**

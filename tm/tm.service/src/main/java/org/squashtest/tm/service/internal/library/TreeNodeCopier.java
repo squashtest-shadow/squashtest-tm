@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.campaign.*;
@@ -308,6 +309,14 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao, int nameMaxSize) {
 		renameIfNeeded((Copiable) copyParam, nameMaxSize);
 		dao.persist(copyParam);
+		((NodeContainer<T>) destination).addContent(copyParam);
+		this.copy = copyParam;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends TreeNode> void persistCopy(T copyParam, JpaRepository<T, Long> dao, int nameMaxSize) {
+		renameIfNeeded((Copiable) copyParam, nameMaxSize);
+		dao.save(copyParam);
 		((NodeContainer<T>) destination).addContent(copyParam);
 		this.copy = copyParam;
 	}

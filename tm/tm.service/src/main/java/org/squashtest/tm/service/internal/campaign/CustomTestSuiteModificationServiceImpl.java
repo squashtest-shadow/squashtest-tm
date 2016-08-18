@@ -68,7 +68,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Override
 	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void rename(long suiteId, String newName) throws DuplicateNameException {
-		TestSuite suite = testSuiteDao.findById(suiteId);
+		TestSuite suite = testSuiteDao.findOne(suiteId);
 		suite.rename(newName);
 	}
 
@@ -76,7 +76,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Override
 	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestSuite findById(long suiteId) {
-		return testSuiteDao.findById(suiteId);
+		return testSuiteDao.findOne(suiteId);
 	}
 
 	@Override

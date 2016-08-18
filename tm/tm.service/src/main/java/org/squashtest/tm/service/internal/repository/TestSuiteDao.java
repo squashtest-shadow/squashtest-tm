@@ -30,12 +30,10 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.List;
 
-
+/**
+ *
+ */
 public interface TestSuiteDao extends JpaRepository<TestSuite, Long>, CustomTestSuiteDao {
-
-	@Override
-	TestSuite findById(long id);
-
 	List<TestSuite> findAllByIterationId(long iterationId);
 
 	@Query

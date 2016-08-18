@@ -81,13 +81,13 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite findTestSuite(long testSuiteId) {
-		return testSuiteDao.findById(testSuiteId);
+		return testSuiteDao.findOne(testSuiteId);
 	}
 
 	@Override
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
-		TestSuite suite = testSuiteDao.findById(suiteId);
+		TestSuite suite = testSuiteDao.findOne(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 	}
 
@@ -121,7 +121,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	public void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds) {
-		List<TestSuite> unboundTestSuites = testSuiteDao.findAllByIds(unboundTestSuiteIds);
+		List<TestSuite> unboundTestSuites = testSuiteDao.findAll(unboundTestSuiteIds);
 		List<IterationTestPlanItem> iterationTestPlanItems = itemTestPlanDao.findAllByIdIn(itpIds);
 		for (TestSuite suite : unboundTestSuites) {
 			unbindTestPlanObj(suite, iterationTestPlanItems);
@@ -158,7 +158,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void changeTestPlanPosition(long suiteId, int newIndex, List<Long> itemIds) {
 
-		TestSuite suite = testSuiteDao.findById(suiteId);
+		TestSuite suite = testSuiteDao.findOne(suiteId);
 
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(suiteId, itemIds);
 
@@ -176,7 +176,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering, columnFiltering);
 
-		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
 		testSuite.getTestPlan().clear();
 		testSuite.getTestPlan().addAll(items);
@@ -186,7 +186,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
 
-		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
 
@@ -200,11 +200,11 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
 
-		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<>();
 
 		for (long testPlanId : testPlanIds) {
-			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findById(testPlanId);
+			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findOne(testPlanId);
 			listTestPlanItems.add(iterTestPlanItem);
 		}
 
@@ -214,7 +214,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
-		TestSuite testSuite = testSuiteDao.findById(suiteId);
+		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
 
