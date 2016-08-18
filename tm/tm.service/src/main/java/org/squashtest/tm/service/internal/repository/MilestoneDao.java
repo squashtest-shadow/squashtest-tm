@@ -58,7 +58,7 @@ public interface MilestoneDao extends JpaRepository<Milestone, Long>, CustomMile
 	@Query(name = "Milestone.findByLabel")
 	Milestone findByName(@Param("label") String name);
 
-
-	long countMilestonesForUsers(List<Long> userIds);
+	@Query
+	long countMilestonesForUsers(@Param("userIds") List<Long> userIds);
 
 }
