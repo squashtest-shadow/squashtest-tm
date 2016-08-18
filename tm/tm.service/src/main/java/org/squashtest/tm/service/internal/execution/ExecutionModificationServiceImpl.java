@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -43,6 +37,11 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -72,13 +71,13 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionDescription(Long executionId, String description) {
-		Execution execution = executionDao.findById(executionId);
+		Execution execution = executionDao.findOne(executionId);
 		execution.setDescription(description);
 	}
 
 	@Override
 	public List<ExecutionStep> findExecutionSteps(long executionId) {
-		return executionDao.findExecutionSteps(executionId);
+		return executionDao.findSteps(executionId);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public PagedCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
-		long count = executionDao.countExecutionSteps(executionId);
+		long count = executionDao.countSteps(executionId);
 		return new PagingBackedPagedCollectionHolder<>(filter, count, list);
 	}
 
@@ -120,7 +119,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	public Execution findById(long id) {
-		return executionDao.findById(id);
+		return executionDao.findOne(id);
 	}
 
 	@Override
@@ -128,11 +127,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		return executionStepDao.findById(id);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.execution.ExecutionFinder#findAllByTestCaseIdOrderByRunDate(long,
-	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
-	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
-	 */
 	@Override
 	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {
 		return executionDao.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
@@ -154,14 +148,14 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
-		Execution execution = executionDao.findById(executionId);
+		Execution execution = executionDao.findOne(executionId);
 		execution.setExecutionStatus(status);
 
 	}
 
 	@Override
 	public long updateSteps(long executionId) {
-		Execution execution = executionDao.findById(executionId);
+		Execution execution = executionDao.findOne(executionId);
 		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
 
 		long result = executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
@@ -171,6 +165,5 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		}
 		return result;
 	}
-
 
 }

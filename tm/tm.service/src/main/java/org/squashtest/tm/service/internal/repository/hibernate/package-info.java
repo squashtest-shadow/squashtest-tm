@@ -206,7 +206,7 @@
 
 	// IterationTestPlanItem
 	@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query = "select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
-	@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
+	@NamedQuery(name = "IterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
 
 
@@ -430,24 +430,23 @@
 	@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query = "select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),
 
 	//Execution
-	@NamedQuery(name = "execution.findSteps", query = "select steps from Execution exec inner join exec.steps steps where exec.id = :executionId"),
-	@NamedQuery(name = "execution.findStepsForAllExecutions", query = "select steps from Execution exec inner join exec.steps steps where exec.id in (:executionIds)"),
-	@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
-	@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
+	@NamedQuery(name = "Execution.findSteps", query = "select steps from Execution exec inner join exec.steps steps where exec.id = :executionId"),
+	@NamedQuery(name = "Execution.findStepsForAllExecutions", query = "select steps from Execution exec inner join exec.steps steps where exec.id in (:executionIds)"),
+	@NamedQuery(name = "Execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
+	@NamedQuery(name = "Execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 	@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
-	@NamedQuery(name = "execution.countByTestCaseId", query = "select count(e) from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId"),
+	@NamedQuery(name = "Execution.countByTestCaseId", query = "select count(e) from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId"),
 	@NamedQuery(name = "execution.countAllStatus", query = "select count(ex) from Execution ex where ex.executionStatus = :status and ex.testPlan.iteration.campaign.project.id = :projectId"),
-	@NamedQuery(name = "execution.findExecutionIdsHavingStepStatus", query = "select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
-	@NamedQuery(name = "execution.findOriginalSteps", query = "select st from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
-	@NamedQuery(name = "execution.findOriginalStepIds", query = "select st.id from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
-	@NamedQuery(name = "execution.count", query = "select count(ex) from Execution ex where ex.id =:executionId"),
+	@NamedQuery(name = "Execution.findExecutionIdsHavingStepStatus", query = "select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
+	@NamedQuery(name = "Execution.findOriginalSteps", query = "select st from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
+	@NamedQuery(name = "Execution.findOriginalStepIds", query = "select st.id from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
 
 
 
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 	@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
-	@NamedQuery(name = "executionStep.replaceStatus", query = "update ExecutionStep set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
+	@NamedQuery(name = "ExecutionStep.replaceStatus", query = "update ExecutionStep set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
 
 	//Generic Project

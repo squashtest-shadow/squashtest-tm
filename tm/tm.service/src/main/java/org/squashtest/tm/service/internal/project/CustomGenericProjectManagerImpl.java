@@ -575,7 +575,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void replaceExecutionStepStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
 
 		// save the ids of executions having steps with the source status
-		List<Long> modifiedExecutionIds = executionDao.findAllExecutionIdHavingStepWithStatus(projectId, source);
+		List<Long> modifiedExecutionIds = executionDao.findExecutionIdsHavingStepStatus(projectId, source);
 
 		// now modify the step statuses
 		executionDao.replaceExecutionStepStatus(projectId, source, target);

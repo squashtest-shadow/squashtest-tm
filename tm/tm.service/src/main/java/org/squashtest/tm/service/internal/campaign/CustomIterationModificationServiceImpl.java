@@ -342,7 +342,7 @@ IterationTestPlanManager {
 
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
-		executionDao.persist(execution);
+		executionDao.save(execution);
 		return execution;
 	}
 
@@ -371,7 +371,7 @@ IterationTestPlanManager {
 
 		Execution execution = item.createAutomatedExecution();
 
-		executionDao.persist(execution);
+		executionDao.save(execution);
 		item.addExecution(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 
@@ -418,7 +418,7 @@ IterationTestPlanManager {
 	@Override
 	public Execution updateExecutionFromTc(long executionId) {
 
-		Execution exec = executionDao.findById(executionId);
+		Execution exec = executionDao.findOne(executionId);
 		if (exec == null) {
 			throw new ExecutionWasDeleted();
 		}

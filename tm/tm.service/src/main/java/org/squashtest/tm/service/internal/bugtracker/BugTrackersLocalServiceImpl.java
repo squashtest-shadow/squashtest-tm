@@ -381,7 +381,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@SuppressWarnings("unchecked")
 	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
 		List<Long> execIds = (List<Long>) CollectionUtils.collect(executions, new IdCollector(), new ArrayList<Long>());
-		return executionDao.findExecutionSteps(execIds);
+		return executionDao.findStepsForAllExecutions(execIds);
 	}
 
 

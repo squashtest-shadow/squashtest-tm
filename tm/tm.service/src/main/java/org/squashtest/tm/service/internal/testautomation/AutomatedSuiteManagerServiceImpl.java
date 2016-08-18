@@ -351,7 +351,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		Execution execution = item.createAutomatedExecution();
 
-		executionDao.persist(execution);
+		executionDao.save(execution);
 		item.addExecution(execution);
 
 		createCustomFieldsForExecutionAndExecutionSteps(execution);

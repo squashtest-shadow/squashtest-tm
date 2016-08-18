@@ -74,12 +74,12 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public boolean wasNeverRun(Long executionId) {
-		return executionDao.wasNeverRan(executionId);
+		return ((executionDao.countSteps(executionId) - executionDao.countStatus(executionId, ExecutionStatus.READY)) == 0);
 	}
 
 	@Override
 	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
-		Execution execution = executionDao.findById(executionId);
+		Execution execution = executionDao.findOne(executionId);
 
 		ExecutionStep step;
 		try {
@@ -139,7 +139,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
-		Execution execution = executionDao.findById(executionId);
+		Execution execution = executionDao.findOne(executionId);
 		execution.setExecutionStatus(status);
 
 	}

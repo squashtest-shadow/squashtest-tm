@@ -74,7 +74,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	public void createAllDenormalizedFieldValuesForSteps(Execution execution) {
 
 		// fetch execution steps
-		List<ExecutionStep> executionSteps = execDao.findExecutionSteps(execution.getId());
+		List<ExecutionStep> executionSteps = execDao.findSteps(execution.getId());
 		if (executionSteps.isEmpty()){
 			return;
 		}

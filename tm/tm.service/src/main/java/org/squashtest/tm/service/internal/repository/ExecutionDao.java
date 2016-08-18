@@ -20,99 +20,61 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
-public interface ExecutionDao extends EntityDao<Execution> {
+import java.util.Collection;
+import java.util.List;
 
-	List<ExecutionStep> findExecutionSteps(long executionId);
+public interface ExecutionDao extends JpaRepository<Execution, Long>, CustomExecutionDao {
 
-	List<ExecutionStep> findExecutionSteps(Collection<Long> executionIds);
+	@Query
+	List<ExecutionStep> findSteps(@Param("executionId") long executionId);
 
-	List<ActionTestStep> findOriginalSteps(long executionId);
+	@Query
+	List<ExecutionStep> findStepsForAllExecutions(@Param("executionIds") Collection<Long> executionIds);
 
-	List<Long> findOriginalStepIds(long executionId);
+	@Query
+	List<ActionTestStep> findOriginalSteps(@Param("executionId") long executionId);
 
-	Execution findAndInit(long executionId);
+	@Query
+	List<Long> findOriginalStepIds(@Param("executionId") long executionId);
 
-	int findExecutionRank(long executionId);
-
-	ExecutionStatusReport getStatusReport(long executionId);
-
-	long countSuccess(long executionId);
-
-	long countReady(long executionId);
-
-	boolean exists(long executionId);
+	@Query
+	long countStatus(@Param("execId") long executionId, @Param("status") ExecutionStatus status);
 
 	// ************** special execution status deactivation section ***************
 
-	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
+	@Query
+	List<Long> findExecutionIdsHavingStepStatus(@Param("projectId") Long projectId, @Param("status") ExecutionStatus source);
 
-	List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus source);
+	@Modifying
+	@Query(name="ExecutionStep.replaceStatus")
+	void replaceExecutionStepStatus(@Param("projectId") long projectId, @Param("oldStatus") ExecutionStatus oldStatus, @Param("newStatus") ExecutionStatus newStatus);
 
-	List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId, ExecutionStatus source);
-
-	List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus source);
-
-	boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus);
-
-	void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
-
-	void replaceTestPlanStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
+	@Modifying
+	@Query(name = "IterationTestPlanItem.replaceStatus")
+	void replaceTestPlanStatus(@Param("projectId") long projectId, @Param("oldStatus") ExecutionStatus oldStatus, @Param("newStatus") ExecutionStatus status);
 
 
 	// ************* /special execution status deactivation section ***************
-
-
-	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
-
-	long countExecutionSteps(long executionId);
-
-	/**
-	 * @param testCaseId
-	 * @param paging
-	 * @return
-	 */
-	List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging);
-
-	/**
-	 * Returns the executions which ran the given test case using the given paging and sorting data
-	 * 
-	 * @param testCaseId
-	 * @param pas
-	 *            non null paging and sorting data
-	 * @return non null list of executions
-	 */
-	List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
+	@Query
+	long countSteps(@Param("executionId") long executionId);
 
 	/**
 	 * Returns the count of executions which ran a given test case.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @return
 	 */
-	long countByTestCaseId(long testCaseId);
-
-
-	/**
-	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status
-	 * READY.
-	 * 
-	 * @param executionId
-	 * @return
-	 */
-	boolean wasNeverRan(Long executionId);
+	@Query
+	long countByTestCaseId(@Param("testCaseId") long testCaseId);
 
 
 }
