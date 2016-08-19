@@ -48,15 +48,30 @@
   </changeSet>
 
   <changeSet id="tm-1.15.0-cuf-custom-report-1" author="jthebault">
+
+
     <comment>Denormalize the cuf ID inside the cuf values, so we don't have to make two more joins in custom reports</comment>
     <createTable tableName="TEMP_CUF_ID">
       <column name="CFV_ID" type="BIGINT"/>
       <column name="CF_ID" type="BIGINT"/>
     </createTable>
 
+    <createIndex tableName="TEMP_CUF_ID" indexName="idx_tmp_cuf_cuf_id">
+      <column name="CF_ID" type="BIGINT"/>
+    </createIndex>
+
+    <createIndex tableName="TEMP_CUF_ID" indexName="idx_tmp_cuf_cfv_id">
+      <column name="CFV_ID" type="BIGINT"/>
+    </createIndex>
+
     <addColumn tableName="CUSTOM_FIELD_VALUE">
       <column name="CF_ID" type="BIGINT" remarks="dernomalize the custom field id for custom report queries" />
     </addColumn>
+
+    <createIndex tableName="CUSTOM_FIELD_VALUE" indexName="idx_cfv_custom_field_id">
+      <column name="CF_ID" type="BIGINT"/>
+    </createIndex>
+
     <sql>
       insert into TEMP_CUF_ID (CFV_ID,CF_ID)
         select cfv.CFV_ID, cfb.CF_ID
@@ -72,9 +87,7 @@
     </sql>
     <dropTable tableName="TEMP_CUF_ID"/>
 
-    <createIndex tableName="CUSTOM_FIELD_VALUE" indexName="idx_cfv_custom_field_id">
-      <column name="CF_ID" type="BIGINT"/>
-    </createIndex>
+
   </changeSet>
 
   <changeSet id="tm-1.15.0-cuf-custom-report-2" author="jthebault">
