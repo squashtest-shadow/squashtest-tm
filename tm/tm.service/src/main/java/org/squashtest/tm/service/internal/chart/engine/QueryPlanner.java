@@ -418,7 +418,7 @@ class QueryPlanner {
 	 */
 	private boolean hasLeftWhereJoin(QueryPlan plan){
 
-		boolean hasLeftJoin = false;
+		boolean hasLeftJoin;
 		boolean hasWhereJoin = false;
 
 		// condition 1

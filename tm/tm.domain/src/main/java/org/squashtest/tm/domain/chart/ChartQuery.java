@@ -218,8 +218,8 @@ public class ChartQuery {
 
 	private List<AxisColumn> copyAxis() {
 		List<AxisColumn> copy = new ArrayList<>();
-		for (AxisColumn axis : getAxis()) {
-			copy.add(axis.createCopy());
+		for (AxisColumn axisColumn : getAxis()) {
+			copy.add(axisColumn.createCopy());
 		}
 		return copy;
 	}

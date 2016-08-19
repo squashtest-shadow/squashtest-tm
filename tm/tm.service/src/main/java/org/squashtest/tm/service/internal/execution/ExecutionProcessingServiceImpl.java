@@ -74,7 +74,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Override
 	public boolean wasNeverRun(Long executionId) {
-		return ((executionDao.countSteps(executionId) - executionDao.countStatus(executionId, ExecutionStatus.READY)) == 0);
+		return executionDao.countSteps(executionId) - executionDao.countStatus(executionId, ExecutionStatus.READY) == 0;
 	}
 
 	@Override
