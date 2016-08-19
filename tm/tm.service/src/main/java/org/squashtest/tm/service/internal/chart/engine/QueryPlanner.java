@@ -339,13 +339,13 @@ class QueryPlanner {
 	}
 
 	private void createCufJoins(Map<ColumnPrototype, Set<Long>> cufPrototypes) {
-		for (ColumnPrototype columnPrototype : cufPrototypes.keySet()) {
-			Set<Long> cufIds = cufPrototypes.get(columnPrototype);
+		for (Map.Entry<ColumnPrototype,Set<Long>> entry :cufPrototypes.entrySet()) {
+			Set<Long> cufIds = entry.getValue();
+			ColumnPrototype columnPrototype = entry.getKey();
 			for (Long cufId : cufIds) {
 				String alias = utils.getCustomFieldColumnAlias(columnPrototype, cufId);
 				//now we join as cartesian product because we have no hibernate mapping between entities
 				QCustomFieldValue qCustomFieldValue = new QCustomFieldValue(alias);
-				QCustomFieldBinding qCustomFieldBinding = QCustomFieldBinding.customFieldBinding;
 				query.from(qCustomFieldValue);
 				//now we need to filter out this ugly cartesian product with three where clause.
 				//but as CUF can be linked to different entity type, we need to create the good clause for our actual cuf.
@@ -363,20 +363,27 @@ class QueryPlanner {
 
 	private NumberPath<Long> getEntityIdForCufValue(ColumnPrototype columnPrototype) {
 		EntityType entityType = columnPrototype.getEntityType();
+		NumberPath<Long> id;
 		switch (entityType){
 			case TEST_CASE:
-				return QTestCase.testCase.id;
+				id = QTestCase.testCase.id;
+				break;
 			case REQUIREMENT_VERSION:
-				return QRequirementVersion.requirementVersion.id;
+				id = QRequirementVersion.requirementVersion.id;
+				break;
 			case CAMPAIGN:
-				return QCampaign.campaign.id;
+				id = QCampaign.campaign.id;
+				break;
 			case ITERATION:
-				return QIteration.iteration.id;
+				id = QIteration.iteration.id;
+				break;
 			case EXECUTION:
-				return QExecution.execution.id;
+				id = QExecution.execution.id;
+				break;
 			default:
 				throw new IllegalArgumentException("This entity type couldn't have cuf bound to them or can't actually be in custom report chart.");
 		}
+		return id;
 	}
 
 	private BindableEntity getBoundEntityType(ColumnPrototype columnPrototype) {
