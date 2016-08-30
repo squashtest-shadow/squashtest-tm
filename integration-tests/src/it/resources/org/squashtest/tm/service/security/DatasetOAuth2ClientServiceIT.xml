@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.12.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.12.0.dtd">
 <dataset>
 
 <OAUTH_CLIENT_DETAILS CLIENT_ID="client1" CLIENT_SECRET="secret"/>
