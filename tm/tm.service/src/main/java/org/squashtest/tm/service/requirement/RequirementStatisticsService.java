@@ -24,9 +24,11 @@ import java.util.Collection;
 
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
 
 public interface RequirementStatisticsService {
 
@@ -71,4 +73,20 @@ public interface RequirementStatisticsService {
 	 * @return
 	 */
 	RequirementBoundDescriptionStatistics gatherRequirementBoundDescriptionStatistics(Collection<Long> requirementIds);
+	/**
+	 * Given those requirements ids, sort them by criticality and returns the rate of coverage. Warning : no security check will 
+	 * be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	RequirementCoverageStatistics gatherRequirementCoverageStatistics(Collection<Long> requirementIds);
+	/**
+	 * Given those requirements ids, sort them by criticality and returns the rates of validation. Warning : no security check will 
+	 * be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	RequirementValidationStatistics gatherRequirementValidationStatistics(Collection<Long> requirementIds);
 }

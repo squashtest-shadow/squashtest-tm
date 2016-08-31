@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pie-view", 
-        "./bar-view"], 
+        "dashboard/basic-objects/bar-view"], 
 		function(Backbone, ChartModel, PieView, BarView){
 
 	

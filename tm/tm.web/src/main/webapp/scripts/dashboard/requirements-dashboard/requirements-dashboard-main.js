@@ -32,8 +32,8 @@
 
 define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/timestamp-label",
 		"dashboard/SuperMasterView","./summary", "./bound-test-cases-pie", "./status-pie", "./criticality-pie",
-		"./bound-description-pie", "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, Summary,
-		BoundTestCasePie, StatusPie, CriticalityPie, BoundDescriptionPie, translator) {
+		"./bound-description-pie", "./coverage-bar", "./validation-bar", "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, Summary,
+		BoundTestCasePie, StatusPie, CriticalityPie, BoundDescriptionPie, CoverageBar, ValidationBar, translator) {
 
 	function doInit(settings) {
 		new SuperMasterView({
@@ -65,6 +65,16 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			model : this.model
 		});
 		
+		var covBar = new CoverageBar({
+			el : this.$("#dashboard-item-coverage"),
+			model : this.model
+		});
+		
+		var validBar = new ValidationBar({
+			el : this.$("#dashboard-item-validation"),
+			model : this.model
+		});
+		
 		var summary = new Summary({
 			el : this.$(".dashboard-summary"),
 			model : this.model
@@ -73,9 +83,10 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		addClickSearchEvent($("#dashboard-item-bound-tcs"), tcPie, "testcase");
 		addClickSearchEvent($("#dashboard-item-requirements-status"), statPie, "status");
 		addClickSearchEvent($("#dashboard-item-requirements-criticality"), critPie, "criticality");
-		addClickSearchEvent($("#dashboard-item-bound-desc"), critPie, "description");
+		addClickSearchEvent($("#dashboard-item-bound-desc"), descPie, "description");
+		addClickSearchEvent($("#dashboard-item-coverage"), covBar, "coverage");
 		
-		return [ summary, tcPie, statPie, critPie, descPie ];
+		return [ summary, tcPie, statPie, critPie, descPie, covBar, validBar ];
 	}
 	
 	function addTestCasesToSearch(search, pointIndex) {
@@ -151,8 +162,31 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		}
 	}
 	
+	function addCoverageToSearch(search, pointIndex, chart) {
+		search.fields.testcases = {};
+		search.fields.testcases.type = "RANGE";
+		search.fields.testcases.minValue = "1";
+		search.fields.testcases.maxValue = "";
+		
+		// Not all categories are displayed so we have to know wich are
+		var categories = chart.plot.axes.xaxis.ticks;
+		var criticalityToSearch = categories[pointIndex];
+		
+		search.fields.criticality = {};
+		search.fields.criticality.type = "LIST";
+		
+		if(criticalityToSearch === translator.get("requirement.criticality.UNDEFINED"))
+			search.fields.criticality.values = [ "3-UNDEFINED" ];
+		else if(criticalityToSearch === translator.get("requirement.criticality.MINOR"))
+			search.fields.criticality.values = [ "2-MINOR" ];
+		else if(criticalityToSearch === translator.get("requirement.criticality.MAJOR"))
+			search.fields.criticality.values = [ "1-MAJOR" ];
+		else if(criticalityToSearch === translator.get("requirement.criticality.CRITICAL"))
+			search.fields.criticality.values = [ "0-CRITICAL" ];
+	}
+	
 	function addClickSearchEvent(item, pie, type) {
-
+		
 		item.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
 			var $this = $(this);
 			// TODO: The message shouldn't be associated with 'test-cases'
@@ -174,15 +208,20 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 
 			var search = {
 				fields : {
-					id : {
+					"requirement.id" : {
 						type : "LIST",
 						values : ""
 					}
 				}
 			};
 
-			search.fields.id.values = ids.toString().split(",");
+			search.fields["requirement.id"].values = ids.toString().split(",");
 
+			search.fields.isCurrentVersion = {};
+			search.fields.isCurrentVersion.type = "SINGLE";
+			search.fields.isCurrentVersion.value = "1";
+			search.fields.isCurrentVersion.ignoreBridge = "true";
+			
 			switch (type) {
 			case "testcase":
 				addTestCasesToSearch(search, pointIndex);
@@ -195,6 +234,9 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 				break;
 			case "description":
 				addDescriptionToSearch(search, pointIndex);
+				break;
+			case "coverage":
+				addCoverageToSearch(search, pointIndex, pie);
 				break;
 			}
 

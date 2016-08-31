@@ -45,11 +45,16 @@ define(["jquery", "backbone", "squash.translator"], function($, Backbone, transl
 		
 			var ids = this.model.get('selectedIds');
 				
-			var search = {fields:{
-				id:{type:"LIST", values:"" }	 
-			}};
+			var search = {
+					fields: {
+						"requirement.id": {
+							type:"LIST",
+							values:""
+						}	 
+					}
+			};
 				 
-			search.fields.id.values = ids.toString().split(",");
+			search.fields["requirement.id"].values = ids.toString().split(",");
 				    
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
 			var urlSearch = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;

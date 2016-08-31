@@ -31,45 +31,35 @@ import spock.lang.Unroll;
 
 class ActualTimePeriodIsActualPeriodValidValidatorTest extends Specification {
 
-	def setup () {
-		
-	}
 	@Unroll("StartDate #actualStartDate with actualStartAuto #actualStartAuto and EndDate #actualEndDate with actualEndAuto #actualEndAuto should be consistent : #isConsistent")
 	def "should accept / reject some dates"() {
+		
 		given:
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy")
-		ActualTimePeriodIsActualPeriodValidValidator validator = new ActualTimePeriodIsActualPeriodValidValidator()
-		ConstraintValidatorContext context = Mock()
-		
-		ActualTimePeriod period = new ActualTimePeriod()
-		period.actualStartAuto = actualStartAuto
-		period.actualEndAuto = actualEndAuto
-		if(actualStartDate != null)
-			period.actualStartDate = format.parse(actualStartDate)
-		if(actualEndDate != null)
-			period.actualEndDate = format.parse(actualEndDate)
-		
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy")
+			ActualTimePeriodIsActualPeriodValidValidator validator = new ActualTimePeriodIsActualPeriodValidValidator()
+			ConstraintValidatorContext context = Mock()
+			
+			ActualTimePeriod period = new ActualTimePeriod()
+			period.actualStartAuto = actualStartAuto
+			period.actualEndAuto = actualEndAuto
+			if(actualStartDate != null)
+				period.actualStartDate = format.parse(actualStartDate)
+			if(actualEndDate != null)
+				period.actualEndDate = format.parse(actualEndDate)		
 		when:
-		boolean result = validator.isValid(period, context)
-		
+			boolean result = validator.isValid(period, context)
 		then:
-		result == isConsistent
+			result == isConsistent
 		
 		where:
-		actualStartAuto | actualEndAuto | actualStartDate | actualEndDate | isConsistent
-		true 			| true 			| "01/01/2015"    | "01/01/2010"  | true
-		true 			| false			| "01/01/2015"    | "01/01/2010"  | true
-		false 			| true			| "01/01/2015"    | "01/01/2010"  | true
-		false 			| false			| null			  | null		  | true
-		false 			| false			| null			  | "01/01/2015"  | true
-		false 			| false			| "01/01/2010"	  | null		  | true
-		false 			| false			| "01/01/2010"    | "01/01/2015"  | true
-		false 			| false			| "01/01/2010"    | "01/01/2000"  | false
-		
-		
-		
-		
-		
-		
+			actualStartAuto | actualEndAuto | actualStartDate | actualEndDate | isConsistent
+			true 			| true 			| "01/01/2015"    | "01/01/2010"  | true
+			true 			| false			| "01/01/2015"    | "01/01/2010"  | true
+			false 			| true			| "01/01/2015"    | "01/01/2010"  | true
+			false 			| false			| null			  | null		  | true
+			false 			| false			| null			  | "01/01/2015"  | true
+			false 			| false			| "01/01/2010"	  | null		  | true
+			false 			| false			| "01/01/2010"    | "01/01/2015"  | true
+			false 			| false			| "01/01/2010"    | "01/01/2000"  | false
 	}
 }

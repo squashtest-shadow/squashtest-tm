@@ -69,7 +69,6 @@
             </div>
           </div>
           
-          
           <div id="dashboard-item-requirements-status" class="dashboard-item dashboard-pie" data-def="model-attribute=statusesStatistics">
             <div id="dashboard-requirement-status-view" class="dashboard-item-view">
             
@@ -150,11 +149,46 @@
             </div>
           </div>
           
+          <div id="dashboard-item-coverage" class="dashboard-item" data-def="model-attribute=coverageStatistics">
+            
+            <div id="dashboard-coverage-view" class="dashboard-item-view">
+            </div>
+            
+            <div class="dashboard-item-meta">   
+              <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.coverage.title"/></h2>
+            </div>
+          </div>
+          
+            <div id="dashboard-item-validation" class="dashboard-item" data-def="model-attribute=validationStatistics">
+            <div id="dashboard-validation-view" class="dashboard-item-view">
+            
+            </div>
+            
+            <div class="dashboard-item-meta">         
+              <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.validation.title"/></h2>
+            
+              <div class="dashboard-item-legend">
+                <div>
+                  <div class="dashboard-legend-sample-color" style="background-color:#A3D86E"></div>
+                  <span><f:message key="dashboard.requirements.validation.CONSLUSIVE" /></span>
+                </div>
+                <div>
+                  <div class="dashboard-legend-sample-color" style="background-color:#EB2828"></div>
+                  <span><f:message key="dashboard.requirements.validation.INCONSLUSIVE" /></span>
+                </div>
+                <div>
+                  <div class="dashboard-legend-sample-color" style="background-color:#9CCBE0"></div>
+                  <span><f:message key="dashboard.requirements.validation.UNDEFINED" /></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div class="unsnap"> </div>     
           <span class="dashboard-summary"><f:message key="dashboard.requirements.summary"/></span>
         
         </div>
-      
+      	
         <div class="dashboard-figleaf-notready" style="text-align : center">
           <h3 class="dashboard-figleaf-notready-title"><f:message key="dashboard.notready.title"/></h3>
         </div>

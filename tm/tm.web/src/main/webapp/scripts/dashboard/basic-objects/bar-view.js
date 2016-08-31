@@ -25,49 +25,88 @@
  * - the method getCategories (aka the labels of the axes) -> array of String
  */
 
-//TODO : move to dashboard/basic-objects when ready
 define(["jquery", "dashboard/basic-objects/jqplot-view",
-        "jqplot-core",  "jqplot-category", "jqplot-bar"],
-		function($, JqplotView){
+        "jqplot-core",  "jqplot-category", "jqplot-bar", "jqplot-point-labels", "jqplot-canvas-ticks"],
+        function($, JqplotView){
 
 	return JqplotView.extend({
 
-		getCategories : function(){
+		getCategories : function() {
 			throw "attempted to create an abstract BarView !";
 		},
-
-		getConf : function(series){
-
-			var ticks = this.getCategories();
-
+		getConf : function(series) {
+			
+			var ticks = this.getCategories(series);
+			var colors = this.getColors();
+			
 			return {
+				seriesColors: colors,
+				stackSeries: true,
 				seriesDefaults : {
 					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
-						fillToZero : true
-					}
+						barWidth: 80
+					},
+					pointLabels: {
+						show: true,
+						escapeHTML: false,
+						edgeTolerance: -20,
+					},
+					shadow: false,
 				},
-
 				legend : {
 					show : false
 				},
-
 				axes : {
+					yaxis : {
+						min: 0.0,
+						max: 100.0,
+						tickInterval: 50,
+						tickOptions: {
+							fontSize: '14px',
+						},
+						showTicks: false
+					},
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
-						ticks : ticks
+						ticks : ticks,
+						tickOptions: {
+							fontSize: '14px'
+						}
 					}
 				},
 				grid : {
-					background : '#FFFFFF',
+					gridLineColor: 'transparent',
 					drawBorder : false,
 					borderColor : 'transparent',
+					drawGridlines: false,
+					background : '#FFFFFF',
 					shadow : false,
 					shadowColor : 'transparent'
 				}
 			};
 
-		}
+		},
+		getColors : function() {
+			var legendcolors = this.$el.find('.dashboard-legend-sample-color');
 
+			return legendcolors.map(function (i, e) {
+				return $(e).css('background-color');
+			}).get();
+		},
+		/* Override of the draw function from JqplotView
+		 * Because the replot function causes a bug while extending configuration
+		 * Since previous configuration can have more categories than the current one
+		 * and the extension doesn't remove the extra categories
+		 * Therefore the plot will be destroyed then redrawn every time */
+		draw : function(series, conf){
+			if(series.length > 0) {
+				if (this.plot !== undefined){	
+					this.plot.destroy();
+				}
+				var viewId = this.$el.find('.dashboard-item-view').attr('id');
+				this.plot = $.jqplot(viewId, series, conf);
+			}
+		},
 	});
 });

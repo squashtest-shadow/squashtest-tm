@@ -37,9 +37,11 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
 
 @Service("RequirementStatisticsService")
 @Transactional(readOnly = true)
@@ -69,12 +71,65 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			+ "Group By coverage.sizeclass";
 
 	private static final String SQL_BOUND_DESC_STATISTICS =
-			"Select (res.description != '' AND res.description is not null) as hasDescription, count(res.res_id) "
+			"Select (Case When res.description != '' AND res.description is not null Then 1 Else 0 End) as hasDescription, count(res.res_id) "
 			+ "From REQUIREMENT req "
-			+ "Inner Join REQUIREMENT_VERSION reqVer on req.current_version_id = reqVer.requirement_id "
+			+ "Inner Join REQUIREMENT_VERSION reqVer on req.current_version_id = reqVer.res_id "
 			+ "Inner Join RESOURCE res on reqVer.res_id = res.res_id "
 			+ "Where req.rln_id in (:requirementIds) "
 			+ "Group By hasDescription";
+	
+	private static final String SQL_COVERAGE_STATISTICS = 
+			"Select totalSelection.criticality, Coalesce(coveredSelection.coverCount, 0), totalSelection.totalCount "
+			+ "From "
+					+ "(Select coverage.criticality as criticality, count(sizeclass) as coverCount "
+					+ "From (Select reqVer.criticality as criticality, reqVer.res_id as id, Case When count(reqVerCov.verified_req_version_id) = 0 then 0 Else 1 End as sizeclass "
+						  + "From REQUIREMENT_VERSION as reqVer "
+						  + "Inner Join REQUIREMENT req on reqVer.res_id = req.current_version_id "
+						  + "Left Outer Join Requirement_version_coverage reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+						  + "Where req.rln_id in (:requirementIds) Group By reqVer.res_id) as coverage "
+						  + "Where sizeclass = 1 "
+						  + "Group By coverage.criticality) "
+			+ "as coveredSelection "
+			+ "Right Outer Join "
+					+ "(Select reqVer2.criticality as criticality, count(reqVer2.res_id) as totalCount "
+					+ "From REQUIREMENT_VERSION as reqVer2 "
+					+ "Inner Join REQUIREMENT req2 on reqVer2.res_id = req2.current_version_id "
+					+ "Where req2.rln_id in (:requirementIds) Group By reqVer2.criticality) "
+			+ "as totalSelection "
+			+ "On coveredSelection.criticality = totalSelection.criticality";
+	
+	private static final String SQL_VALIDATION_STATISTICS = 
+				"Select Selection1.criticality, Selection1.status, count(*) "
+					+ "From "
+						+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, exec.execution_status as status, exec.last_executed_on as execDate "
+						+ "From REQUIREMENT as req "
+						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
+						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
+						+ "Left Outer Join EXECUTION exec on exec.tcln_id = tc.tcln_id "
+						+ "Where req.rln_id in (:requirementIds)) as Selection1 "
+					+ "Inner Join "
+						+ "(Select req.rln_id as requirement, tc.tcln_id as testCase, max(exec.last_executed_on) as lastDate "
+						+ "From REQUIREMENT as req "
+						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
+						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
+						+ "Left Outer Join EXECUTION exec on exec.tcln_id = tc.tcln_id "
+							+ "Inner Join "
+							+ "(Select Max(req.rln_id) as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase "
+							+ "From REQUIREMENT req "
+							+ "Inner Join REQUIREMENT_VERSION as reqVer On req.current_version_id = reqVer.res_id "
+							+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov On reqVerCov.verified_req_version_id = reqVer.res_id "
+							+ "Inner Join TEST_CASE as tc On tc.tcln_id = reqVerCov.verifying_test_case_id "
+							+ "Where req.rln_id in (:requirementIds) "
+							+ "Group By criticality, testCase) as NoDuplicateTCByCritSelection "
+							+ "On NoDuplicateTCByCritSelection.requirement = req.rln_id And NoDuplicateTCByCritSelection.criticality = reqVer.criticality And NoDuplicateTCByCritSelection.testCase = tc.tcln_id "
+						+ "Where req.rln_id in (:requirementIds) "
+						+ "Group By NoDuplicateTCByCritSelection.criticality, NoDuplicateTCByCritSelection.testCase) as LastExecutionSelection "
+					+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase "
+						+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
+					+ "Group By Selection1.criticality, Selection1.status";
+			
 	
 	private static String reqParamName = "requirementIds";
 	
@@ -103,7 +158,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			sizeClass= (Integer)tuple[0];
 			count = ((BigInteger)tuple[1]).intValue();
 
-			switch(sizeClass){
+			switch(sizeClass) {
 				case 0 : stats.setZeroTestCases(count); break;
 				case 1 : stats.setOneTestCase(count); break;
 				case 2 : stats.setManyTestCases(count); break;
@@ -150,8 +205,8 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			case CRITICAL:
 				stats.setCritical(cardinality);
 				break;
-			default:
-				LOGGER.warn("RequirmentStatisticsService cannot handle the following RequirementCriticality value : '"
+			default: throw new IllegalArgumentException(
+					"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
 						+ (String) tuple[0] + "'");
 			}
 		}
@@ -193,15 +248,14 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			case OBSOLETE:
 				stats.setObsolete(cardinality);
 				break;
-			default:
-				LOGGER.warn("RequirmentStatisticsService cannot handle the following RequirementStatus value : '"
+			default: throw new IllegalArgumentException(
+					"RequirmentStatisticsService cannot handle the following RequirementStatus value : '"
 						+ (String) tuple[0] + "'");
 			}
 		}
 		return stats;
 	}	
 
-	
 	@Override
 	public RequirementBoundDescriptionStatistics gatherRequirementBoundDescriptionStatistics(
 			Collection<Long> requirementIds) {
@@ -222,7 +276,14 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		Integer count;
 		for(Object[] tuple : tuples){
 
-			hasDescription = (Boolean)tuple[0];
+			// If only one requirement is present,
+			// request return tuple[0] as a BigInteger
+			// it returns an Integer in other cases
+			try {
+				hasDescription = (Integer)tuple[0] != 0;
+			} catch(ClassCastException exception) {
+				hasDescription = ((BigInteger)tuple[0]).intValue() != 0;
+			}
 			count = ((BigInteger)tuple[1]).intValue();
 
 			if(hasDescription) {
@@ -237,6 +298,159 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 	}
 
 	@Override
+	public RequirementCoverageStatistics gatherRequirementCoverageStatistics(Collection<Long> requirementIds) {
+		
+		if(requirementIds.isEmpty()) {
+			return new RequirementCoverageStatistics();
+		}
+		
+		Query query = entityManager.createNativeQuery(SQL_COVERAGE_STATISTICS);
+		query.setParameter(reqParamName, requirementIds);
+		
+		List<Object[]> tuples = query.getResultList();
+		
+		RequirementCoverageStatistics stats = new RequirementCoverageStatistics();
+		
+		String criticality;
+		Integer count;
+		Integer total;
+		
+		for(Object[] tuple : tuples) {
+			
+			criticality = (String) tuple[0];
+			count = ((BigInteger)tuple[1]).intValue();
+			total = ((BigInteger)tuple[2]).intValue();
+			
+			switch(criticality) {
+			case "UNDEFINED":
+				stats.setUndefined(count);
+				stats.setTotalUndefined(total);
+				break;
+			case "MINOR":
+				stats.setMinor(count);
+				stats.setTotalMinor(total);
+				break;
+			case "MAJOR":
+				stats.setMajor(count);
+				stats.setTotalMajor(total);
+				break;
+			case "CRITICAL":
+				stats.setCritical(count);
+				stats.setTotalCritical(total);
+				break;
+			default: throw new IllegalArgumentException(
+					"RequirmentStatisticsService cannot handle the following RequirementCriticality value : '"
+						+ (String) tuple[0] + "'");
+			}
+		}
+		
+		return stats;
+	}
+	
+	@Override
+	public RequirementValidationStatistics gatherRequirementValidationStatistics(Collection<Long> requirementIds) {
+		
+		if(requirementIds.isEmpty()) {
+			return new RequirementValidationStatistics();
+		}
+		
+		Query query = entityManager.createNativeQuery(SQL_VALIDATION_STATISTICS);
+		query.setParameter(reqParamName, requirementIds);
+		
+		List<Object[]> tuples = query.getResultList();
+		
+		RequirementValidationStatistics stats = new RequirementValidationStatistics();
+		
+		String requirementCriticality;
+		String executionStatus;
+		Integer count;
+		
+		for(Object[] tuple : tuples) {
+
+			requirementCriticality = (String) tuple[0];
+			executionStatus = (String) tuple[1];
+			count = ((BigInteger)tuple[2]).intValue();
+
+			// If the TestCase has no executions, it counts as an Undefined Test
+			if(executionStatus == null)
+				executionStatus = "NOT_RUN";
+			
+			switch(executionStatus) {
+			case "SUCCESS":
+				switch(requirementCriticality) {
+				case "UNDEFINED":
+					stats.setConclusiveUndefined(count);
+					break;
+				case "MINOR":
+					stats.setConclusiveMinor(count);
+					break;
+				case "MAJOR":
+					stats.setConclusiveMajor(count);
+					break;
+				case "CRITICAL":
+					stats.setConclusiveCritical(count);
+					break;
+				default: throw new IllegalArgumentException(
+						"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
+							+ (String) tuple[0] + "'");
+				}
+				break;
+			case "FAILURE":
+				switch(requirementCriticality) {
+				case "UNDEFINED":
+					stats.setInconclusiveUndefined(count);
+					break;
+				case "MINOR":
+					stats.setInconclusiveMinor(count);
+					break;
+				case "MAJOR":
+					stats.setInconclusiveMajor(count);
+					break;
+				case "CRITICAL":
+					stats.setInconclusiveCritical(count);
+					break;
+				default: throw new IllegalArgumentException(
+						"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
+							+ (String) tuple[0] + "'");	
+				}
+				break;
+			case "BLOCKED":
+			case "ERROR":
+			case "NOT_FOUND":
+			case "NOT_RUN":
+			case "READY":
+			case "RUNNING":
+			case "SETTLED":
+			case "UNTESTABLE":
+			case "WARNING":
+				switch(requirementCriticality) {
+				case "UNDEFINED":
+					stats.setUndefinedUndefined(stats.getUndefinedUndefined() + count);
+					break;
+				case "MINOR":
+					stats.setUndefinedMinor(stats.getUndefinedMinor() + count);
+					break;
+				case "MAJOR":
+					stats.setUndefinedMajor(stats.getUndefinedMajor() + count);
+					break;
+				case "CRITICAL":
+					stats.setUndefinedCritical(stats.getUndefinedCritical() + count);
+					break;
+				default: throw new IllegalArgumentException(
+						"RequirementStatisticsService cannot handle the following RequirementCriticality value : '"
+							+ (String) tuple[0] + "'");
+				}
+			break;
+			default: throw new IllegalArgumentException(
+					"RequirementStatisticsService cannot handle the following ExecutionStatus value : '"
+						+ (String) tuple[1] + "'");
+			}
+		}
+		
+		return stats;
+	}
+	
+	@Override
 	public RequirementStatisticsBundle gatherRequirementStatisticsBundle(
 			Collection<Long> requirementIds) {
 
@@ -244,8 +458,10 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		RequirementStatusesStatistics status = gatherRequirementStatusesStatistics(requirementIds);
 		RequirementCriticalityStatistics criticality = gatherRequirementCriticalityStatistics(requirementIds);
 		RequirementBoundDescriptionStatistics description = gatherRequirementBoundDescriptionStatistics(requirementIds);
+		RequirementCoverageStatistics coverage = gatherRequirementCoverageStatistics(requirementIds);
+		RequirementValidationStatistics validation = gatherRequirementValidationStatistics(requirementIds);
 		
-		return new RequirementStatisticsBundle(tcs, status, criticality, description, requirementIds);
+		return new RequirementStatisticsBundle(tcs, status, criticality, description, coverage, validation, requirementIds);
 	}
 
 }

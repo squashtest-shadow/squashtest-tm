@@ -28,29 +28,28 @@ public class RequirementStatisticsBundle {
 	private RequirementStatusesStatistics statusesStatistics;
 	private RequirementCriticalityStatistics criticalityStatistics;
 	private RequirementBoundDescriptionStatistics boundDescriptionStatistics;
+	private RequirementCoverageStatistics coverageStatistics;
+	private RequirementValidationStatistics validationStatistics;
 	private Collection<Long> selectedIds;
 	
 	public RequirementStatisticsBundle(RequirementBoundTestCasesStatistics boundTestCasesStatistics,
 			RequirementStatusesStatistics statusesStatistics, RequirementCriticalityStatistics criticalityStatistics,
-			RequirementBoundDescriptionStatistics boundDescriptionStatistics, Collection<Long> selectedIds) {
+			RequirementBoundDescriptionStatistics boundDescriptionStatistics,
+			RequirementCoverageStatistics coverageStatistics, RequirementValidationStatistics validationStatistics,
+			Collection<Long> selectedIds) {
 		super();
 		this.boundTestCasesStatistics = boundTestCasesStatistics;
 		this.statusesStatistics = statusesStatistics;
 		this.criticalityStatistics = criticalityStatistics;
 		this.boundDescriptionStatistics = boundDescriptionStatistics;
+		this.coverageStatistics = coverageStatistics;
+		this.validationStatistics = validationStatistics;
 		this.selectedIds = selectedIds;
 	}
 	public RequirementStatisticsBundle() {
 		super();
 	}
-	
-	public Collection<Long> getSelectedIds() {
-		return selectedIds;
-	}
-	public void setSelectedIds(Collection<Long> selectedIds) {
-		this.selectedIds = selectedIds;
-	}
-	
+
 	public RequirementBoundTestCasesStatistics getBoundTestCasesStatistics() {
 		return boundTestCasesStatistics;
 	}
@@ -64,19 +63,40 @@ public class RequirementStatisticsBundle {
 	public void setStatusesStatistics(RequirementStatusesStatistics statusesStatistics) {
 		this.statusesStatistics = statusesStatistics;
 	}
-	
+
 	public RequirementCriticalityStatistics getCriticalityStatistics() {
 		return criticalityStatistics;
 	}
 	public void setCriticalityStatistics(RequirementCriticalityStatistics criticalityStatistics) {
 		this.criticalityStatistics = criticalityStatistics;
 	}
-	
+
 	public RequirementBoundDescriptionStatistics getBoundDescriptionStatistics() {
 		return boundDescriptionStatistics;
 	}
-	public void setBoundDescriptionStatistics(RequirementBoundDescriptionStatistics descriptionStatistics) {
-		this.boundDescriptionStatistics = descriptionStatistics;
+	public void setBoundDescriptionStatistics(RequirementBoundDescriptionStatistics boundDescriptionStatistics) {
+		this.boundDescriptionStatistics = boundDescriptionStatistics;
+	}
+
+	public RequirementCoverageStatistics getCoverageStatistics() {
+		return coverageStatistics;
+	}
+	public void setCoverageStatistics(RequirementCoverageStatistics coverageStatistics) {
+		this.coverageStatistics = coverageStatistics;
+	}
+
+	public RequirementValidationStatistics getValidationStatistics() {
+		return validationStatistics;
+	}
+	public void setValidationStatistics(RequirementValidationStatistics validationStatistics) {
+		this.validationStatistics = validationStatistics;
+	}
+
+	public Collection<Long> getSelectedIds() {
+		return selectedIds;
+	}
+	public void setSelectedIds(Collection<Long> selectedIds) {
+		this.selectedIds = selectedIds;
 	}
 	
 }
