@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public interface UserDao extends JpaRepository<User, Long>, CustomUserDao {
 	User findUserByLogin(@Param("userLogin") String login);
 
 	@Query
+	@EmptyCollectionGuard
 	List<User> findUsersByLoginList(@Param("logins") List<String> loginList);
 
 	@Query

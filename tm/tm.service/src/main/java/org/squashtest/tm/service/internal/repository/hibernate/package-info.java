@@ -441,6 +441,7 @@
 	@NamedQuery(name = "Execution.findOriginalSteps", query = "select st from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
 	@NamedQuery(name = "Execution.findOriginalStepIds", query = "select st.id from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
 
+	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
 
 
 	//ExecutionStep

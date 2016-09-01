@@ -106,6 +106,13 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 	}
 
 	@Override
+	public void removeEntityNQ(String namedQuery, String namedParam, Long paramId){
+		Query query = getSession().getNamedQuery(namedQuery);
+		query.setParameter(namedParam, paramId, LongType.INSTANCE);
+		query.executeUpdate();
+	}
+
+	@Override
 	public void removeAttachmentList(AttachmentList list) {
 
 		if (list == null) {

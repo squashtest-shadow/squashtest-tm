@@ -126,7 +126,6 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 			}
 
 			denormalizedFieldValueDao.save(dfv);
-
 		}
 
 	}

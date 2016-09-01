@@ -25,24 +25,25 @@ import java.util.List;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 
 public interface DeletionDao {
-	
+
 	/* *** batch versions *** */
 	void removeAttachmentsLists(List<Long> attachmentListIds);
-	
+
 	void removeEntities(List<Long> entityIds);
-	
-	
+
+
 	/* *** oneshot version *** */
 	void removeEntity(Object entity);
-	
+	void removeEntityNQ(String namedQuery, String namedParam, Long paramId);
+
 	void removeAttachmentList(AttachmentList list);
-	
-	
+
+
 	//because flushing is convenient sometimes.
 	/**
 	 *  @deprecated caller uses SF.currentSession.flush() instead
 	 */
 	@Deprecated
 	void flush();
-	
+
 }
