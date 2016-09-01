@@ -32,11 +32,13 @@ public class HibernateDenormalizedFieldValueDeletionDao extends HibernateDeletio
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeDenormalizedFieldValue(DenormalizedFieldValue denormalizedFieldValue) {
-		removeEntity(denormalizedFieldValue);
+		removeEntityNQ("Execution.removeDfv", "dfvId",  denormalizedFieldValue.getId());
 	}
+
+
 }

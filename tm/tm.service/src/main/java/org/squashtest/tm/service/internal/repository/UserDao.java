@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -35,6 +36,7 @@ public interface UserDao extends EntityDao<User> {
 	List<User> findAllUsers(PagingAndSorting sorter, Filtering filter);
 
 	User findUserByLogin(String login);
+	@EmptyCollectionGuard
 
 	List<User> findUsersByLoginList(List<String> loginList);
 
