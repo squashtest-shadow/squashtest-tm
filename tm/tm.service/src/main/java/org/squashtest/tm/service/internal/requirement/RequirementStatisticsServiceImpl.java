@@ -125,7 +125,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 							+ "Group By criticality, testCase) as NoDuplicateTCByCritSelection "
 						+ "On NoDuplicateTCByCritSelection.requirement = req.rln_id And NoDuplicateTCByCritSelection.criticality = reqVer.criticality And NoDuplicateTCByCritSelection.testCase = tc.tcln_id "
 						+ "Where req.rln_id in (:requirementIds) "
-						+ "Group By NoDuplicateTCByCritSelection.requirement, NoDuplicateTCByCritSelection.criticality, NoDuplicateTCByCritSelection.testCase) as LastExecutionSelection "
+						+ "Group By req.rln_id, NoDuplicateTCByCritSelection.criticality, tc.tcln_id) as LastExecutionSelection "
 					+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase "
 						+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
 					+ "Group By Selection1.criticality, Selection1.status";
