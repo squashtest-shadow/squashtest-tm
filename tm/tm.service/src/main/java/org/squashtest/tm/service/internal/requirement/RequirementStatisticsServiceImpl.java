@@ -276,13 +276,15 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		Integer count;
 		for(Object[] tuple : tuples){
 
-			// If only one requirement is present,
-			// request return tuple[0] as a BigInteger
-			// it returns an Integer in other cases
+			/* If only one requirement is present,
+			* request return tuple[0] as a BigInteger
+			* it returns an Integer in other cases 
+			* */
 			try {
 				hasDescription = (Integer)tuple[0] != 0;
 			} catch(ClassCastException exception) {
 				hasDescription = ((BigInteger)tuple[0]).intValue() != 0;
+				LOGGER.info("BigInteger handled.");
 			}
 			count = ((BigInteger)tuple[1]).intValue();
 
