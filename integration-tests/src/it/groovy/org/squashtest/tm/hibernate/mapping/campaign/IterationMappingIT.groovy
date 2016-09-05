@@ -47,10 +47,10 @@ class IterationMappingIT extends DbunitMappingSpecification {
 	def "should persist actual and scheduled date periods"() {
 		given:
 		Iteration iteration = new Iteration(name: "it")
-		iteration.actualEndDate = new Date()
-		iteration.actualStartDate = new Date()
-		iteration.scheduledEndDate = new Date()
-		iteration.scheduledStartDate = new Date()
+		iteration.actualStartDate = new Date(10000000)
+		iteration.actualEndDate = new Date(20000000)
+		iteration.scheduledStartDate = new Date(12000000)
+		iteration.scheduledEndDate = new Date(22000000)
 		persistFixture iteration
 
 		when:
