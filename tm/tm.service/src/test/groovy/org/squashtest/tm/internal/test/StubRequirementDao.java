@@ -198,4 +198,10 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
+	@Override
+	public List<Long> findAllRequirementIdsFromMilestones(Collection<Long> milestoneIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

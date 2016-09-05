@@ -174,6 +174,7 @@
 			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
 
+	 @NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
 	// Synchronized requirements
 	@NamedQuery(name = "RequirementSyncExtender.retrieveByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteReqId = :id and req.project.id = :pId"),
 	@NamedQuery(name = "RequirementSyncExtender.retrieveAllByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteReqId in (:ids) and req.project.id = :pId"),

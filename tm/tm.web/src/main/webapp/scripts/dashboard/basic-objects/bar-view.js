@@ -100,13 +100,13 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 		 * and the extension doesn't remove the extra categories
 		 * Therefore the plot will be destroyed then redrawn every time */
 		draw : function(series, conf){
-			if(series.length > 0) {
-				if (this.plot !== undefined){	
+				if (this.plot !== undefined) {
 					this.plot.destroy();
 				}
-				var viewId = this.$el.find('.dashboard-item-view').attr('id');
-				this.plot = $.jqplot(viewId, series, conf);
-			}
+				if(series.length > 0) {
+					var viewId = this.$el.find('.dashboard-item-view').attr('id');
+					this.plot = $.jqplot(viewId, series, conf);
+				}
 		},
 	});
 });

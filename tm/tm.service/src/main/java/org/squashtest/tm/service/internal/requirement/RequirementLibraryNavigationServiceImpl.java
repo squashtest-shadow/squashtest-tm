@@ -37,6 +37,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
@@ -106,6 +108,8 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 
+import com.google.common.base.Optional;
+
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
 @Transactional
@@ -154,6 +158,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 	
 	@Inject
 	private MilestoneMembershipManager milestoneService;
+	
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder; 
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
@@ -966,7 +973,29 @@ public class RequirementLibraryNavigationServiceImpl extends
 		
 		Collection<Long> reqIds = findRequirementIdsFromSelection(libraryIds, nodeIds);
 		
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			reqIds = filterReqIdsListByMilestone(reqIds, activeMilestone.get());
+		}
+		
 		return statisticsService.gatherRequirementStatisticsBundle(reqIds);
 	}
+	
+	private Collection<Long> filterReqIdsListByMilestone(Collection<Long> reqIds, Milestone activeMilestone) {
+		List<Long> reqInMilestone = findAllRequirementLibraryNodesInMilestone(activeMilestone);
+		return CollectionUtils.retainAll(reqIds, reqInMilestone);
+	}
+	
+	private List<Long> findAllRequirementLibraryNodesInMilestone(Milestone activeMilestone) {
+		if(activeMilestone != null) {
+			List<Long> milestoneIds = new ArrayList<>();
+			milestoneIds.add(activeMilestone.getId());
+			return requirementDao.findAllRequirementIdsFromMilestones(milestoneIds);
+		} else {
+			return new ArrayList<>();
+		}
+	}
+	
+	
 
 }

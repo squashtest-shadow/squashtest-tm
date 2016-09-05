@@ -449,5 +449,19 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
+	@Override
+	public List<Long> findAllRequirementIdsFromMilestones(Collection<Long> milestoneIds) {
+		if (! milestoneIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsFromMilestones");
+			q.setParameterList("milestoneIds", milestoneIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+	
+	
+
 
 }

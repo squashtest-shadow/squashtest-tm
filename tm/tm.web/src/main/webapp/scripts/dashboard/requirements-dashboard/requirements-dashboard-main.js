@@ -175,14 +175,18 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		search.fields.criticality = {};
 		search.fields.criticality.type = "LIST";
 		
-		if(criticalityToSearch === translator.get("requirement.criticality.UNDEFINED"))
+		if(criticalityToSearch === translator.get("requirement.criticality.UNDEFINED")) {
 			search.fields.criticality.values = [ "3-UNDEFINED" ];
-		else if(criticalityToSearch === translator.get("requirement.criticality.MINOR"))
+		}
+		else if(criticalityToSearch === translator.get("requirement.criticality.MINOR")) {
 			search.fields.criticality.values = [ "2-MINOR" ];
-		else if(criticalityToSearch === translator.get("requirement.criticality.MAJOR"))
+		}
+		else if(criticalityToSearch === translator.get("requirement.criticality.MAJOR")) {
 			search.fields.criticality.values = [ "1-MAJOR" ];
-		else if(criticalityToSearch === translator.get("requirement.criticality.CRITICAL"))
+		}
+		else if(criticalityToSearch === translator.get("requirement.criticality.CRITICAL")) {
 			search.fields.criticality.values = [ "0-CRITICAL" ];
+		}
 	}
 	
 	function addClickSearchEvent(item, pie, type) {

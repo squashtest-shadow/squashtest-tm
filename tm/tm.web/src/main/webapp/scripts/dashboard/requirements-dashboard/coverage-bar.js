@@ -27,9 +27,9 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 			var seriesArray = this._getCompleteSeriesArray();
 			var series = this._selectNotEmptySeries(seriesArray);
 			
-			if(series.length > 0)
+			if(series.length > 0) {
 				series = this._computeRatioSeriesAndLabels(series);
-			
+			}
 			return series;
 		},
 		_getCompleteStats: function() {
@@ -64,7 +64,7 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 				var label = 
 					coveredCount === 0 ? 
 							"<div style='font-size:14px;text-align:center;'>" + ratio.toFixed() + " % (" + coveredCount + "/" + totalCount + ")</div>"
-							: "<div style='font-size:14px;text-align:center;'>" + ratio.toFixed() + " %<br/>(" + coveredCount + "/" + totalCount + ")</div>"
+							: "<div style='font-size:14px;text-align:center;'>" + ratio.toFixed() + " %<br/>(" + coveredCount + "/" + totalCount + ")</div>";
 				ratioSeries[0].push([i+1,
 				                     ratio, 
 				                     label]);

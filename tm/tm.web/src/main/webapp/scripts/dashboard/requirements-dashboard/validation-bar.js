@@ -27,9 +27,9 @@ define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarVi
 			var seriesArray = this._getCompleteSeriesArray();
 			var series = this._selectNotEmptySeries(seriesArray);
 			
-			if(series.length > 0)
+			if(series.length > 0) {
 				series = this._computeRatioSeriesAndLabels(series);
-			
+			}
 			return series;
 		},
 		_getCompleteStats: function() {

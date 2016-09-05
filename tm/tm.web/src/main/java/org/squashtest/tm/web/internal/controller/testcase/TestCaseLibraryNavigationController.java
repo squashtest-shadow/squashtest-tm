@@ -306,8 +306,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public
- TestCaseStatisticsBundle getStatisticsAsJson() {
+	public TestCaseStatisticsBundle getStatisticsAsJson() {
 
 		// Find node ids for specific milestone
 		List<Long> nodeIds = testCaseLibraryNavigationService
