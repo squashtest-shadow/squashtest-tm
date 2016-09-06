@@ -29,7 +29,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -46,7 +50,17 @@ public class TestAutomationServerModificationAdminController {
 
 		TestAutomationServer server = service.findById(serverId);
 
+		List<User> users = new ArrayList<User>();
+		User user = new User();
+		user.setFirstName("toto");
+		user.setLastName("titi");
+		user.setLogin("tototiti");
+
+		users.add(user);
+
 		model.addAttribute("server", server);
+		model.addAttribute("users", users);
+
 
 		return "test-automation/server-modification.html";
 
