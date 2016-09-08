@@ -345,7 +345,7 @@ class QueryPlanner {
 			Set<Long> cufIds = entry.getValue();
 			ColumnPrototype columnPrototype = entry.getKey();
 			for (Long cufId : cufIds) {
-				String alias = utils.getCustomFieldValueTableAlias(columnPrototype, cufId);
+				String alias = utils.getCustomFieldValueStandardTableAlias(columnPrototype, cufId);
 				if(columnPrototype.getDataType().equals(DataType.TAG)){
 					String cufValueOptionAlias = utils.getCustomFieldValueOptionTableAlias(columnPrototype, cufId);
 					createJoinForMultipleValues(columnPrototype, cufId, alias, cufValueOptionAlias);
@@ -383,7 +383,7 @@ class QueryPlanner {
 		query.innerJoin(qTagsValue.selectedOptions,qCustomFieldValueOption);
 	}
 
-
+	//return the path for the entity attribute id for the designed cuf column prototype
 	private NumberPath<Long> getEntityIdForCufValue(ColumnPrototype columnPrototype) {
 		EntityType entityType = columnPrototype.getEntityType();
 		NumberPath<Long> id;

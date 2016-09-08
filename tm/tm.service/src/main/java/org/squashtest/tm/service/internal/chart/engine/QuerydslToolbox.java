@@ -69,6 +69,10 @@ import com.querydsl.core.types.Visitor;
 
 class QuerydslToolbox {
 
+	public static final int BY_YEAR_SUBSTRING_SIZE = 4;
+	public static final int BY_MONTH_SUBSTRING_SIZE = 7;
+	public static final int BY_DAY_SUBSTRING_SIZE = 10;
+
 	private String subContext;
 
 	private Map<InternalEntityType, String> nondefaultPath = new HashMap<>();
@@ -160,6 +164,13 @@ class QuerydslToolbox {
 	}
 
 	String getCustomFieldValueTableAlias(ColumnPrototype columnPrototype, Long cufId) {
+		if (columnPrototype.getDataType().equals(DataType.TAG)){
+			return getCustomFieldValueOptionTableAlias(columnPrototype,cufId);
+		}
+		return getCustomFieldValueStandardTableAlias(columnPrototype,cufId);
+	}
+
+	String getCustomFieldValueStandardTableAlias(ColumnPrototype columnPrototype, Long cufId) {
 		return columnPrototype.getLabel() + "_" + cufId;
 	}
 
@@ -253,6 +264,10 @@ class QuerydslToolbox {
 
 			case CALCULATED:
 				selectElement = createSubquerySelect(col);
+				break;
+
+			case CUF:
+				selectElement = createCustomFieldSelect(col);
 				break;
 
 			default:
@@ -377,6 +392,29 @@ class QuerydslToolbox {
 		return expression;
 	}
 
+	private Expression<?> createCustomFieldSelect(ColumnPrototypeInstance col) {
+		Expression<?> expression;
+
+		ColumnPrototype columnPrototype = col.getColumn();
+		DataType dataType = columnPrototype.getDataType();
+		Long cufId = col.getCufId();
+		String alias = getCustomFieldValueTableAlias(columnPrototype, cufId);
+		Operation operation = col.getOperation();
+
+		expression = makePathForCFV(dataType,alias);
+		if (operation != Operation.NONE) {
+			if(dataType == DataType.DATE_AS_STRING){
+				expression = applyOperationForDateCustomFields(operation, expression);
+			}
+			else {
+				expression = applyOperation(operation, expression);
+			}
+		}
+
+		return expression;
+	}
+
+
 
 	/**
 	 * Creates an expression fit for a "where" clause,  for columns of ColumnType = ATTRIBUTE
@@ -458,7 +496,7 @@ class QuerydslToolbox {
 		ColumnPrototype columnPrototype = filter.getColumn();
 		DataType dataType = columnPrototype.getDataType();
 		Long cufId = filter.getCufId();
-		String alias = getCustomFieldValueTableAlias(columnPrototype, cufId);
+		String alias = getCustomFieldValueStandardTableAlias(columnPrototype, cufId);
 		Operation operation = filter.getOperation();
 
 		// convert the operands
@@ -486,6 +524,22 @@ class QuerydslToolbox {
 				throw new IllegalArgumentException("The datatype " + dataType.name() + " is not handled by custom report engine");
 		}
 		return createPredicate(operation, attrExpr, dataType, operands);
+	}
+
+	private Expression<?> makePathForCFV(DataType dataType, String alias) {
+		switch(dataType){
+			case STRING:
+			case LIST:
+			case BOOLEAN_AS_STRING:
+			case DATE_AS_STRING:
+				return makePathForValueCFV(alias);
+			case NUMERIC:
+				return makePathForNumericValueCFV(alias);
+			case TAG:
+				return makePathForTagValueCFV(alias);
+			default:
+				throw new IllegalArgumentException("Unknown datatype for cuf : " + dataType);
+		}
 	}
 
 	private Expression<?> makePathForTagValueCFV(String alias) {
@@ -538,6 +592,38 @@ class QuerydslToolbox {
 		}
 		return result;
 	}
+
+	private SimpleExpression<?> applyOperationForDateCustomFields(Operation operation, Expression<?> baseExp, Expression... operands) {
+		SimpleExpression result;
+
+		Operator operator = Ops.SUBSTR_2ARGS;
+		Expression<Integer> subStringBegin = Expressions.constant(0);
+		Expression<Integer> subStringEnd;
+
+		switch (operation){//NOSONAR a switch...
+			case BY_YEAR:
+				subStringEnd = Expressions.constant(BY_YEAR_SUBSTRING_SIZE);
+				break;
+			case BY_MONTH:
+				subStringEnd = Expressions.constant(BY_MONTH_SUBSTRING_SIZE);
+				break;
+			case BY_DAY:
+				subStringEnd = Expressions.constant(BY_DAY_SUBSTRING_SIZE);
+				break;
+			case COUNT://If it's a count we don't need substring we must return with a correct count expression
+				operator = ExtOps.S_COUNT;
+				return Expressions.operation(operator.getType(), operator, baseExp);
+			default:
+				throw new IllegalArgumentException("Unknown operation for date custom field");
+		}
+
+		result = Expressions.operation(operator.getType(), operator, baseExp, subStringBegin, subStringEnd);
+
+		return result;
+	}
+
+
+
 
 	/**
 	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ...
@@ -824,7 +910,6 @@ class QuerydslToolbox {
 
 		return operator;
 	}
-
 
 	private Expression[] prepend(Expression head, Expression... tail) {
 		Expression[] res = new Expression[tail.length + 1];
