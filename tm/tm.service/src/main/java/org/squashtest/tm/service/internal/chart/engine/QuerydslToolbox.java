@@ -698,6 +698,7 @@ class QuerydslToolbox {
 					case LIST:
 					case STRING:
 					case TAG:
+					case DATE_AS_STRING:
 						operand = val;
 						break;
 					case NUMERIC:
