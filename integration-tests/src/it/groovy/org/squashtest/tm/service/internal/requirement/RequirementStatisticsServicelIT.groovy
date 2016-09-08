@@ -167,7 +167,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		stats.getConclusiveUndefined() == 2
 		stats.getInconclusiveUndefined() == 2
-		stats.getUndefinedUndefined() == 2
+		stats.getUndefinedUndefined() == 3
 
 		stats.getConclusiveMinor() == 3
 		stats.getInconclusiveMinor() == 1
@@ -178,7 +178,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		stats.getUndefinedMajor() == 3
 
 		stats.getConclusiveCritical() == 2
-		stats.getInconclusiveCritical() == 1
-		stats.getUndefinedCritical() == 3
+		stats.getInconclusiveCritical() == 2
+		stats.getUndefinedCritical() == 4
 	}
 }

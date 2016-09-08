@@ -98,23 +98,23 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			+ "as totalSelection "
 			+ "On coveredSelection.criticality = totalSelection.criticality";
 	
-	private static final String SQL_VALIDATION_STATISTICS = 
+	private static final String SQL_VALIDATION_STATISTICS_2 = 
 				"Select Selection1.criticality, Selection1.status, count(*) "
 					+ "From "
-						+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, exec.execution_status as status, exec.last_executed_on as execDate "
+						+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, itpi.execution_status as status, itpi.last_executed_on as execDate "
 						+ "From REQUIREMENT as req "
 						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
 						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
 						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
-						+ "Left Outer Join EXECUTION exec on exec.tcln_id = tc.tcln_id "
+						+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
 						+ "Where req.rln_id in (:requirementIds)) as Selection1 "
 					+ "Inner Join "
-						+ "(Select req.rln_id as requirement, tc.tcln_id as testCase, max(exec.last_executed_on) as lastDate "
+						+ "(Select req.rln_id as requirement, tc.tcln_id as testCase, max(itpi.last_executed_on) as lastDate "
 						+ "From REQUIREMENT as req "
 						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
 						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
 						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
-						+ "Left Outer Join EXECUTION exec on exec.tcln_id = tc.tcln_id "
+						+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
 						+ "Inner Join "
 							+ "(Select Max(req.rln_id) as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase "
 							+ "From REQUIREMENT req "
@@ -129,7 +129,43 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 					+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase "
 						+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
 					+ "Group By Selection1.criticality, Selection1.status";
-			
+	
+	private static final String SQL_VALIDATION_STATISTICS = 
+			"Select Selection1.criticality, Selection1.status, count(*) "
+			+ "From "
+				+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, dataset.dataset_id as dataset, itpi.execution_status as status, itpi.last_executed_on as execDate "
+				+ "From REQUIREMENT as req "
+				+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
+				+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+				+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
+				+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
+				+ "Left Outer Join DATASET dataset on dataset.dataset_id = itpi.dataset_id "
+				+ "Where req.rln_id in (:requirementIds)) as Selection1 "
+			+ "Inner Join "
+				+ "(Select req.rln_id as requirement, reqVer.criticality, tc.tcln_id as testCase, dataset.dataset_id as dataset, max(itpi.last_executed_on) as lastDate "
+				+ "From REQUIREMENT as req "
+				+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
+				+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+				+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
+				+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
+				+ "Left Outer Join DATASET as dataset on dataset.dataset_id = itpi.dataset_id "
+				+ "Inner Join "
+					+ "(Select Max(req.rln_id) as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase "
+					+ "From REQUIREMENT req "
+					+ "Inner Join REQUIREMENT_VERSION as reqVer On req.current_version_id = reqVer.res_id "
+					+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov On reqVerCov.verified_req_version_id = reqVer.res_id "
+					+ "Inner Join TEST_CASE as tc On tc.tcln_id = reqVerCov.verifying_test_case_id "
+					+ "Where req.rln_id in (:requirementIds) "
+					+ "Group By criticality, testCase) as NoDuplicateTCByCritSelection "
+				+ "On NoDuplicateTCByCritSelection.requirement = req.rln_id "
+				+ "And NoDuplicateTCByCritSelection.criticality = reqVer.criticality "
+				+ "And NoDuplicateTCByCritSelection.testCase = tc.tcln_id "
+				+ "Where req.rln_id in (:requirementIds) "
+				+ "Group By req.rln_id, reqVer.criticality, tc.tcln_id, dataset.dataset_id) as LastExecutionSelection "
+		+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase "
+		+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
+		+ "And (Selection1.dataset = LastExecutionSelection.dataset Or (Selection1.dataset is Null And LastExecutionSelection.dataset Is Null)) "
+		+ "Group By Selection1.criticality, Selection1.status"; 
 	
 	private static String reqParamName = "requirementIds";
 	
