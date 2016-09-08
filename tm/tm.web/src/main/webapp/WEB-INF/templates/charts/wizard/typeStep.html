@@ -46,7 +46,7 @@
 
 
 {{#equal this.column.columnType "CUF"}}
-{{cuf-label this.column}}
+{{i18n this.column.specializedType.entityType prefix="chart.entityType."}}     >  {{cuf-label this.column}}
 {{else}}
 {{i18n this.column.specializedType.entityType prefix="chart.entityType."}}     >  {{i18n this.column.label prefix="chart.column."}}
 {{/equal}}

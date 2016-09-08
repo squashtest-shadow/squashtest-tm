@@ -178,11 +178,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 							cufPrototype.cufListOptions = cufBinding.customField.options;
 						}
 						return cufPrototype;
-					} else {
-						throw "Unknown CUF prototype";
 					}
 				});
-				protoForCufBinding[key] = generatedPrototype;
+				if(generatedPrototype){
+					protoForCufBinding[key] = generatedPrototype;
+				}
 			});
 			return protoForCufBinding;
 		},
@@ -208,9 +208,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				case "NUMERIC":
 					suffix = "CUF_NUMERIC";
 					break;
-			
-				default:
-					throw "Unknown CUF type";
 			}
 			return suffix;
 		}
