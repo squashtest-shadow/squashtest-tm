@@ -174,7 +174,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						cufPrototype.originalPrototypeId = cufPrototype.id;
 						cufPrototype.id = cufPrototype.id + "-" + cufBinding.id;
 						cufPrototype.cufType = cufBinding.customField.inputType.enumName;
-						if (cufPrototype.cufType === "DROPDOWN_LIST") {
+						if (cufPrototype.cufType === "DROPDOWN_LIST" || cufPrototype.cufType === "TAG") {
 							cufPrototype.cufListOptions = cufBinding.customField.options;
 						}
 						return cufPrototype;

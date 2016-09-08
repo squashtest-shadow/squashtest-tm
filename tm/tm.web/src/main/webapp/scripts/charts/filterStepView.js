@@ -43,7 +43,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
 			this.initInfoListValues();
-			this.initDropDownCufValues();
+			this.initDropDownCufValues("DROPDOWN_LIST");
+			this.initDropDownCufValues("TAG");
 			this.reloadPreviousValues();
 			this.initOperationValues();
 			this.removeStatusDependingOnProjectConf();
@@ -55,15 +56,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			"change .info-lists" : "changeInfoList"
 		},
 
-		initDropDownCufValues : function () {
+		initDropDownCufValues : function (cufType) {
 
 			var self = this;
 
-			var cufLists = _.chain(self.model.get('computedColumnsPrototypes'))
-			.values()
-			.flatten()
-			.where({columnType : "CUF", cufType : "DROPDOWN_LIST"})
-			.value();
+			var cufLists = this.getCufList(cufType);
 
 			_.each(cufLists, function(liste){
 
@@ -75,6 +72,18 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			});
 
+		},
+
+		getCufList : function(cufType){
+			var self = this;
+
+			var cufLists = _.chain(self.model.get('computedColumnsPrototypes'))
+			.values()
+			.flatten()
+			.where({columnType : "CUF", cufType : cufType})
+			.value();
+
+			return cufLists;
 		},
 
 		initInfoListValues : function() {
@@ -285,6 +294,22 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 					var result = $.datepicker.formatDate(self.dateISOFormat, date);
 					return result;
 				});
+			}
+
+			if (datatype == "TAG"){
+				var cufList = this.getCufList("TAG");
+				var cufListTagValues = _.chain(cufList)
+					.pluck("cufListOptions")
+					.flatten()
+					.value();
+
+				var cufTagValue =  _.find(cufListTagValues, function (value) {
+						return value.code === result[0];
+					});
+
+				if(cufTagValue){
+					result = [cufTagValue.label];
+				}
 			}
 
 			return self.removeEmpty(result);

@@ -72,6 +72,7 @@ public class NumericCustomFieldValue extends CustomFieldValue {
 		CustomFieldValue copy = new NumericCustomFieldValue();
 		copy.setBinding(getBinding());
 		copy.setValue(getValue());
+		copy.setCufId(binding.getCustomField().getId());
 		return copy;
 	}
 

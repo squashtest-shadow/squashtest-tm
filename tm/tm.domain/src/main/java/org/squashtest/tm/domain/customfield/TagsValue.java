@@ -94,6 +94,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	public CustomFieldValue copy() {
 		TagsValue copy = new TagsValue();
 		copy.setBinding(getBinding());
+		copy.setCufId(binding.getCustomField().getId());
 
 		for (CustomFieldValueOption option : selectedOptions) {
 			copy.addCUFieldValueOption(option.copy());

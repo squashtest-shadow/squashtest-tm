@@ -45,10 +45,7 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.QCustomField;
-import org.squashtest.tm.domain.customfield.QCustomFieldBinding;
-import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
@@ -162,8 +159,12 @@ class QuerydslToolbox {
 		return path.getMetadata().getName();
 	}
 
-	String getCustomFieldColumnAlias(ColumnPrototype columnPrototype, Long cufId) {
+	String getCustomFieldValueTableAlias(ColumnPrototype columnPrototype, Long cufId) {
 		return columnPrototype.getLabel() + "_" + cufId;
+	}
+
+	String getCustomFieldValueOptionTableAlias(ColumnPrototype columnPrototype, Long cufId) {
+		return columnPrototype.getLabel() + "_value_option_" + cufId;
 	}
 
 
@@ -457,7 +458,7 @@ class QuerydslToolbox {
 		ColumnPrototype columnPrototype = filter.getColumn();
 		DataType dataType = columnPrototype.getDataType();
 		Long cufId = filter.getCufId();
-		String alias = getCustomFieldColumnAlias(columnPrototype, cufId);
+		String alias = getCustomFieldValueTableAlias(columnPrototype, cufId);
 		Operation operation = filter.getOperation();
 
 		// convert the operands
@@ -470,16 +471,25 @@ class QuerydslToolbox {
 			case STRING:
 			case BOOLEAN_AS_STRING:
 			case DATE_AS_STRING:
+			case LIST:
 				//make a path for the cuf value
 				attrExpr = makePathForValueCFV(alias);
 				break;
 			case NUMERIC:
 				attrExpr = makePathForNumericValueCFV(alias);
 				break;
+			case TAG:
+				alias = getCustomFieldValueOptionTableAlias(columnPrototype,cufId);
+				attrExpr = makePathForTagValueCFV(alias);
+				break;
 			default:
 				throw new IllegalArgumentException("The datatype " + dataType.name() + " is not handled by custom report engine");
 		}
 		return createPredicate(operation, attrExpr, dataType, operands);
+	}
+
+	private Expression<?> makePathForTagValueCFV(String alias) {
+		return makePath(CustomFieldValueOption.class, alias, String.class, "label");
 	}
 
 	private Expression<?> makePathForNumericValueCFV(String alias) {
@@ -685,7 +695,9 @@ class QuerydslToolbox {
 
 				switch (actualType) {
 					case INFO_LIST_ITEM:
+					case LIST:
 					case STRING:
+					case TAG:
 						operand = val;
 						break;
 					case NUMERIC:
@@ -699,6 +711,9 @@ class QuerydslToolbox {
 						break;
 					case LEVEL_ENUM:
 						operand = LevelEnumHelper.valueOf(val);
+						break;
+					case BOOLEAN_AS_STRING:
+						operand = val.toLowerCase();
 						break;
 					case BOOLEAN:
 					case EXISTENCE:

@@ -69,11 +69,7 @@
   {{/equal}}
 
   {{#equal dataType "STRING"}}
-    {{#equal cufType "DROPDOWN_LIST"}}
-      <span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
-    {{else}}
       <input type="text" id="first-filter-value-{{id}}" name="{{id}}" />
-    {{/equal}}
   {{/equal}}
 
   {{#equal dataType "DATE"}}
@@ -118,6 +114,10 @@
 {{/equal}}
 
 {{#equal dataType "LIST"}}
+<span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
+
+{{#equal dataType "TAG"}}
 <span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
 {{/equal}}
 

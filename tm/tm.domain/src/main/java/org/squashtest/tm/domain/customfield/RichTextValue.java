@@ -56,6 +56,7 @@ public class RichTextValue extends CustomFieldValue {
 		CustomFieldValue copy = new RichTextValue();
 		copy.setBinding(getBinding());
 		copy.setValue(getValue());
+		copy.setCufId(binding.getCustomField().getId());
 		return copy;
 	}
 

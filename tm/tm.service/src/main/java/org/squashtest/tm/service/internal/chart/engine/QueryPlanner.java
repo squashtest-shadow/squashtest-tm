@@ -30,9 +30,11 @@ import org.squashtest.tm.domain.chart.ChartQuery.NaturalJoinStyle;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.QCustomFieldBinding;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.QTagsValue;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
@@ -343,22 +345,43 @@ class QueryPlanner {
 			Set<Long> cufIds = entry.getValue();
 			ColumnPrototype columnPrototype = entry.getKey();
 			for (Long cufId : cufIds) {
-				String alias = utils.getCustomFieldColumnAlias(columnPrototype, cufId);
-				//now we join as cartesian product because we have no hibernate mapping between entities
-				QCustomFieldValue qCustomFieldValue = new QCustomFieldValue(alias);
-				query.from(qCustomFieldValue);
-				//now we need to filter out this ugly cartesian product with three where clause.
-				//but as CUF can be linked to different entity type, we need to create the good clause for our actual cuf.
-				BindableEntity boundEntityType = getBoundEntityType(columnPrototype);
-				query.where(qCustomFieldValue.boundEntityType.eq(boundEntityType));
-				//join clause on cufValue.boundEntity.id = "boundEntity".id
-				query.where(qCustomFieldValue.boundEntityId.eq(getEntityIdForCufValue(columnPrototype)));
-				//now we filter on cuf ID so only the tuples with the good cuf will be kept.
-				query.where(qCustomFieldValue.cufId.eq(cufId));
+				String alias = utils.getCustomFieldValueTableAlias(columnPrototype, cufId);
+				if(columnPrototype.getDataType().equals(DataType.TAG)){
+					String cufValueOptionAlias = utils.getCustomFieldValueOptionTableAlias(columnPrototype, cufId);
+					createJoinForMultipleValues(columnPrototype, cufId, alias, cufValueOptionAlias);
+				}
+				else {
+					createJoinForUniqueValue(columnPrototype, cufId, alias);
+				}
 			}
 		}
 	}
 
+	private void createJoinForUniqueValue(ColumnPrototype columnPrototype, Long cufId, String alias) {
+		//now we join as cartesian product because we have no hibernate mapping between entities
+		QCustomFieldValue qCustomFieldValue = new QCustomFieldValue(alias);
+		query.from(qCustomFieldValue);
+		//now we need to filter out this ugly cartesian product with three where clause.
+		//but as CUF can be linked to different entity type, we need to create the good clause for our actual cuf.
+		BindableEntity boundEntityType = getBoundEntityType(columnPrototype);
+		query.where(qCustomFieldValue.boundEntityType.eq(boundEntityType));
+		//join clause on cufValue.boundEntity.id = "boundEntity".id
+		query.where(qCustomFieldValue.boundEntityId.eq(getEntityIdForCufValue(columnPrototype)));
+		//now we filter on cuf ID so only the tuples with the good cuf will be kept.
+		query.where(qCustomFieldValue.cufId.eq(cufId));
+	}
+
+	private void createJoinForMultipleValues(ColumnPrototype columnPrototype, Long cufId, String alias, String cufValueOptionAlias) {
+		//if TAG we make a cross join on TagsValue and an inner joins on custom field value option as we need one tuple for each cuf value option
+		QTagsValue qTagsValue = new QTagsValue(alias);
+		QCustomFieldValueOption qCustomFieldValueOption = new QCustomFieldValueOption(cufValueOptionAlias);
+		query.from(qTagsValue);
+		BindableEntity boundEntityType = getBoundEntityType(columnPrototype);
+		query.where(qTagsValue.boundEntityType.eq(boundEntityType));
+		query.where(qTagsValue.boundEntityId.eq(getEntityIdForCufValue(columnPrototype)));
+		query.where(qTagsValue.cufId.eq(cufId));
+		query.innerJoin(qTagsValue.selectedOptions,qCustomFieldValueOption);
+	}
 
 
 	private NumberPath<Long> getEntityIdForCufValue(ColumnPrototype columnPrototype) {
