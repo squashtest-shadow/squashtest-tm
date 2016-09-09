@@ -982,11 +982,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 	
 	private Collection<Long> filterReqIdsListByMilestone(Collection<Long> reqIds, Milestone activeMilestone) {
-		List<Long> reqInMilestone = findAllRequirementLibraryNodesInMilestone(activeMilestone);
+		List<Long> reqInMilestone = findAllRequirementIdsInMilestone(activeMilestone);
 		return CollectionUtils.retainAll(reqIds, reqInMilestone);
 	}
 	
-	private List<Long> findAllRequirementLibraryNodesInMilestone(Milestone activeMilestone) {
+	@Override
+	public List<Long> findAllRequirementIdsInMilestone(Milestone activeMilestone) {
 		if(activeMilestone != null) {
 			List<Long> milestoneIds = new ArrayList<>();
 			milestoneIds.add(activeMilestone.getId());

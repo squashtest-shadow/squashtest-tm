@@ -102,7 +102,7 @@
            <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
             <li class="tab">
               <a href="#tree-pane" >
-                <span th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"></span>
+                <span id="requirementDashboardMilestone" th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}" class="clickable-item" style="text-decoration:none"></span>
                 <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>

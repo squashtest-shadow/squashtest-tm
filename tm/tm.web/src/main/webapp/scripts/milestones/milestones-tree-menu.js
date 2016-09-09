@@ -111,6 +111,11 @@ define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextua
 			dialog.formDialog('open');
 		});
 		
+		// the requirement dashboard button
+		$("#requirementDashboardMilestone").on('click', function(){
+			ctxContent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard");
+		});
+		
 		// the test-case dashboard button
 		$("#testCaseDashboardMilestone").on('click', function(){
 	  ctxContent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");

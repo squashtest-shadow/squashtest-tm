@@ -321,4 +321,31 @@ public class RequirementLibraryNavigationController extends
 		return "fragment/requirements/requirement-dashboard";
 	}
 	
+	/* This method is called when the user click on the refresh button in the milestone dashboard */
+	@ResponseBody
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public RequirementStatisticsBundle getMilestoneStatisticsAsJson() {
+
+		// Find node ids for specific milestone
+		List<Long> nodeIds = requirementLibraryNavigationService
+				.findAllRequirementIdsInMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
+
+		return requirementLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
+	}
+	/* This method is called when the user click on the milestone button to show the milestone dashboard */
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public String getMilestoneDashboard(Model model) {
+		
+		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
+		// Find ids for specific milestone
+		List<Long> nodeIds = requirementLibraryNavigationService.findAllRequirementIdsInMilestone(activeMilestone);
+
+		RequirementStatisticsBundle stats = requirementLibraryNavigationService
+				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
+		model.addAttribute("statistics", stats);
+		model.addAttribute("milestone", activeMilestone);
+
+		return "fragment/requirements/requirement-milestone-dashboard";
+	}
+	
 }

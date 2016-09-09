@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -220,7 +221,8 @@ RequirementLibraryFinderService {
 
 	List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
 
-
+	List<Long> findAllRequirementIdsInMilestone(Milestone activeMilestone);
+	
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	@Override
 	@PreventConcurrents(
