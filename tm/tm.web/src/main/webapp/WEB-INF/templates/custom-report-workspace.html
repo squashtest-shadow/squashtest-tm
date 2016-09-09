@@ -100,16 +100,7 @@
     </div>
     <div id="tree-panel-left" style="z-index: 1" class="left-frame noprint">
       <div class="position-layout-fix">
-        <div id="tabbed-pane"
-            th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
-           <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
-            <li class="tab">
-              <a href="#tree-pane" >
-              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
-              <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
-              </a>
-            </li>
-          </ul>
+        <div id="tabbed-pane">
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
             <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">

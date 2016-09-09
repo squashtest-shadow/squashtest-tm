@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['squash.translator', 'tree', './cr-treemenu', './init-actions',
-        'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace',
-        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu', './popups/init-all'],
-    function (translator, tree, treemenu, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu, popups) {
+        'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace', './popups/init-all'],
+    function (translator, tree, treemenu, actions, resizer, ToggleWorkspace, popups) {
         "use strict";
 
         function initResizer() {
@@ -36,12 +35,6 @@ define(['squash.translator', 'tree', './cr-treemenu', './init-actions',
             $("#tabbed-pane").tabs();
         }
 
-        function initMilestoneMenu() {
-            if (mstoneManager.isEnabled()) {
-                mstoneTreeMenu.init();
-            }
-        }
-
         function initI18n() {
             translator.load({
                 "date-format": "squashtm.dateformat",
@@ -53,7 +46,6 @@ define(['squash.translator', 'tree', './cr-treemenu', './init-actions',
             initI18n();
             initResizer();
             initTabbedPane();
-            initMilestoneMenu();
             ToggleWorkspace.init(settings.toggleWS);
             tree.initCustomReportWorkspaceTree(settings.tree);
             treemenu.init(settings.treemenu);
