@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery'], function($){
+define(['jquery','underscore'], function($,_){
 	
 	return {
 		btnconf : function(css){
@@ -28,6 +28,20 @@ define(['jquery'], function($){
 					primary : css
 				}
 			};
+		},
+
+		extractCufsFromWorkspace : function (params) {
+			//extracting all the cufs from the bindings
+			var cufs = _.chain(squashtm.workspace.projects)
+							.pluck("customFieldBindings")
+							.map(function(entitiesBindings){
+								return _.values(entitiesBindings);
+							})
+							.flatten()
+							.pluck("customField")
+							.value();
+			return cufs;							
 		}
+
 	};
 });

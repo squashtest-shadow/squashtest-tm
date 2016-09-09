@@ -42,7 +42,7 @@
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
                 contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-			
+
             customReportWorkspaceConf : {
                   tree : {
                     model : /*[[${ rootModel }]]*/ '',
@@ -238,6 +238,9 @@
 		<div class="display-table-cell">
 		{{columnLabel}}
 		</div>
+    <div class="display-table-cell">
+      {{operationLabel}}
+    </div>
 		<div class="display-table-cell">
 		{{values}}
 		</div>

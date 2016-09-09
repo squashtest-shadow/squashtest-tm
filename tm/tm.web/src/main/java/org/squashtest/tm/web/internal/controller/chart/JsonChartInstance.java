@@ -29,17 +29,7 @@ import java.util.Map;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartInstance;
-import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.ChartType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 
@@ -69,7 +59,7 @@ public class JsonChartInstance {
 	private Map<String, List<Object>> series = new HashMap<>();
 
         private List<String> projectScope = new ArrayList<>();
-        
+
 	private List<JsonEntityReference> scope = new ArrayList<>();
 
 	public JsonChartInstance() {
@@ -97,7 +87,7 @@ public class JsonChartInstance {
 		for (EntityReference ref : def.getScope()) {
 			scope.add(new JsonEntityReference(ref,def));
 		}
-                
+
                 this.projectScope = instance.getDefinition().getProjectScope();
 
 		ChartSeries series = instance.getSeries();
@@ -223,9 +213,10 @@ public class JsonChartInstance {
         public void setProjectScope(List<String> projectScope) {
             this.projectScope = projectScope;
         }
-        
+
 	public static final class JsonMeasureColumn{
 
+		private Long cufId;
 		private String label;
 
 		private JsonColumnPrototype columnPrototype;
@@ -241,6 +232,7 @@ public class JsonChartInstance {
 			this.label = measure.getLabel();
 			this.columnPrototype = new JsonColumnPrototype(measure.getColumn());
 			this.operation = new JsonOperation(measure.getOperation());
+			this.cufId = measure.getCufId();
 		}
 
 		public String getLabel() {
@@ -267,11 +259,18 @@ public class JsonChartInstance {
 			this.operation = operation;
 		}
 
+		public Long getCufId() {
+			return cufId;
+		}
 
+		public void setCufId(Long cufId) {
+			this.cufId = cufId;
+		}
 	}
 
 	public static final class JsonAxisColumn{
 
+		private Long cufId;
 		private String label;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
@@ -300,6 +299,14 @@ public class JsonChartInstance {
 			this.operation = operation;
 		}
 
+		public Long getCufId() {
+			return cufId;
+		}
+
+		public void setCufId(Long cufId) {
+			this.cufId = cufId;
+		}
+
 		public JsonAxisColumn() {
 			super();
 		}
@@ -309,11 +316,14 @@ public class JsonChartInstance {
 			this.label = axis.getLabel();
 			this.setColumnPrototype(new JsonColumnPrototype(axis.getColumn()));
 			this.setOperation(new JsonOperation(axis.getOperation()));
+			this.cufId = axis.getCufId();
 		}
 
 	}
 
 	public static final class JsonColumnPrototype{
+
+		private final ColumnType columnType;
 
 		private String label;
 
@@ -325,6 +335,7 @@ public class JsonChartInstance {
 			this.label = column.getLabel();
 			this.specializedEntityType = new JsonSpecializedEntityType(column.getSpecializedType());
 			this.dataType = column.getDataType();
+			this.columnType = column.getColumnType();
 		}
 
 		public String getLabel() {
@@ -352,6 +363,9 @@ public class JsonChartInstance {
 			this.dataType = dataType;
 		}
 
+		public ColumnType getColumnType() {
+			return columnType;
+		}
 	}
 
 	public static final class JsonOperation{
@@ -442,6 +456,7 @@ public class JsonChartInstance {
 
 	public static final class JsonFilter{
 
+		private Long cufId;
 		private List<String> values;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
@@ -450,6 +465,7 @@ public class JsonChartInstance {
 			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
 			this.operation = new JsonOperation(filter.getOperation());
 			this.values = filter.getValues();
+			this.cufId = filter.getCufId();
 		}
 
 		public List<String> getValues() {
@@ -469,6 +485,14 @@ public class JsonChartInstance {
 		}
 		public void setOperation(JsonOperation operation) {
 			this.operation = operation;
+		}
+
+		public Long getCufId() {
+			return cufId;
+		}
+
+		public void setCufId(Long cufId) {
+			this.cufId = cufId;
 		}
 	}
 

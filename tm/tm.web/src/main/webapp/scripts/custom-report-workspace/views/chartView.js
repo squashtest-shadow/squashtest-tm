@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dateutils",
-		"workspace.projects", "workspace.routing", "../charts/chartFactory"],
-	function (_, Backbone, translator, Handlebars, dateutils, projects, urlBuilder, chartFactory) {
+		"workspace.projects", "workspace.routing", "../charts/chartFactory","../utils"],
+	function (_, Backbone, translator, Handlebars, dateutils, projects, urlBuilder, chartFactory, chartUtils) {
 		"use strict";
 
 		var View = Backbone.View.extend({
@@ -49,8 +49,8 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 					"dateFormatShort": "squashtm.dateformatShort"
 				});
 				_.bindAll(this, "render", "redraw");
+				this.extractCufsFromWorkspace();
 				this.render();
-				//this.initListenerOnWindowResize();
 			},
 
 			events: {
@@ -182,11 +182,26 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var self = this;
 				var entityFilters = _.chain(this.model.get("filters"))
 					.map(function (filter) {
+						var columnPrototype = filter.columnPrototype;
+						var cufId = filter.cufId;
+						var isCuf = cufId !== null;
+
+						var columnLabel;
+						if(isCuf){
+							var cuf = self.getCufById(cufId);
+							columnLabel = cuf.label;
+						}
+						else{
+							columnLabel = self.addPrefix(columnPrototype.label, "chart.column.");
+						}
+
 						var formatedFilter = {
-							entityType: self.addPrefix(filter.columnPrototype.specializedEntityType.entityType, "chart.entityType."),
-							columnLabel: self.addPrefix(filter.columnPrototype.label, "chart.column."),
-							values: self.getI18nKeyForFilterValues(filter.columnPrototype.label, filter.values),
-							hasI18nValues: self.filterHasI18nValues(filter.columnPrototype.label, filter.values)
+							entityType: self.addPrefix(columnPrototype.specializedEntityType.entityType, "chart.entityType."),
+							columnLabel: columnLabel,
+							values: self.getI18nKeyForFilterValues(columnPrototype.label, filter.values),
+							hasI18nValues: self.filterHasI18nValues(columnPrototype.label, filter.values),
+							operationLabel: self.addPrefix(filter.operation.name, "chart.operation."),
+							isCuf : isCuf
 						};
 						return formatedFilter;
 					})
@@ -199,12 +214,27 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			loadOperations: function () {
 				var self = this;
 				var operations = _.union(this.model.get("axes"), this.model.get("measures"));
+				
+				//extracting all the cufs from the bindings
+				var cufs = this.model.get("cufs");
+
 				var formatedOperations = _.chain(operations)
 					.map(function (operation) {
+						var cufId = operation.cufId;
+						var isCuf = cufId !== null;
+						var columnLabel;
+						if(isCuf){
+							var cuf = self.getCufById(cufId);
+							columnLabel = cuf.label;
+						}
+						else{
+							columnLabel = self.addPrefix(operation.columnPrototype.label, "chart.column.");
+						}
 						return {
 							entityType: self.addPrefix(operation.columnPrototype.specializedEntityType.entityType, "chart.entityType."),
-							columnLabel: self.addPrefix(operation.columnPrototype.label, "chart.column."),
-							operationLabel: self.addPrefix(operation.operation.name, "chart.operation.")
+							columnLabel: columnLabel,
+							operationLabel: self.addPrefix(operation.operation.name, "chart.operation."),
+							isCuf: isCuf
 						};
 					})
 					.groupBy("entityType")
@@ -224,7 +254,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var operations = this.model.get("entityOperation");
 				_.each(operations, function (operationsByType) {
 					_.each(operationsByType, function (op) {
+						if(!!op.isCuf){
 						keys.push(_.values(op));
+						}
 					});
 				});
 
@@ -234,7 +266,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 					_.each(filtersByType, function (filter) {
 						keys.push(filter.entityType);
 						keys.push(filter.columnLabel);
-						if (filter.hasI18nValues) {
+						if (filter.hasI18nValues && !filter.isCuf) {
 							_.each(filter.values, function (value) {
 								keys.push(value);
 							});
@@ -254,7 +286,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				_.each(operations, function (operationsByType) {
 					_.each(operationsByType, function (op) {
 						op.entityType = self.getI18n(op.entityType);
-						op.columnLabel = self.getI18n(op.columnLabel);
+						if(!op.isCuf){
+							op.columnLabel = self.getI18n(op.columnLabel);
+						}
 						op.operationLabel = self.getI18n(op.operationLabel);
 					});
 				});
@@ -262,8 +296,11 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				_.each(filters, function (filtersByType) {
 					_.each(filtersByType, function (filter) {
 						filter.entityType = self.getI18n(filter.entityType);
-						filter.columnLabel = self.getI18n(filter.columnLabel);
-						if (filter.hasI18nValues) {
+						filter.operationLabel = self.getI18n(filter.operationLabel);
+						if(!filter.isCuf){
+							filter.columnLabel = self.getI18n(filter.columnLabel);
+						}
+						if (filter.hasI18nValues && !filter.isCuf) {
 							_.each(filter.values, function (value, index) {
 								filter.values[index] = self.getI18n(value);
 							});
@@ -336,6 +373,21 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 
 			getI18n: function (key) {
 				return " " + translator.get(key);
+			},
+
+			extractCufsFromWorkspace : function () {
+				//extracting all the cufs from the bindings
+				var cufs = chartUtils.extractCufsFromWorkspace();
+				//put in model for further access
+				this.model.set("cufs",cufs);
+			},
+
+			getCufById : function (cufId) {
+				var cufs = this.model.get("cufs");
+				var cuf = _.find(cufs, function (cuf) {
+								return cuf.id === cufId;
+							});
+				return cuf;
 			},
 
 			modifyChart: function () {

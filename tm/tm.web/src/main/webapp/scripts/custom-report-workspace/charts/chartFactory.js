@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["backbone","./chart-render-utils","./customReportPieView","./customReportBarView",
-  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView","./customReportTrendView","squash.translator"],
-		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView,TrendView,translator){
+  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView","./customReportTrendView","squash.translator","../utils"],
+		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView,TrendView,translator,chartUtils){
 
   /**
   * Generate a bar chart. Other type of graph have the same kind of arguments and behavior
@@ -418,12 +418,31 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
   }
 
   function extractXlabel(jsonChart) {
-    var labelKey = jsonChart.axes[0].columnPrototype.label;
-    return translator.get('chart.column.' + labelKey);
+    var axis = jsonChart.axes[0];
+    return extractAxisLabel(axis);
   }
 
   function extractYlabel(jsonChart) {
-    var labelKey = jsonChart.measures[0].columnPrototype.label;
+    var axis = jsonChart.measures[0];
+     return extractAxisLabel(axis);
+  }
+
+  function extractAxisLabel(axis) {
+    var labelKey = axis.columnPrototype.label;
+    var cufId = axis.cufId;
+    var isCuf = cufId != null;
+    if(isCuf){
+      var cufs = chartUtils.extractCufsFromWorkspace();
+      var cuf = _.find(cufs,function (cuf) {
+          return cufId === cuf.id;
+        });
+      if(cuf){
+        return cuf.label;
+      }
+      else {
+        return "Unknown custom field";
+      }
+    }
     return translator.get('chart.column.' + labelKey);
   }
 

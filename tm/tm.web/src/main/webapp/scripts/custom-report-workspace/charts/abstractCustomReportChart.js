@@ -28,8 +28,8 @@
  *
  *
  */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars", "text!./empty-chart.html!strip", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate) {
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars", "text!./empty-chart.html!strip","../utils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils) {
 		"use strict";
 		var squashtm = window.squashtm;
 
