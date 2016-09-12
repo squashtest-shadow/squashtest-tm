@@ -184,11 +184,13 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 
 				this.model.set({selectedEntity: entity});
 
-				this.model.set({
-					selectedAttributes: _.filter(this.model.get("selectedAttributes"), function (val) {
-						return _.contains(self.getIdsOfValidColumn(), val);
-					})
-				});
+				//// Why do we check attribute during entity type ?
+				//// i put it on comment the time perimeter mess is fixed, so we can make a better version...
+				// this.model.set({
+				// 	selectedAttributes: _.filter(this.model.get("selectedAttributes"), function (val) {
+				// 		return _.contains(self.getIdsOfValidColumn(), val);
+				// 	})
+				// });
 
 				var filtered = _(['filters', 'axis', 'measures', 'operations'])
 					.reduce(function (memo, val) {
