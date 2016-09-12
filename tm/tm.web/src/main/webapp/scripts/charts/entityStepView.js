@@ -35,7 +35,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.tmpl = "#entity-step-tpl";
 				this.model = data;
 				data.name = "entity";
-				this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
+				this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
+				//this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
 				var treePopup = $("#tree-popup-tpl").html();
@@ -226,12 +227,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 
 			isValidCufColumnPrototype : function(columnPrototypeInstance){
 				if(columnPrototypeInstance.column.columnType === "CUF"){
-					var customFields = chartUtils.extractCufsFromWorkspace();
-					var customFieldsIds = _.pluck(customFields,"id");
+					var customFieldsIds = _.pluck(this.customFields,"id");
 					return _.contains(customFieldsIds, columnPrototypeInstance.cufId);
 				}
 				return false;
-			},
+			}
 
 			
 		});

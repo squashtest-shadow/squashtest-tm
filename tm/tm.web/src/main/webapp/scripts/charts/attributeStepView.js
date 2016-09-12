@@ -70,15 +70,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			
 			var self = this;
 
-			//1 keep only the selected entities columnsPrototypes
-			_.each(initialColumnsPrototypes, function (value, key) {
-				if(_.contains(selectedEntities, key)){
-					selectedEntitiesColumnsPrototypes[key] = value;
-				}
-			});
-
-			//2 creating synthetics prototypes and merging with natural
-			return this.mergeProtoypes(selectedEntitiesColumnsPrototypes);
+			//1 creating synthetics prototypes and merging with natural
+			return this.mergeProtoypes(initialColumnsPrototypes);
 		},
 		
 		getSelectedProject : function () {
@@ -101,7 +94,9 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				});
 				//extracting cuf prototype for this entity type and put in array of all cuf column proto
 				var cufPrototypesForOneEntityType = groupedcolumnsPrototype["CUF"];
-				cufPrototypes = cufPrototypes.concat(cufPrototypesForOneEntityType);
+				if(cufPrototypesForOneEntityType){
+					cufPrototypes = cufPrototypes.concat(cufPrototypesForOneEntityType);
+				}
 				//now inject into computedColumnsPrototypes all the natural column prototypes
 				var naturalPrototypes = groupedcolumnsPrototype["ATTRIBUTE"];
 				naturalPrototypes = naturalPrototypes.concat(groupedcolumnsPrototype["CALCULATED"]);
@@ -132,12 +127,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var self = this;
 			var cufMap = _.reduce(selectedProjects,function (memo, project) {
 				_.each(project.customFieldBindings,function (values,key) {
-					if(_.contains(selectedEntities,key) && values.length > 0 && memo.hasOwnProperty(key)){
+					if(values.length > 0 && memo.hasOwnProperty(key)){
 						memo[key] = memo[key].concat(values);
 					}
 				});
 				return memo;
 			},self.getEmptyCufMap());
+
+			//TO DO FILTER OUT DUPLICATE CUF FOR THE PERIMETER EVOLUTION IF NEEDED
 			return cufMap;
 		},
 
@@ -169,7 +166,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						cufPrototype.cufLabel = cufBinding.customField.label;
 						cufPrototype.cufName = cufBinding.customField.name;
 						cufPrototype.cufId = cufBinding.customField.id;
-						cufPrototype.cufBindingId = cufBinding.id;
 						cufPrototype.isCuf = true;
 						cufPrototype.originalPrototypeId = cufPrototype.id;
 						cufPrototype.id = cufPrototype.id + "-" + cufBinding.customField.id;
