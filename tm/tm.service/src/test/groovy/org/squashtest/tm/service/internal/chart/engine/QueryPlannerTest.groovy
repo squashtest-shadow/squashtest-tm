@@ -372,4 +372,29 @@ from TestCase testCase
 
 	}
 
+	def "Should generate correct request for chart def with cuf"(){
+		given:
+		MeasureColumn selectId = mkMeasure(ATTRIBUTE, NUMERIC, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "id");
+		AxisColumn cufTextAxis = mkAxe(CUF, STRING, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "value")
+
+		cufTextAxis.cufId = 12;
+
+		ChartQuery mainquery = new ChartQuery(
+			measures : [ selectId	],
+			filters : [],
+			axis : [cufTextAxis]
+		)
+
+		when:
+		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+
+		ExtendedHibernateQuery res = planner.createQuery()
+		res.select(tc.id)
+
+		then :
+		res.toString() == """select testCase.id
+		from TestCase testCase, CustomFieldValue null_12
+		where null_12.boundEntityType = ?1 and null_12.boundEntityId = testCase.id and null_12.cufId = ?2""";
+	}
+
 }

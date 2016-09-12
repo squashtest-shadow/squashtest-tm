@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import com.querydsl.core.types.dsl.PathBuilder
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
@@ -99,5 +100,31 @@ class QuerydslToolboxTest extends Specification{
 
 
 	}
+
+	def "should create path for standard Custom Field Value"(){
+		when:
+		PathBuilder pathBuilder = utils.makePathForValueCFV("TEST_CASE_CUF_TEXT");
+
+		then:
+		pathBuilder.toString().equals("TEST_CASE_CUF_TEXT.value");
+	}
+
+	def "should create path for numeric Custom Field Value"(){
+		when:
+		PathBuilder pathBuilder = utils.makePathForNumericValueCFV("TEST_CASE_CUF_NUM");
+
+		then:
+		pathBuilder.toString().equals("TEST_CASE_CUF_NUM.numericValue");
+	}
+
+	def "should create path for TAG Custom Field Value"(){
+		when:
+		PathBuilder pathBuilder = utils.makePathForTagValueCFV("TEST_CASE_CUF_TAG");
+
+		then:
+		pathBuilder.toString().equals("TEST_CASE_CUF_TAG.label");
+	}
+
+
 
 }

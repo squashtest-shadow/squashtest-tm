@@ -492,7 +492,7 @@ class QuerydslToolbox {
 	 * @return
      */
 	//TODO make predicate for different data types
-	private BooleanExpression createCufPredicate(Filter filter) {
+	BooleanExpression createCufPredicate(Filter filter) {
 		ColumnPrototype columnPrototype = filter.getColumn();
 		DataType dataType = columnPrototype.getDataType();
 		Long cufId = filter.getCufId();
@@ -526,7 +526,7 @@ class QuerydslToolbox {
 		return createPredicate(operation, attrExpr, dataType, operands);
 	}
 
-	private Expression<?> makePathForCFV(DataType dataType, String alias) {
+	Expression<?> makePathForCFV(DataType dataType, String alias) {
 		switch(dataType){
 			case STRING:
 			case LIST:
@@ -542,11 +542,11 @@ class QuerydslToolbox {
 		}
 	}
 
-	private Expression<?> makePathForTagValueCFV(String alias) {
+	Expression<?> makePathForTagValueCFV(String alias) {
 		return makePath(CustomFieldValueOption.class, alias, String.class, "label");
 	}
 
-	private Expression<?> makePathForNumericValueCFV(String alias) {
+	Expression<?> makePathForNumericValueCFV(String alias) {
 		return makePath(CustomFieldValue.class, alias, String.class, "numericValue");
 	}
 
@@ -557,7 +557,7 @@ class QuerydslToolbox {
 	 * @param alias
 	 * @return
      */
-	private PathBuilder makePathForValueCFV(String alias) {
+	PathBuilder makePathForValueCFV(String alias) {
 		return makePath(CustomFieldValue.class, alias, String.class, "value");
 	}
 

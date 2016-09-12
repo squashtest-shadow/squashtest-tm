@@ -184,8 +184,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 
 				this.model.set({selectedEntity: entity});
 
-				//// Why do we check attribute during entity type ?
-				//// i put it on comment the time perimeter mess is fixed, so we can make a better version...
+				//// We must check selected attribute as we can change the selected entities after other steps were perfomed
+				//// i put it on comment the time perimeter mess is fixed, so we can make a better version for the cufs...
 				// this.model.set({
 				// 	selectedAttributes: _.filter(this.model.get("selectedAttributes"), function (val) {
 				// 		return _.contains(self.getIdsOfValidColumn(), val);
