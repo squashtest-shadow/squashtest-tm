@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,chartUtils) {
 		"use strict";
 
 		translator.load({
@@ -35,6 +35,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.tmpl = "#entity-step-tpl";
 				this.model = data;
 				data.name = "entity";
+				this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
 				var treePopup = $("#tree-popup-tpl").html();
@@ -195,15 +196,17 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					}, {});
 
 				this.model.set(filtered);
+				
 
 			},
 
 			filterWithValidIds: function (col) {
 				var self = this;
+				var idsOfValidColumns = self.getIdsOfValidColumn();
 
 				return _.chain(col)
 					.filter(function (val) {
-						return _.contains(self.getIdsOfValidColumn(), val.column.id.toString());
+						return (_.contains(idsOfValidColumns, val.column.id.toString()) || self.isValidCufColumnPrototype(val, idsOfValidColumns));
 					})
 					.value();
 
@@ -219,7 +222,18 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 						return val.toString();
 					})
 					.value();
-			}
+			},
+
+			isValidCufColumnPrototype : function(columnPrototypeInstance){
+				if(columnPrototypeInstance.column.columnType === "CUF"){
+					var customFields = chartUtils.extractCufsFromWorkspace();
+					var customFieldsIds = _.pluck(customFields,"id");
+					return _.contains(customFieldsIds, columnPrototypeInstance.cufId);
+				}
+				return false;
+			},
+
+			
 		});
 
 		return entityStepView;

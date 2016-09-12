@@ -30,7 +30,7 @@ define(['jquery','underscore'], function($,_){
 			};
 		},
 
-		extractCufsFromWorkspace : function (params) {
+		extractCufsFromWorkspace : function () {
 			//extracting all the cufs from the bindings
 			var cufs = _.chain(squashtm.workspace.projects)
 							.pluck("customFieldBindings")
@@ -39,6 +39,9 @@ define(['jquery','underscore'], function($,_){
 							})
 							.flatten()
 							.pluck("customField")
+							.uniq(function(customField){
+								return customField.id;
+							})
 							.value();
 			return cufs;							
 		}

@@ -89,29 +89,57 @@ return Backbone.Model.extend({
 
 	getSelectedAttributes : function (chartDef){
 
+		var standardSelectedAttributes = _.chain(chartDef)
+			.pick('filters', 'measures', 'axis')
+			.values()
+			.flatten()
+			.filter(function(columnPrototypeInstance){//filter out the cuf prototype as we need to change ids only on cuf proto
+				return columnPrototypeInstance.cufId === undefined || columnPrototypeInstance.cufId === null;
+			})
+			.pluck('column')
+			.pluck('id')
+			.uniq()
+			.map(function(val) {return val.toString();})
+			.value();
+
+		var customFieldSelectedAttributes = this.getCufSelectedAttributes(chartDef);
+
+		return _.union(standardSelectedAttributes,customFieldSelectedAttributes);
+
+	},
+
+	getCufSelectedAttributes : function(chartDef){
+		var customFieldSelectedAttributes = _.chain(chartDef)
+			.pick('filters', 'measures', 'axis')
+			.values()
+			.flatten()
+			.filter(function(columnPrototypeInstance){//filter out the cuf prototype as we need to change ids only on cuf proto
+				return columnPrototypeInstance.cufId != null;
+			})
+			.map(function (columnPrototypeInstance){
+				columnPrototypeInstance.column.id = columnPrototypeInstance.column.id + "-" + columnPrototypeInstance.cufId;
+				return columnPrototypeInstance;
+			})
+			.pluck('column')
+			.pluck('id')
+			.uniq()
+			.map(function(val) {return val.toString();})
+			.value();
+
+			return customFieldSelectedAttributes;
+	},
+
+	getSelectedEntities : function (chartDef) {
+
 		return _.chain(chartDef)
 		.pick('filters', 'measures', 'axis')
 		.values()
 		.flatten()
 		.pluck('column')
-		.pluck('id')
+		.pluck('specializedType')
+		.pluck('entityType')
 		.uniq()
-		.map(function(val) {return val.toString();})
 		.value();
-
-	},
-
-	getSelectedEntities : function (chartDef) {
-
-	return _.chain(chartDef)
-	.pick('filters', 'measures', 'axis')
-	.values()
-	.flatten()
-	.pluck('column')
-	.pluck('specializedType')
-	.pluck('entityType')
-	.uniq()
-	.value();
 	},
 
 

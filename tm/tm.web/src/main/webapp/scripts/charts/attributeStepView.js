@@ -156,13 +156,13 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var protoForCufBinding = this.getEmptyCufMap();
 			var self = this;
 			_.each(bindingMap,function (values,key) {
-				var generatedPrototype = _.map(values,function (cufBinding) {
+				var generatedPrototypes = _.map(values,function (cufBinding) {
 					//1 find the proto name
 					var protoLabel = key + "_" + self.getProtoSuffix(cufBinding);
 					//2 find the prototype and upgrade it with cufCode and label
 					var cufPrototype = _.find(cufPrototypes,function (proto) {
 						return proto.label === protoLabel;
-					});		
+					});
 					if (cufPrototype) {
 						cufPrototype = _.clone(cufPrototype);
 						cufPrototype.code = cufBinding.customField.code;
@@ -172,7 +172,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						cufPrototype.cufBindingId = cufBinding.id;
 						cufPrototype.isCuf = true;
 						cufPrototype.originalPrototypeId = cufPrototype.id;
-						cufPrototype.id = cufPrototype.id + "-" + cufBinding.id;
+						cufPrototype.id = cufPrototype.id + "-" + cufBinding.customField.id;
 						cufPrototype.cufType = cufBinding.customField.inputType.enumName;
 						if (cufPrototype.cufType === "DROPDOWN_LIST" || cufPrototype.cufType === "TAG") {
 							cufPrototype.cufListOptions = cufBinding.customField.options;
@@ -180,8 +180,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						return cufPrototype;
 					}
 				});
-				if(generatedPrototype){
-					protoForCufBinding[key] = generatedPrototype;
+				if(generatedPrototypes){
+					protoForCufBinding[key] = generatedPrototypes;
 				}
 			});
 			return protoForCufBinding;
