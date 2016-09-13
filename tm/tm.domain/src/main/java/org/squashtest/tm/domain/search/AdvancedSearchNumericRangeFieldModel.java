@@ -46,8 +46,8 @@ public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchField
 
 	public Double getMaxValueAsDouble() {
 		try {
-			this.maxValue = this.maxValue.replace(",",".");
-			return Double.parseDouble(maxValue);
+			String stdMaxValue = this.maxValue.replace(",",".");
+			return Double.parseDouble(stdMaxValue);
 		} catch (NumberFormatException nfe) {
 			return Double.POSITIVE_INFINITY;//NOSONAR it's handled by replacing the invalid user input value with a constant.
 		}
@@ -55,8 +55,8 @@ public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchField
 
 	public Double getMinValueAsDouble() {
 		try {
-			this.maxValue = this.maxValue.replace(",",".");
-			return Double.parseDouble(minValue);
+			String stdMinValue = this.minValue.replace(",",".");
+			return Double.parseDouble(stdMinValue);
 		} catch (NumberFormatException nfe) {
 			return Double.NEGATIVE_INFINITY;//NOSONAR it's handled by replacing the invalid user input value with a constant.
 		}
