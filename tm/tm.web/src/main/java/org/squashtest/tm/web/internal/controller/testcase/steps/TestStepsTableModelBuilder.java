@@ -32,11 +32,13 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
+import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
@@ -197,6 +199,9 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
 				this.values = ((MultiValuedCustomFieldValue)value).getValues();
+			}
+			else if(NumericCustomFieldValue.class.isAssignableFrom(value.getClass())){
+				this.value = NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 			}
 			else{
 				this.value = value.getValue();

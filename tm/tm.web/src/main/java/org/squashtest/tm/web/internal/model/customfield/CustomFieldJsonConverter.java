@@ -118,8 +118,6 @@ public class CustomFieldJsonConverter {
 	}
 
 
-	// because of Java spec 15.12 and because I don't want another Visitor bullshit
-	// we're doing an ugly downcast for multi select fields when appropriate
 	@SuppressWarnings("unchecked")
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
