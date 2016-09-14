@@ -106,6 +106,9 @@ tm/data
 tm/tomcat-work
 .java-options
 .java-version
+tm/tm.web/src/main/resources/config/application-jth_mysql.properties
+tm/tm.web/.vscode/settings.json
+tm/tm.web/src/main/resources/config/application-jth_h2.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp

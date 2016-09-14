@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 @DiscriminatorValue("NUM")
 public class NumericCustomFieldValue extends CustomFieldValue {
 
+	//Will be used for research and reporting.
 	private BigDecimal numericValue;
 
 	@Override
@@ -64,7 +65,7 @@ public class NumericCustomFieldValue extends CustomFieldValue {
 
 	@Override
 	public String getValue(){
-		return numericValue  != null ? numericValue.toString()  : "";
+		return this.value;
 	}
 
 	@Override

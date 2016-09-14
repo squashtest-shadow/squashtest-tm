@@ -37,13 +37,13 @@
   <changeSet id="tm-1.15.0-feature-6365" author="jthebault">
     <comment>column for numeric cufs</comment>
     <addColumn tableName="CUSTOM_FIELD">
-      <column name="NUMERIC_DEFAULT_VALUE" type="DECIMAL" remarks="a column to persist numeric cuf" />
+      <column name="NUMERIC_DEFAULT_VALUE" type="DECIMAL(20,5)" remarks="a column to persist numeric cuf" />
     </addColumn>
     <addColumn tableName="CUSTOM_FIELD_VALUE">
-      <column name="NUMERIC_VALUE" type="DECIMAL" remarks="a column to persist numeric cuf" />
+      <column name="NUMERIC_VALUE" type="DECIMAL(20,5)" remarks="a column to persist numeric cuf" />
     </addColumn>
     <addColumn tableName="DENORMALIZED_FIELD_VALUE">
-      <column name="NUMERIC_VALUE" type="DECIMAL" remarks="a column to persist denormalized numeric cuf" />
+      <column name="NUMERIC_VALUE" type="DECIMAL(20,5)" remarks="a column to persist denormalized numeric cuf" />
     </addColumn>
   </changeSet>
 
