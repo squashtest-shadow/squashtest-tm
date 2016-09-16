@@ -50,16 +50,16 @@ public class TestAutomationServerModificationAdminController {
 
 		TestAutomationServer server = service.findById(serverId);
 
-		List<User> users = new ArrayList<User>();
+		List<User> usersList = new ArrayList<User>();
 		User user = new User();
 		user.setFirstName("toto");
 		user.setLastName("titi");
 		user.setLogin("tototiti");
 
-		users.add(user);
+		usersList.add(user);
 
 		model.addAttribute("server", server);
-		model.addAttribute("users", users);
+		model.addAttribute("users", usersList);
 
 
 		return "test-automation/server-modification.html";

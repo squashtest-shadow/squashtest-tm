@@ -29,7 +29,8 @@
 
  -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
 <head>
 
   <title th:text="#{title.TestAutomationServerManagement}">Espace Détails Server d'Exécution Automatisée</title>
@@ -48,6 +49,8 @@
 		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/"http://localhost/taserver"
 	};
 	/*]]>*/
+
+
 
 
 
@@ -114,8 +117,6 @@
 				publish('load.toolbar');
 
 
-
-
           </script>
 
           <br/>
@@ -170,59 +171,76 @@
 
             <br/>
 
-           <!--  <div class="sg-tg expend">-->
-                <div class="tg-head">
-                  <h3 th:text="#{title.RightsManagementServer}"></h3>
+            <!--  <div class="sg-tg expend">-->
+            <div class="tg-head">
+              <h3 th:text="#{title.RightsManagementServer}"></h3>
+            </div>
+            <div class="tg-body">
+
+              <div id="user-automation-server-table-pane">
+
+                <div class="toolbar">
+                  <button class="snap-right sq-btn" type="button" value="Delete a test automation server user"
+                          th:value="#{label.userAutomationServer.delete}"
+                          th:title="#{label.userAutomationServer.delete}" id="delete-user-automation-server">
+                    <span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
+                  </button>
+                  <button class="snap-right sq-btn" type="button" value="Add a test automation server user"
+                          th:value="#{label.userAutomationServer.add}"
+                          th:title="#{label.userAutomationServer.add}" id="add-user-automation-server">
+                    <span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
+                  </button>
                 </div>
-               <div class="tg-body">
-                  <div class="table-tab">
-
-                    <table id="test-automation-server-users" class="dataTable"
-                           th:attr="data-def='pre-sort=2-asc, pre-filled,  pagesize=50, datakeys-id=user-id ,ajaxsource='+@{/administration/test-automation-servers}">
-                      <thead>
-                      <tr>
-                        <th th:attr="data-def='invisible, map=user-id'" class="not-displayed">Id</th>
-                        <th th:attr="data-def='select, map=user-index'">#</th>
-                        <th th:attr="data-def='sortable, map=user-login, link='+@{/administration/test-automation-servers/{serverId}}" >Login</th>
-                        <th th:attr="data-def='sortable, map=user-group'">Groupe</th>
-                        <th th:attr="data-def='sortable, map=user-firstname'">Prénom</th>
-                        <th th:attr="data-def='sortable, map=user-lastname'">Nom</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr th:each="tas, iterStat : ${users}" th:object="${tas}">
-                        <td th:text="*{user-id}" class="not-displayed">1</td>
-                        <td th:text="${iterStat.count}">1</td>
-                        <td th:text="*{user-login}">Login XX</td>
-                        <td th:text="*{user-group}">group XX</td>
-                        <td th:text="*{user-firstname}">prenom XX</td>
-                        <td th:text="*{user-lastname}">nom XX</td>
-                        <td></td>
-                      </tr>
-                      <tr th:remove="all">
-                        <td class="not-displayed">id</td>
-                        <td>index</td>
-                        <td>login</td>
-                        <td>groupe</td>
-                        <td>forname</td>
-                        <td>name</td>
-                        <td class="delete-button"></td>
-                      </tr>
-                      </tbody>
-                    </table>
+                <script type="text/javascript">
+				    publish('load.toolbarButtons');
 
 
-                  <!--  <h4 th:text="${server.name}"></h4> -->
+          </script>
 
-                  <br/>
-                  <br/>
-                  <br/>
+                <div class="table-tab">
 
-               <!-- </div>-->
+                  <table id="test-automation-server-users"
+                         th:attr="data-def='pre-sort=2-asc, pre-filled,  pagesize=50, datakeys-id=user-id ,ajaxsource='+@{/administration/test-automation-servers/{serverId}}"
+                         class="dataTable no-footer is-contextual"
+                  >
+                    <thead>
+                    <tr>
+                      <th th:attr="data-def='invisible, map=user-id'" class="not-displayed">Id</th>
+                      <th th:attr="data-def='select, map=user-index'">#</th>
+                      <th th:attr="data-def='sortable, map=user-login'">Login</th>
+                      <th th:attr="data-def='sortable, map=user-group'">Groupe</th>
+                      <th th:attr="data-def='sortable, map=user-firstName'">Prénom</th>
+                      <th th:attr="data-def='sortable, map=user-lastName'">Nom</th>
+                      <th
+                        th:attr="data-def='delete-button=#remove-user-automation-server-confirm-dialog , map=empty-delete-holder'"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="itUser, iterStat : ${users}" th:object="${user}">
+                      <td th:text="${itUser.id}" class="not-displayed">1</td>
+                      <td th:text="${iterStat.count}">1</td>
+                      <td th:text="${itUser.login}">Login XXX</td>
+                      <td th:text="${itUser.group}">group XX</td>
+                      <td th:text="${itUser.firstName}">prenom XX</td>
+                      <td th:text="${itUser.lastName}">nom XX</td>
+                      <td></td>
+                    </tr>
+                    <tr th:remove="all">
+                      <td class="not-displayed">id</td>
+                      <td>index</td>
+                      <td>login</td>
+                      <td>groupe</td>
+                      <td>forname</td>
+                      <td>name</td>
+                      <td class="delete-button"></td>
+                    </tr>
+                    </tbody>
+                  </table>
 
-                  </div>
+
+                </div>
               </div>
-
+            </div>
           </div>
 
 
@@ -230,6 +248,8 @@
 
         <script type="text/javascript">
           publish('load.main-panel');
+
+
 
 
 
@@ -253,14 +273,67 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<!-- REMOVE USER POPUP-->
+<div id="remove-user-automation-server-confirm-dialog" class="popup-dialog not-displayed"
+     th:title="#{title.removeUserAutomationServer}" title="info">
+  <div><span th:text="#{message.permissions.remove.teamOrUser.first}"></span></div>
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+    <input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel"/>
+  </div>
+
+</div>
+
+<!--      ADD USER POPUP-->
+<div id="add-user-automation-server-popup" class="popup-dialog not-displayed"
+  th:title="#{title.addUserAutomationServer}" title="info">
+
+  <input type="hidden" id="source-status-user" />
+
+  <div data-def="state=normal" class="display-table">
+      <div onclick="display-table-row">
+        <span class="display-table-cell" th:text="#{party.label}"></span>
+        <div class="display-table-cell"><input id="party-input-user"/></div>
+      </div>
+    <div class="display-table-row">
+      <span class="display-table-cell" th:text="#{label.Permission}"></span>
+      <div class="display-table-cell">
+        <select id="permission-input-user">
+          <c:forEach items="$(available.Permissions)" var="permission">
+            <option value="${permission.qualifiedName}" id="${permission.simpleName}"></option>
+          </c:forEach>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div data-def="state=allbound">
+    <span th:text="#{message.AllUsersAlreadyLinkedToProject}"></span>
+  </div>
+  <div data-def="state=noselect">
+    <span th:text="#{error.permissions.noUserSelected}"></span>
+  </div>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Confirm}" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+    <input type="button" th:value="#{label.Cancel}" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, avt=cancel"/>
+    <input type="button" th:value="#{label.Close}" value="${closeLabel}" data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+  </div>
+
+</div>
+
+
+
+  <script type="text/javascript">
 			publish('load.popups');
 			publish('load.ready');
 
 
 
 
-</script>
+
+
+  </script>
 
 </body>
 </html>
