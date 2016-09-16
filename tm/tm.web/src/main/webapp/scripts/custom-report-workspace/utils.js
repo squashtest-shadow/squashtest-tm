@@ -29,7 +29,9 @@ define(['jquery','underscore'], function($,_){
 				}
 			};
 		},
-
+		/**
+		 * Take all cufs from global vars, remove duplicate and return an array of all cufs
+		 */
 		extractCufsFromWorkspace : function () {
 			//extracting all the cufs from the bindings
 			var cufs = _.chain(squashtm.workspace.projects)
@@ -44,7 +46,40 @@ define(['jquery','underscore'], function($,_){
 							})
 							.value();
 			return cufs;							
-		}
+		},
 
+		getEmptyCufMap : function () {
+			return {
+				"REQUIREMENT_VERSION":[],
+				"TEST_CASE":[],
+				"CAMPAIGN":[],
+				"ITERATION":[],
+				"ITEM_TEST_PLAN":[],
+				"EXECUTION":[]
+			};
+		},
+
+		extractCufsMapFromWorkspace : function(){
+			var cufMap = this.getEmptyCufMap();
+			var keys = _.keys(cufMap);
+			//Exctracting all cufbindings and add them to cufmap by entity type
+			_.chain(squashtm.workspace.projects)
+				.pluck("customFieldBindings")
+				.each(function(bindings){
+					_.each(keys,function(key){
+							var bindingsForEntityType = bindings[key] || [];
+							cufMap[key] = cufMap[key].concat(bindingsForEntityType);
+					});
+				})
+				.value();
+
+			//extract cuf from bindings and remove duplicates (duplicates came from same cufs binded to same entity type on several projetct)
+			return _.mapObject(cufMap,function(value){
+				return _.chain(value)
+							.pluck("customField")
+							.uniq("id")
+							.value();
+				});
+			}
 	};
 });

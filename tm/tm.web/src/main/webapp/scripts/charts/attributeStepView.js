@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView"],
-	function($, backbone, _, Handlebars, AbstractStepView) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView","../custom-report-workspace/utils"],
+	function($, backbone, _, Handlebars, AbstractStepView,chartUtils) {
 	"use strict";
 
 	var attributesStepView = AbstractStepView.extend({
@@ -110,7 +110,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var syntheticColumnPrototypes = this.getCufProtoForBindings(cufBindingMap,cufPrototypes);
 
 			//finally we merge the the two maps and return
-			var mergedPrototypes = this.getEmptyCufMap();
+			var mergedPrototypes = chartUtils.getEmptyCufMap();
 			_.each(mapOfNaturalPrototypes,function (values,key) {
 				var syntheticColumnPrototypesForEntity = syntheticColumnPrototypes[key];
 				var allProto = values.concat(syntheticColumnPrototypesForEntity);
@@ -132,7 +132,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 					}
 				});
 				return memo;
-			},self.getEmptyCufMap());
+			},chartUtils.getEmptyCufMap());
 
 			//TO DO FILTER OUT DUPLICATE CUF FOR THE PERIMETER EVOLUTION IF NEEDED
 			return cufMap;
@@ -150,7 +150,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		},
 
 		getCufProtoForBindings : function (bindingMap,cufPrototypes) {
-			var protoForCufBinding = this.getEmptyCufMap();
+			var protoForCufBinding = chartUtils.getEmptyCufMap();
 			var self = this;
 			_.each(bindingMap,function (values,key) {
 				var generatedPrototypes = _.map(values,function (cufBinding) {

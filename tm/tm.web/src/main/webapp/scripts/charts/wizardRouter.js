@@ -28,8 +28,8 @@ define([ "jquery", "backbone", "workspace.routing", "./abstractStepView" ], func
 		},
 		
 		routes : {
-			"" : "entityStep",
-			"entity": "entityStep",
+			"" : "perimeterStep",
+			"perimeter": "perimeterStep",
 			"filter" : "filterStep",
 			"type" : "typeStep",
 			"axis" : "axisStep",
@@ -39,8 +39,8 @@ define([ "jquery", "backbone", "workspace.routing", "./abstractStepView" ], func
 		}, 
 
 		
-		entityStep : function() {
-			this.wizardView.showEntityStep(this);			
+		perimeterStep : function() {
+			this.wizardView.showPerimeterStep(this);			
 		},
 		filterStep :  function() {
 			this.wizardView.showFilterStep(this);

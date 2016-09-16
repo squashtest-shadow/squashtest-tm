@@ -165,7 +165,7 @@ requirejs.config({
         "jqueryui": "lib/jquery/jquery-ui-1.9.2.custom.min",
         "handlebars": "lib/handlebars/handlebars-v4.0.2",
 //				"underscore" : "lib/underscore/underscore-1.7.0",
-        "underscore": "lib/underscore/underscore-1.7.0-min",
+        "underscore": "lib/underscore/underscore-1.8.3-min",
 //				"backbone" : "lib/backbone/backbone",
         "backbone": "lib/backbone/backbone-min",
 //				"backbone.validation" : "lib/backbone/backbone-validation-amd",

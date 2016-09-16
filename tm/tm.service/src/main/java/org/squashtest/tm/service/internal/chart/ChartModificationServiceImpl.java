@@ -85,7 +85,6 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
 
-		//For 1.13 we don't support CUF so it's filtered. Remove the where clause when cuf must be supported
 		prototypes = factory.from(prototype).where(prototype.business.eq(true)).orderBy(prototype.id.asc())
 				.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
 

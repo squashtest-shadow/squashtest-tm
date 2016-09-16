@@ -18,15 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog" ], function($, Backbone,
-		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./perimeterStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog" ], function($, Backbone,
+		router, translator, PerimeterStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
 
 	var validation =
 		[{
-			name : "entity",
-			validationParam : "selectedEntity"
+			name : "perimeter",
+			validationParam : "scope"
 		},{
 			name :"attributes",
 			validationParam : "selectedAttributes"
@@ -42,10 +42,10 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		}
 		];
 	var steps = [{
-		name : "entity",
+		name : "perimeter",
 		prevStep : "",
 		nextStep : "attributes",
-		viewTitle : "chart.wizard.creation.step.entity",
+		viewTitle : "chart.wizard.creation.step.perimeter",
 		stepNumber : 1,
 		buttons : ["next"],
 		clickable : true
@@ -55,7 +55,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		nextStep : "filter",
 		viewTitle : "chart.wizard.creation.step.attributes",
 		stepNumber : 2,
-		neededStep : ["entity"],
+		neededStep : ["perimeter"],
 		buttons : ["previous", "next"],
 		clickable : true
 	},{
@@ -64,7 +64,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 	    nextStep : "axis",
 		viewTitle : "chart.wizard.creation.step.filter",
 		stepNumber : 3,
-		neededStep : ["entity", "attributes"],
+		neededStep : ["perimeter", "attributes"],
 		buttons : ["previous", "next"],
 		clickable : true
 	}, {
@@ -73,7 +73,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		nextStep : "type",
 		viewTitle : "chart.wizard.creation.step.axis",
 		stepNumber : 4,
-		neededStep : ["entity", "attributes"],
+		neededStep : ["perimeter", "attributes"],
 		buttons : ["previous", "next"],
 		clickable : true
 	},{
@@ -82,7 +82,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		nextStep : "preview",
 		viewTitle : "chart.wizard.creation.step.type",
 		stepNumber : 5,
-		neededStep : ["entity", "attributes", "axis"],
+		neededStep : ["perimeter", "attributes", "axis"],
 		buttons : ["previous", "generate"],
 		clickable : true
 
@@ -92,7 +92,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		nextStep : "",
 		viewTitle : "chart.wizard.creation.step.preview",
 		stepNumber : 6,
-		neededStep : ["entity", "attributes", "axis"],
+		neededStep : ["perimeter", "attributes", "axis"],
 		buttons : ["previous", "save"],
 		clickable : false
 	}
@@ -185,8 +185,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 
 		},
 
-		showEntityStep : function(wizrouter) {
-			this.showNewStepView(EntityStepView, wizrouter);
+		showPerimeterStep : function(wizrouter) {
+			this.showNewStepView(PerimeterStepView, wizrouter);
 		},
 
 		showFilterStep : function(wizrouter) {

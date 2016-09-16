@@ -36,6 +36,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.model = data;
 				data.name = "entity";
 				this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
+				var toto = chartUtils.extractCufsMapFromWorkspace();
 				//this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
