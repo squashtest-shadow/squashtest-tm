@@ -23,23 +23,25 @@ package org.squashtest.tm.service.internal.requirement
 import javax.inject.Inject
 
 import org.hibernate.type.LongType;
-import org.spockframework.util.NotThreadSafe
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics
-import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics
-import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics
-import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics
-import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics
-import org.squashtest.tm.service.requirement.RequirementStatisticsService
+import org.spockframework.util.NotThreadSafe;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
+import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 
-import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 
-import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.unitils.dbunit.annotation.DataSet;
+
+import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 
-import spock.unitils.UnitilsSupport
+import spock.unitils.UnitilsSupport;
 
 @NotThreadSafe
 @UnitilsSupport
@@ -180,5 +182,36 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		stats.getConclusiveCritical() == 2
 		stats.getInconclusiveCritical() == 2
 		stats.getUndefinedCritical() == 4
+	}
+	
+	@DataSet("RequirementStatisticsServiceIT.xml")
+	def "Should return the requirement ids from a click on a validation chart part"() {
+		given:
+			def reqIds = [-11L,-21L,-31L, -41L, -51L,-61L,-71L, -81L, -91L,-101L,-111L,-121L,-131L, -1311L, -1321L, -141L,-151L]
+			def RequirementCriticality criticalitySearched = criticality
+			def String validationStatusSearched = validationStatus
+		when:
+			List<Long> reqIdsFromValidation = service.gatherRequirementIdsFromValidation(reqIds, criticality, validationStatus);
+			Set<Long> reqIdsSet = new HashSet<Long>(reqIdsFromValidation);
+		then:
+			reqIdsSet == expectedSet
+		where:
+			criticality 					 | validationStatus | expectedSet
+			RequirementCriticality.UNDEFINED | ["SUCCESS"] 		| [-121l, -141l] as Set
+			RequirementCriticality.UNDEFINED | ["FAILURE"] 		| [-121l, -131l, -151l] as Set
+			
+			RequirementCriticality.MINOR 	 | ["SUCCESS"] 		| [-81l, -101l, -111l, -1321l] as Set
+			RequirementCriticality.MINOR 	 | ["FAILURE"] 		| [-111l] as Set
+			
+			RequirementCriticality.MAJOR 	 | ["SUCCESS"] 		| [-41l, -51l, -61l, -71l] as Set
+			RequirementCriticality.MAJOR 	 | ["FAILURE"] 		| [] as Set
+			
+			RequirementCriticality.CRITICAL  | ["SUCCESS"] 		| [-11l, -21l, -31l] as Set
+			RequirementCriticality.CRITICAL  | ["FAILURE"] 		| [-11l, -31l] as Set
+
+			RequirementCriticality.UNDEFINED | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-121l, -131l, -151l] as Set
+			RequirementCriticality.MINOR 	 | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-91l, -101l, -111l] as Set
+			RequirementCriticality.MAJOR 	 | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-61l, -71l] as Set
+			RequirementCriticality.CRITICAL  | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-11l, -21l, -31l] as Set
 	}
 }

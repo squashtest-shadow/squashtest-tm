@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -97,39 +98,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 					+ "Where req2.rln_id in (:requirementIds) Group By reqVer2.criticality) "
 			+ "as totalSelection "
 			+ "On coveredSelection.criticality = totalSelection.criticality";
-	
-	private static final String SQL_VALIDATION_STATISTICS_2 = 
-				"Select Selection1.criticality, Selection1.status, count(*) "
-					+ "From "
-						+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, itpi.execution_status as status, itpi.last_executed_on as execDate "
-						+ "From REQUIREMENT as req "
-						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
-						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
-						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
-						+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
-						+ "Where req.rln_id in (:requirementIds)) as Selection1 "
-					+ "Inner Join "
-						+ "(Select req.rln_id as requirement, tc.tcln_id as testCase, max(itpi.last_executed_on) as lastDate "
-						+ "From REQUIREMENT as req "
-						+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id "
-						+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
-						+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id "
-						+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id "
-						+ "Inner Join "
-							+ "(Select Max(req.rln_id) as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase "
-							+ "From REQUIREMENT req "
-							+ "Inner Join REQUIREMENT_VERSION as reqVer On req.current_version_id = reqVer.res_id "
-							+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov On reqVerCov.verified_req_version_id = reqVer.res_id "
-							+ "Inner Join TEST_CASE as tc On tc.tcln_id = reqVerCov.verifying_test_case_id "
-							+ "Where req.rln_id in (:requirementIds) "
-							+ "Group By criticality, testCase) as NoDuplicateTCByCritSelection "
-						+ "On NoDuplicateTCByCritSelection.requirement = req.rln_id And NoDuplicateTCByCritSelection.criticality = reqVer.criticality And NoDuplicateTCByCritSelection.testCase = tc.tcln_id "
-						+ "Where req.rln_id in (:requirementIds) "
-						+ "Group By req.rln_id, NoDuplicateTCByCritSelection.criticality, tc.tcln_id) as LastExecutionSelection "
-					+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase "
-						+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
-					+ "Group By Selection1.criticality, Selection1.status";
-	
+		
 	private static final String SQL_VALIDATION_STATISTICS = 
 			"Select Selection1.criticality, Selection1.status, count(*) "
 			+ "From "
@@ -166,8 +135,37 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) "
 		+ "And (Selection1.dataset = LastExecutionSelection.dataset Or (Selection1.dataset is Null And LastExecutionSelection.dataset Is Null)) "
 		+ "Group By Selection1.criticality, Selection1.status"; 
+
+	private static final String SQL_REQUIREMENTS_IDS_FROM_VALIDATION = 
+			"Select Distinct Selection1.requirement "
+			+ "From "
+				+ "(Select Distinct req.rln_id as requirement, reqVer.criticality as criticality, tc.tcln_id as testCase, dataset.dataset_id as dataset, Coalesce(itpi.execution_status, 'NOT_FOUND' ) as status, itpi.last_executed_on as execDate " 
+				+ "From REQUIREMENT as req " 
+				+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id " 
+				+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id " 
+				+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id " 
+				+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id " 
+				+ "Left Outer Join DATASET dataset on dataset.dataset_id = itpi.dataset_id " 
+				+ "Where req.rln_id In (:requirementIds)) as Selection1 " 
+			+ "Inner Join " 
+			 	+ "(Select req.rln_id as requirement, reqVer.criticality, tc.tcln_id as testCase, dataset.dataset_id as dataset, max(itpi.last_executed_on) as lastDate " 
+			 	+ "From REQUIREMENT as req " 
+			 	+ "Inner Join REQUIREMENT_VERSION as reqVer on req.current_version_id = reqVer.res_id " 
+			 	+ "Inner Join REQUIREMENT_VERSION_COVERAGE as reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id " 
+			 	+ "Inner Join TEST_CASE as tc on tc.tcln_id = reqVerCov.verifying_test_case_id " 
+			 	+ "Left Outer Join ITERATION_TEST_PLAN_ITEM itpi on itpi.tcln_id = tc.tcln_id " 
+			 	+ "Left Outer Join DATASET as dataset on dataset.dataset_id = itpi.dataset_id " 
+			 	+ "Where req.rln_id In (:requirementIds) " 
+			 	+ "Group By req.rln_id, reqVer.criticality, tc.tcln_id, dataset.dataset_id) as LastExecutionSelection " 
+			+ "On Selection1.requirement = LastExecutionSelection.requirement And Selection1.testCase = LastExecutionSelection.testCase " 
+			+ "And (Selection1.execDate = LastExecutionSelection.lastDate Or (Selection1.execDate is Null And LastExecutionSelection.lastDate Is Null)) " 
+			+ "And (Selection1.dataset = LastExecutionSelection.dataset Or (Selection1.dataset is Null And LastExecutionSelection.dataset Is Null)) "
+			+ "Where Selection1.criticality = (:criticality) "
+			+ "And Selection1.status In (:validationStatus)";
 	
 	private static String reqParamName = "requirementIds";
+	private static String critPramName = "criticality";
+	private static String validationStatusParamName = "validationStatus";
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -502,4 +500,22 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		return new RequirementStatisticsBundle(tcs, status, criticality, description, coverage, validation, requirementIds);
 	}
 
+	@Override
+	public Collection<Long> gatherRequirementIdsFromValidation(Collection<Long> requirementIds, RequirementCriticality criticality, Collection<String> validationStatus) {
+		
+		if(requirementIds.isEmpty()) {
+			return new ArrayList<Long>();
+		}
+		Query query = entityManager.createNativeQuery(SQL_REQUIREMENTS_IDS_FROM_VALIDATION);
+		query.setParameter(reqParamName, requirementIds);
+		query.setParameter(critPramName, criticality.toString());
+		query.setParameter(validationStatusParamName, validationStatus);
+		
+		List<BigInteger> bigIntIdsList = query.getResultList();
+		List<Long> reqIdsList = new ArrayList<Long>(bigIntIdsList.size());
+		for(BigInteger id : bigIntIdsList) {
+			reqIdsList.add(id.longValue());
+		}
+		return reqIdsList;
+	}
 }

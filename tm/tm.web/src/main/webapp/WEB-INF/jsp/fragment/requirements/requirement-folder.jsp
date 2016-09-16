@@ -58,8 +58,8 @@
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
   <div id="right-frame-button">
-    <f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
-    <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button"  />
+    <f:message var="toggleLabel" key="label.toggleTree" />
+    <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLabel}" />
   </div>
 
 	<h2>

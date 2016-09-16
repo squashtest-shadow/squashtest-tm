@@ -398,4 +398,29 @@ class RequirementStatisticsServiceImplTest extends Specification {
 		"OTHER_CRITICALITY"  | "READY"
 	}
 	
+	
+	def "gatherRequirementIdsFromValidation should return requirement Ids"() {
+		given:
+			List<BigInteger> reqIdsFromValidation = reqIdsList
+			
+			addMockQuery(reqIdsFromValidation)
+		
+		when:
+			List<Long> res = service.gatherRequirementIdsFromValidation([1l, 42l, 6l], RequirementCriticality.CRITICAL, ["test", "test", "test"]);
+			Set<Long> resSet = new HashSet<Long>(res);
+		then:
+			resSet ==  expectedSet
+				
+		where:
+			reqIdsList | expectedSet
+			[new BigInteger(3), new BigInteger(5), 
+			new BigInteger(7), new BigInteger(9), 
+			new BigInteger(13), new BigInteger(21),
+			new BigInteger(27), new BigInteger(29)] | [3l, 5l, 7l, 9l, 13l, 21l, 29l, 27l] as Set
+			
+			[new BigInteger(42)] | [42] as Set
+			
+			[] | [] as Set
+	}
+	
 }

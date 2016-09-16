@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -54,6 +55,7 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -94,6 +96,9 @@ public class RequirementLibraryNavigationController extends
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
+	@Inject
+	private RequirementStatisticsService requirementStatisticsService;
+	
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
@@ -346,6 +351,19 @@ public class RequirementLibraryNavigationController extends
 		model.addAttribute("milestone", activeMilestone);
 
 		return "fragment/requirements/requirement-milestone-dashboard";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/validation-statistics", 
+		method=RequestMethod.POST, 
+		produces = ContentTypes.APPLICATION_JSON, 
+		params={"selectedIds", "criticality", "validation"})
+	public Collection<Long> getValidationRequirementIds(
+			@RequestParam Collection<Long> selectedIds,
+			@RequestParam RequirementCriticality criticality, 
+			@RequestParam Collection<String> validation) {
+		
+		return requirementStatisticsService.gatherRequirementIdsFromValidation(selectedIds, criticality, validation);
 	}
 	
 }

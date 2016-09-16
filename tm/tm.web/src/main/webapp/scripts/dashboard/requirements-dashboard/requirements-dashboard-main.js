@@ -85,6 +85,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		addClickSearchEvent($("#dashboard-item-requirements-criticality"), critPie, "criticality");
 		addClickSearchEvent($("#dashboard-item-bound-desc"), descPie, "description");
 		addClickSearchEvent($("#dashboard-item-coverage"), covBar, "coverage");
+		addValidationToSearch($("#dashboard-item-validation"), validBar);
 		
 		return [ summary, tcPie, statPie, critPie, descPie, covBar, validBar ];
 	}
@@ -168,7 +169,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		search.fields.testcases.minValue = "1";
 		search.fields.testcases.maxValue = "";
 		
-		// Not all categories are displayed so we have to know wich are
+		// Not all categories are displayed so we have to know which are
 		var categories = chart.plot.axes.xaxis.ticks;
 		var criticalityToSearch = categories[pointIndex];
 		
@@ -187,10 +188,11 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		else if(criticalityToSearch === translator.get("requirement.criticality.CRITICAL")) {
 			search.fields.criticality.values = [ "0-CRITICAL" ];
 		}
+		
 	}
 	
-	function addClickSearchEvent(item, pie, type) {
-		
+	function _bindHighlightUnhighlight(item) {
+
 		item.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
 			var $this = $(this);
 			// TODO: The message shouldn't be associated with 'test-cases'
@@ -198,7 +200,6 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			//add pointer because IE don't support  zoom-in. Put pointer before zoom-in, so zoom-in is used if the brower support it
 			$this.css('cursor', 'pointer');
 			$this.css('cursor', 'zoom-in');
-
 		});
 
 		item.bind('jqplotDataUnhighlight', function(ev, seriesIndex, pointIndex, data) {
@@ -206,26 +207,18 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			$this.attr('title', "");
 			$this.css('cursor', 'auto');
 		});
+	}
+	function addClickSearchEvent(item, pie, type) {
+				
+		_bindHighlightUnhighlight(item);
 
 		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
 			var ids = pie.model.get('selectedIds');
 
-			var search = {
-				fields : {
-					"requirement.id" : {
-						type : "LIST",
-						values : ""
-					}
-				}
-			};
-
+			var search = _initializeSearch();
+			
 			search.fields["requirement.id"].values = ids.toString().split(",");
 
-			search.fields.isCurrentVersion = {};
-			search.fields.isCurrentVersion.type = "SINGLE";
-			search.fields.isCurrentVersion.value = "1";
-			search.fields.isCurrentVersion.ignoreBridge = "true";
-			
 			switch (type) {
 			case "testcase":
 				addTestCasesToSearch(search, pointIndex);
@@ -246,6 +239,79 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
 			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
+
+		});
+	}
+	function _initializeSearch() {
+		var search = {
+				fields : {
+					"requirement.id" : {
+						type : "LIST",
+						values : "",
+						ignoreBridge : "false"
+					}
+				}
+			};
+			
+			search.fields.isCurrentVersion = {};
+			search.fields.isCurrentVersion.type = "SINGLE";
+			search.fields.isCurrentVersion.value = "1";
+			search.fields.isCurrentVersion.ignoreBridge = "false";
+
+			return search;
+	}
+	function addValidationToSearch(item, chart) {
+		
+		_bindHighlightUnhighlight(item);
+		
+		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
+			
+			var ids = chart.model.get('selectedIds');
+			
+			var categories = chart.plot.axes.xaxis.ticks;
+			var criticality = categories[pointIndex];
+			
+			if(criticality === translator.get("requirement.criticality.UNDEFINED")) {
+				criticality = "UNDEFINED";
+			}
+			else if(criticality === translator.get("requirement.criticality.MINOR")) {
+				criticality = "MINOR";
+			}
+			else if(criticality === translator.get("requirement.criticality.MAJOR")) {
+				criticality = "MAJOR";
+			}
+			else if(criticality === translator.get("requirement.criticality.CRITICAL")) {
+				criticality = "CRITICAL";
+			}
+			
+			var validation;
+			switch(seriesIndex) {
+			case 0:
+				validation = ["SUCCESS"];
+				break;
+			case 1:
+				validation = ["FAILURE"];
+				break;
+			default:
+				validation = ["READY", "RUNNING", "UNTESTABLE", "BLOCKED", "NOT_FOUND", "NOT_RUN", "ERROR", "WARNING", "SETTLED"];
+			}
+			
+			var search = _initializeSearch();
+			
+			$.ajax({
+				url: squashtm.app.contextRoot + "/requirement-browser/validation-statistics",
+				type: "POST",
+				dataType: "json",
+				data : { 
+					'selectedIds' : ids.join(","),
+					'criticality' : criticality,
+					'validation' : validation.join(",")
+				}
+			}).success(function(requirementIdsFromValidation) {
+				search.fields["requirement.id"].values = requirementIdsFromValidation.toString().split(",");
+				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
+				document.location.href = squashtm.app.contextRoot + "/advanced-search/results?requirement&" + queryString;
+			});
 
 		});
 	}

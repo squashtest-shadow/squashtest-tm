@@ -22,6 +22,7 @@ package org.squashtest.tm.service.requirement;
 
 import java.util.Collection;
 
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
 import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
@@ -89,4 +90,14 @@ public interface RequirementStatisticsService {
 	 * @return
 	 */
 	RequirementValidationStatistics gatherRequirementValidationStatistics(Collection<Long> requirementIds);
+	/**
+	 * Among the given requirements ids, returns the ids of the requirements that have the given criticality and are bound to the test cases with the given validation.
+	 * Warning : no security check will be performed and the data will be returned regardless of who requested it.
+	 * 
+	 * @param requirementIds
+	 * @param criticality
+	 * @param validation
+	 * @return
+	 */
+	Collection<Long> gatherRequirementIdsFromValidation(Collection<Long> requirementIds, RequirementCriticality criticality, Collection<String> validation);
 }
