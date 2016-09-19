@@ -25,6 +25,24 @@ define(["dashboard/basic-objects/pie-view"], function(PieView){
 		getSeries : function(){
 			var stats = this.model.get('boundTestCasesStatistics');
 			return [ stats.zeroTestCases, stats.oneTestCase, stats.manyTestCases ];
+		},
+		/* The getCategories function enables to know which categories are displayed on the chart
+		 * It is used specifically in the research, because when the pie is full, 
+		 * the pointIndex of the click is always 0 and distort the research */
+		getCategories : function() {
+			var possibleCategories = ['zeroTestCases', 'oneTestCase', 'manyTestCases'];
+			var categories = [];
+			
+			var stats = this.model.get('boundTestCasesStatistics');
+			var totalsArray = [ stats.zeroTestCases, stats.oneTestCase, stats.manyTestCases ];
+			
+			for(var i=0, length=totalsArray.length; i < length; i++) {
+				if(totalsArray[i] > 0) {
+					categories.push(possibleCategories[i]);
+				}
+			}
+			
+			return categories;
 		}
 	});
 
