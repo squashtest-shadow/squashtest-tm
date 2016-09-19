@@ -42,10 +42,24 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		updateModel : function() {
 
 			var self = this;
-
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
-			
 			this.model.set({selectedAttributes : ids});
+
+			//now retrieve the selected entities type to updated filter and operation view
+			var selectedEntities = _.chain(ids)
+				.map(function(id){
+					var allProtos = _.chain(self.model.get("computedColumnsPrototypes")).values().flatten().value();
+					return _.find(allProtos,function(proto){
+						return proto.id === id || proto.id.toString() === id;
+					});
+				})
+				.map(function(proto){
+					return proto.specializedType.entityType;
+				})
+				.uniq()
+				.value();
+
+			this.model.set({"selectedEntity" : selectedEntities});
 			
 		},
 		
@@ -57,21 +71,16 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			
 		},
 		
-		/**
-		 * Compute the columnPrototypes :
-		 * 1/ keep only the selected entities columnsPrototypes
-		 * 2/ generate the prototypes for the CUF
-		 */
 		computeColumnsPrototypes : function () {
 			var initialColumnsPrototypes = this.model.get('columnPrototypes');
-			var selectedEntities = this.model.get('selectedEntity');
-			var selectedEntitiesColumnsPrototypes = {};
-			var selectedProjects = this.getSelectedProject();
-			
-			var self = this;
 
 			//1 creating synthetics prototypes and merging with natural
-			return this.mergeProtoypes(initialColumnsPrototypes);
+			var mergedProto = this.mergeProtoypes(initialColumnsPrototypes);
+			
+			//2 reorder to follow the squashtm workspace order
+			var orderedProtos = _.pick(mergedProto,["REQUIREMENT","REQUIREMENT_VERSION","TEST_CASE","CAMPAIGN","ITERATION","ITEM_TEST_PLAN","EXECUTION"]);
+
+			return orderedProtos;
 		},
 		
 		getSelectedProject : function () {
@@ -109,12 +118,17 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			//now we generate the synthetics columns prototypes
 			var syntheticColumnPrototypes = this.getCufProtoForBindings(cufBindingMap,cufPrototypes);
 
-			//finally we merge the the two maps and return
+			//finally we merge the the two maps and return the result
 			var mergedPrototypes = chartUtils.getEmptyCufMap();
 			_.each(mapOfNaturalPrototypes,function (values,key) {
 				var syntheticColumnPrototypesForEntity = syntheticColumnPrototypes[key];
-				var allProto = values.concat(syntheticColumnPrototypesForEntity);
-				mergedPrototypes[key] = allProto;
+				if(syntheticColumnPrototypesForEntity && syntheticColumnPrototypesForEntity.length > 0){
+					var allProto = values.concat(syntheticColumnPrototypesForEntity);
+					mergedPrototypes[key] = allProto;
+				}
+				else{
+					mergedPrototypes[key] = values;
+				}
 			});
 
 			return mergedPrototypes;

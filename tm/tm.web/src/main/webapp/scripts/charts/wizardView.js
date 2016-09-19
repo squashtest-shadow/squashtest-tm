@@ -26,7 +26,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 	var validation =
 		[{
 			name : "perimeter",
-			validationParam : "scope"
+			validationParam : "scopeType"
 		},{
 			name :"attributes",
 			validationParam : "selectedAttributes"
@@ -51,7 +51,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 		clickable : true
 	}, {
 		name : "attributes",
-		prevStep : "entity",
+		prevStep : "perimeter",
 		nextStep : "filter",
 		viewTitle : "chart.wizard.creation.step.attributes",
 		stepNumber : 2,

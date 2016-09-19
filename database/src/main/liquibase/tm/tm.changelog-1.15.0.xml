@@ -217,6 +217,10 @@
     <addColumn tableName="CHART_FILTER">
       <column name="CUF_ID" type="BIGINT" remarks="a column to persist cuf id relative to this filter" />
     </addColumn>
+
+    <addColumn tableName="CHART_DEFINITION">
+      <column name="SCOPE_TYPE" type="VARCHAR(20)" remarks="a column to persist the scope type" />
+    </addColumn>
   </changeSet>
 
 </databaseChangeLog>

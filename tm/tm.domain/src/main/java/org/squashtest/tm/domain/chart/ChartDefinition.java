@@ -100,6 +100,9 @@ public class ChartDefinition implements TreeEntity{
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
 
+	@Enumerated(EnumType.STRING)
+	private ScopeType scopeType;
+
 	@ElementCollection
 	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
 	private List<String> projectScope = new ArrayList<>();

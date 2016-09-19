@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,chartUtils) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","./projectPopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectPopup,chartUtils) {
 		"use strict";
 
 		translator.load({
@@ -43,6 +43,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				var treePopup = $("#tree-popup-tpl").html();
 				this.treePopupTemplate = Handlebars.compile(treePopup);
 				this.initPerimeter();
+				this.updateButtonStatus(this.model.get("scopeType"));
 
 
 			},
@@ -50,18 +51,62 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			events: {
 				"click .perimeter-select": "openPerimeterPopup",
 				"click #repopen-perim": "reopenPerimeter",
-				"click #reset-perimeter": "resetPerimeter"
+				"click #reset-perimeter": "resetPerimeter",
+				"click #change-perimeter-project-button":"openProjectPerimeterPopup",
+				"click .scope-type": "changeScopeType"
 
 			},
 
 			initPerimeter: function () {
-				var scope = this.model.get("scopeEntity") || "default";
-				if (scope === "default") {
+				var scope = this.model.get("scopeEntity") || "DEFAULT";
+
+				if (scope === "DEFAULT") {
 					this.writeDefaultPerimeter();
 				} else {
 					this.writePerimeter(scope);
 				}
 
+			},
+
+			changeScopeType : function () {
+				var scopeType = this.$el.find("input[name='scope-type']:checked").val();
+				this.model.set("scopeType",scopeType);
+				this.updateButtonStatus(scopeType);
+			},
+
+			updateButtonStatus : function (scopeType) {
+				switch (scopeType) {
+					case "DEFAULT":
+						this.inactivateChooseProjectPerimeter();
+						this.inactivateChooseCustomPerimeter();
+						break;
+					case "PROJECTS":
+						this.activateChooseProjectPerimeter();
+						this.inactivateChooseCustomPerimeter();
+						break;
+					case "CUSTOM":
+						this.inactivateChooseProjectPerimeter();
+						this.activateChooseCustomPerimeter();
+						break;
+					default:
+						break;
+				}
+			},
+
+			inactivateChooseProjectPerimeter : function () {
+				this.$el.find("#change-perimeter-project-button").addClass("disabled");
+			},
+
+			inactivateChooseCustomPerimeter : function () {
+				this.$el.find("#change-perimeter-button").addClass("disabled");
+			},
+
+			activateChooseProjectPerimeter : function () {
+				this.$el.find("#change-perimeter-project-button").removeClass("disabled");
+			},
+
+			activateChooseCustomPerimeter : function () {
+				this.$el.find("#change-perimeter-button").removeClass("disabled");
 			},
 
 			writeDefaultPerimeter: function () {
@@ -105,8 +150,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			},
 
 			reopenPerimeter: function (event) {
-
-
 				var self = this;
 
 				var nodes = _.map(this.model.get("scope"), function (obj) {
@@ -115,7 +158,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 						resid: obj.id
 					};
 				});
-
 
 				var treePopup = new TreePopup({
 					model: self.model,
@@ -139,6 +181,13 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				self.addTreePopupConfirmEvent(treePopup, self, event.target.name);
 
 
+			},
+
+			openProjectPerimeterPopup : function(){
+				var self = this;
+				var projectPopup = new ProjectPopup({
+					model: self.model
+				});
 			},
 
 			addTreePopupConfirmEvent: function (popup, self, name) {
@@ -184,14 +233,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				});
 
 				this.model.set({selectedEntity: entity});
-
-				//// We must check selected attribute as we can change the selected entities after other steps were perfomed
-				//// i put it on comment the time perimeter mess is fixed, so we can make a better version for the cufs...
-				// this.model.set({
-				// 	selectedAttributes: _.filter(this.model.get("selectedAttributes"), function (val) {
-				// 		return _.contains(self.getIdsOfValidColumn(), val);
-				// 	})
-				// });
 
 				var filtered = _(['filters', 'axis', 'measures', 'operations'])
 					.reduce(function (memo, val) {

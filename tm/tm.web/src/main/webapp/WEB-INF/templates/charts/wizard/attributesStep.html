@@ -21,6 +21,7 @@
 
 -->
 <div th:fragment="chart-wizard-attributes">
+{{!--<![CDATA[--}}
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.attributes}"/>
 <br />
@@ -31,10 +32,11 @@
  {{#each attributes.computedColumnsPrototypes}}
 
 
-
-  {{#if (contains ../attributes.selectedEntity @key)}}
-
+{{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">
+{{else}}
+   <div class="sq-tg collapse">
+{{/if}}
  <div class="tg-head">
 {{i18n @key prefix='chart.entityType.'}}
 </div>
@@ -43,7 +45,7 @@
 <div class="tg-body">
 {{#each  this}}
 <div style="float:left; min-width:240px;">
-  {{!--<![CDATA[--}}
+ 
     {{#equal this.columnType "CUF"}}
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf-binding-id="{{cufBindingId}}"
              {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
@@ -58,17 +60,17 @@
       />
     {{i18n this.label prefix="chart.column."}}
     {{/equal}}
-  {{!--]]>--}}
+
 </div>
 
 {{/each}}
+
 </div>
  </div>
 
- {{/if}}
 
 {{/each}}
 
-
+  {{!--]]>--}}
 </div>
 

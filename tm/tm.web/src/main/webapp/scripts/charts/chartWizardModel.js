@@ -27,26 +27,28 @@ return Backbone.Model.extend({
 
 		var self = this;
 		var chartDef = data.chartDef;
+		this.set("projects",squashtm.workspace.projects);
 
 		if (chartDef !== null){
-
-		this.set({
-                    updateId : chartDef.id,
-                    name : chartDef.name,
-                    type : chartDef.type,
-                    axis: chartDef.axis,
-                    owner : chartDef.owner,
-                    scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
-                    projectsScope : chartDef.projectScope,
-                    scopeEntity : self.getScopeEntity(chartDef.scope),
-		    measures : chartDef.measures,
-		    operations : self.getOperations(chartDef),
-		    filters : self.getFilters(chartDef),
-		    selectedEntity : self.getSelectedEntities(chartDef),
-		    selectedAttributes : self.getSelectedAttributes(chartDef),
-		    filtered : [true]
-		});
-
+			this.set({
+						updateId : chartDef.id,
+						name : chartDef.name,
+						type : chartDef.type,
+						axis: chartDef.axis,
+						owner : chartDef.owner,
+						scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
+						projectsScope : chartDef.projectScope,
+						scopeEntity : self.getScopeEntity(chartDef.scope),
+						scopeType : chartDef.scopeType,
+				measures : chartDef.measures,
+				operations : self.getOperations(chartDef),
+				filters : self.getFilters(chartDef),
+				selectedEntity : self.getSelectedEntities(chartDef),
+				selectedAttributes : self.getSelectedAttributes(chartDef),
+				filtered : [true]
+			});
+		} else {
+			this.set({scopeType : "DEFAULT"});
 		}
 	},
 
