@@ -83,7 +83,7 @@ public class CustomReportController {
 	@RequestMapping(value = "custom-report-chart/{id}", method = RequestMethod.GET)
 	public JsonChartInstance getChartDetails(@PathVariable Long id){
 		ChartDefinition chartDef = customReportLibraryNodeService.findChartDefinitionByNodeId(id);
-		ChartInstance instance = chartService.generateChart(chartDef.getId());
+		ChartInstance instance = chartService.generateChart(chartDef.getId(),null,null);
 		return new JsonChartInstance(instance);
 	}
 

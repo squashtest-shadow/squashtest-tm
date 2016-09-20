@@ -168,6 +168,7 @@ return Backbone.Model.extend({
 			},
 			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
+			scopeType : this.get("scopeType"),
 			scope : _.map(this.get("scope"), function(val) {var newVal = _.clone(val); newVal.type = val.type.replace("LIBRARIE", "LIBRARY"); return newVal;})
 			});
 		},

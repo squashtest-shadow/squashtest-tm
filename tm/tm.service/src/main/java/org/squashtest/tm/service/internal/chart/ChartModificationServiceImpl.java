@@ -35,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -44,6 +45,7 @@ import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
@@ -98,10 +100,17 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 
 	@Override
-	public ChartInstance generateChart(long chartDefId){
+	public ChartInstance generateChart(long chartDefId, List<EntityReference> dynamicScope, Long dashboardId){
 		ChartDefinition def = findById(chartDefId);
-		return generateChart(def);
+		return generateChart(def,dynamicScope,dashboardId);
 
+	}
+
+	@Override
+	public ChartInstance generateChart(ChartDefinition chartDef, Long projectId){
+		Project project = em.find(Project.class,projectId);
+		chartDef.setProject(project);
+		return generateChart(chartDef,null,null);
 	}
 
 
@@ -110,8 +119,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
-	public ChartInstance generateChart(ChartDefinition definition) {
-		ChartSeries series = dataFinder.findData(definition);
+	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId) {
+		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId);
 		return new ChartInstance(definition, series);
 	}
 

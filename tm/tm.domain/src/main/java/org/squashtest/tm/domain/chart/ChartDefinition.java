@@ -161,6 +161,13 @@ public class ChartDefinition implements TreeEntity{
 		return query;
 	}
 
+	public ScopeType getScopeType() {
+		return scopeType;
+	}
+
+	public void setScopeType(ScopeType scopeType) {
+		this.scopeType = scopeType;
+	}
 
 	/**
 	 * Returns which entities are covered by this chart, sorted by roles

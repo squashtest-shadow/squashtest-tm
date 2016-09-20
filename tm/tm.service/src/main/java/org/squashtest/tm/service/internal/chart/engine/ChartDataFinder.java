@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
@@ -157,7 +158,7 @@ import com.querydsl.core.Tuple;
  * 		<li><b>Target Entities</b> : entities on which apply at least one of the MeasureColumns, AxisColumns, Filters, or Scope (see <b>Scope and ACLs</b>)</li>
  * 		<li><b>Support Entities</b> : entities that aren't Target entities but must be joined on in order to join together all
  * 			the Target entities. For example if a ChartDefinition defines Execution as Root entity and Campaign as a TargetEntity,
- * 			then IterationTestPlanItem and Iteration are Support entities. 
+ * 			then IterationTestPlanItem and Iteration are Support entities.
  *              </li>
  * 	</ul>
  * </p>
@@ -166,12 +167,12 @@ import com.querydsl.core.Tuple;
  *  The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
  *  Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).
  * </p>
- * 
+ *
  * <p>
- *      <b>Clarification about the Scope and the Main Query (custom scopes only, TM 1.14):</b> 
- *      As of TM 1.14 the Scope is now included in order to force a natural joins on the scoped entity. Indeed, when the user defines a query on which the 
+ *      <b>Clarification about the Scope and the Main Query (custom scopes only, TM 1.14):</b>
+ *      As of TM 1.14 the Scope is now included in order to force a natural joins on the scoped entity. Indeed, when the user defines a query on which the
  *      scoped entity is neither used in a Filter, Axis or Measure, the resulting data is void because the Root Entity or Support entities are indeed out of the scope.
- *      This decision is only half satisfactory : the definitive solution would be to actually reify and handle a Domain on which the query should innerjoin on, 
+ *      This decision is only half satisfactory : the definitive solution would be to actually reify and handle a Domain on which the query should innerjoin on,
  *      but for now this trick will avoid the main problem (ie the case of empty resultset). See more with tickets #6260 and #6275
  * </p>
  *
@@ -316,10 +317,9 @@ public class ChartDataFinder {
 	Provider<ScopePlanner> scopePlannerProvider;
 
 	@Transactional(readOnly=true)
-	public ChartSeries findData(ChartDefinition definition){
+	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId){
 
 		DetailedChartQuery enhancedDefinition = new DetailedChartQuery(definition.getQuery());
-
 
 		// *********** step 1 : create the query ************************
 
@@ -330,10 +330,11 @@ public class ChartDataFinder {
 		ScopePlanner scopePlanner = scopePlannerProvider.get();
 		scopePlanner.setChartQuery(enhancedDefinition);
 		scopePlanner.setHibernateQuery(detachedQuery);
-		scopePlanner.setScope(definition.getScope());
+		// *********** override the chart scope if needed ************************
+		scopePlanner.setDynamicScope(definition,dynamicScope,dashboardId);
 		scopePlanner.appendScope();
 
-		// ******************* step 3 : run the query*************************
+		// ******************* step 3 : run the query *************************
 
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(em.unwrap(Session.class));
 

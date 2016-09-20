@@ -47,13 +47,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 			if (self.isValid()){
 
-				self.convertBackCustomFieldColumnPrototypes();
-
 			$.ajax({
 				'type' : 'POST',
 				'dataType' : 'json',
 				'contentType' : 'application/json',
-				'url' : squashtm.app.contextRoot + '/charts/instance',
+				'url' : squashtm.app.contextRoot + '/charts/instance/' + this.model.get("defaultProject"),
 				'data' : this.model.toJson("graph")
 			})
 			.success(function(json){
@@ -61,10 +59,6 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				self.navigateNext();
 			});
 			}
-		},
-
-		convertBackCustomFieldColumnPrototypes : function () {
-			
 		},
 
 		isValid : function(){

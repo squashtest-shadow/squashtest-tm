@@ -33,9 +33,8 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QCampaignPathEdge;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
@@ -106,7 +105,17 @@ import static org.squashtest.tm.domain.EntityType.*;
  *      <br/>
  *       More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
  * </p>
+ * <p>
+ * As of Squash 1.15 the rules for scope are following :
+ * If the user consult a chart in tc-workspace, req-workspace or campaign workspace,
+ * the chart definition scope will be changed by his dynamic selection in workspace tree (hence the second list of {@link EntityReference})
  *
+ * For other place (custom report workspace, home workspace...) the rules are :
+ * if scopeType = DEFAULT and the user isn't looking the chart through a dashboard, the scope will be the present project containing the chart definition NODE
+ * if scopeType = DEFAULT and the user is looking the chart through a dashboard, the scope will be the present project containing the dashboard NODE
+ * else, the chart scope will be the custom perimeter defined by the user (PROJECTS or CUSTOM)
+ *
+ * </p>
  *
  * <h3> How is this done </h3>
  *
@@ -168,7 +177,7 @@ class ScopePlanner {
 		utils = new ScopeUtils(em, permissionService);
 	}
 
-	// *********************** main method **********************************
+	// *********************** main methods **********************************
 
 	protected void appendScope() {
 
@@ -191,6 +200,34 @@ class ScopePlanner {
 			addWhereClauses();
 		}
 
+	}
+
+
+	protected void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+		if(dynamicScope != null && dynamicScope.size()>0){
+			this.setScope(dynamicScope);
+		}
+		else{
+			ScopeType scopeType = chartDefinition.getScopeType();
+			if (scopeType==ScopeType.DEFAULT){
+				setDefaultPerimeter(chartDefinition,dashboardId);
+			}
+			else{
+				this.setScope(chartDefinition.getScope());
+			}
+		}
+	}
+
+	private void setDefaultPerimeter(ChartDefinition chartDefinition, Long dashboardId) {
+		List<EntityReference> scope = new ArrayList<>();
+		if (dashboardId != null){
+			CustomReportDashboard dashboard = em.find(CustomReportDashboard.class, dashboardId);
+			scope.add(new EntityReference(PROJECT, dashboard.getProject().getId()));
+		}
+		else{
+			scope.add(new EntityReference(PROJECT,chartDefinition.getProject().getId()));
+		}
+		this.setScope(scope);
 	}
 
 

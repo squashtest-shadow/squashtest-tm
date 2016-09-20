@@ -48,6 +48,7 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
@@ -128,14 +129,23 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/{definitionId}/instance", method = RequestMethod.GET)
 	public JsonChartInstance generate(@PathVariable("definitionId") Long definitionId){
-		ChartInstance instance = chartService.generateChart(definitionId);
+		ChartInstance instance = chartService.generateChart(definitionId,null,null);
 		return new JsonChartInstance(instance);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/instance", method = RequestMethod.POST)
 	public JsonChartInstance generate(@RequestBody @Valid ChartDefinition definition) {
-		ChartInstance instance = chartService.generateChart(definition);
+		ChartInstance instance = chartService.generateChart(definition,null,null);
+		return new JsonChartInstance(instance);
+	}
+
+	//as above but require a project id. We need it for squash tm 1.15 because now the default perimeter is the current
+	//project of chart, so for the preview, the definition has no project, we need to pass one...
+	@ResponseBody
+	@RequestMapping(value = "/instance/{projectId}", method = RequestMethod.POST)
+	public JsonChartInstance generateWithoutProject(@PathVariable("projectId") Long projectId, @RequestBody @Valid ChartDefinition definition) {
+		ChartInstance instance = chartService.generateChart(definition,projectId);
 		return new JsonChartInstance(instance);
 	}
 

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
@@ -36,7 +37,7 @@ public interface ChartModificationService {
 	void persist(ChartDefinition newChartDefinition);
 
 	ChartDefinition findById(long id);
-	
+
 	boolean hasChart(List<Long> userIds);
 
 	/**
@@ -57,14 +58,22 @@ public interface ChartModificationService {
 
 	/**
 	 * Instanciate a ChartDefinition given its id.
-	 * 
+	 *
 	 * @param chartDefinitionId
 	 * @return
 	 */
-	ChartInstance generateChart(long chartDefinitionId);
+	ChartInstance generateChart(long chartDefinitionId, List<EntityReference> dynamicScope, Long dashboardId);
 
-	ChartInstance generateChart(ChartDefinition definition);
+	ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId);
 
+	/**
+	 * Generate a chart with the given definition for the given projectId.
+	 * Use only for transient {@link ChartDefinition} wich are not linked to project and no persisted...
+	 * @param definition
+	 * @param projectId
+     * @return
+     */
+	ChartInstance generateChart(ChartDefinition definition, Long projectId);
 
 	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
 

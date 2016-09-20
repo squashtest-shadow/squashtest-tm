@@ -52,7 +52,7 @@ public class JsonCustomReportChartBindingBuilder {
 		json.setRow(binding.getRow());
 		json.setSizeX(binding.getSizeX());
 		json.setSizeY(binding.getSizeY());
-		ChartInstance chartInstance = chartService.generateChart(binding.getChart());
+		ChartInstance chartInstance = chartService.generateChart(binding.getChart(),null,null);
 		JsonChartInstance jsonChartInstance = new JsonChartInstance(chartInstance);
 		json.setChartInstance(jsonChartInstance);
 
