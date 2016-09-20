@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 		initialize : function(options) {
 
 			this.linkTemplate = Handlebars
-					.compile('<label class="{{cssClass}} ui-icon afterDisabled req-link-label"></label>');			
+					.compile('<label class="{{cssClass}} afterDisabled req-link-label"></label>');			
 			
 			this.constructor.__super__.initialize.apply(this, [ options ]);
 			this.detachSelectedRequirements = $.proxy(this._detachSelectedRequirements, this);
