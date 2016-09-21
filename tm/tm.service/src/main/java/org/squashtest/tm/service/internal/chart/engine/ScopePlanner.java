@@ -204,13 +204,13 @@ class ScopePlanner {
 
 
 	protected void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
-		if(dynamicScope != null && dynamicScope.size()>0){
+		if(dynamicScope != null && !dynamicScope.isEmpty()){
 			this.setScope(dynamicScope);
 		}
 		else{
 			ScopeType scopeType = chartDefinition.getScopeType();
 			if (scopeType==ScopeType.DEFAULT){
-				setDefaultPerimeter(chartDefinition,dashboardId);
+				setDefaultScope(chartDefinition,dashboardId);
 			}
 			else{
 				this.setScope(chartDefinition.getScope());
@@ -218,16 +218,16 @@ class ScopePlanner {
 		}
 	}
 
-	private void setDefaultPerimeter(ChartDefinition chartDefinition, Long dashboardId) {
-		List<EntityReference> scope = new ArrayList<>();
+	private void setDefaultScope(ChartDefinition chartDefinition, Long dashboardId) {
+		List<EntityReference> defaultScope = new ArrayList<>();
 		if (dashboardId != null){
 			CustomReportDashboard dashboard = em.find(CustomReportDashboard.class, dashboardId);
-			scope.add(new EntityReference(PROJECT, dashboard.getProject().getId()));
+			defaultScope.add(new EntityReference(PROJECT, dashboard.getProject().getId()));
 		}
 		else{
-			scope.add(new EntityReference(PROJECT,chartDefinition.getProject().getId()));
+			defaultScope.add(new EntityReference(PROJECT,chartDefinition.getProject().getId()));
 		}
-		this.setScope(scope);
+		this.setScope(defaultScope);
 	}
 
 
