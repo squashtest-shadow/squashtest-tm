@@ -68,7 +68,7 @@ public interface ChartModificationService {
 
 	/**
 	 * Generate a chart with the given definition for the given projectId.
-	 * Use only for transient {@link ChartDefinition} wich are not linked to project and no persisted...
+	 * Use only for transient {@link ChartDefinition} which are not linked to project and aren't no persisted...
 	 * @param definition
 	 * @param projectId
      * @return

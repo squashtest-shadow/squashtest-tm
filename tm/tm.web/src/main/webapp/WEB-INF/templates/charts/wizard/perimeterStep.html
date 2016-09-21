@@ -34,20 +34,32 @@
     {{!--<![CDATA[--}}
     <input  type="radio" name="scope-type" class="scope-type" value="DEFAULT"
             {{#equal this.attributes.scopeType "DEFAULT"}} checked="checked" {{/equal}}
-    />  {{!--]]>--}} Current project
+    />  {{!--]]>--}} <span th:text="#{chart.wizard.perimeter.default}">Current project</span>
   </div>
-  <div>
+  <div style="margin-top:4em;">
     {{!--<![CDATA[--}}
     <input  type="radio" name="scope-type" class="scope-type" value="PROJECTS"
             {{#equal this.attributes.scopeType "PROJECTS"}} checked="checked" {{/equal}}/>
-    {{!--]]>--}} custom-project
+    {{!--]]>--}} <span th:text="#{chart.wizard.perimeter.projects}">Custom project</span>
     <input type="button" class="sq-btn" id="change-perimeter-project-button" th:value="#{label.Choose}" />
   </div>
-  <div>
+  <div style="margin-top:4em;">
     {{!--<![CDATA[--}}
     <input  type="radio" name="scope-type" class="scope-type" value="CUSTOM"
-            {{#equal this.attributes.scopeType "CUSTOM"}} checked="checked" {{/equal}}/> {{!--]]>--}} custom-entites
-  </div>
+            {{#equal this.attributes.scopeType "CUSTOM"}} checked="checked" {{/equal}}/> {{!--]]>--}}
+            <span th:text="#{chart.wizard.perimeter.custom}">Custom entities</span>
+            <a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+        	  <span th:text="#{wizard.perimeter.change}"/>
+            </a>
+
+            <ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
+                  {{#each attributes.perimSelect}}
+                  <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
+                    <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+                  </li>
+                  {{/each}}
+            </ul>
+    </div>
 </div>
 
 
@@ -55,17 +67,7 @@
 	<span style="font-weight: bold;" id="selected-perim-msg"/>
 	<span style="font-weight: bold;color: #750021;text-decoration: underline" id="selected-perim" />
 
-	<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
-        	<span th:text="#{wizard.perimeter.change}"/>
-       </a>
-
-	<ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
-        {{#each attributes.perimSelect}}
-	      <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
-	         <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
-        </li>
-        {{/each}}
-   </ul>
+	
 </div>
 
 

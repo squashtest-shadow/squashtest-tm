@@ -108,6 +108,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Override
 	public ChartInstance generateChart(ChartDefinition chartDef, Long projectId){
+		if(chartDef.getId() != null){
+			throw new IllegalArgumentException("This implementation of generate chart should be only used with transient Chart Definition (ie for previews only)");
+		}
 		Project project = em.find(Project.class,projectId);
 		chartDef.setProject(project);
 		return generateChart(chartDef,null,null);
