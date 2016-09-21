@@ -147,6 +147,7 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
+					active : 1
 				/*cookie : {
 					name : "suite-tab-cookie",
 					path : routing.buildURL('testsuites.base')
