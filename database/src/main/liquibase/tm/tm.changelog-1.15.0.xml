@@ -218,9 +218,24 @@
       <column name="CUF_ID" type="BIGINT" remarks="a column to persist cuf id relative to this filter" />
     </addColumn>
 
+
+  </changeSet>
+
+  <changeSet id="tm-1.15.0-feat-5417" author="jthebault">
     <addColumn tableName="CHART_DEFINITION">
       <column name="SCOPE_TYPE" type="VARCHAR(20)" remarks="a column to persist the scope type" />
     </addColumn>
+
+    <sql>
+      update CHART_DEFINITION
+      set SCOPE_TYPE = 'PROJECTS'
+      where CHART_ID in
+      (select CHART_ID from CHART_SCOPE where ENTITY_REFERENCE_TYPE like 'PROJECT');
+
+      update CHART_DEFINITION
+      set SCOPE_TYPE = 'CUSTOM'
+      where SCOPE_TYPE IS NULL;
+    </sql>
   </changeSet>
 
 </databaseChangeLog>
