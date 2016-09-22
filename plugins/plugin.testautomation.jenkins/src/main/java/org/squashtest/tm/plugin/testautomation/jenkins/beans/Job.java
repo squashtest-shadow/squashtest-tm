@@ -22,8 +22,8 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 public class Job {
 	
-	private String name;
-	private String color;
+	private String name = "undefined";
+	private String color = "undefined";
 
 	public String getName() {
 		return name;
