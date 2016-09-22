@@ -26,7 +26,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 	var validation =
 		[{
 			name : "perimeter",
-			validationParam : "scopeType"
+			validationParam : "scope"
 		},{
 			name :"attributes",
 			validationParam : "selectedAttributes"

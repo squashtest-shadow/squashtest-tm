@@ -81,14 +81,13 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 			validate : function(event){
 				
 				var nbSelect = $("#tree").jstree('get_selected').size();
-				if (nbSelect == 0){
+				if (nbSelect === 0){
 					var title = translator.get('wizard.perimeter.select.title');
 					var msg = translator.get('wizard.perimeter.select.msg');				
 					$.squash.openMessage(title, msg); 
 					return false;
 				}
 				return true;
-		
 			},
 
 			confirm: function (event) {

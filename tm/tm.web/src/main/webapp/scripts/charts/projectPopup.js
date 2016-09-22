@@ -35,7 +35,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
             events: {
 				"confirmdialogcancel": "cancel",
-				"confirmdialogconfirm": "confirm"
+				"confirmdialogconfirm": "confirm",
+				"confirmdialogvalidate" : "validate"
 			},
 
             render: function(){
@@ -54,16 +55,27 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 				this.remove();
 			},
 
+            
+			validate : function(event){
+				var nbSelect = this.getSelectedCheckbox().length;
+				if (nbSelect === 0){
+					var title = translator.get('wizard.perimeter.select.title');
+					var msg = translator.get('wizard.perimeter.select.msg');				
+					$.squash.openMessage(title, msg); 
+					return false;
+				}
+				return true;
+			},
+
 			confirm: function (event) {
-                var selectedIds = $(".project-perimeter-checkbox:checked").map(function(index,object){
-                    return $(this).val();
-                }).toArray();
+                var selectedIds = this.getSelectedCheckbox();
                 this.model.set("scope", _.map(selectedIds,function(id){
                     return {id:id,type:"PROJECT"};
                 }));
                  this.model.set("projectsScope", _.map(selectedIds,function(id){
                     return parseInt(id);
                 }));
+                this.trigger("projectPopup.confirm");
 				this.remove();
 			},
 
@@ -81,6 +93,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
                 _.each(checkboxIds,function (id) {
                     self.$el.find(id).attr("checked","checked");
                 });
+            },
+
+            getSelectedCheckbox : function() {
+                return $(".project-perimeter-checkbox:checked").map(function(index,object){
+                    return $(this).val();
+                }).toArray();
             }
         
     });

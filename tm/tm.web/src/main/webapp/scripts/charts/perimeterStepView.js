@@ -51,6 +51,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			events: {
 				"click .perimeter-select": "openPerimeterPopup",
 				"click #repopen-perim": "reopenPerimeter",
+				"click #repopen-projects-perim": "openProjectPerimeterPopup",
 				"click #reset-perimeter": "resetPerimeter",
 				"click #change-perimeter-project-button":"openProjectPerimeterPopup",
 				"click .scope-type": "changeScopeType"
@@ -59,19 +60,37 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 
 			initPerimeter: function () {
 				var scope = this.model.get("scopeEntity") || "DEFAULT";
+				var scopeType = this.model.get("scopeType");
 
-				if (scope === "DEFAULT") {
-					this.writeDefaultPerimeter();
-				} else {
-					this.writePerimeter(scope);
+				switch (scopeType) {
+					case "DEFAULT":
+						this.writeDefaultPerimeter();
+						break;
+
+					case "PROJECTS":
+						this.writeProjectPerimeter(scope);
+						break;
+
+					case "CUSTOM":
+						this.writePerimeter(scope);
+						break;
+				
+					default:
+						break;
 				}
-
 			},
 
 			changeScopeType : function () {
 				var scopeType = this.$el.find("input[name='scope-type']:checked").val();
+				this.model.set({
+					scope : [],
+					projectsScope : [],
+					scopeEntity: "default"
+				});
 				this.model.set("scopeType",scopeType);
 				this.updateButtonStatus(scopeType);
+				this.initPerimeter();
+							
 			},
 
 			updateButtonStatus : function (scopeType) {
@@ -127,12 +146,17 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			writePerimeter: function (name) {
 
 				var rootmsg = translator.get('wizard.perimeter.msg.custom.root');
-				var entitynames = translator.get("wizard.perimeter." + name);
+				var entitynames; 
+				if (name && name !== "default") {
+					entitynames = translator.get("wizard.perimeter." + name);
+				}
 
 				var projScope = this.model.get('projectsScope'),
 					suffixmsg = null;
 
-				if (projScope.length === 1) {
+				var scope = this.model.get('scope');
+
+				if (projScope.length === 1 && name!=="default") {
 					var projectId = projects.findProject(projScope[0]).name;
 					suffixmsg = translator.get('wizard.perimeter.msg.custom.singleproject', entitynames, projectId);
 				} else {
@@ -140,9 +164,38 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				}
 
 				$("#selected-perim-msg").text(rootmsg);
-				var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + suffixmsg + "</a>";
-				$("#selected-perim").html(link);
 
+				if (name==="default" || scope.length === 0) {
+					var textHint = translator.get('wizard.perimeter.msg.perimeter.choose');
+					$("#selected-perim").text(textHint);
+				} else {
+					var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + suffixmsg + "</a>";
+					$("#selected-perim").html(link);
+				}
+				
+
+			},
+
+			writeProjectPerimeter: function() {
+				var rootmsg = translator.get('wizard.perimeter.msg.projects.root');
+				var projScope = this.model.get('projectsScope');
+				$("#selected-perim-msg").text(rootmsg);
+
+				if (projScope.length === 0) {
+					var textHint = translator.get('wizard.perimeter.msg.perimeter.choose');
+					$("#selected-perim").text(textHint);
+				} else {
+					var projectNames = projects.getProjectsNames(projScope);
+					var link = "";
+					_.each(projectNames,function(name) {
+						link=link.concat(name+", ");
+					});
+					//removing the last comma
+					link = link.slice(0, -2);
+					//append html
+					link = "<a id='repopen-projects-perim' style='cursor:pointer' >" + link + "</a>";
+					$("#selected-perim").html(link);
+				}
 			},
 
 			resetPerimeter: function () {
@@ -188,6 +241,12 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				var projectPopup = new ProjectPopup({
 					model: self.model
 				});
+
+				// projectPopup.on('projectPopup.confirm', function () {
+				// 	self.writeProjectPerimeter();
+				// });
+
+				 this.listenTo(projectPopup, 'projectPopup.confirm', self.writeProjectPerimeter);
 			},
 
 			addTreePopupConfirmEvent: function (popup, self, name) {
@@ -241,11 +300,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					}, {});
 
 				this.model.set(filtered);
-
-
-				
-				
-
 			},
 
 			filterWithValidIds: function (col) {

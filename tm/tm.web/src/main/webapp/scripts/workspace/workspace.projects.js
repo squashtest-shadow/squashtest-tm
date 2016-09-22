@@ -47,6 +47,16 @@ define(["jquery", "underscore"], function($, _){
 		return project;
 		
 	}
+
+
+	function getProjectsNames (ids) {
+		return _.chain(squashtm.workspace.projects)
+					.filter(function(project) {
+						return _.contains(ids,project.id);
+					})
+					.pluck("name")
+					.value();
+	}
 	
 	/*
 	 * given their ids, tells whether at least two projects have different configurations
@@ -161,6 +171,7 @@ define(["jquery", "underscore"], function($, _){
 	return {
 		getAll : getAll,
 		findProject : findProject,
+		getProjectsNames : getProjectsNames,
 		haveDifferentInfolists : haveDifferentInfolists,
 		getAllMilestones : getAllMilestones,
 		willMilestonesBeLost : willMilestonesBeLost
