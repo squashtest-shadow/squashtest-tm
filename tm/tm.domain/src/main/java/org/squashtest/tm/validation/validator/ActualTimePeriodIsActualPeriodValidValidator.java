@@ -46,11 +46,10 @@ public class ActualTimePeriodIsActualPeriodValidValidator implements ConstraintV
 	@Override
 	public boolean isValid(ActualTimePeriod actualTimePeriod, ConstraintValidatorContext context) {
 		boolean result = true;
-		if(!actualTimePeriod.isActualStartAuto() && !actualTimePeriod.isActualEndAuto()) {
-			if(actualTimePeriod.getActualStartDate() != null && actualTimePeriod.getActualEndDate() !=null) {
-				if(actualTimePeriod.getActualStartDate().getTime() > actualTimePeriod.getActualEndDate().getTime()) {
-					result = false;
-				}
+		if(!actualTimePeriod.isActualStartAuto() && !actualTimePeriod.isActualEndAuto()
+				&& actualTimePeriod.getActualStartDate() != null && actualTimePeriod.getActualEndDate() !=null) {
+			if(actualTimePeriod.getActualStartDate().getTime() > actualTimePeriod.getActualEndDate().getTime()) {
+				result = false;
 			}
 		}
 		return result;

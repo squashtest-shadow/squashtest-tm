@@ -272,28 +272,9 @@
 						</div>
 					</td>
 					<td class="datepicker-table-col">
-						<table>
-							<tr>
-								<td class="datepicker-table-col">
-									<comp:datepicker-auto datePickerId="actual-start" url="${iterationPlanningUrl}"
-				                    fmtLabel="dialog.label.iteration.actual_start.label" paramName="actualStart"
-				                    autosetParamName="setActualStartAuto" isAuto="${iteration.actualStartAuto}"
-				                    initialDate="${iteration.actualStartDate.time}" isContextual="true" editable="${ writable }"
-				                    jsVarName="actualStart">
-									</comp:datepicker-auto>
-								</td>
-							</tr>
-							<tr>
-								<td class="datepicker-table-col">
-									<comp:datepicker-auto datePickerId="actual-end" url="${iterationPlanningUrl}"
-				                    fmtLabel="dialog.label.iteration.actual_end.label" paramName="actualEnd"
-				                    autosetParamName="setActualEndAuto" isAuto="${iteration.actualEndAuto}"
-				                    initialDate="${iteration.actualEndDate.time}" isContextual="true" editable="${ writable }"
-				                    jsVarName="actualEnd">
-									</comp:datepicker-auto>
-								</td>
-							</tr>
-						</table>
+						<div class="datepicker-col-actual">
+							<comp:datepickers-auto-pair />
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -385,18 +366,23 @@
 	if (!squashtm.page.isFullPage) {
 		require(["common"], function() {
 			require(["iteration-page"], function() {
-				require(["datepicker/datepickers-pair"], function(datePickers) {
+				require(["datepicker/datepickers-pair", "datepicker/datepickers-auto-pair"], function(datePickers, datePickersPair) {
 					var conf = {
 						data : {
 							planningUrl : "${iterationPlanningUrl}",
 							initialScheduledStartDate :	"${iteration.scheduledStartDate.time}",
-							initialScheduledEndDate :	"${iteration.scheduledEndDate.time}"
+							initialScheduledEndDate :	"${iteration.scheduledEndDate.time}",
+							initialActualStartDate: "${iteration.actualStartDate.time}",
+							initialActualEndDate: "${iteration.actualEndDate.time}",
+							initialActualStartAuto: "${iteration.actualStartAuto}",
+							initialActualEndAuto: "${iteration.actualEndAuto}"
 						},
 						features : {
 							editable : ${writable}
 						}
 					};
 					datePickers.init(conf);
+					datePickersPair.init(conf);
 				});
 			});
 		});

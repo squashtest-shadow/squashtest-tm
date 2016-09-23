@@ -260,26 +260,9 @@
 					</div>
 				</td>
 				<td class="datepicker-table-col">
-					<table>
-						<tr>
-							<td class="datepicker-table-col">
-								<comp:datepicker-auto datePickerId="actual-start" url="${campaignPlanningUrl}"
-			                    fmtLabel="dialog.label.campaign.actual_start.label" paramName="actualStart"
-			                    autosetParamName="setActualStartAuto" isAuto="${campaign.actualStartAuto}"
-			                    initialDate="${campaign.actualStartDate.time}" isContextual="true" editable="${ writable }">
-								</comp:datepicker-auto>
-							</td>
-						</tr>
-						<tr>
-							<td class="datepicker-table-col">
-								<comp:datepicker-auto datePickerId="actual-end" url="${campaignPlanningUrl}"
-			                    fmtLabel="dialog.label.campaign.actual_end.label" paramName="actualEnd"
-			                    autosetParamName="setActualEndAuto" isAuto="${campaign.actualEndAuto}"
-			                    initialDate="${campaign.actualEndDate.time}" isContextual="true" editable="${ writable }">
-								</comp:datepicker-auto>
-							</td>
-						</tr>
-					</table>
+					<div class="datepicker-col-actual">
+						<comp:datepickers-auto-pair />
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -372,16 +355,6 @@
 	require(["common"], function(){
 		require(["campaign-management"], function(manager){
 			
-			var scheduledStartDate = "${(campaign.scheduledStartDate != null) ? campaign.scheduledStartDate.time : ''}";
-			var scheduledEndDate = "${(campaign.scheduledEndDate != null) ? campaign.scheduledEndDate.time : ''}";
-			
-			if(!!scheduledStartDate) {
-				scheduledStartDate = parseInt(scheduledStartDate);
-			}
-			if(!!scheduledEndDate) {
-				scheduledEndDate = parseInt(scheduledEndDate);
-			}
-
 			var conf = {
 				data : {
 					campaignId : ${campaign.id},
@@ -393,7 +366,11 @@
 					modes : ${ json:serialize(modes)},
 					planningUrl: '${campaignPlanningUrl}',
 					initialScheduledStartDate: "${campaign.scheduledStartDate.time}",
-					initialScheduledEndDate: "${campaign.scheduledEndDate.time}"
+					initialScheduledEndDate: "${campaign.scheduledEndDate.time}",
+					initialActualStartDate: "${campaign.actualStartDate.time}",
+					initialActualEndDate: "${campaign.actualEndDate.time}",
+					initialActualStartAuto: "${campaign.actualStartAuto}",
+					initialActualEndAuto: "${campaign.actualEndAuto}"
 				},
 				features : {
 					editable : ${writable},

@@ -88,18 +88,18 @@ function DatePickerAuto(controls, params) {
 	// pseudo constructors
 	this.initialize = dpa_initialize;
 
-	this.initialize();
+	this.initialize(params);
 
 }
 
-function dpa_initialize() {
+function dpa_initialize(options) {
 	// init the datepicker
 	$(this.controls.datepick).datepicker();
 	var me = this;
 	if(this.params.dateFormat){//[Issue 3435]
 		$(this.controls.datepick).datepicker( "option", "dateFormat", this.params.dateFormat );
 	}
-	$(this.controls.datepick).datepicker("option", "onClose", function() {
+	$(this.controls.datepick).datepicker("option", "onClose", function(submittedDateText) {
 		try {
 			var currentDate = $(me.controls.datepick).datepicker("getDate");
 		} catch (damnit) {
@@ -111,7 +111,18 @@ function dpa_initialize() {
 		// if null, we set the control to automode
 		// if (currentDate==null) me.setAutoMode();
 
-		me.inputAndExitEditMode();
+		// Check validity of submitted date if a validator exists
+		if(!!options.validator) {
+			if(options.validator.isValid(submittedDateText)) {
+				me.inputAndExitEditMode();
+			} else {
+				me.cancelEditMode();
+				squashtm.notification.showError(options.validator.errorMessage);
+				return false;
+			}
+		} else {
+			me.inputAndExitEditMode();
+		}
 
 	});
 

@@ -36,10 +36,10 @@
  */
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
-        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair",
+        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
         "./test-plan-panel", "custom-field-values", "squash.configmanager", "jqueryui", "jquery.squash.formdialog"],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, datePickers, testplan, cufvalues, confman){
+        dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman){
 
 
 	function init(conf){
@@ -61,6 +61,8 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		initPlanning(conf);
 
 		initDatePickers(conf);
+		
+		initDatePickersAuto(conf);
 		
 		initDashboard(conf);
 
@@ -154,6 +156,12 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 	function initDatePickers(conf) {
 		if(conf.features.writable) {
 			datePickers.init(conf);
+		}
+	}
+	
+	function initDatePickersAuto(conf) {
+		if(conf.features.writable) {
+			datePickersAuto.init(conf);
 		}
 	}
 

@@ -101,7 +101,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Embedded @Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 
-	@Embedded
+	@Embedded @Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
 	/*
