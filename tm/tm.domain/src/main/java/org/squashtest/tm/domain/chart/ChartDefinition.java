@@ -247,6 +247,7 @@ public class ChartDefinition implements TreeEntity{
 		copy.setType(this.getType());
 		copy.setScope(this.copyScope());
 		copy.setVisibility(this.getVisibility());
+		copy.setScopeType(this.getScopeType());
 		return copy;
 	}
 

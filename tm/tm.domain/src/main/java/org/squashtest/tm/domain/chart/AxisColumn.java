@@ -106,6 +106,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		copy.setColumn(this.getColumn());
 		copy.setOperation(this.getOperation());
 		copy.setCufId(this.getCufId());
+		copy.setLabel(this.getLabel());
 		return copy;
 	}
 
