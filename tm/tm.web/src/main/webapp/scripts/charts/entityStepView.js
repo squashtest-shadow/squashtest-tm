@@ -35,9 +35,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.tmpl = "#entity-step-tpl";
 				this.model = data;
 				data.name = "entity";
-				this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
-				var toto = chartUtils.extractCufsMapFromWorkspace();
-				//this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
+				//this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
 				var treePopup = $("#tree-popup-tpl").html();

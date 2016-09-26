@@ -1855,3 +1855,10 @@ border-style: solid;
 opacity:0.2;
 }
 
+.chart-wizard-hidden{
+	display: none;
+}
+
+.chart-wizard-visible{
+	display: inline;
+}

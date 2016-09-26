@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView","../custom-report-workspace/utils"],
-	function($, backbone, _, Handlebars, AbstractStepView,chartUtils) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView","../custom-report-workspace/utils","./customFieldPopup"],
+	function($, backbone, _, Handlebars, AbstractStepView,chartUtils,CustomFieldPopup) {
 	"use strict";
 
 	var attributesStepView = AbstractStepView.extend({
@@ -29,11 +29,15 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.model = data;
 			data.name = "attributes";
 			this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
+			this.model.set ("cufMapByEntity",chartUtils.extractCufsMapFromWorkspace());
 			this._initialize(data, wizrouter);
+			//listen to changes in cuf selected attributes
+			
+			this.listenTo(this.model, 'change:selectedCufAttributes', this.updateSelectedAttributesWithCuf);
 		},
 		
 		events : {
-
+			"click .wizard-cuf-btn" : "openCufPopup"
 		},
 		
 		
@@ -43,6 +47,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var self = this;
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
+			var selectedAttributes = [];
+			if (ids && ids.length > 0) {
+				selectedAttributes.push(ids);
+			}
+			selectedAttributes.push(this.model.get);
 			this.model.set({selectedAttributes : ids});
 
 			//now retrieve the selected entities type to updated filter and operation view
@@ -220,6 +229,45 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 					break;
 			}
 			return suffix;
+		},
+
+		openCufPopup : function(event) {
+			var self = this;
+			var entityType = event.target.getAttribute("data-entity");
+			var cufMapByEntity = this.model.get("cufMapByEntity");
+			var cufToDisplay = cufMapByEntity[entityType];
+			this.model.set("cufToDisplay",cufToDisplay);
+			this.model.set("selectedCufEntity",entityType);
+			var cufPopup = new CustomFieldPopup(this.model);
+			
+		},
+		//callback executed when selected cuf changes
+		updateSelectedAttributesWithCuf:function(model, newSelectedIds, options) {
+			console.log("CAHNGED !!!");
+			var self = this;
+			var previousSelectedIds = model.previous("selectedCufAttributes");
+			var idsToHide = _.difference(previousSelectedIds, newSelectedIds);
+
+			_.each(idsToHide, function(id) {
+				var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
+				var checkBox = self.$el.find(checkBoxSelector);
+				checkBox.prop("checked",false);
+				var checkBoxWrapperSelector = '[id="wrapper-attributes-selection-'+ id + '"]';
+				var wrapper = self.$el.find(checkBoxWrapperSelector);
+				wrapper.removeClass("chart-wizard-visible");
+				wrapper.addClass("chart-wizard-hidden");
+			});
+
+			var idsToShow = _.difference(newSelectedIds, previousSelectedIds);
+			_.each(idsToShow, function(id) {
+				var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
+				var checkBox = self.$el.find(checkBoxSelector);
+				checkBox.prop("checked",true);
+				var checkBoxWrapperSelector = '[id="wrapper-attributes-selection-'+ id + '"]';
+				var wrapper = self.$el.find(checkBoxWrapperSelector);
+				wrapper.addClass("chart-wizard-visible");
+				wrapper.removeClass("chart-wizard-hidden");
+			});
 		}
 	});
 	return attributesStepView;

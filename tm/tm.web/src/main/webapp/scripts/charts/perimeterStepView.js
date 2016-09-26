@@ -36,8 +36,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.model = data;
 				data.name = "perimeter";
 				this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
-				var toto = chartUtils.extractCufsMapFromWorkspace();
-				//this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
 				var treePopup = $("#tree-popup-tpl").html();
@@ -241,10 +239,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				var projectPopup = new ProjectPopup({
 					model: self.model
 				});
-
-				// projectPopup.on('projectPopup.confirm', function () {
-				// 	self.writeProjectPerimeter();
-				// });
 
 				 this.listenTo(projectPopup, 'projectPopup.confirm', self.writeProjectPerimeter);
 			},

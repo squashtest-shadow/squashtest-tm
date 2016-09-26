@@ -37,31 +37,42 @@
 {{else}}
    <div class="sq-tg collapse">
 {{/if}}
- <div class="tg-head">
+<div class="tg-head">
 {{i18n @key prefix='chart.entityType.'}}
+  {{!--]]>--}}
+
+<div class="tg-toolbar">
+				<input id="refresh-btn" type="button" class="sq-btn wizard-cuf-btn" data-entity="{{@key}}"
+					role="button"
+          th:attr="value=#{generics.customfieldvalues.title},title=#{generics.customfieldvalues.title}" />
+			</div>
+{{!--<![CDATA[--}}
 </div>
-
-
 <div class="tg-body">
 {{#each  this}}
-<div style="float:left; min-width:240px;">
- 
     {{#equal this.columnType "CUF"}}
+    <div id="wrapper-attributes-selection-{{id}}" style="float:left; min-width:240px;" class="chart-wizard-hidden">
+
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf-binding-id="{{cufBindingId}}"
-             {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
+             {{#if (contains ../../attributes.selectedAttributes id)}} 
+              checked="checked"
+             {{/if}}
       />
       {{cuf-label this}}
       {{!--
-    {{cuf-label this.attributeName ../../attributes.customFields}}
+        {{cuf-label this.attributeName ../../attributes.customFields}}
       --}}
+    </div>
     {{else}}
+    <div style="float:left; min-width:240px;">
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}"
              {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}}
       />
     {{i18n this.label prefix="chart.column."}}
+    </div>
     {{/equal}}
 
-</div>
+
 
 {{/each}}
 
@@ -72,5 +83,47 @@
 {{/each}}
 
   {{!--]]>--}}
+
+  <div id="cuf-popup-container">
+    <div id="cuf-popup"  class="popup-dialog not-displayed" th:title="#{dialog.settings.filter.title}">
+    </div>
+  </div>
+</div>
+
+<div th:fragment="chart-wizard-custom-fields-popup">
+    <table>
+          <thead>
+            <tr>
+              <th width="25px" class="th-check ui-state-default"></th>
+              <th class="th-name ui-state-default" th:text="#{label.Label}">Label</th>
+              <th class="th-name ui-state-default" th:text="#{label.code}">code</th>
+              <th class="th-name ui-state-default" th:text="#{label.Type}">Cuf type</th>
+            </tr>
+          </thead>
+          <tbody class="available-fields">
+          {{#each attributes.cufToDisplay}}
+          <tr>
+            <td class="td-check">
+              {{!--<![CDATA[--}}
+              <input type="checkbox" class="cuf-checkbox"
+                     id="cuf-checkbox-{{id}}" name="cuf"
+                     value="{{id}}"  
+                     {{#if (contains ../attributes.selectedCufAttributes id)}} checked="checked" {{/if}}
+                     />
+              {{!--]]>--}}
+            </td>
+            <td class="project-name">{{label}}</td>
+            <td class="project-name">{{code}}</td>
+            <td class="project-name">{{inputType.friendlyName}}</td>
+            <td class="project-name">{{../attributes.selectedCufAttributes}}</td>
+          </tr>
+          {{/each}}
+          </tbody>
+        </table>
+      <div class="unsnap not-displayed"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}"/>
+      <input type="button" th:value="#{label.Cancel}"/>
+    </div>
 </div>
 

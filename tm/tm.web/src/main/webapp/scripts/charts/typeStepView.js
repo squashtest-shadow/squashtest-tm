@@ -375,7 +375,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				var entityType = axis1.column.specializedType.entityType;
 				measure = {};
 				measure.operation = "COUNT";
-				measure.column = _.chain(this.model.get("columnPrototypes"))
+				measure.column = _.chain(this.model.get("computedColumnsPrototypes"))
 				.pick(entityType)
 				.values()
 				.flatten()
