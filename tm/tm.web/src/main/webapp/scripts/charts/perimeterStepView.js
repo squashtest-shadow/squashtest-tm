@@ -285,7 +285,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					return $(a).val();
 				});
 
-				this.model.set({selectedEntity: entity});
+				//this.model.set({selectedEntity: entity});
 
 				var filtered = _(['filters', 'axis', 'measures', 'operations'])
 					.reduce(function (memo, val) {
