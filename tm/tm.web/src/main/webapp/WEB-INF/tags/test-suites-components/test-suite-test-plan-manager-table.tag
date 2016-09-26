@@ -52,8 +52,6 @@
 </s:url>
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
-
-<s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 <s:url var="workspaceUrl" value="/test-case-workspace" />
 
 
