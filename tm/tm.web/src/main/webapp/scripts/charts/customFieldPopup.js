@@ -30,17 +30,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
                 this.$el.confirmDialog({
 					autoOpen: true
 				});
-                var protoForEntityType = this.model.get("computedColumnsPrototypes");
-                protoForEntityType = protoForEntityType[this.model.get("selectedCufEntity")];
-                this.cufProtosforThisEntityType = _.filter(protoForEntityType,function(proto){
-                    return proto && proto.columnType === "CUF";
-                });
             },
 
             events: {
 				"confirmdialogcancel": "cancel",
-				"confirmdialogconfirm": "confirm",
-				"confirmdialogvalidate" : "validate"
+				"confirmdialogconfirm": "confirm"
 			},
 
             render: function(){
@@ -61,13 +55,15 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
 			confirm: function (event) {
                 var selectedCufAttributes = this.model.get("selectedCufAttributes") || [];
-                var checkedCufAttributes = this.convertCufIdToPrototypeId();
+                var checkedCufAttributes = this.getSelectedCheckbox();
                 //removing all cuf proto id for this entity type before adding only checked one
                 //so we can keep a clean list of ids if the popup is openened several times
-                var cufIds = _.pluck(this.cufProtosforThisEntityType,"id");
+                var cufIds = _.pluck(this.model.get("cufToDisplay"),"id");
+                
                 selectedCufAttributes = _.reject(selectedCufAttributes,function(id) {
                     return _.contains(cufIds,id);
                 });
+                //now concat choosen cuf
                 if(checkedCufAttributes.length > 0){
                     selectedCufAttributes = selectedCufAttributes.concat(checkedCufAttributes);
                 }
@@ -76,17 +72,6 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
                 this.trigger("cufPopup.confirm");
 				this.remove();
 			},
-
-            convertCufIdToPrototypeId: function() {
-                var self = this;
-                var cufIds = this.getSelectedCheckbox();
-                return _.map(cufIds, function(cufId) {
-                    var cufPrototype = _.find(self.cufProtosforThisEntityType, function(proto) {
-                        return proto.cufId === parseInt(cufId);
-                    });
-                    return cufPrototype.id;
-                });
-            },
 
             getSelectedCheckbox : function() {
                 return $(".cuf-checkbox:checked").map(function(index,object){

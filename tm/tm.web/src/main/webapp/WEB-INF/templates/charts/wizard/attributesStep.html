@@ -29,7 +29,8 @@
 <br />
 <br />
 
- {{#each attributes.computedColumnsPrototypes}}
+{{#each attributes.computedColumnsPrototypes}}
+
 
 
 {{#if (contains ../attributes.selectedEntity @key)}}
@@ -53,7 +54,7 @@
     {{#equal this.columnType "CUF"}}
     <div id="wrapper-attributes-selection-{{id}}" style="float:left; min-width:240px;" class="chart-wizard-hidden">
 
-      <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf-binding-id="{{cufBindingId}}"
+      <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf="true"
              {{#if (contains ../../attributes.selectedAttributes id)}} 
               checked="checked"
              {{/if}}
@@ -112,10 +113,9 @@
                      />
               {{!--]]>--}}
             </td>
-            <td class="project-name">{{label}}</td>
+            <td class="project-name">{{cufLabel}}</td>
             <td class="project-name">{{code}}</td>
-            <td class="project-name">{{inputType.friendlyName}}</td>
-            <td class="project-name">{{../attributes.selectedCufAttributes}}</td>
+            <td class="project-name">{{cufTypeFriendly}}</td>
           </tr>
           {{/each}}
           </tbody>

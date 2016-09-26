@@ -32,17 +32,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.model.set ("cufMapByEntity",chartUtils.extractCufsMapFromWorkspace());
 			this._initialize(data, wizrouter);
 			//listen to changes in cuf selected attributes
-			
 			this.listenTo(this.model, 'change:selectedCufAttributes', this.updateSelectedAttributesWithCuf);
+			this.initializeCufCheckBox();
 		},
 		
 		events : {
 			"click .wizard-cuf-btn" : "openCufPopup"
 		},
-		
-		
-
-		
+	
 		updateModel : function() {
 
 			var self = this;
@@ -80,6 +77,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			
 		},
 		
+		//as in database we have not a real column prototype for each cu, we need to create synthetic prototype client side.
+		//the prototypes for cuf in database are generic for one data type and one entity type. The cuf id isn't stored in prototype but directly in axis, filter or measure.
 		computeColumnsPrototypes : function () {
 			var initialColumnsPrototypes = this.model.get('columnPrototypes');
 
@@ -193,6 +192,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 						cufPrototype.originalPrototypeId = cufPrototype.id;
 						cufPrototype.id = cufPrototype.id + "-" + cufBinding.customField.id;
 						cufPrototype.cufType = cufBinding.customField.inputType.enumName;
+						cufPrototype.cufTypeFriendly = cufBinding.customField.inputType.friendlyName;
 						if (cufPrototype.cufType === "DROPDOWN_LIST" || cufPrototype.cufType === "TAG") {
 							cufPrototype.cufListOptions = cufBinding.customField.options;
 						}
@@ -234,40 +234,60 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		openCufPopup : function(event) {
 			var self = this;
 			var entityType = event.target.getAttribute("data-entity");
-			var cufMapByEntity = this.model.get("cufMapByEntity");
-			var cufToDisplay = cufMapByEntity[entityType];
-			this.model.set("cufToDisplay",cufToDisplay);
+			var cufToDisplay = _.mapObject(this.model.get("computedColumnsPrototypes"),function(prototypes,entityType) {
+				return _.filter(prototypes,function(proto) {
+					return proto.columnType === "CUF";
+				});
+			});
+			this.model.set("cufToDisplay",cufToDisplay[entityType]);
 			this.model.set("selectedCufEntity",entityType);
+			var ids = _.pluck($('[id^="attributes-selection-"][data-cuf="true"]').filter(":checked"), "name");
+			this.model.set("selectedCufAttributes",ids);
 			var cufPopup = new CustomFieldPopup(this.model);
-			
 		},
+
 		//callback executed when selected cuf changes
 		updateSelectedAttributesWithCuf:function(model, newSelectedIds, options) {
-			console.log("CAHNGED !!!");
 			var self = this;
 			var previousSelectedIds = model.previous("selectedCufAttributes");
+			//damned, we have to play with lot's of manual change. A simple viewSate = fn(state) "a la react/redux" would be much cleaner...
 			var idsToHide = _.difference(previousSelectedIds, newSelectedIds);
-
 			_.each(idsToHide, function(id) {
-				var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
-				var checkBox = self.$el.find(checkBoxSelector);
-				checkBox.prop("checked",false);
-				var checkBoxWrapperSelector = '[id="wrapper-attributes-selection-'+ id + '"]';
-				var wrapper = self.$el.find(checkBoxWrapperSelector);
-				wrapper.removeClass("chart-wizard-visible");
-				wrapper.addClass("chart-wizard-hidden");
+				self.hideCufCheckBox(id);
 			});
 
 			var idsToShow = _.difference(newSelectedIds, previousSelectedIds);
 			_.each(idsToShow, function(id) {
-				var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
-				var checkBox = self.$el.find(checkBoxSelector);
+				self.showCufCheckBox(id);
+			});
+		},
+
+		initializeCufCheckBox :function() {
+			var ids = this.model.get("selectedCufAttributes") || [];
+			var self = this;
+			_.each(ids,function(id) {
+				self.showCufCheckBox(id);
+			});
+		},
+
+		showCufCheckBox : function(id) {
+			var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
+				var checkBox = this.$el.find(checkBoxSelector);
 				checkBox.prop("checked",true);
 				var checkBoxWrapperSelector = '[id="wrapper-attributes-selection-'+ id + '"]';
-				var wrapper = self.$el.find(checkBoxWrapperSelector);
+				var wrapper = this.$el.find(checkBoxWrapperSelector);
 				wrapper.addClass("chart-wizard-visible");
 				wrapper.removeClass("chart-wizard-hidden");
-			});
+		},
+
+		hideCufCheckBox : function(id) {
+			var checkBoxSelector = '[id="attributes-selection-'+ id + '"]';
+				var checkBox = this.$el.find(checkBoxSelector);
+				checkBox.prop("checked",false);
+				var checkBoxWrapperSelector = '[id="wrapper-attributes-selection-'+ id + '"]';
+				var wrapper = this.$el.find(checkBoxWrapperSelector);
+				wrapper.removeClass("chart-wizard-visible");
+				wrapper.addClass("chart-wizard-hidden");
 		}
 	});
 	return attributesStepView;

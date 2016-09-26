@@ -105,7 +105,8 @@ return Backbone.Model.extend({
 			.value();
 
 		var customFieldSelectedAttributes = this.getCufSelectedAttributes(chartDef);
-
+		//convenient attribute to have easier templating in attribute step view
+		this.set("selectedCufAttributes",customFieldSelectedAttributes);
 		return _.union(standardSelectedAttributes,customFieldSelectedAttributes);
 
 	},
