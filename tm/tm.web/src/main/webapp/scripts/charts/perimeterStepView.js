@@ -35,7 +35,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.tmpl = "#perimeter-step-tpl";
 				this.model = data;
 				data.name = "perimeter";
-				this.model.set("cufsFromWorkspace",chartUtils.extractCufsFromWorkspace());
 				this._initialize(data, wizrouter);
 				$("#change-perimeter-button").buttonmenu();
 				var treePopup = $("#tree-popup-tpl").html();
@@ -278,54 +277,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			},
 
 			updateModel: function () {
-
-				var self = this;
-
-				var entity = _.map($("input[name='entity']:checked"), function (a) {
-					return $(a).val();
-				});
-
-				//this.model.set({selectedEntity: entity});
-
-				var filtered = _(['filters', 'axis', 'measures', 'operations'])
-					.reduce(function (memo, val) {
-						memo[val] = self.filterWithValidIds(self.model.get(val));
-						return memo;
-					}, {});
-
-				this.model.set(filtered);
-			},
-
-			filterWithValidIds: function (col) {
-				var self = this;
-				var idsOfValidColumns = self.getIdsOfValidColumn();
-
-				return _.chain(col)
-					.filter(function (val) {
-						return (_.contains(idsOfValidColumns, val.column.id.toString()) || self.isValidCufColumnPrototype(val, idsOfValidColumns));
-					})
-					.value();
-
-			},
-
-			getIdsOfValidColumn: function () {
-				return _.chain(this.model.get("columnPrototypes"))
-					.pick(this.model.get("selectedEntity"))
-					.values()
-					.flatten()
-					.pluck("id")
-					.map(function (val) {
-						return val.toString();
-					})
-					.value();
-			},
-
-			isValidCufColumnPrototype : function(columnPrototypeInstance){
-				if(columnPrototypeInstance.column.columnType === "CUF"){
-					var customFieldsIds = _.pluck(this.customFields,"id");
-					return _.contains(customFieldsIds, columnPrototypeInstance.cufId);
-				}
-				return false;
+				//NOPE
+				//everything is done by event in the view, the model should be up to date and correct
 			}
 
 			
