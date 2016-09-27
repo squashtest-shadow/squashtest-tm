@@ -279,8 +279,92 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			updateModel: function () {
 				//here we must invalidate cuf selected attributes if the perimeter change.
 				//we also must clean filter and axis if some cufs are now invalids
-				
 
+				//1. first we recompile all computedColumnPrototypes for the new perimeter
+				this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
+
+				//2. exctracting all valid column prototype ids
+				var validsIds = _.chain(this.model.get("computedColumnsPrototypes"))
+									.values()
+									.flatten()
+									.pluck("id")
+									.value(); 
+
+				//3. now it's simple. If the column is always in computedColumnPrototypes it's valid, else it's invalid...	
+				this.checkValidColumnPrototypeInstance(["axis","filters","measures"],validsIds);		
+
+				//4. For the selectedAttributes and selectedCufAttribute it's a little more tricky, as all the ids are strings
+				this.checkValidColumnPrototypeId(["selectedAttributes","selectedCufAttributes"],validsIds);
+
+				//5. Recompute the selectedEntities attributes after invalids columns ids have been filtered out
+				this.recomputeSelectedEntities();
+			},
+
+			checkValidColumnPrototypeInstance : function(instanceTypes,validsIds) {
+				var self = this;
+				_.each(instanceTypes, function(instanceType) {
+					var instances = self.model.get(instanceType);
+					var filtered = _.filter(instances,function(instance) {
+						return _.contains(validsIds,instance.column.id);
+					});	
+					self.model.set(instanceType,filtered);		
+				});
+			},
+
+			// recomputeSelectedAttributes : function(instanceTypes) {
+			// 	var self = this;
+			// 	var selectedAttributes = [];
+			// 	var selectedCufAttributes = [];
+
+			// 	_.each(instanceTypes, function(instanceType) {
+			// 		var instances = self.model.get(instanceType);
+			// 		var ids = _.each(instances,function(instance) {
+			// 			if (instance.column.columnType == "CUF") {
+			// 				selectedCufAttributes.push("" + instance.column.id);
+			// 			}
+			// 			selectedAttributes.push("" + instance.column.id);
+			// 		});
+			// 	});
+
+			// 	selectedAttributes = _.uniq(selectedAttributes);
+			// 	this.model.set("selectedAttributes",selectedAttributes);
+
+			// 	selectedCufAttributes = _.uniq(selectedCufAttributes);
+			// 	this.model.set("selectedCufAttributes",selectedCufAttributes);
+			// },
+
+			checkValidColumnPrototypeId : function(listIds,validsIds) {
+				var validsStringIds = _.map(validsIds,function(id) {
+					return "" + id;//yeah toString() in javascript :)
+				});
+				var self = this;
+				_.each(listIds, function(listId) {
+					var list = self.model.get(listId);
+					var filtered = _.filter(list,function(id) {
+						return _.contains(validsStringIds,id);
+					});	
+					self.model.set(listId,filtered);	
+				});
+			},
+
+			recomputeSelectedEntities : function() {
+				//get a map entityType/valids ids like {TEST_CASE:[1,2,101-4....]}
+				var selectedEntities = [];
+				var selectedAttributes = this.model.get("selectedAttributes");
+				var protosIdsByEntityType = _.mapObject(this.model.get("computedColumnsPrototypes"),function(values, key) {
+					return _.chain(values)
+								.pluck("id")
+								.map(function(id) {return "" + id;})
+								.value();
+					});
+				
+				_.each(protosIdsByEntityType,function(protos,entityType) {
+					var inter = _.intersection(protos,selectedAttributes);
+					if(inter.length > 0 ){
+						selectedEntities.push(entityType);
+					}
+				});
+				
 			}
 
 			
