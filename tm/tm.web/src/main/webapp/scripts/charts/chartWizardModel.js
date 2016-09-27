@@ -28,6 +28,8 @@ return Backbone.Model.extend({
 		var self = this;
 		var chartDef = data.chartDef;
 		this.set("projects",squashtm.workspace.projects);
+		//settings the entityType who can have cuf binded in squashtm 1.15
+		this.set("entityWithCuf",["REQUIREMENT_VERSION","TEST_CASE","CAMPAIGN","ITERATION","EXECUTION"]);
 
 		if (chartDef !== null){
 			this.set({

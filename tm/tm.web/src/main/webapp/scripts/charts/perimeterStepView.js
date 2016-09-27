@@ -277,8 +277,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			},
 
 			updateModel: function () {
-				//NOPE
-				//everything is done by event in the view, the model should be up to date and correct
+				//here we must invalidate cuf selected attributes if the perimeter change.
+				//we also must clean filter and axis if some cufs are now invalids
+				
+
 			}
 
 			

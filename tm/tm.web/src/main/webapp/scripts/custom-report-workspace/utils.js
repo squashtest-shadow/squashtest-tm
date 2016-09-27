@@ -60,18 +60,7 @@ define(['jquery','underscore'], function($,_){
 		},
 
 		extractCufsMapFromWorkspace : function(){
-			var cufMap = this.getEmptyCufMap();
-			var keys = _.keys(cufMap);
-			//Exctracting all cufbindings and add them to cufmap by entity type
-			_.chain(squashtm.workspace.projects)
-				.pluck("customFieldBindings")
-				.each(function(bindings){
-					_.each(keys,function(key){
-							var bindingsForEntityType = bindings[key] || [];
-							cufMap[key] = cufMap[key].concat(bindingsForEntityType);
-					});
-				})
-				.value();
+			var cufMap = this.extractCufsBindingMapFromWorkspace();
 
 			//extract cuf from bindings and remove duplicates (duplicates came from same cufs binded to same entity type on several projetct)
 			return _.mapObject(cufMap,function(value){
@@ -80,6 +69,23 @@ define(['jquery','underscore'], function($,_){
 							.uniq("id")
 							.value();
 				});
+			},
+
+			extractCufsBindingMapFromWorkspace : function() {
+				var cufMap = this.getEmptyCufMap();
+				var keys = _.keys(cufMap);
+				//Exctracting all cufbindings and add them to cufmap by entity type
+				_.chain(squashtm.workspace.projects)
+					.pluck("customFieldBindings")
+					.each(function(bindings){
+						_.each(keys,function(key){
+								var bindingsForEntityType = bindings[key] || [];
+								cufMap[key] = cufMap[key].concat(bindingsForEntityType);
+						});
+					})
+					.value();
+
+				return cufMap;
 			}
 	};
 });

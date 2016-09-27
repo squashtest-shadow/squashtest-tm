@@ -31,8 +31,6 @@
 
 {{#each attributes.computedColumnsPrototypes}}
 
-
-
 {{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">
 {{else}}
@@ -41,12 +39,13 @@
 <div class="tg-head">
 {{i18n @key prefix='chart.entityType.'}}
   {{!--]]>--}}
-
+{{#if (contains ../attributes.entityWithCuf @key)}}
 <div class="tg-toolbar">
 				<input id="refresh-btn" type="button" class="sq-btn wizard-cuf-btn" data-entity="{{@key}}"
 					role="button"
           th:attr="value=#{generics.customfieldvalues.title},title=#{generics.customfieldvalues.title}" />
 			</div>
+{{/if}}
 {{!--<![CDATA[--}}
 </div>
 <div class="tg-body">

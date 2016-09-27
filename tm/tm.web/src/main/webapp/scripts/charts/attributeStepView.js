@@ -28,8 +28,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.tmpl = "#attributes-step-tpl";
 			this.model = data;
 			data.name = "attributes";
+			this.model.set("cufMapByEntity",chartUtils.extractCufsMapFromWorkspace());
 			this.model.set("computedColumnsPrototypes",this.computeColumnsPrototypes());
-			this.model.set ("cufMapByEntity",chartUtils.extractCufsMapFromWorkspace());
 			this._initialize(data, wizrouter);
 			//listen to changes in cuf selected attributes
 			this.listenTo(this.model, 'change:selectedCufAttributes', this.updateSelectedAttributesWithCuf);
@@ -145,19 +145,49 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		//return a map with cuf bindings by entitity type : {"CAMPAIGN":[{cufBinding1},{cufBinding2}],"ITERATION":[{cufBinding1},{cufBinding2}]...}
 		getCufProjectMap : function () {
 			var selectedProjects = this.getSelectedProject();
-			var selectedEntities = this.model.get('selectedEntity');
+			var scopeType = this.model.get('scopeType');
 			var self = this;
 			var cufMap = _.reduce(selectedProjects,function (memo, project) {
 				_.each(project.customFieldBindings,function (values,key) {
 					if(values.length > 0 && memo.hasOwnProperty(key)){
-						memo[key] = memo[key].concat(values);
+							memo[key] = memo[key].concat(values);
 					}
 				});
 				return memo;
 			},chartUtils.getEmptyCufMap());
 
-			//TO DO FILTER OUT DUPLICATE CUF FOR THE PERIMETER EVOLUTION IF NEEDED
+			// if the perimeter type is default or selected project, we want only cuf in the project scope
+			// but if the perimeter type is is custom, we want only the project scope for the specified entity and all cuf of the database for the others entities 
+			// as we can't infer the joins that can be made between projects entities (eg a requirement can be linked to any TC so the cufs for TC must cover everything)
+			// An alternative could be to make an ajax request to find all linked entities and adjust cuf but it will be too complex for a small gain, and will introduce issues for custom reports in workspaces
+			if (scopeType === "CUSTOM") {
+				this.appendAdditionnalCufBinding(cufMap);
+			}
+			//Now we filter out duplicates induced by selected several project with the same cuf binded to same entity type
+			//we only want one instance of each cuf-entityType pair
+			cufMap = _.mapObject(cufMap,function(bindings,entityType) {
+				return _.uniq(bindings,function(binding) {
+					return binding.customField.id;
+				});
+			});
+
 			return cufMap;
+		},
+
+		appendAdditionnalCufBinding : function(cufBindingMap) {
+			var entityPerimeter = this.model.get("scopeEntity");
+			var emptyCufBindingsMap = this.getEmptycufBindingMapFilterd(entityPerimeter);
+			var allcufBindingMap = chartUtils.extractCufsBindingMapFromWorkspace();
+			_.each(emptyCufBindingsMap,function(value,entityType) {
+				var additionnalCuf =  allcufBindingMap[entityType];
+				if(cufBindingMap[entityType]){
+					cufBindingMap[entityType] = cufBindingMap[entityType].concat(additionnalCuf);
+				}
+				else {
+					cufBindingMap[entityType] = additionnalCuf;
+				}
+				
+			});
 		},
 
 		getEmptyCufMap : function () {
@@ -169,6 +199,32 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				"ITEM_TEST_PLAN":[],
 				"EXECUTION":[]
 			};
+		},
+
+		getEmptycufBindingMapFilterd :function(entityPerimeter) {
+			switch (entityPerimeter) {
+				case 'REQUIREMENT':
+					return {
+						"TEST_CASE":[],
+						"CAMPAIGN":[],
+						"ITERATION":[],
+						"ITEM_TEST_PLAN":[],
+						"EXECUTION":[]
+					};
+				case 'TEST_CASE':
+					return {
+						"REQUIREMENT_VERSION":[],
+						"CAMPAIGN":[],
+						"ITERATION":[],
+						"ITEM_TEST_PLAN":[],
+						"EXECUTION":[]
+					};
+				case 'CAMPAIGN':
+					return {
+						"REQUIREMENT_VERSION":[],
+						"TEST_CASE":[]
+					};
+			}
 		},
 
 		getCufProtoForBindings : function (bindingMap,cufPrototypes) {
