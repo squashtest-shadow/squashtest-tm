@@ -221,6 +221,7 @@ public class CustomReportNavigationController {
 	private void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
 		customReportLibraryNodeService.moveNodes(Arrays.asList(nodeIds),destinationId);
 	}
+
 	private List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
 		List<TreeLibraryNode> nodeList;
 		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
