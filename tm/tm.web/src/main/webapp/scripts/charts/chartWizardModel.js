@@ -157,17 +157,7 @@ return Backbone.Model.extend({
 			query : {
 				axis: this.extractAxisCufPrototype(),
 				measures : this.extractMeasureCufPrototype(),
-				filters : _.map(this.get("filters"), function(filter) {
-					var newFilter= _.clone(filter);			
-					newFilter.values = _.flatten(filter.values);
-					if(filter.column.isCuf){
-						var newColumn = _.clone(filter.column);
-						newColumn.id = filter.column.originalPrototypeId;
-						newFilter.column = newColumn;
-						newFilter.cufId = filter.column.cufId;
-					}
-					return newFilter;
-				})
+				filters : this.extractFiltersCufPrototype()
 			},
 			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
@@ -209,7 +199,21 @@ return Backbone.Model.extend({
 				}
 				
 			});
-		}
+		},
 
+		extractFiltersCufPrototype : function(){
+			var list = _.map(this.get("filters"), function(filter) {
+					var newFilter= _.clone(filter);			
+					newFilter.values = _.flatten(filter.values);
+					if(filter.column.isCuf){
+						var newColumn = _.clone(filter.column);
+						newColumn.id = filter.column.originalPrototypeId;
+						newFilter.column = newColumn;
+						newFilter.cufId = filter.column.cufId;
+					}
+					return newFilter;
+			});
+			return list;
+		}
 	});
 });
