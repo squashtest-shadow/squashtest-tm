@@ -86,7 +86,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 					+ "From (Select reqVer.criticality as criticality, reqVer.res_id as id, Case When count(reqVerCov.verified_req_version_id) = 0 then 0 Else 1 End as sizeclass "
 						  + "From REQUIREMENT_VERSION as reqVer "
 						  + "Inner Join REQUIREMENT req on reqVer.res_id = req.current_version_id "
-						  + "Left Outer Join Requirement_version_coverage reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
+						  + "Left Outer Join REQUIREMENT_VERSION_COVERAGE reqVerCov on reqVerCov.verified_req_version_id = reqVer.res_id "
 						  + "Where req.rln_id in (:requirementIds) Group By reqVer.res_id) as coverage "
 						  + "Where sizeclass = 1 "
 						  + "Group By coverage.criticality) "
