@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
@@ -46,6 +47,8 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -163,7 +166,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	public void addTestCasesToIteration(final List<Long> objectsIds,@Id long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -237,7 +241,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan,@Id long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
 			iteration.addTestPlan(itp);
@@ -276,7 +281,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	public boolean removeTestPlansFromIteration(List<Long> testPlanIds,@Id long iterationId) {
 		Iteration it = iterationDao.findById(iterationId);
 
 		return removeTestPlansFromIterationObj(testPlanIds, it);
