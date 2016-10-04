@@ -27,11 +27,16 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
@@ -53,22 +58,23 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	/**
 	 * Adds a list of test cases to an iteration. If a test case have one or several datasets, that test case will be planned
 	 * as many time with a different dataset.
+	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 */
-	void addTestCasesToIteration(List<Long> testCaseIds, long iterationId);
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	void addTestCasesToIteration(List<Long> testCaseIds,@Id long iterationId);
 
 	/**
 	 * Will add the given test case, with the given test plan, to the test plan of the given iteration.
-	 * 
+	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 * @param testCaseId
 	 * @param datasetId, may be null
-	 * @param campaignId
+	 * @param iterationId
 	 */
-	void addTestCaseToIteration(Long testcaseId, Long datasetId, long iterationId);
+	void addTestCaseToIteration(Long testCaseId, Long datasetId, long iterationId);
 
 	/**
 	 * Adds a list of test cases to an iteration. If a test case have one or several datasets, that test case will be planned
 	 * as many time with a different dataset.
-	 *
 	 * @param testCaseIds
 	 * @param iteration
 	 */
@@ -76,7 +82,8 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
-	void reorderTestPlan(long iterationId, MultiSorting newSorting);
+
+	void reorderTestPlan( long iterationId, MultiSorting newSorting);
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed
@@ -87,7 +94,8 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 *            the id of the iteration
 	 * @return true if at least one test plan item was not deleted (because of insufficient rights on executed item)
 	 */
-	boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId);
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	boolean removeTestPlansFromIteration(List<Long> testPlanIds,@Id long iterationId);
 
 	/**
 	 * Removes a list of test cases from an iteration excepted the test plans which were executed
@@ -141,7 +149,8 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param testPlan
 	 * @param iterationId
 	 */
-	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId);
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan,@Id long iterationId);
 
 	/**
 	 *
