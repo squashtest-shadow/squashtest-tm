@@ -75,17 +75,18 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
                 this.initListenerOnTree();
                 this.initListenerOnWindowResize();
                 this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
+				
 			},
 
 			events: {
 				"click .delete-chart-button": "unbindChart",
+				"click .favorite-select": "chooseFavoriteDashboard",
 				"transitionend #dashboard-grid": "refreshCharts",
 				"webkitTransitionEnd #dashboard-grid": "refreshCharts",
 				"oTransitionEnd #dashboard-grid": "refreshCharts",
 				"MSTransitionEnd #dashboard-grid": "refreshCharts",
 				"click #toggle-expand-left-frame-button": "toggleDashboard",
-				"click #rename-dashboard-button": "rename",
-                "click #welcome-dashboard-button": "chooseFavoriteDashboard"
+				"click #rename-dashboard-button": "rename"
 			},
 
 			/**
@@ -106,7 +107,8 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						.render()
 						.generateGridsterCss()
 						.initGrid()
-						.buildDashBoard();//templating first, then init gridster css, then init gridster, then add charts into widgets
+						.buildDashBoard()//templating first, then init gridster css, then init gridster, then add charts into widgets, then init button
+						.initFavoriteButton();
 				});
 			},
 
@@ -334,6 +336,11 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				});
 			},
 
+			initFavoriteButton : function () {
+				$("#change-favorite-dashboard-button").buttonmenu();
+				return this;
+			},
+
 			//create a new customReportChartBinding in database and add it to gridster in call back
 			dropChartInGrid: function (data) {
 				var cell = this.getCellFromDrop();
@@ -382,7 +389,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						self.changeBindedChart(bindingId, response);
 					});
 			},
-
 
 			redrawDashboard: function () {
 				var bindings = _.values(this.dashboardChartBindings);
@@ -489,7 +495,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					var id = event.currentTarget.getAttribute("data-binding-id");
 					var url = urlBuilder.buildURL("custom-report-chart-binding-with-id", id);
 					var self = this;
-					//Suppress on server and if succes, update gridster and update maps properties
+					//Suppress on server and if success, update gridster and update maps properties
 					$.ajax({
 						url: url,
 						type: 'delete'
@@ -589,13 +595,14 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				wreqr.trigger("renameNode");
 			},
             
-            chooseFavoriteDashboard : function () {
+            chooseFavoriteDashboard : function (event) {
                 var id = this.model.get('id');
-                var url = urlBuilder.buildURL("custom-report-dashboard-favorite", id);
+				var workspace = event.target.getAttribute("name");
+                var url = urlBuilder.buildURL("custom-report-dashboard-favorite",workspace, id);
                 $.ajax({
 					url: url,
 					type: 'post'
-				})
+				});
             }
 		});
 

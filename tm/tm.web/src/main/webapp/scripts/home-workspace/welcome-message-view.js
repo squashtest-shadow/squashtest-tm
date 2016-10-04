@@ -26,7 +26,6 @@ define(["jquery", "underscore", "backbone","handlebars"],
 	    var View = Backbone.View.extend({
             el: "#contextual-content-wrapper",
             initialize :  function () {
-                console.log('INIT MESSAGE VIEW');
                 this.render();
             },
             

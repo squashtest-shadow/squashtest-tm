@@ -41,7 +41,7 @@
     	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
-    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",		
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
     		testCaseWorkspaceConf : {
 				tree : {
 					model : /*[[${ rootModel }]]*/ '',
@@ -58,7 +58,8 @@
 					workspace : pathname
 				},
 				activeMilestone : /*[[${activeMilestone}]]*/{}
-			}
+			},
+			userPrefs : /*[[${userPrefs}]]*/ '{'"squash.core.favorite.dashboard"':'12','"squash.core.favorite.color"':'blue'...}',
 
     	};
 

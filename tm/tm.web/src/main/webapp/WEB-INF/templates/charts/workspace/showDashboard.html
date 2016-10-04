@@ -42,7 +42,26 @@
 				</div>
 			</div>
       <div class="toolbar-button-panel">
-      <input type="button" th:attr="value=#{label.favorite-dashboard},title=#{title.favorite-dashboard}" id="welcome-dashboard-button" class="sq-btn" />
+
+			<a id="change-favorite-dashboard-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+				<span th:text="#{label.favorite-dashboard}"/>
+			</a>
+
+			<ul id="change-favorite-dashboard-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;">
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="home" th:text="#{label.home}">home</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="requirement" th:text="#{label.requirement}">requirement</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="test-case" th:text="#{label.testCase}">test-case</a>
+				</li>
+				<li  class="cursor-pointer ui-menu-item favorite-select" role="presentation" aria-disabled="true">
+					<a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="campaign" th:text="#{label.Campaign}">campaign</a>
+				</li>
+			</ul>
+
       {{#if canWrite}}
 				<input type="button" th:attr="value=#{label.Rename},title=#{label.Rename}" id="rename-dashboard-button" class="sq-btn" />
       {{/if}}

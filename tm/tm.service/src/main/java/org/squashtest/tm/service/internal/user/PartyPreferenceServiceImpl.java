@@ -93,7 +93,7 @@ public class PartyPreferenceServiceImpl implements PartyPreferenceService{
 	@Override
 	public void chooseWelcomeMessageAsHomeContentForCurrentUser() {
 		String key = CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
-		String value = HomeContentValues.MESSAGE.getPreferenceValue();
+		String value = HomeContentValues.DEFAULT.getPreferenceValue();
 		addOrUpdatePreferenceForCurrentUser(key, value);
 	}
 

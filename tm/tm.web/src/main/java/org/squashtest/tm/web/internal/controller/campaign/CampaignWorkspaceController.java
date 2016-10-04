@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,7 +55,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider;
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceService()
 	 */
 	@Override
@@ -70,6 +71,11 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Override
 	public WorkspaceType getWorkspaceType() {
 		return WorkspaceType.CAMPAIGN_WORKSPACE;
+	}
+
+	@Override
+	protected Map<String, String> getWorkspaceUserPref() {
+		return null;
 	}
 
 	@Override

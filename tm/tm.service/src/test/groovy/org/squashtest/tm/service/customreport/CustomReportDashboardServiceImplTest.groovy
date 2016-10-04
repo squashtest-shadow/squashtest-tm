@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.customreport
 
+import org.squashtest.tm.domain.Workspace
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.users.PartyPreference
 import org.squashtest.tm.domain.users.preferences.HomeContentValues
@@ -55,12 +56,12 @@ class CustomReportDashboardServiceImplTest extends Specification {
 	def "should not show dashboard"(){
 		given:
 		def preference = new PartyPreference()
-		preference.setPreferenceValue(HomeContentValues.MESSAGE.getPreferenceValue())
+		preference.setPreferenceValue(HomeContentValues.DEFAULT.getPreferenceValue())
 
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
 
 		when:
-		boolean result = service.shouldShowDashboardOnHomePage();
+		boolean result = service.shouldShowFavoriteDashboardInWorkspace(Workspace.HOME);
 
 		then:
 		result == false;
@@ -71,7 +72,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> null;
 
 		when:
-		boolean result = service.shouldShowDashboardOnHomePage();
+		boolean result = service.shouldShowFavoriteDashboardInWorkspace(Workspace.HOME);
 
 		then:
 		result == false;
@@ -85,7 +86,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
 
 		when:
-		boolean result = service.shouldShowDashboardOnHomePage();
+		boolean result = service.shouldShowFavoriteDashboardInWorkspace(Workspace.HOME);
 
 		then:
 		result == true;

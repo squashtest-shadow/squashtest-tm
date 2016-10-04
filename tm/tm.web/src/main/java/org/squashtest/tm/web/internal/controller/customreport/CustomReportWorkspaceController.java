@@ -90,9 +90,9 @@ public class CustomReportWorkspaceController {
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
-        
-        @Inject
-        private JsonProjectBuilder jsonProjectBuilder;
+
+	@Inject
+	private JsonProjectBuilder jsonProjectBuilder;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
@@ -122,7 +122,7 @@ public class CustomReportWorkspaceController {
 
 		//Active Milestone
 		if (milestone.isPresent()){
-			JsonMilestone jsMilestone = 
+			JsonMilestone jsMilestone =
                             new JsonMilestone(
                                 milestone.get().getId(),
                                 milestone.get().getLabel(),
@@ -133,7 +133,7 @@ public class CustomReportWorkspaceController {
                             );
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
-                
+
                 // json projects
                 Collection<JsonProject> projects = jsonProjectBuilder.getExtendedReadableProjects();
                 model.addAttribute("projects", projects);

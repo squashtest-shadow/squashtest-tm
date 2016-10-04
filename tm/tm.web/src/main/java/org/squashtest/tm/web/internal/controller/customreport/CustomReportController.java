@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -118,10 +119,11 @@ public class CustomReportController {
 	 * Change the favorite dashboard for current user, and keep the info in party preferences.
 	 * @param nodeId This is the {@link CustomReportLibraryNode} id, not the {@link CustomReportDashboard} id.
      */
-	@RequestMapping(method = RequestMethod.POST, value="custom-report-dashboard/favorite/{nodeId}")
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-dashboard/favorite/{workspace}/{nodeId}")
 	@ResponseBody
-	public void changeFavoriteDashboard(@PathVariable long nodeId) {
-		dashboardService.chooseFavoriteDashboardForCurrentUser(nodeId);
+	public void changeFavoriteDashboard(@PathVariable long nodeId, @PathVariable String workspace) {
+		Workspace workspaceId = Workspace.getWorkspaceFromShortName(workspace);
+		dashboardService.chooseFavoriteDashboardForCurrentUser(workspaceId,nodeId);
 	}
 
 	private RenameModel renameNode (long nodeId, String newName){

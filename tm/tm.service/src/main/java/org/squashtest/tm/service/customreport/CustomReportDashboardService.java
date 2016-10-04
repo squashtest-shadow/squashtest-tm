@@ -23,6 +23,7 @@ package org.squashtest.tm.service.customreport;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -65,12 +66,12 @@ public interface CustomReportDashboardService {
 	 * Set the dashboard as favorite.
 	 * @param nodeId This is the {@link CustomReportLibraryNode} id not the {@link CustomReportDashboard} id
 	 * */
-	void chooseFavoriteDashboardForCurrentUser(long nodeId);
+	void chooseFavoriteDashboardForCurrentUser(Workspace workspace, long nodeId);
 
 	/**
 	 * Check if user prefs said that we should show a dashboard on home page
      */
-	boolean shouldShowDashboardOnHomePage();
+	boolean shouldShowFavoriteDashboardInWorkspace(Workspace workspace);
 
 	/**
 	 * Check if dashboard id in user prefs is valid

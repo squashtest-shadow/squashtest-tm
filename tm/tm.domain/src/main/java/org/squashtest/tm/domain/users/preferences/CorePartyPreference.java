@@ -21,15 +21,23 @@
 package org.squashtest.tm.domain.users.preferences;
 
 /**
- * Convenient enumeration to declare all user prefs in SquashTM core
+ * Convenient enumeration to declare all user preferences used in SquashTM core
  * Created by jthebault on 30/03/2016.
  */
 public enum CorePartyPreference {
+	//as the values here are used to persist user preferences in database, don't change these keys, or if you have to, do a proper data migration...
 
-	//value should be "dashboard" or "message"
-	HOME_WORKSPACE_CONTENT("squash.core.home.content"),
-	//value should be a CustomReportLibraryNode id
-	FAVORITE_DASHBOARD("squash.core.favorite.dashboard");
+	//value should be "dashboard" or "default"
+	HOME_WORKSPACE_CONTENT("squash.core.dashboard.content.home"),
+	REQUIREMENT_WORKSPACE_CONTENT("squash.core.dashboard.content.requirement"),
+	TEST_CASE_WORKSPACE_CONTENT("squash.core.dashboard.content.tc"),
+	CAMPAIGN_WORKSPACE_CONTENT("squash.core.dashboard.content.campaign"),
+
+	//for favorites dashboards, values should be CustomReportLibraryNode id
+	FAVORITE_DASHBOARD("squash.core.favorite.dashboard.home"),
+	FAVORITE_DASHBOARD_REQUIREMENT("squash.core.favorite.dashboard.requirement"),
+	FAVORITE_DASHBOARD_TEST_CASE("squash.core.favorite.dashboard.tc"),
+	FAVORITE_DASHBOARD_CAMPAIGN("squash.core.favorite.dashboard.campaign");
 
 	private String preferenceKey;
 

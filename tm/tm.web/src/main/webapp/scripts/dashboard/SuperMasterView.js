@@ -81,7 +81,8 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 		},
 		
 		events : {
-			"click .dashboard-refresh-button" : "syncmodel"
+			"click .dashboard-refresh-button" : "syncmodel",
+			"click .show-favorite-dashboard-button" : "showFavoriteDashboard"
 		},
 
 		getBasicViews : function() {
@@ -109,6 +110,11 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 
 		syncmodel : function() {
 			this.model.fetch();
+		},
+
+		showFavoriteDashboard : function () { 
+			var wreqr = squashtm.app.wreqr;
+			wreqr.trigger("showFavoriteDashboard");
 		}
 	});
 	return SuperMasterView;

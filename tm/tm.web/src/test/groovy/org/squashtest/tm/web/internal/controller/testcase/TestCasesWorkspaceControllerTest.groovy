@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase
 import com.google.common.base.Optional
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.springframework.ui.Model
+import org.squashtest.tm.service.user.PartyPreferenceService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -42,6 +43,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	JsonProjectBuilder projBuilder = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 	Provider provider = Mock()
+	PartyPreferenceService partyPreferenceService = Mock();
 
 	def setup() {
 		controller.workspaceService = service
@@ -50,6 +52,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		provider.get() >> driveNodeBuilder
+		controller.partyPreferenceService = partyPreferenceService;
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
 		}

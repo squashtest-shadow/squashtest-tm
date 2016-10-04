@@ -60,7 +60,7 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
 					type: 'post'
                 }).success(
                     self.showMessage
-                )
+                );
             },
             
             chooseFavoriteDarshboard : function () {
@@ -72,7 +72,7 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
 					type: 'post'
                 }).success(
                     self.showDashboard
-                )
+                );
             },
             
             showMessage : function () {
@@ -80,7 +80,7 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
             },
             
             showDashboard : function () {
-                var id = squashtm.app.userPrefs["squash.core.favorite.dashboard"];
+                var id = squashtm.app.userPrefs["squash.core.favorite.dashboard.home"];
                 if(id && squashtm.app.homeWorkspaceConf.canShowDashboard){
                     id = Number(id);
                     var modelDef = Backbone.Model.extend({
@@ -102,9 +102,9 @@ define(["jquery", "underscore", "backbone","./welcome-message-view","custom-repo
             },
             
             clearView : function () {
-                this.$('#home-content').html("<div id='contextual-content-wrapper' style='height: 90%; width:98%; overflow: auto; position:absolute'></div>")
+                this.$('#home-content').html("<div id='contextual-content-wrapper' style='height: 90%; width:98%; overflow: auto; position:absolute'></div>");
             }
         });
        
-        return View 
+        return View;
     });

@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,6 +48,7 @@ import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -84,6 +82,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	@Inject
 	protected ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	protected PartyPreferenceService partyPreferenceService;
 
 	/**
 	 * Shows a workspace.
@@ -136,13 +137,15 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		if (activeMilestone.isPresent()) {
 			JsonMilestone jsMilestone =
 				new JsonMilestone(
-activeMilestone.get().getId(),
+					activeMilestone.get().getId(),
 					activeMilestone.get().getLabel(), activeMilestone.get().getStatus(),
 					activeMilestone.get().getRange(), activeMilestone.get().getEndDate(),
 					activeMilestone.get().getOwner().getLogin()
 				);
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
+
+		model.addAttribute("userPrefs", getWorkspaceUserPref());
 
 		return getWorkspaceViewName();
 	}
@@ -215,6 +218,17 @@ activeMilestone.get().getId(),
 	 * @return
 	 */
 	protected abstract WorkspaceType getWorkspaceType();
+
+	/**
+	 * Returns the preference for current workspace
+	 * As squash TM 1.15, user preference are small so we pass all the object to the client.
+	 * If user pref become a too big map, please do add-hoc implementation of this method in subclass of this controller
+	 *
+	 * @return Map<String,String> All user preferences
+	 */
+	protected Map<String,String> getWorkspaceUserPref(){
+		return partyPreferenceService.findPreferencesForCurrentUser();
+	};
 
 	@ModelAttribute("wizards")
 	public MenuItem[] getWorkspaceWizards() {

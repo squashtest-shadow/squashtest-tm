@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
@@ -35,10 +36,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Controller
 @RequestMapping("/test-case-workspace")
@@ -54,6 +52,9 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Inject
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider;
+
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
 
 	@Override
 	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {

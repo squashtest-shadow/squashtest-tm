@@ -18,22 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.users.preferences;
+package org.squashtest.tm.domain;
+
+import java.util.EnumSet;
 
 /**
- * Created by jthebault on 31/03/2016.
+ * Created by jthebault on 30/09/2016.
  */
-public enum HomeContentValues {
-	DEFAULT("default"),
-	DASHBOARD("dashboard");
+public enum Workspace {
 
-	private String preferenceValue;
+	HOME("home"),
+	REQUIREMENT("requirement"),
+	TEST_CASE("test-case"),
+	CAMPAIGN("campaign");
 
-	public String getPreferenceValue() {
-		return preferenceValue;
+	Workspace(String shortName) {
+		this.shortName = shortName;
 	}
 
-	HomeContentValues(String preferenceValue) {
-		this.preferenceValue = preferenceValue;
+	private final String shortName;
+
+	public String getShortName() {
+		return shortName;
+	}
+
+	public static Workspace getWorkspaceFromShortName(String shortName){
+		EnumSet<Workspace> workspaces = EnumSet.allOf(Workspace.class);
+		for (Workspace workspace : workspaces) {
+			if (workspace.getShortName().equals(shortName)){
+				return workspace;
+			}
+		}
+		throw new IllegalArgumentException("invalid workspace shortName");
 	}
 }

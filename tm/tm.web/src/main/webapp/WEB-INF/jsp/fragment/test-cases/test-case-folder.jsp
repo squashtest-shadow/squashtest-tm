@@ -43,16 +43,16 @@
 
 
 <c:if test="${empty editable}">
-	<c:set var="editable" value="${ false }" /> 
+	<c:set var="editable" value="${ false }" />
 	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ folder }">
-		<c:set var="editable" value="${ true }" /> 
+		<c:set var="editable" value="${ true }" />
 	</authz:authorized>
 </c:if>
 
 
 
 <c:if test="${ editable }">
-   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>  
+   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>
 </c:if>
 
 
@@ -69,53 +69,55 @@
 
 
 <div class="fragment-body">
-	
+
 	<%-- statistics panel --%>
-	
+
 	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
-	
+
+
+
 	<%-- description panel --%>
-	
+
 	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
 			<div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
-	
+
+
 	<%-- attachments panel --%>
-	
+
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
-	
+
 	<script type="text/javascript">
 
 	var identity = { resid : ${folder.id}, restype : 'test-case-folders'  };
-	
+
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management"], 
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management"],
 					function($, basic, contentHandlers, TCFM){
 		$(function(){
-				
+
 				basic.init();
-				
+
 				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
+
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
-						
-				
+
+
 				//init the dashboard
 				TCFM.initDashboardPanel({
 					master : '#dashboard-master',
 					cacheKey : 'dashboard-tcfold${folder.id}'
 				});
-				
+
 			});
 		});
 	});
 
 </script>
-	
+
 </div>
 
 

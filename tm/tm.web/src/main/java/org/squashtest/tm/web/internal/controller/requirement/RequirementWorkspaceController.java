@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -76,6 +77,11 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected WorkspaceType getWorkspaceType() {
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
+	}
+
+	@Override
+	protected Map<String, String> getWorkspaceUserPref() {
+		return null;
 	}
 
 	/**

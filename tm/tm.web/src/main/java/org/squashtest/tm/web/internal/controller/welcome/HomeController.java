@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -86,7 +87,7 @@ public class HomeController {
 		String welcomeMessage = administrationService.findWelcomeMessage();
 		Map<String,String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardOnHomePage();
-		boolean shouldShowDashboard = customReportDashboardService.shouldShowDashboardOnHomePage();
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.HOME);
 
 		ModelAndView model = new ModelAndView("home-workspace.html");
 

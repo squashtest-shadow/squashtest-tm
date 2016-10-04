@@ -238,4 +238,20 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.15.0-feat-5417-2" author="jthebault">
+    <sql>
+      update PARTY_PREFERENCE
+      set PREFERENCE_VALUE = 'default'
+      where PREFERENCE_VALUE = 'message' and PREFERENCE_KEY = 'squash.core.home.content';
+
+      update PARTY_PREFERENCE
+      set PREFERENCE_KEY = 'squash.core.dashboard.content.home'
+      where PREFERENCE_KEY = 'squash.core.home.content';
+
+      update PARTY_PREFERENCE
+      set PREFERENCE_KEY = 'squash.core.favorite.dashboard.home'
+      where PREFERENCE_KEY = 'squash.core.favorite.dashboard';
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

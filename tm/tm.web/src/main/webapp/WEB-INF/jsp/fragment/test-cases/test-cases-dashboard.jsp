@@ -42,7 +42,9 @@
 <div class="fragment-body">
 
 	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
-	
+
+	<dashboard:favorite-dashboard workspace="tc"/>
+
 </div>
 
 
@@ -54,8 +56,8 @@ require(["common"], function() {
 				master : '#dashboard-master',
 				model : ${json:serialize(statistics)},
 				listenTree : true
-			});			
-		});	
+			});
+		});
 	});
 });
 </script>

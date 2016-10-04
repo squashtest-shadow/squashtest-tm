@@ -31,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -119,26 +120,57 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	@Override
-	public void chooseFavoriteDashboardForCurrentUser(long nodeId) {
+	public void chooseFavoriteDashboardForCurrentUser(Workspace workspace, long nodeId) {
 		CustomReportLibraryNode node = crlnService.findCustomReportLibraryNodeById(nodeId);
+		String preferenceKey = getChooseFavoriteDashboardPreferenceKey(workspace);
 		if (node != null){
 			partyPreferenceService.addOrUpdatePreferenceForCurrentUser(
-				CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey(),String.valueOf(node.getId()));
+				preferenceKey,String.valueOf(node.getId()));
+		}
+	}
+
+	private String getChooseFavoriteDashboardPreferenceKey(Workspace workspace) {
+		switch (workspace){
+			case HOME:
+				return CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey();
+			case REQUIREMENT:
+				return CorePartyPreference.FAVORITE_DASHBOARD_REQUIREMENT.getPreferenceKey();
+			case TEST_CASE:
+				return CorePartyPreference.FAVORITE_DASHBOARD_TEST_CASE.getPreferenceKey();
+			case CAMPAIGN:
+				return CorePartyPreference.FAVORITE_DASHBOARD_CAMPAIGN.getPreferenceKey();
+			default:
+				throw new IllegalArgumentException("workspace should be home, requirement,test-case or campaign");
 		}
 	}
 
 	@Override
-	public boolean shouldShowDashboardOnHomePage() {
-		String key = CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
+	public boolean shouldShowFavoriteDashboardInWorkspace(Workspace workspace) {
+		String key = getWorkspaceContentPreferenceKey(workspace);
 		PartyPreference pref = partyPreferenceService.findPreferenceForCurrentUser(key);
 		if (pref == null){
 			return false;
 		}
 		String content = pref.getPreferenceValue();
-		if (StringUtils.isEmpty(content) || content.equals(HomeContentValues.MESSAGE.getPreferenceValue())){
+		if (StringUtils.isEmpty(content) || content.equals(HomeContentValues.DEFAULT.getPreferenceValue())){
 			return false;
 		}
 		return content.equals(HomeContentValues.DASHBOARD.getPreferenceValue());
+	}
+
+	private String getWorkspaceContentPreferenceKey(Workspace workspace) {
+		switch (workspace){
+			case HOME :
+				return CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
+			case REQUIREMENT :
+				return CorePartyPreference.REQUIREMENT_WORKSPACE_CONTENT.getPreferenceKey();
+			case TEST_CASE:
+				return CorePartyPreference.TEST_CASE_WORKSPACE_CONTENT.getPreferenceKey();
+			case CAMPAIGN:
+				return CorePartyPreference.CAMPAIGN_WORKSPACE_CONTENT.getPreferenceKey();
+			default:
+				throw new IllegalArgumentException("workspace should be home, requirement,test-case or campaign");
+		}
 	}
 
 	@Override
