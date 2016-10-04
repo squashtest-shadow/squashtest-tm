@@ -219,6 +219,9 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			var self = this;
 			var cufMap = _.reduce(selectedProjects,function (memo, project) {
 				_.each(project.customFieldBindings,function (values,key) {
+					values = _.filter(values, function (binding) {
+									return binding.customField.inputType.enumName !== "RICH_TEXT";
+					});
 					if(values.length > 0 && memo.hasOwnProperty(key)){
 							memo[key] = memo[key].concat(values);
 					}

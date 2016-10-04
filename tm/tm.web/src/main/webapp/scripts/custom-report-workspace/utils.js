@@ -75,12 +75,16 @@ define(['jquery','underscore'], function($,_){
 				var cufMap = this.getEmptyCufMap();
 				var keys = _.keys(cufMap);
 				//Exctracting all cufbindings and add them to cufmap by entity type
+				//we exclude rich text as they are not in the scope of the custom reports.
 				_.chain(squashtm.workspace.projects)
 					.pluck("customFieldBindings")
 					.each(function(bindings){
 						_.each(keys,function(key){
 								var bindingsForEntityType = bindings[key] || [];
-								cufMap[key] = cufMap[key].concat(bindingsForEntityType);
+								bindingsForEntityType = _.filter(bindingsForEntityType, function (binding) {
+									return binding.customField.inputType.enumName !== "RICH_TEXT";
+								});
+								cufMap[key] = cufMap[key].concat();
 						});
 					})
 					.value();
