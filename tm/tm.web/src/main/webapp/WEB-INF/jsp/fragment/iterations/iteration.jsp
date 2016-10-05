@@ -366,7 +366,7 @@
 	if (!squashtm.page.isFullPage) {
 		require(["common"], function() {
 			require(["iteration-page"], function() {
-				require(["datepicker/datepickers-pair", "datepicker/datepickers-auto-pair"], function(datePickers, datePickersPair) {
+				require(["datepicker/datepickers-pair", "datepicker/datepickers-auto-pair"], function(datePickers, datePickersAuto) {
 					var conf = {
 						data : {
 							planningUrl : "${iterationPlanningUrl}",
@@ -374,15 +374,15 @@
 							initialScheduledEndDate :	"${iteration.scheduledEndDate.time}",
 							initialActualStartDate: "${iteration.actualStartDate.time}",
 							initialActualEndDate: "${iteration.actualEndDate.time}",
-							initialActualStartAuto: "${iteration.actualStartAuto}",
-							initialActualEndAuto: "${iteration.actualEndAuto}"
+							initialActualStartAuto: ${iteration.actualStartAuto},
+							initialActualEndAuto: ${iteration.actualEndAuto}
 						},
 						features : {
 							editable : ${writable}
 						}
 					};
 					datePickers.init(conf);
-					datePickersPair.init(conf);
+					datePickersAuto.init(conf);
 				});
 			});
 		});

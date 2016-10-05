@@ -369,8 +369,8 @@
 					initialScheduledEndDate: "${campaign.scheduledEndDate.time}",
 					initialActualStartDate: "${campaign.actualStartDate.time}",
 					initialActualEndDate: "${campaign.actualEndDate.time}",
-					initialActualStartAuto: "${campaign.actualStartAuto}",
-					initialActualEndAuto: "${campaign.actualEndAuto}"
+					initialActualStartAuto: ${campaign.actualStartAuto},
+					initialActualEndAuto: ${campaign.actualEndAuto}
 				},
 				features : {
 					editable : ${writable},
