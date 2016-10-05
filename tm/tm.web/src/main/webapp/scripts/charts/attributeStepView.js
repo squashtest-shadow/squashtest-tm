@@ -44,17 +44,17 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var self = this;
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
-			var selectedAttributes = [];
-			if (ids && ids.length > 0) {
-				selectedAttributes.push(ids);
-			}
-			selectedAttributes.push(this.model.get);
-			this.model.set({selectedAttributes : ids});
+			this.model.set({"selectedAttributes" : ids});
+
+			//also updating the convenient attribute selectedCufAttributes
+			var selectedCuf = this.model.get("selectedCufAttributes");
+			this.model.set({"selectedCufAttributes" : _.intersection(ids,selectedCuf)});
 
 			//now retrieve the selected entities type to updated filter and operation view
+			var allProtos = _.chain(self.model.get("computedColumnsPrototypes")).values().flatten().value();
+
 			var selectedEntities = _.chain(ids)
 				.map(function(id){
-					var allProtos = _.chain(self.model.get("computedColumnsPrototypes")).values().flatten().value();
 					return _.find(allProtos,function(proto){
 						return proto.id === id || proto.id.toString() === id;
 					});
@@ -66,13 +66,25 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				.value();
 
 			this.model.set({"selectedEntity" : selectedEntities});
+
+			//now filtering out the axis, filter, measures and operations to sync them with new user selection
+			var filteredAxis = this.filterWithValidIds(this.model.get("axis"));
+			this.model.set({"axis" : filteredAxis});
 			
+			var filteredMeasures = this.filterWithValidIds(this.model.get("measures"));
+			this.model.set({"measures" : filteredMeasures});
+
+			var filteredFilters = this.filterWithValidIds(this.model.get("filters"));
+			this.model.set({"filters" : filteredFilters});
+
+			var filteredOperations = this.filterWithValidIds(this.model.get("operations"));
+			this.model.set({"operations" : filteredOperations});
 		},
 		
 		filterWithValidIds : function (col) {		
 			var self = this;
 			return _.chain(col)
-			.filter(function(val){return _.contains(self.model.get("selectedAttributes"), val.column.id.toString());})
+			.filter(function(val){return _.contains(self.model.get("selectedAttributes"), "" + val.column.id);})
 			.value();
 			
 		},
@@ -108,7 +120,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			});
 		},
 
-		initializeCufCheckBox :function() {
+		initializeCufCheckBox : function() {
 			var ids = this.model.get("selectedCufAttributes") || [];
 			var self = this;
 			_.each(ids,function(id) {
