@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.preferences.CorePartyPreference;
-import org.squashtest.tm.domain.users.preferences.HomeContentValues;
+import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValues;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
@@ -132,7 +132,7 @@ public class CustomReportDashboardServiceImpl implements
 	private String getChooseFavoriteDashboardPreferenceKey(Workspace workspace) {
 		switch (workspace){
 			case HOME:
-				return CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey();
+				return CorePartyPreference.FAVORITE_DASHBOARD_HOME.getPreferenceKey();
 			case REQUIREMENT:
 				return CorePartyPreference.FAVORITE_DASHBOARD_REQUIREMENT.getPreferenceKey();
 			case TEST_CASE:
@@ -152,10 +152,10 @@ public class CustomReportDashboardServiceImpl implements
 			return false;
 		}
 		String content = pref.getPreferenceValue();
-		if (StringUtils.isEmpty(content) || content.equals(HomeContentValues.DEFAULT.getPreferenceValue())){
+		if (StringUtils.isEmpty(content) || content.equals(WorkspaceDashboardContentValues.DEFAULT.getPreferenceValue())){
 			return false;
 		}
-		return content.equals(HomeContentValues.DASHBOARD.getPreferenceValue());
+		return content.equals(WorkspaceDashboardContentValues.DASHBOARD.getPreferenceValue());
 	}
 
 	private String getWorkspaceContentPreferenceKey(Workspace workspace) {
@@ -174,8 +174,8 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	@Override
-	public boolean canShowDashboardOnHomePage() {
-		String key = CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey();
+	public boolean canShowDashboardInWorkspace(Workspace workspace) {
+		String key = getChooseFavoriteDashboardPreferenceKey(workspace);
 		PartyPreference pref = partyPreferenceService.findPreferenceForCurrentUser(key);
 		if (pref == null) {
 			return false;

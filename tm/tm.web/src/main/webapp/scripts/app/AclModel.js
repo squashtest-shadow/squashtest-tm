@@ -18,17 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./home-main-view'],
-    function (mainView) {
-        "use strict";
+define(["backbone", "workspace.routing"], function(Backbone, urlBuilder) {
+    'use strict';
         
-        var homeMainView;
-         
-         function init() {
-             homeMainView = new mainView();
-         }
-         
-         return {
-             init : init
-         };
-    });
+        /**
+		 * AclModel should be initialized with dash-style resource type and id : {type: "test-case", id: 10}
+		 */
+		var AclModel = Backbone.Model.extend({
+			defaults: {
+				type: undefined
+			},
+			urlRoot: function () {
+				return urlBuilder.buildURL("acls") + "/" + this.attributes.type;
+			}
+		});
+
+        //use this module only as a constructor ie 
+        //myVar = new AclModel({type:...,id:...});
+        return AclModel;
+});

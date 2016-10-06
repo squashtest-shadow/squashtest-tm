@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
@@ -295,6 +296,11 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			LIBRARIES, NODES })
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds,
 			@RequestParam(NODES) Collection<Long> nodeIds) {
+
+		if(customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE)){
+
+			return "fragment/test-cases/test-cases-favorite-dashboard";
+		}
 
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
 				.getStatisticsForSelection(libraryIds, nodeIds);

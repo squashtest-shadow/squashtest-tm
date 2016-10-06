@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -88,6 +89,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@Inject
 	private JasperReportsService jrServices;
+
+	@Inject
+	protected CustomReportDashboardService customReportDashboardService;
 
 	private static final int EOF = -1;
 

@@ -19,21 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "underscore", "backbone","./welcome-message-view","custom-report-workspace/views/dashboardView","./default-dashboard-view", "workspace.routing","squash.attributeparser","jquery.switchButton"],
-	function ($, _, Backbone,messageView,DashboardView,DefaultDashboardView,urlBuilder,attrparser) {
+define(["jquery", "underscore", "backbone","./welcome-message-view","custom-report-workspace/views/dashboardView","./default-dashboard-view", "workspace.routing","squash.attributeparser","app/AclModel","jquery.switchButton"],
+	function ($, _, Backbone,messageView,DashboardView,DefaultDashboardView,urlBuilder,attrparser,AclModel) {
 		"use strict";
-        
-        /**
-		 * AclModel should be initialized with dash-style resource type and id : {type: "test-case", id: 10}
-		 */
-		var AclModel = Backbone.Model.extend({
-			defaults: {
-				type: undefined
-			},
-			urlRoot: function () {
-				return urlBuilder.buildURL("acls") + "/" + this.attributes.type;
-			}
-		});
 
 	    var View = Backbone.View.extend({
             el: "#home-workspace",

@@ -31,7 +31,10 @@ import javax.validation.ValidatorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -128,7 +131,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	}
 
 
-        
+
 	@Bean
 	public Properties hibernateProperties() {
 		Set<String> names = new HashSet<>();
@@ -165,10 +168,12 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 		return new LocalValidatorFactoryBean();
 	}
 
-        
+
 	@Override
-        @Bean
+    @Bean
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return transactionManager();
 	}
+
+
 }

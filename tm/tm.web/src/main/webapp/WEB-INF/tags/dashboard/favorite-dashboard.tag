@@ -26,9 +26,11 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ attribute name="workspace" required="true" description="url where to get the data" %>
 
+<div id="favorite-dashboard-wrapper" style=" height: 100%; width:92%;">
  <div id="contextual-content-wrapper" style=" height: 100%; width:92%;">
           <!--empty -->
  </div>
+</div>
 
 <!-- SHOW DASHBOARD -->
   <script id="tpl-show-dashboard" type="text/x-handlebars-template">
@@ -75,3 +77,15 @@
   </script>
 
   <!-- /SHOW DASHBOARD  -->
+
+<!-- sorry for that ugly inline script but this tag is in several fragments inside contextual content, so we have to boot the js this way...-->
+
+<script type="text/javascript">
+require(["common"], function() {
+		require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
+      $(function(){
+          favoriteMain.init();
+      });
+    });
+});
+</script>

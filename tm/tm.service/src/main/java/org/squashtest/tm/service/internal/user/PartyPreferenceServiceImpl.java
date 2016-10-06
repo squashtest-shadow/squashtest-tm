@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.preferences.CorePartyPreference;
-import org.squashtest.tm.domain.users.preferences.HomeContentValues;
+import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValues;
 import org.squashtest.tm.service.internal.repository.PartyPreferenceDao;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -93,14 +93,14 @@ public class PartyPreferenceServiceImpl implements PartyPreferenceService{
 	@Override
 	public void chooseWelcomeMessageAsHomeContentForCurrentUser() {
 		String key = CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
-		String value = HomeContentValues.DEFAULT.getPreferenceValue();
+		String value = WorkspaceDashboardContentValues.DEFAULT.getPreferenceValue();
 		addOrUpdatePreferenceForCurrentUser(key, value);
 	}
 
 	@Override
 	public void chooseFavoriteDashboardAsHomeContentForCurrentUser() {
 		String key = CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
-		String value = HomeContentValues.DASHBOARD.getPreferenceValue();
+		String value = WorkspaceDashboardContentValues.DASHBOARD.getPreferenceValue();
 		addOrUpdatePreferenceForCurrentUser(key, value);
 	}
 }

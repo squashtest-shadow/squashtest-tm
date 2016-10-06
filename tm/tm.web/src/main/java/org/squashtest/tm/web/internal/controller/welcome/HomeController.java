@@ -86,7 +86,7 @@ public class HomeController {
 
 		String welcomeMessage = administrationService.findWelcomeMessage();
 		Map<String,String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
-		boolean canShowDashboard = customReportDashboardService.canShowDashboardOnHomePage();
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.HOME);
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.HOME);
 
 		ModelAndView model = new ModelAndView("home-workspace.html");

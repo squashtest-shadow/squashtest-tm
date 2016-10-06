@@ -76,6 +76,6 @@ public interface CustomReportDashboardService {
 	/**
 	 * Check if dashboard id in user prefs is valid
 	 */
-	boolean canShowDashboardOnHomePage();
+	boolean canShowDashboardInWorkspace(Workspace workspace);
 
 }

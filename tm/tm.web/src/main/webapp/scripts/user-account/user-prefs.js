@@ -20,7 +20,8 @@
  */
 define([], function() {
     'use strict';
-    var FAVORITE_DASHBOARD_KEY = "";
+    var FAVORITE_DASHBOARD_KEY = "squash.core.favorite.dashboard.";
+    var VALID_WORKSPACE = ["home","tc","requirement","campaign"];
 
 
     function getAllPrefs(){
@@ -37,18 +38,8 @@ define([], function() {
     }
 
     //as of squash 1.15 workspace should be home, tc, requirement or campaign
-    function getFavoriteDashboard(workspace){
-        var key = "";
+    function getFavoriteDashboardId(workspace){
         
-        switch (workspace) {
-            case "home":
-                
-                break;
-        
-            default:
-                throw ("Unknown workspace type");
-        }
-
     }
 
     return {

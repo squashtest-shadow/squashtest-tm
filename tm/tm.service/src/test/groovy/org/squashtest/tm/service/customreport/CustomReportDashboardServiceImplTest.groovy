@@ -23,7 +23,7 @@ package org.squashtest.tm.service.customreport
 import org.squashtest.tm.domain.Workspace
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.users.PartyPreference
-import org.squashtest.tm.domain.users.preferences.HomeContentValues
+import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValues
 import org.squashtest.tm.service.internal.customreport.CustomReportDashboardServiceImpl
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -56,7 +56,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 	def "should not show dashboard"(){
 		given:
 		def preference = new PartyPreference()
-		preference.setPreferenceValue(HomeContentValues.DEFAULT.getPreferenceValue())
+		preference.setPreferenceValue(WorkspaceDashboardContentValues.DEFAULT.getPreferenceValue())
 
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
 
@@ -81,7 +81,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 	def "should show dashboard"(){
 		given:
 		def preference = new PartyPreference()
-		preference.setPreferenceValue(HomeContentValues.DASHBOARD.getPreferenceValue())
+		preference.setPreferenceValue(WorkspaceDashboardContentValues.DASHBOARD.getPreferenceValue())
 
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
 
@@ -97,7 +97,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> null;
 
 		when:
-		boolean result = service.canShowDashboardOnHomePage();
+		boolean result = service.canShowDashboardInWorkspace(Workspace.HOME);
 
 		then:
 		result == false;
@@ -111,7 +111,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		customReportLibraryNodeDao.findOne(_)>>null
 
 		when:
-		boolean result = service.canShowDashboardOnHomePage();
+		boolean result = service.canShowDashboardInWorkspace(Workspace.HOME);
 
 		then:
 		result == false;
@@ -127,7 +127,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> false
 
 		when:
-		boolean result = service.canShowDashboardOnHomePage()
+		boolean result = service.canShowDashboardInWorkspace(Workspace.HOME)
 
 		then:
 		result == false
@@ -142,7 +142,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> true
 
 		when:
-		boolean result = service.canShowDashboardOnHomePage()
+		boolean result = service.canShowDashboardInWorkspace(Workspace.HOME)
 
 		then:
 		result == true

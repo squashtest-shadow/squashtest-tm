@@ -18,17 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./home-main-view'],
-    function (mainView) {
-        "use strict";
+define(["backbone"], function(Backbone) {
+    'use strict';
+     var View = Backbone.View.extend({
+            el: "#favorite-dashboard-wrapper",
+            initialize : function(options) {
+                console.log("backbone view initialized");
+            }
         
-        var homeMainView;
-         
-         function init() {
-             homeMainView = new mainView();
-         }
-         
-         return {
-             init : init
-         };
     });
+
+    return View;
+});

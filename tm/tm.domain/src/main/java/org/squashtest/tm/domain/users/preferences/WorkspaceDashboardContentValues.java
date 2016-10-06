@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.users.preferences;
 /**
  * Created by jthebault on 31/03/2016.
  */
-public enum HomeContentValues {
+public enum WorkspaceDashboardContentValues {
 	DEFAULT("default"),
 	DASHBOARD("dashboard");
 
@@ -33,7 +33,7 @@ public enum HomeContentValues {
 		return preferenceValue;
 	}
 
-	HomeContentValues(String preferenceValue) {
+	WorkspaceDashboardContentValues(String preferenceValue) {
 		this.preferenceValue = preferenceValue;
 	}
 }

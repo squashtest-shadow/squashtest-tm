@@ -18,17 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./home-main-view'],
-    function (mainView) {
-        "use strict";
-        
-        var homeMainView;
-         
-         function init() {
-             homeMainView = new mainView();
-         }
-         
-         return {
-             init : init
-         };
-    });
+define(["./favorite-dashboard-view"], function(FavoriteDashboardView) {
+    'use strict';
+
+    var dashboardView; 
+
+    function init(options) {
+      dashboardView = new FavoriteDashboardView (options);
+    }
+
+    return {init:init};
+});
