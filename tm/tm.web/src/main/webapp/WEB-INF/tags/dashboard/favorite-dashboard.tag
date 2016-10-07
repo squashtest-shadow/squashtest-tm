@@ -26,8 +26,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ attribute name="workspace" required="true" description="url where to get the data" %>
 
-<div id="favorite-dashboard-wrapper" style=" height: 100%; width:92%;">
- <div id="contextual-content-wrapper" style=" height: 100%; width:92%;">
+<div id="favorite-dashboard-wrapper">
+ <div id="contextual-content-wrapper">
           <!--empty -->
  </div>
 </div>
@@ -55,7 +55,7 @@
 
   <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
 	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;">
+    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
     </div>
   </script>
 
@@ -82,10 +82,11 @@
 
 <script type="text/javascript">
 require(["common"], function() {
-		require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
-      $(function(){
-          favoriteMain.init();
-      });
+	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
+      	$(function(){
+    		squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+      		favoriteMain.init();
+      	});
     });
 });
 </script>

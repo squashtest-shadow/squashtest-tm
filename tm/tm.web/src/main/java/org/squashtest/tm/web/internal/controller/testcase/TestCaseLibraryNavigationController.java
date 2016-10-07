@@ -298,7 +298,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			@RequestParam(NODES) Collection<Long> nodeIds) {
 
 		if(customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE)){
-
+			model.addAttribute("canShowDashboard", customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE));
 			return "fragment/test-cases/test-cases-favorite-dashboard";
 		}
 

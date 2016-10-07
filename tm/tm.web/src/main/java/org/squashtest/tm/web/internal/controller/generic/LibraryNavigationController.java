@@ -56,6 +56,7 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.report.service.JasperReportsService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;

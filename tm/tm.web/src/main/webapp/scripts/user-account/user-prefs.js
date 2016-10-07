@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([], function() {
+define(["underscore"], function(_) {
     'use strict';
     var FAVORITE_DASHBOARD_KEY = "squash.core.favorite.dashboard.";
     var VALID_WORKSPACE = ["home","tc","requirement","campaign"];
@@ -37,13 +37,16 @@ define([], function() {
         }
     }
 
-    //as of squash 1.15 workspace should be home, tc, requirement or campaign
-    function getFavoriteDashboardId(workspace){
-        
+    function getFavoriteDashboardId(workspace) {
+        if(_.contains(VALID_WORKSPACE,workspace)){
+            return getPref(FAVORITE_DASHBOARD_KEY + workspace);
+        }
+        throw ("Unknown workspace type " + workspace);
     }
 
     return {
         getAllPrefs : getAllPrefs,
-        getPref : getPref
+        getPref : getPref,
+        getFavoriteDashboardId : getFavoriteDashboardId
     };
 });

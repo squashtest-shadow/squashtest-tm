@@ -18,31 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * view used if user haven't defined a favorite dashboard or if the defined dashboard doesn't exist anymore
- */
-define(["jquery", "underscore", "backbone", "handlebars"],
-	function ($, _, Backbone,Handlebars) {
-		"use strict";
-
-	    var View = Backbone.View.extend({
+define(["backbone"], function(Backbone) {
+    'use strict';
+     var View = Backbone.View.extend({
             el: "#contextual-content-wrapper",
-            initialize :  function () {
-                this.render();
-            },
             
-            events: {
-               
-            },
-            
-            render : function () {
-                this.$el.html("");
-                var source = $("#tpl-default-dashboard").html();
-				var template = Handlebars.compile(source);
-                this.$el.append(template());
+            initialize : function(options) {
+               console.log("FAV DASHBOARD INITIALIZED");
             }
-        
-        });
-       
-        return View;
+            
     });
+
+    return View;
+});

@@ -40,16 +40,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
+import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -85,6 +91,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	@Inject
 	protected PartyPreferenceService partyPreferenceService;
+
+	@Inject
+	protected I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
 
 	/**
 	 * Shows a workspace.
@@ -146,6 +155,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 
 		model.addAttribute("userPrefs", getWorkspaceUserPref());
+		model.addAttribute("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
+		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
+		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
+		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+		model.addAttribute("executionStatus",
+			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
 		return getWorkspaceViewName();
 	}

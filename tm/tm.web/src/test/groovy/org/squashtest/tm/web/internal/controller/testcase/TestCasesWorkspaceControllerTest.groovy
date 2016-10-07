@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.service.project.ProjectFinder
+import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 
@@ -44,6 +45,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 	Provider provider = Mock()
 	PartyPreferenceService partyPreferenceService = Mock();
+	I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper = Mock();
 
 	def setup() {
 		controller.workspaceService = service
@@ -53,6 +55,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		provider.get() >> driveNodeBuilder
 		controller.partyPreferenceService = partyPreferenceService;
+		controller.i18nLevelEnumInfolistHelper = i18nLevelEnumInfolistHelper;
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
 		}

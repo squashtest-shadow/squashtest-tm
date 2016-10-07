@@ -46,5 +46,5 @@ define(["jquery", "underscore", "backbone","handlebars"],
             
         });
        
-        return View 
+        return View;
     });

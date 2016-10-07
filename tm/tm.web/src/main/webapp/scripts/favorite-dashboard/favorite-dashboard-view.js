@@ -18,14 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["backbone"], function(Backbone) {
+define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-favorite-view","../user-account/user-prefs","app/AclModel"], function(Backbone,DashboardView,CantShowView,userPrefs,AclModel) {
     'use strict';
      var View = Backbone.View.extend({
             el: "#favorite-dashboard-wrapper",
             initialize : function(options) {
                 console.log("backbone view initialized");
-            }
+                this.canShowDashboard = squashtm.workspace.canShowFavoriteDashboard==="true";
+                
+                if(this.canShowDashboard){
+                    this.showDashboard();
+                } else {
+                    this.activeView = new CantShowView();
+                }
+            },
+
+            showDashboard : function() {
+                var id = userPrefs.getFavoriteDashboardId("tc");
+                if(id){
+                    id = Number(id);
+                    var modelDef = Backbone.Model.extend({
+                        defaults: {
+                            id: id
+                        }
+                    });
+
+                    var activeModel = new modelDef();
+                    var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+                    this.activeView = new DashboardView({
+                        model: activeModel,
+                        acls: acls
+                    });
+                }
         
+            }
     });
 
     return View;
