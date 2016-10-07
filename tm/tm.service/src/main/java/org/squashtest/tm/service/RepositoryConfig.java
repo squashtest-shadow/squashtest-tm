@@ -163,14 +163,17 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	}
 
 	@Bean
-        @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-        public static ValidatorFactory validatorFactory() {
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public static ValidatorFactory validatorFactory() {
 		return new LocalValidatorFactoryBean();
 	}
 
 
 	@Override
-    @Bean
+	//[Issue 6432]
+	//trying to remove a nasty double bean PlatformTransactionManager bug by commenting the @Bean below
+	//see http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/transaction/annotation/TransactionManagementConfigurer.html#annotationDrivenTransactionManager--
+    //@Bean
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return transactionManager();
 	}
