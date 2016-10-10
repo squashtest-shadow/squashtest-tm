@@ -27,8 +27,8 @@
 <%@ attribute name="workspace" required="true" description="url where to get the data" %>
 
 <div id="favorite-dashboard-wrapper">
- <div id="contextual-content-wrapper">
-          <!--empty -->
+ <div id="contextual-content-wrapper" style="height: 800px; width:98%; overflow: auto;">
+	<!--empty -->
  </div>
 </div>
 
@@ -55,18 +55,18 @@
 
   <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
 	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
     </div>
   </script>
 
   <script id="tpl-chart-display-area" type="text/x-handlebars-template">
 	<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
     </div>
   </script>
 
   <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
     	<span class="gs-resize-handle gs-resize-handle-both"></span>
   </script>
 
@@ -85,6 +85,7 @@ require(["common"], function() {
 	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
       	$(function(){
     		squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+    		squashtm.workspace.shouldShowFavoriteDashboard = "${shouldShowDashboard}";
       		favoriteMain.init();
       	});
     });

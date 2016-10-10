@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
@@ -38,10 +39,12 @@ import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
 import org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
+import org.squashtest.tm.web.internal.model.json.JsonDynamicScope;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -93,6 +96,15 @@ public class CustomReportController {
 	public JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id, Locale locale){
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
 		return builderProvider.get().build(dashboard, locale);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "custom-report-dashboard/{id}", method = RequestMethod.POST )
+	public JsonCustomReportDashboard getDashboardDetailsWithDynamicScope(@PathVariable Long id, Locale locale, @RequestBody JsonDynamicScope dynamicScope){
+		List<EntityReference> entityReferences = dynamicScope.convertToEntityReferences();
+		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
+
+		return builderProvider.get().build(dashboard, locale, entityReferences);
 	}
 
 	//---- RENAME ----

@@ -102,6 +102,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
+
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {

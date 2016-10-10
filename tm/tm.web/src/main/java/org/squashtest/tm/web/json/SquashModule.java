@@ -63,5 +63,6 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
 		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
+		context.setMixInAnnotations(JsonDynamicScope.class, JsonDynamicScopeMixin.class);
 	}
 }

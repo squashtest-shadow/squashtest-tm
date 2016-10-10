@@ -307,7 +307,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				//this._readDOM();
 
 				//create. This may abort if the model is not available yet.
-				this._requestRender();
+				this.render();
 
 				// events
 				this._bindEvents();

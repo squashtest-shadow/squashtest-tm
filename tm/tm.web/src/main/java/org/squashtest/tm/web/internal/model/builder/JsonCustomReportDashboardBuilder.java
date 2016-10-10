@@ -22,11 +22,13 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
@@ -52,6 +54,8 @@ public class JsonCustomReportDashboardBuilder {
 
 	private InternationalizationHelper i18nHelper;
 
+	private List<EntityReference> scope;
+
 	private String i18nKeyDateFormat = "squashtm.dateformat";
 
 	@Inject
@@ -62,6 +66,15 @@ public class JsonCustomReportDashboardBuilder {
 	}
 
 	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale){
+		return getJsonCustomReportDashboard(dashboard, locale);
+	}
+
+	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale, List<EntityReference> scope){
+		this.scope = scope;
+		return getJsonCustomReportDashboard(dashboard, locale);
+	}
+
+	private JsonCustomReportDashboard getJsonCustomReportDashboard(CustomReportDashboard dashboard, Locale locale) {
 		this.dashboard = dashboard;
 		doBaseAttributes();
 		doBindings();
@@ -80,7 +93,7 @@ public class JsonCustomReportDashboardBuilder {
 			jsonBinding.setCol(binding.getCol());
 			jsonBinding.setSizeX(binding.getSizeX());
 			jsonBinding.setSizeY(binding.getSizeY());
-			ChartInstance chartInstance = chartService.generateChart(binding.getChart(),null,dashboard.getId());
+			ChartInstance chartInstance = chartService.generateChart(binding.getChart(),this.scope,dashboard.getId());
 			jsonBinding.setChartInstance(new JsonChartInstance(chartInstance));
 			json.getChartBindings().add(jsonBinding);
 		}
@@ -89,13 +102,13 @@ public class JsonCustomReportDashboardBuilder {
 	private void doBaseAttributes() {
 		json.setId(dashboard.getId());
 		json.setName(dashboard.getName());
-		AuditableMixin	 audit = (AuditableMixin) dashboard;//NOSONAR it's just for eclipse...
+		AuditableMixin audit = (AuditableMixin) dashboard;//NOSONAR it's just for eclipse...
 		json.setCreatedBy(audit.getCreatedBy());
 		json.setLastModifiedBy(audit.getLastModifiedBy());
 	}
 
 	private void doDateAttributes(Locale locale) {
-		AuditableMixin	 audit = (AuditableMixin) dashboard;//NOSONAR it's just for eclipse...
+		AuditableMixin	audit = (AuditableMixin) dashboard;//NOSONAR it's just for eclipse...
 		String dateFormat = findI18nDateFormat(locale);
 		DateFormat formater = new SimpleDateFormat(dateFormat);
 		json.setCreatedOn(formater.format(audit.getCreatedOn()));

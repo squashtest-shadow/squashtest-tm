@@ -80,21 +80,27 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 
 			//mode than 1 element is selected : display the dashboard
 			default :
+				if(squashtm.workspace.favoriteViewLoaded){
+					var wreqr = squashtm.app.wreqr;
+					wreqr.trigger("favoriteDashboard.reload");
+				}
 
-				var libIds = selected.filter(":library").map(function(i,e){
-					return $(e).attr("resid");
-				}).get();
+				else {
+					var libIds = selected.filter(":library").map(function(i,e){
+						return $(e).attr("resid");
+					}).get();
 
-				var nodeIds = selected.not(":library").map(function(i,e){
-					return $(e).attr("resid");
-				}).get();
+					var nodeIds = selected.not(":library").map(function(i,e){
+						return $(e).attr("resid");
+					}).get();
 
-				params = {
-					libraries : libIds.join(","),
-					nodes : nodeIds.join(",")
-				};
+					params = {
+						libraries : libIds.join(","),
+						nodes : nodeIds.join(",")
+					};
 
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params);
+					ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params);
+				}
 
 				break;
 		}	

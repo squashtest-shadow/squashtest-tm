@@ -48,14 +48,16 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			maxChartSizeX: 4,
 			maxChartSizeY: 3,
 			cssStyleTagId: "gridster-stylesheet-squash",
-			xSizeWidget: null,//this attribute will be computed by calculateWidgetDimension
-			ySizeWidget: null,//this attribute will be computed by calculateWidgetDimension
+			// xSizeWidget: null,//this attribute will be computed by calculateWidgetDimension
+			// ySizeWidget: null,//this attribute will be computed by calculateWidgetDimension
 			secureBlank: 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
             
             //Instance variable are initialised in initialize function
 			initialize: function (options) {
 				this.options = options;
 				var self = this;
+				this.xSizeWidget = null,//this attribute will be computed by calculateWidgetDimension
+				this.ySizeWidget = null,//this attribute will be computed by calculateWidgetDimension
 				//fetching the acls so we can adapt the view with user rights
 				//Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
                 this.dashboardInitialData = null;
@@ -95,8 +97,22 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			initializeData: function () {
 				var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
 				var self = this;
+
 				this.options.acls.fetch({})
 					.then(function () {
+						//1.15 favorite dashboard in classic workspaces. In that case we must pass the model (ie tree selection to server)
+						//I choose to do a POST request to avoid the nasty URL param size limit witch is causing serious unresolved bug in research workspace.
+						//Even if the http semantic suggest to do a GET in that kind of request...
+						if(self.options.model.get("showInClassicWorkspace")){
+							var scope = self.options.model.get("dynamicScopeModel");
+							return $.ajax({
+								'type' : 'POST',
+								'contentType' : 'application/json',
+								'url':url,
+								'data': JSON.stringify(scope)
+								});
+							}
+
 						return $.ajax({
 							url: url,
 							type: 'GET',
@@ -192,6 +208,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			 * Update all charts. The binding are given by this.dashboardChartBindings
 			 */
 			refreshCharts: function () {
+				console.log("REFRESH !!!!");
 				// var charts = _.values(this.dashboardChartViews);
 				var bindings = _.values(this.dashboardChartBindings);
 				for (var j = 0; j < bindings.length; j++) {
@@ -391,14 +408,17 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			redrawDashboard: function () {
+				console.log("REDRAW !!!!");
 				var bindings = _.values(this.dashboardChartBindings);
 				var self = this;
 				//update initial data with changes done by user since initialization
 				this.dashboardInitialData.chartBindings = bindings;
 				this.gridster.destroy();
 				this.render().generateGridsterCss().initGrid();
-				//as ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
-				if (isIE()) {
+				//As ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
+				//As squash 1.15 we also need it for classic workspace (req, tc and campaign) as the events don't seems to propagate inside contextual content...
+				if (isIE() || this.options.model.get("showInClassicWorkspace")) {
+					console.log("classic refresh");
 					_.delay(function () {
 						self.refreshCharts();
 					}, 1000);
@@ -526,6 +546,9 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			changeBindedChart: function (bindingId, binding) {
+				console.log("CHANGE BINDED");
+				console.log("bindingId" + bindingId);
+				console.log("binding" + binding);
 				this.removeChart(bindingId);
 				var source = $(this.tplChartDisplay).html();
 				var template = Handlebars.compile(source);
