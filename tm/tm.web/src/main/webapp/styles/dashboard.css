@@ -73,4 +73,8 @@
 	.dashboard-grid-in-classic-workspace {
      	border: 1px solid #000000;
      	background: #ffffff;
+     	height: 90%;
+     	width:98%;
+     	overflow: auto;
+     	position:absolute;
      }

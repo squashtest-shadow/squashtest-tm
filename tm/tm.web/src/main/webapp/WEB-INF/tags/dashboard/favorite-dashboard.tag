@@ -27,7 +27,7 @@
 <%@ attribute name="workspace" required="true" description="url where to get the data" %>
 
 <div id="favorite-dashboard-wrapper">
- <div id='contextual-content-wrapper' style='height: 90%; width:98%; overflow: auto; position:absolute' class="dashboard-grid-in-classic-workspace  ui-corner-all">
+ <div id='contextual-content-wrapper' class="dashboard-grid-in-classic-workspace  ui-corner-all">
 	<!--empty -->
  </div>
 </div>

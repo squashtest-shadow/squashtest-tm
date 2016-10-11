@@ -97,7 +97,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
 			    wreqr.on("favoriteDashboard.reload", function () {
                     //removing the active view and reinitialize a dashboard with new selection
                     self.activeView.remove();
-                    self.$el.html('<div id="contextual-content-wrapper" style="height: 90%; width:98%; overflow: auto; position:absolute"> </div>');
+                    self.$el.html('<div id="contextual-content-wrapper" class="dashboard-grid-in-classic-workspace ui-corner-all"> </div>');
                     self.initView();
                 });
             }
