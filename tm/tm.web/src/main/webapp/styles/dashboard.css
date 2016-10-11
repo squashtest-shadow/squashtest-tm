@@ -60,3 +60,17 @@
 	.jqplot-point-label{
 		font-size: 12px;
 	}
+	/*
+	* class for mime toggle panel style. Gridster doesn't support to be hided like toogle panel do,
+	* and togle panel doesn't support gridster redimension post request
+	*/
+	.ui-default-black {
+		background: #2b2b2b url(images/ui-bg_glass_45_2b2b2b_1x400.png) 50% 50% repeat-x;
+		font-weight: normal;
+		color: #ffffff;
+	}
+
+	.dashboard-grid-in-classic-workspace {
+     	border: 1px solid #000000;
+     	background: #ffffff;
+     }

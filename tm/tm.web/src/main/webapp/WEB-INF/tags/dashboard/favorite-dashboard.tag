@@ -27,14 +27,14 @@
 <%@ attribute name="workspace" required="true" description="url where to get the data" %>
 
 <div id="favorite-dashboard-wrapper">
- <div id="contextual-content-wrapper" style="height: 800px; width:98%; overflow: auto;">
+ <div id='contextual-content-wrapper' style='height: 90%; width:98%; overflow: auto; position:absolute' class="dashboard-grid-in-classic-workspace  ui-corner-all">
 	<!--empty -->
  </div>
 </div>
 
 <!-- SHOW DASHBOARD -->
   <script id="tpl-show-dashboard" type="text/x-handlebars-template">
-	<div id="dashboard-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+	<div id="dashboard-name-div" class="fragment-header ui-default-black">
 		<div style="float: left; height: 100%;" class="small-margin-left">
 			<h2>
 				{{name}}
@@ -55,18 +55,16 @@
 
   <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
 	<div id="widget-chart-binding-{{id}}" data-binding-id="{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
+    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
     </div>
   </script>
 
   <script id="tpl-chart-display-area" type="text/x-handlebars-template">
-	<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
-    </div>
+    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
   </script>
 
   <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100% !important; width:100% !important;"></div>
+		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
     	<span class="gs-resize-handle gs-resize-handle-both"></span>
   </script>
 
