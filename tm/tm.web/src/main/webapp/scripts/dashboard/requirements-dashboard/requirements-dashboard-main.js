@@ -32,8 +32,8 @@
 
 define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/timestamp-label",
 		"dashboard/SuperMasterView","./summary", "./bound-test-cases-pie", "./status-pie", "./criticality-pie",
-		"./bound-description-pie", "./coverage-bar", "./validation-bar", "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, Summary,
-		BoundTestCasePie, StatusPie, CriticalityPie, BoundDescriptionPie, CoverageBar, ValidationBar, translator) {
+		"./bound-description-pie", "./coverage-donut", "./validation-donut", "squash.translator" ], function(require, StatModel, Timestamp, SuperMasterView, Summary,
+		BoundTestCasePie, StatusPie, CriticalityPie, BoundDescriptionPie, CoverageDonut, ValidationDonut, translator) {
 
 	function doInit(settings) {
 		new SuperMasterView({
@@ -64,15 +64,21 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			el : this.$("#dashboard-item-bound-desc"),
 			model : this.model
 		});
-		
-		var covBar = new CoverageBar({
+				
+		var covDonut = new CoverageDonut({
 			el : this.$("#dashboard-item-coverage"),
-			model : this.model
+			model : this.model,
+			fetchStats: function(model) {
+				return model.get("coverageStatistics");
+			}
 		});
 		
-		var validBar = new ValidationBar({
+		var validDonut = new ValidationDonut({
 			el : this.$("#dashboard-item-validation"),
-			model : this.model
+			model : this.model,
+			fetchStats: function(model) {
+				return model.get("validationStatistics");
+			}
 		});
 		
 		var summary = new Summary({
@@ -84,10 +90,10 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		addClickSearchEvent($("#dashboard-item-requirements-status"), statPie, "status");
 		addClickSearchEvent($("#dashboard-item-requirements-criticality"), critPie, "criticality");
 		addClickSearchEvent($("#dashboard-item-bound-desc"), descPie, "description");
-		addClickSearchEvent($("#dashboard-item-coverage"), covBar, "coverage");
-		addValidationToSearch($("#dashboard-item-validation"), validBar);
+		addClickSearchEvent($("#dashboard-item-coverage"), covDonut, "coverage");
+		addValidationToSearch($("#dashboard-item-validation"), validDonut);
 		
-		return [ summary, tcPie, statPie, critPie, descPie, covBar, validBar ];
+		return [ summary, tcPie, statPie, critPie, descPie, covDonut, validDonut ];
 	}
 	
 	function _initializeSearch() {
@@ -113,7 +119,6 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 
 		item.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
 			var $this = $(this);
-			// TODO: The message shouldn't be associated with 'test-cases'
 			$this.attr('title', translator.get("dashboard.test-cases.search"));
 			//add pointer because IE don't support  zoom-in. Put pointer before zoom-in, so zoom-in is used if the brower support it
 			$this.css('cursor', 'pointer');
@@ -132,6 +137,26 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		_bindHighlightUnhighlight(item);
 
 		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
+			/* Since the dashboard has only pies and donuts, they both implements getData() function. 
+			One can add an existence check if needed (if another chart type is added for example). */
+			if(pie.getData()[0].length > 1) {
+				// If it is a donut
+				// Special case for empty circle in the donut.
+				if(pie.getData()[seriesIndex].isEmpty) {
+					return;
+				}
+			} else {
+				// If it is a pie
+				// Special case for full pie.
+				if (pie.getData().isFull) {
+					pointIndex = pie.getData().nonzeroindex;
+				}
+				// Special case for empty pie.
+				if (pie.getData().isEmpty){
+					return;
+				}
+			}			
+
 			var ids = pie.model.get('selectedIds');
 
 			var search = _initializeSearch();
@@ -152,7 +177,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 				addDescriptionToSearch(search, pointIndex, pie);
 				break;
 			case "coverage":
-				addCoverageToSearch(search, pointIndex, pie);
+				addCoverageToSearch(search, pointIndex, seriesIndex, pie);
 				break;
 			}
 
@@ -166,23 +191,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		search.fields.testcases = {};
 		search.fields.testcases.type = "RANGE";
 		
-		// If it's a full pie, we need to know which category is displayed
-		if(pie.plot._plotData[0].length === 1) {
-			var categoryToSearch = _getResearchedCategory(pie, pointIndex);
-
-			if(categoryToSearch === 'zeroTestCases') {
-				search.fields.testcases.minValue = "0";
-				search.fields.testcases.maxValue = "0";
-			} else if (categoryToSearch === 'oneTestCase'){
-				search.fields.testcases.minValue = "1";
-				search.fields.testcases.maxValue = "1";
-			} else if(categoryToSearch === 'manyTestCases') {
-				search.fields.testcases.minValue = "2";
-				search.fields.testcases.maxValue = "";
-			}
-		// Else, pointIndex works fine
-		} else {
-			switch (pointIndex) {
+		switch (pointIndex) {
 			case 0:
 				search.fields.testcases.minValue = "0";
 				search.fields.testcases.maxValue = "0";
@@ -196,7 +205,6 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 				search.fields.testcases.minValue = "2";
 				search.fields.testcases.maxValue = "";
 				break;
-			}
 		}
 	}
 	
@@ -204,22 +212,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		search.fields.status = {};
 		search.fields.status.type = "LIST";
 
-		// If it's a full pie, we need to know which category is displayed
-		if(pie.plot._plotData[0].length === 1) {
-			var categoryToSearch = _getResearchedCategory(pie, pointIndex);
-
-			if(categoryToSearch === 'workInProgress') {
-				search.fields.status.values = [ "1-WORK_IN_PROGRESS" ];
-			} else if (categoryToSearch === 'underReview'){
-				search.fields.status.values = [ "2-UNDER_REVIEW" ];
-			} else if(categoryToSearch === 'approved') {
-				search.fields.status.values = [ "3-APPROVED" ];
-			} else if(categoryToSearch === 'obsolete') {
-				search.fields.status.values = [ "4-OBSOLETE" ];
-			}
-		// Else, pointIndex works fine
-		} else {
-			switch (pointIndex) {
+		switch (pointIndex) {
 			case 0:
 				search.fields.status.values = [ "1-WORK_IN_PROGRESS" ];
 				break;
@@ -232,31 +225,14 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			case 3:
 				search.fields.status.values = [ "4-OBSOLETE" ];
 				break;
-			}
-		}
-		
+			}		
 	}
 	
 	function addCriticalityToSearch(search, pointIndex, pie) {
 		search.fields.criticality = {};
 		search.fields.criticality.type = "LIST";
 
-		// If it's a full pie, we need to know which category is displayed
-		if(pie.plot._plotData[0].length === 1) {
-			var categoryToSearch = _getResearchedCategory(pie, pointIndex);
-
-			if(categoryToSearch === 'undefined') {
-				search.fields.criticality.values = [ "3-UNDEFINED" ];
-			} else if (categoryToSearch === 'minor'){
-				search.fields.criticality.values = [ "2-MINOR" ];
-			} else if(categoryToSearch === 'major') {
-				search.fields.criticality.values = [ "1-MAJOR" ];
-			} else if(categoryToSearch === 'critical') {
-				search.fields.criticality.values = [ "0-CRITICAL" ];
-			}
-		// Else, pointIndex works fine
-		} else {
-			switch (pointIndex) {
+		switch (pointIndex) {
 			case 0:
 				search.fields.criticality.values = [ "3-UNDEFINED" ];
 				break;
@@ -269,7 +245,6 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			case 3:
 				search.fields.criticality.values = [ "0-CRITICAL" ];
 				break;
-			}
 		}
 	}
 	
@@ -277,21 +252,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 		search.fields.hasDescription = {};
 		search.fields.hasDescription.type = "RANGE";
 		
-		// If it's a full pie, we need to know which category is displayed
-		if(pie.plot._plotData[0].length === 1) {
-			var categoryToSearch = _getResearchedCategory(pie, pointIndex);
-			
-			if(categoryToSearch === 'hasNoDescription') {
-				search.fields.hasDescription.minValue = "";
-				search.fields.hasDescription.maxValue = "0";
-			} else if (categoryToSearch === 'hasDescription'){
-				search.fields.hasDescription.minValue = "1";
-				search.fields.hasDescription.maxValue = "";
-			}
-		// Else, pointIndex works fine
-		} else {
-
-			switch (pointIndex) {
+		switch (pointIndex) {
 			case 0:
 				search.fields.hasDescription.minValue = "";
 				search.fields.hasDescription.maxValue = "0";
@@ -300,64 +261,77 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 				search.fields.hasDescription.minValue = "1";
 				search.fields.hasDescription.maxValue = "";
 				break;
-			}
 		}
 	}
-	
-	function addCoverageToSearch(search, pointIndex, chart) {
-		search.fields.testcases = {};
-		search.fields.testcases.type = "RANGE";
-		search.fields.testcases.minValue = "1";
-		search.fields.testcases.maxValue = "";
-		
-		// Not all categories are displayed so we have to know which are
-		var categories = chart.plot.axes.xaxis.ticks;
-		var criticalityToSearch = categories[pointIndex];
+
+	function addCoverageToSearch(search, pointIndex, seriesIndex, chart) {
 		
 		search.fields.criticality = {};
 		search.fields.criticality.type = "LIST";
 		
-		if(criticalityToSearch === translator.get("requirement.criticality.UNDEFINED")) {
-			search.fields.criticality.values = [ "3-UNDEFINED" ];
+		switch(seriesIndex) {
+			case 0:
+				search.fields.criticality.values = ["0-CRITICAL"];
+			break;
+			case 1:
+				search.fields.criticality.values = ["1-MAJOR"];
+			break;
+			case 2:
+				search.fields.criticality.values = ["2-MINOR"];
+			break;
+			case 3:
+				search.fields.criticality.values = ["3-UNDEFINED"];
+			break;
 		}
-		else if(criticalityToSearch === translator.get("requirement.criticality.MINOR")) {
-			search.fields.criticality.values = [ "2-MINOR" ];
+
+		search.fields.testcases = {};
+		search.fields.testcases.type = "RANGE";
+
+		switch(pointIndex) {
+			case 0:
+				search.fields.testcases.minValue = "1";
+				search.fields.testcases.maxValue = "";
+			break;
+			case 1:
+				search.fields.testcases.minValue = "0";
+				search.fields.testcases.maxValue = "0";
+			break;
 		}
-		else if(criticalityToSearch === translator.get("requirement.criticality.MAJOR")) {
-			search.fields.criticality.values = [ "1-MAJOR" ];
-		}
-		else if(criticalityToSearch === translator.get("requirement.criticality.CRITICAL")) {
-			search.fields.criticality.values = [ "0-CRITICAL" ];
-		}
+
 		
 	}
-		
+	
 	function addValidationToSearch(item, chart) {
 		
 		_bindHighlightUnhighlight(item);
 		
 		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
 			
+			if(chart.getData()[seriesIndex].isEmpty) {
+				return;
+			}
+
 			var ids = chart.model.get('selectedIds');
 			
-			var categories = chart.plot.axes.xaxis.ticks;
-			var criticality = categories[pointIndex];
-			
-			if(criticality === translator.get("requirement.criticality.UNDEFINED")) {
-				criticality = "UNDEFINED";
-			}
-			else if(criticality === translator.get("requirement.criticality.MINOR")) {
-				criticality = "MINOR";
-			}
-			else if(criticality === translator.get("requirement.criticality.MAJOR")) {
-				criticality = "MAJOR";
-			}
-			else if(criticality === translator.get("requirement.criticality.CRITICAL")) {
-				criticality = "CRITICAL";
-			}
-			
-			var validation;
+			var criticality;
 			switch(seriesIndex) {
+			case 0:
+				criticality = "CRITICAL";
+				break;
+			case 1:
+				criticality = "MAJOR";
+				break;
+			case 2:
+				criticality = "MINOR";
+				break;
+			case 3:
+				criticality = "UNDEFINED";
+				break;
+			}
+			
+			// validation must be an array to perform the split() for the ajax request
+			var validation;
+			switch(pointIndex) {
 			case 0:
 				validation = ["SUCCESS"];
 				break;
@@ -386,12 +360,6 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			});
 
 		});
-	}
-	/* This function is only used when the pie is full.
-	It determines which category is researched when the user clicks on the pie. */
-	function _getResearchedCategory(pie, pointIndex) {
-		var categories = pie.getCategories();
-		return categories[pointIndex];
 	}
 	
 	return {

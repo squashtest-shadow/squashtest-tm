@@ -162,7 +162,7 @@ define(["jquery", "./jqplot-view", "jqplot-donut", "jqplot-highlight"],
 
 
 			getConf: function (pieserie) {
-
+				var self = this;
 				var colorsAndLabels = this._getNormalConf(pieserie);
 
 				for (var i = 0; i < pieserie.length; i++) {
@@ -199,7 +199,7 @@ define(["jquery", "./jqplot-view", "jqplot-donut", "jqplot-highlight"],
 						useAxesFormatters: false,
 						tooltipContentEditor: function (str, seriesIndex, pointIndex, plot) {
 							$(".serie").removeClass("span-bold");
-							$(".serie" + seriesIndex).addClass("span-bold");
+							$(self.$el.selector + " .serie" + seriesIndex).addClass("span-bold");
 						}
 					}
 				};

@@ -18,6 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * (12/10/2016: SquashTM-1.15.0.IT5)
+ * This script is now DEPRECATED and unused in the application.
+ * It was used in the first specification of the requirement dashboard.
+ * But was replaced by a donut chart: validation-donut.js
+ */
 define(["dashboard/basic-objects/bar-view", "squash.translator"], function(BarView, translator) {
 
 	return BarView.extend({

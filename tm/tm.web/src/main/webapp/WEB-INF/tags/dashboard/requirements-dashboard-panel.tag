@@ -45,9 +45,7 @@
           
           <div id="dashboard-item-bound-tcs" class="dashboard-item dashboard-pie" data-def="model-attribute=boundTestCasesStatistics">
           
-            <div id="dashboard-bound-tcs-view" class="dashboard-item-view">
-            
-            </div>
+            <div id="dashboard-bound-tcs-view" class="dashboard-item-view"></div>
     
             <div class="dashboard-item-meta">
               <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.bound-tcs.title"/></h2>
@@ -150,39 +148,102 @@
           </div>
           
           <div id="dashboard-item-coverage" class="dashboard-item" data-def="model-attribute=coverageStatistics">
-            
-            <div id="dashboard-coverage-view" class="dashboard-item-view">
-            </div>
-            
-            <div class="dashboard-item-meta">   
-              <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.coverage.title"/></h2>
-            </div>
-          </div>
+					
+			<div id="dashboard-coverage-view" class="dashboard-item-view"></div>
+						
+			<div class="dashboard-item-meta">		
+
+				<h2 class="dashboard-item-title"><f:message key="dashboard.requirements.coverage.title"/></h2>
+				<div class="dashboard-item-subplot">
+					<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
+								
+					<div class="dashboard-subplot-legend success-rate-total-success" 
+						 style="background-color:#99CC00; color:black;"></div>
+								
+					<div class="dashboard-subplot-legend success-rate-total-failure"
+						 style="background-color:#FF3300; color:white;"></div>							
+				</div>		
+							
+				<div class="dashboard-item-legend">
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
+						<span class="serie serie0"><f:message key="requirement.criticality.CRITICAL" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl3"></div>
+						<span class="serie serie1"><f:message key="requirement.criticality.MAJOR" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl2"></div>
+						<span class="serie serie2"><f:message key="requirement.criticality.MINOR" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
+						<span class="serie serie3"><f:message key="requirement.criticality.UNDEFINED" /></span>
+					</div>
+						
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
+						<span><f:message key="dashboard.requirements.coverage.covered" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
+						<span><f:message key="dashboard.requirements.coverage.notCovered" /></span>
+					</div>
+				</div>
+		  	</div>
+		  </div>
           
-            <div id="dashboard-item-validation" class="dashboard-item" data-def="model-attribute=validationStatistics">
-            <div id="dashboard-validation-view" class="dashboard-item-view">
-            
-            </div>
-            
-            <div class="dashboard-item-meta">         
-              <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.validation.title"/></h2>
-            
-              <div class="dashboard-item-legend">
-                <div>
-                  <div class="dashboard-legend-sample-color" style="background-color:#A3D86E"></div>
-                  <span><f:message key="dashboard.requirements.validation.CONSLUSIVE" /></span>
-                </div>
-                <div>
-                  <div class="dashboard-legend-sample-color" style="background-color:#EB2828"></div>
-                  <span><f:message key="dashboard.requirements.validation.INCONSLUSIVE" /></span>
-                </div>
-                <div>
-                  <div class="dashboard-legend-sample-color" style="background-color:#9CCBE0"></div>
-                  <span><f:message key="dashboard.requirements.validation.UNDEFINED" /></span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div id="dashboard-item-validation" class="dashboard-item" data-def="model-attribute=validationStatistics">
+											
+			<div id="dashboard-validation-view" class="dashboard-item-view"></div>
+						
+			<div class="dashboard-item-meta">		
+
+				<h2 class="dashboard-item-title"><f:message key="dashboard.requirements.validation.title"/></h2>
+				<div class="dashboard-item-subplot">
+					<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
+								
+					<div class="dashboard-subplot-legend success-rate-total-success" 
+						 style="background-color:#99CC00; color:black;"></div>
+								
+					<div class="dashboard-subplot-legend success-rate-total-failure"
+						 style="background-color:#FF3300; color:white;"></div>							
+				</div>		
+							
+				<div class="dashboard-item-legend">
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
+						<span class="serie serie0"><f:message key="requirement.criticality.CRITICAL" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl3"></div>
+						<span class="serie serie1"><f:message key="requirement.criticality.MAJOR" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl2"></div>
+						<span class="serie serie2"><f:message key="requirement.criticality.MINOR" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
+						<span class="serie serie3"><f:message key="requirement.criticality.UNDEFINED" /></span>
+					</div>
+						
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
+						<span><f:message key="dashboard.requirements.validation.CONCLUSIVE" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
+						<span><f:message key="dashboard.requirements.validation.INCONCLUSIVE" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+						<span><f:message key="dashboard.requirements.validation.UNDEFINED" /></span>
+					</div>
+				</div>
+		  	</div>
+		  </div>
           
           <div class="unsnap"> </div>     
           <span class="dashboard-summary"><f:message key="dashboard.requirements.summary"/></span>
