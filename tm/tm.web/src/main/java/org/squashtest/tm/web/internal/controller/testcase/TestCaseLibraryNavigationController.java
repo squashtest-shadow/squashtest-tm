@@ -297,18 +297,27 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds,
 			@RequestParam(NODES) Collection<Long> nodeIds) {
 
-		if(customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE)){
-			model.addAttribute("shouldShowDashboard",true);
-			model.addAttribute("canShowDashboard", customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE));
-			return "fragment/test-cases/test-cases-favorite-dashboard";
-		}
-
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
 				.getStatisticsForSelection(libraryIds, nodeIds);
 
 		model.addAttribute("statistics", stats);
 
 		return "fragment/test-cases/test-cases-dashboard";
+	}
+
+	@RequestMapping(value = "/dashboard-favorite", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public String getFavoriteDashboard(Model model) {
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE);
+
+
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
+		return "fragment/test-cases/test-cases-favorite-dashboard";
+
+
+
 	}
 
 	@ResponseBody

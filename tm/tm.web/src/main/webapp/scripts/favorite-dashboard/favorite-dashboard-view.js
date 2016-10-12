@@ -27,7 +27,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
             initialize : function(options) {
                 console.log("backbone view initialized");
                 this.canShowDashboard = squashtm.workspace.canShowFavoriteDashboard==="true";
-                this.initializeRefresh();
+                this.initializeEvents();
                 this.tree = zetree.get();
                 this.initView();
                 this.model = Backbone.Model.extend({timestamp : new Date()});
@@ -97,7 +97,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                 });
             },
 
-            initializeRefresh : function() {
+            initializeEvents : function() {
                 var wreqr = squashtm.app.wreqr;
                 var self = this;
 			    wreqr.on("favoriteDashboard.reload", function () {
@@ -105,6 +105,10 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                     self.activeView.remove();
                     self.$el.html('<div id="contextual-content-wrapper" class="dashboard-grid-in-classic-workspace ui-corner-all"> </div>');
                     self.initView();
+                });
+
+                wreqr.on("contextualContent.loadWith", function () {
+                    self.remove();
                 });
             },
 
@@ -118,12 +122,23 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                 var self = this;
 
                 var callback = function() {
-                    console.log("preference done !!!");
                     wreqr.trigger("favoriteDashboard.showDefault");
+                    //destroying the backbone view
+                    self.remove();
                 };
 
                 userPrefs.chooseDefaultContentInWorkspace(callback);
               
+            },
+
+            remove :  function() {
+                squashtm.workspace.favoriteViewLoaded = false;
+                 //removing listener on event bus
+                var wreqr = squashtm.app.wreqr;
+                wreqr.off("favoriteDashboard.reload");
+                wreqr.off("contextualContent.loadWith");
+                this.activeView.remove();
+                Backbone.View.prototype.remove.call(this);
             }
 
            

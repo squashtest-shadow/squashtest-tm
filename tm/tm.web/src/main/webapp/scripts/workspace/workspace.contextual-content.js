@@ -84,6 +84,10 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 					this.currentXhr = $.get(url, params, 'html').success(function(html) {
 						cleanContent();
 						self.html(html);
+						var wreqr = squashtm.app.wreqr;
+						if(wreqr){
+							wreqr.trigger("contextualContent.loadWith");
+						}
 					});
 
 					return this.currentXhr;

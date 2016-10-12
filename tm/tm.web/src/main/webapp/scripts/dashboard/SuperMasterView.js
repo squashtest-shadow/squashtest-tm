@@ -34,8 +34,8 @@
  * 
  */
 define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/model",
-		"./basic-objects/timestamp-label", "./basic-objects/figleaf-view", "backbone" ], function($, _, attrparser, StatModel,
-		Timestamp, FigLeafView, Backbone) {
+		"./basic-objects/timestamp-label", "./basic-objects/figleaf-view", "backbone","user-account/user-prefs" ], function($, _, attrparser, StatModel,
+		Timestamp, FigLeafView, Backbone, userPrefs) {
 /**
  * When creating a SuperMasterView, one can pas as an option an initCharts function :
  * <code> 
@@ -112,9 +112,13 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 			this.model.fetch();
 		},
 
-		showFavoriteDashboard : function () { 
-			var wreqr = squashtm.app.wreqr;
-			wreqr.trigger("showFavoriteDashboard");
+		showFavoriteDashboard : function () {
+			var callback = function() {
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("favoriteDashboard.showFavorite");
+			};
+
+			userPrefs.chooseFavoriteDashboardInWorkspace(callback);
 		}
 	});
 	return SuperMasterView;

@@ -22,6 +22,8 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
     'use strict';
     var FAVORITE_DASHBOARD_KEY = "squash.core.favorite.dashboard.";
     var WORKSPACE_CONTENT_KEY = "squash.core.dashboard.content.";
+    var WORKSPACE_CONTENT_DASHBOARD_VALUE = "dashboard";
+    var WORKSPACE_CONTENT_DEFAULT_VALUE = "default";
     var VALID_WORKSPACE = ["home","tc","requirement","campaign"];
 
      //***************** GET PREF METHODS *****************************
@@ -44,6 +46,12 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
        return getPref(key);
     }
 
+    function shouldShowFavoriteDashboardInWorkspace (){
+        var workspace = getWorkspace();
+        var key = getWorkspaceKey(workspace, WORKSPACE_CONTENT_KEY);
+        return getPref(key) === WORKSPACE_CONTENT_DASHBOARD_VALUE;
+    }
+
     //***************** SET PREF METHODS *****************************
 
     function getWorkspaceContentPreferenceKey (workspace){
@@ -59,7 +67,12 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
 
     function chooseDefaultContentInWorkspace(callback){
         var workspace = getWorkspace();
-        updateFavoriteContentInWorkspace(workspace,"default",callback);
+        updateFavoriteContentInWorkspace(workspace, WORKSPACE_CONTENT_DEFAULT_VALUE, callback);
+    }
+
+    function chooseFavoriteDashboardInWorkspace(callback){  
+        var workspace = getWorkspace();
+        updateFavoriteContentInWorkspace(workspace, WORKSPACE_CONTENT_DASHBOARD_VALUE, callback);
     }
 
     function updateFavoriteContentInWorkspace(workspace,value,callback){
@@ -67,14 +80,13 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         updateUserPreference(key,value,callback);
     }
 
-        //ajax reqwuest to update user preference.
+    //ajax reqwuest to update user preference.
     //callback should be a function called after request completed.
-    //response will be provided as argument of callback
     function updateUserPreference (key, value, callback){
         var url = urlBuilder.buildURL("user-pref-update");
                var data = {
                    key : key,
-                   value : "default"
+                   value : value
                };
 
                $.ajax({
@@ -83,8 +95,13 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
 					'url':url,
 					'data': JSON.stringify(data)
                }).success(function(response) {
+                   //updating the pref client side also
+                   if(squashtm.app.userPrefs){
+                       squashtm.app.userPrefs[data.key] = data.value;
+                   }
+                   //calling callback if callback provided
                    if(callback && typeof callback === "function"){
-                        callback(response);
+                        callback();
                    }
                });
     }
@@ -108,6 +125,8 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         getPref : getPref,
         getFavoriteDashboardId : getFavoriteDashboardId,
         getWorkspaceContentPreferenceKey : getWorkspaceContentPreferenceKey,
-        chooseDefaultContentInWorkspace : chooseDefaultContentInWorkspace
+        chooseDefaultContentInWorkspace : chooseDefaultContentInWorkspace,
+        chooseFavoriteDashboardInWorkspace : chooseFavoriteDashboardInWorkspace,
+        shouldShowFavoriteDashboardInWorkspace : shouldShowFavoriteDashboardInWorkspace
     };
 });

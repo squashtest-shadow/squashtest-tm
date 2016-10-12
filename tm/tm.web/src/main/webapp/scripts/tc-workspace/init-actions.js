@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus","workspace.routing", "squash.translator" ,
-        "workspace.tree-node-copier", "workspace.tree-event-handler","custom-report-workspace/views/dashboardView"], function($, Backbone, zetree, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler,DashboardView){
+        "workspace.tree-node-copier", "workspace.tree-event-handler","custom-report-workspace/views/dashboardView","user-account/user-prefs"], function($, Backbone, zetree, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler,DashboardView, userPrefs){
 
 
 
@@ -80,9 +80,18 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 
 			//mode than 1 element is selected : display the dashboard
 			default :
-				if(squashtm.workspace.favoriteViewLoaded){
+
+				var shouldShowFavoriteDashboard = userPrefs.shouldShowFavoriteDashboardInWorkspace();
+				var favoriteDashboardViewLoaded = squashtm.workspace.favoriteViewLoaded;
+
+				if(shouldShowFavoriteDashboard && favoriteDashboardViewLoaded ){
 					var wreqr = squashtm.app.wreqr;
 					wreqr.trigger("favoriteDashboard.reload");
+				}
+
+				else if(shouldShowFavoriteDashboard && !favoriteDashboardViewLoaded){
+					ctxcontent.unload();
+					ctxcontent.loadWith(squashtm.app.contextRoot + "/test-case-browser/dashboard-favorite");
 				}
 
 				else {
@@ -99,46 +108,12 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 						nodes : nodeIds.join(",")
 					};
 
-					ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params);
+					ctxcontent.loadWith(squashtm.app.contextRoot + "/test-case-browser/dashboard", params);
 				}
 
 				break;
 		}	
 	}
-
-	function showDashboard () {
-				
-				var AclModel = Backbone.Model.extend({
-					defaults: {
-						type: undefined
-					},
-					urlRoot: function () {
-						return urlBuilder.buildURL("acls") + "/" + this.attributes.type;
-					}
-				});
-
-
-                var id = squashtm.app.userPrefs["squash.core.favorite.dashboard.home"];
-                if(id /*&& squashtm.app.homeWorkspaceConf.canShowDashboard*/){
-                    id = Number(id);
-                    var modelDef = Backbone.Model.extend({
-                        defaults: {
-                            id: id
-                        }
-                    });
-
-                    var activeModel = new modelDef();
-                    var acls = new AclModel({type: "custom-report-library-node", id: id});
-
-                  new DashboardView({
-                        model: activeModel,
-                        acls: acls
-                    });
-                } 
-				// else {
-                //     this.activeView = new DefaultDashboardView({});
-                // }
-            }
 
 	return {
 		init : function(){
@@ -250,12 +225,12 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 			//**************** favorite dashboard **************
 			
 			var wreqr = squashtm.app.wreqr;
-			wreqr.on("showFavoriteDashboard", function () {
-				console.log("FAVORITE DASHBOARD");
+			wreqr.on("favoriteDashboard.showDefault", function () {
+				loadFragment(tree);
 			  });
 			  
-			wreqr.on("showDefaultDashboard", function () {
-				console.log("DEFAULT DASHBOARD");
+			wreqr.on("favoriteDashboard.showFavorite", function () {
+				loadFragment(tree);
 			  });
 		}
 	};
