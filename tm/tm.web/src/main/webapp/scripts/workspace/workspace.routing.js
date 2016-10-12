@@ -245,6 +245,9 @@ define([], function(){
 		// authorizations
 		'acls': root + '/acls',
 
+		//user prefs
+		'user-pref-update' : root + '/user-prefs/update',
+
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

@@ -61,20 +61,46 @@
 		font-size: 12px;
 	}
 	/*
-	* class for mime toggle panel style. Gridster doesn't support to be hided like toogle panel do,
-	* and togle panel doesn't support gridster redimension post request
+	* class for mime toggle panel style. Gridster doesn't support to be hided like toggle panel do,
+	* and toggle panel doesn't support gridster manipulating is own dimensions after initialization, or on windows resize...
 	*/
 	.ui-default-black {
 		background: #2b2b2b url(images/ui-bg_glass_45_2b2b2b_1x400.png) 50% 50% repeat-x;
 		font-weight: normal;
 		color: #ffffff;
+		overflow: hidden;
 	}
 
 	.dashboard-grid-in-classic-workspace {
      	border: 1px solid #000000;
      	background: #ffffff;
-     	height: 90%;
+     	height: 98%;
      	width:98%;
      	overflow: auto;
      	position:absolute;
      }
+
+     /*
+     * Class for mime small buttons that are in tg-head. Duplicate of tg-head -> tg-toolbar to avoid conflict is we have decided to extract this class from .tg-head
+     */
+	.dashboard-grid-toolbar {
+    			display: block;
+    			float: right;
+    			text-align: right;
+    			margin-top: 0.4em;
+    			margin-right: 0.5em !important;
+
+    			// meh... we have to redefine buttons height
+    			// for them to look good^h^h as before
+    			input {
+    				.sq-btn;
+    			}
+
+    			a {
+    				padding-top: .15em;
+    				padding-bottom: .15em;
+    				margin-left: 0.5em !important;
+    				font-size: @small-font;
+    			}
+
+    		}

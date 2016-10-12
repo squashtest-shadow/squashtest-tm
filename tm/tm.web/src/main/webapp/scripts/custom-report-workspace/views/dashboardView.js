@@ -546,9 +546,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			},
 
 			changeBindedChart: function (bindingId, binding) {
-				console.log("CHANGE BINDED");
-				console.log("bindingId" + bindingId);
-				console.log("binding" + binding);
 				this.removeChart(bindingId);
 				var source = $(this.tplChartDisplay).html();
 				var template = Handlebars.compile(source);

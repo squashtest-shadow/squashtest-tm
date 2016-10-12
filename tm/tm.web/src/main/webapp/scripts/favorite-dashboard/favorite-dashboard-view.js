@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-favorite-view","../user-account/user-prefs","app/AclModel","tree"], function(Backbone,DashboardView,CantShowView,userPrefs,AclModel,zetree) {
+define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-favorite-view","../user-account/user-prefs","app/AclModel","tree"], 
+    function(Backbone,DashboardView,CantShowView,userPrefs,AclModel,zetree) {
     'use strict';
      var View = Backbone.View.extend({
             el: "#favorite-dashboard-wrapper",
@@ -29,7 +30,12 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                 this.initializeRefresh();
                 this.tree = zetree.get();
                 this.initView();
+                this.model = Backbone.Model.extend({timestamp : new Date()});
                 
+            },
+            events : {
+                "click .favorite-dashboard-refresh-button": "triggerRefresh",
+                "click .show-default-dashboard-button": "showDefault"
             },
 
             initView : function() {
@@ -100,6 +106,24 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                     self.$el.html('<div id="contextual-content-wrapper" class="dashboard-grid-in-classic-workspace ui-corner-all"> </div>');
                     self.initView();
                 });
+            },
+
+            triggerRefresh : function() {
+               var wreqr = squashtm.app.wreqr;
+               wreqr.trigger("favoriteDashboard.reload");
+            },
+
+            showDefault : function() {
+                var wreqr = squashtm.app.wreqr;
+                var self = this;
+
+                var callback = function() {
+                    console.log("preference done !!!");
+                    wreqr.trigger("favoriteDashboard.showDefault");
+                };
+
+                userPrefs.chooseDefaultContentInWorkspace(callback);
+              
             }
 
            

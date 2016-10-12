@@ -41,7 +41,17 @@
 			</h2>
 		</div>
 
+	<div class="dashboard-grid-toolbar">
+		<span><f:message key="workspace.custom-report.timestamp.label"/></span>
+		<a class="favorite-dashboard-refresh-button sq-btn" role="button" title="<f:message key='label.Refresh' />">
+			<span><f:message key='label.Refresh' /></span>
+		</a>
+		<a class="show-default-dashboard-button sq-btn" role="button"  title="<f:message key='label.default' />">
+			<span><f:message key='label.default' /></span>
+		</a>
+
 		<div class="unsnap"></div>
+	</div>
 	</div>
 			{{#if emptyDashboard}}
 				{{> dashboardDoc}}
