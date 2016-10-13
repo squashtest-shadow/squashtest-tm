@@ -41,9 +41,9 @@
 <%---------------------------- Test Case Header ------------------------------%>
 
 <c:if test="${empty editable}">
-	<c:set var="editable" value="${ false }" /> 
+	<c:set var="editable" value="${ false }" />
 	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ library }">
-		<c:set var="editable" value="${ true }" /> 
+		<c:set var="editable" value="${ true }" />
 	</authz:authorized>
 </c:if>
 
@@ -58,31 +58,48 @@
 
 <div class="fragment-body">
 
-	<%-- statistics panel --%>	
-	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
-	
+	<%-- statistics panel --%>
+	<c:if test="${shouldShowDashboard}">
+    <dashboard:favorite-dashboard/>
+  </c:if>
+
+  <c:if test="${not shouldShowDashboard}">
+	  <dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
+	</c:if>
+
 	<%-- description panel --%>
 	<comp:toggle-panel id="library-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
 			<div id="library-description" >${ library.project.description }</div>
 		</jsp:attribute>
-	</comp:toggle-panel> 
-	
+	</comp:toggle-panel>
+
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
 </div>
 
 <script type="text/javascript">
+
+var shouldShowDashboard = ${shouldShowDashboard};
+
 require(["common"], function() {
 
-		require(["jquery","squash.basicwidgets","test-case-library-management"], function($,basicwidg, TCLM){
+		require(["jquery","squash.basicwidgets","test-case-library-management", "favorite-dashboard/favorite-dashboard-main"], function($,basicwidg, TCLM, favoriteMain){
 			$(function(){
 			basicwidg.init();
-			TCLM.initDashboardPanel({
-				master : '#dashboard-master',
-				cacheKey : 'dashboard-tclib${library.id}'
-			});			
-		});	
+
+			if(shouldShowDashboard){
+        squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+        squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+        favoriteMain.init();
+      }
+      else {
+          TCLM.initDashboardPanel({
+            master : '#dashboard-master',
+            cacheKey : 'dashboard-tclib${library.id}'
+          });
+			  }
+		});
 	});
 });
 </script>

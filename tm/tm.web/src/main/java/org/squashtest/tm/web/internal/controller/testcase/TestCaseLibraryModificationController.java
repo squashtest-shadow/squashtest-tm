@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
@@ -44,6 +46,9 @@ public class TestCaseLibraryModificationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCaseLibrary(@PathVariable long libraryId) {
 
@@ -55,6 +60,13 @@ public class TestCaseLibraryModificationController {
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
 		mav.addObject("workspaceName", "test-case");
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE);
+
+		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("canShowDashboard", canShowDashboard);
+
 		return mav;
 	}
 

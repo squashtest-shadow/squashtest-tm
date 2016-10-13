@@ -47,7 +47,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
 	@Inject
-	private CustomReportDashboardService customReportDashboardService;
+	protected CustomReportDashboardService customReportDashboardService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public  ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {

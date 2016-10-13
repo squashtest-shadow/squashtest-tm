@@ -49,6 +49,6 @@ public enum Workspace {
 				return workspace;
 			}
 		}
-		throw new IllegalArgumentException("invalid workspace shortName");
+		return null;
 	}
 }

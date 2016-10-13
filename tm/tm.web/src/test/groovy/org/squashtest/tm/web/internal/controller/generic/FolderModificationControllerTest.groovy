@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
+import org.squashtest.tm.domain.Workspace
+import org.squashtest.tm.service.customreport.CustomReportDashboardService
+
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest
@@ -35,9 +38,13 @@ import spock.lang.Specification
 class FolderModificationControllerTest extends Specification {
 	DummyFolderModificationController controller = new DummyFolderModificationController()
 	FolderModificationService service = Mock()
+	CustomReportDashboardService customReportDashboardService = Mock();
+
+
 
 	def setup() {
 		controller.service = service
+		controller.customReportDashboardService = customReportDashboardService;
 	}
 
 	def "should return folder page fragment"() {
@@ -46,6 +53,7 @@ class FolderModificationControllerTest extends Specification {
 		req.getPathInfo() >> "/dummy-something/1"
 		TestCaseFolder f = Mock()
 		service.findFolder(15) >> f
+
 
 		when:
 		ModelAndView res = controller.showFolder(15, req)
@@ -59,19 +67,19 @@ class FolderModificationControllerTest extends Specification {
 
 class DummyFolderModificationController extends FolderModificationController<TestCaseFolder> {
 	FolderModificationService service
-	ServiceAwareAttachmentTableModelHelper attachmentsHelper 
-	
+	ServiceAwareAttachmentTableModelHelper attachmentsHelper
+
 
 	@Override
 	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
 		return service;
 	}
-	
+
 	@Override
 	protected String getWorkspaceName() {
 		return "workspace";
 	}
-	
+
 	@Override
 	protected Set<Attachment> findAttachments(TestCaseFolder folder){
 		return []
