@@ -31,9 +31,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<s:url var="statsUrl" value="/test-case-browser/statistics"/>
-
-
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >
 	<h2><span><f:message key="title.Dashboard" /></span></h2>
 </div>
@@ -41,7 +38,7 @@
 
 <div class="fragment-body">
 
-	<dashboard:favorite-dashboard workspace="tc"/>
+	<dashboard:favorite-dashboard />
 
 </div>
 

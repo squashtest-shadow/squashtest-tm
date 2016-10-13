@@ -70,12 +70,12 @@
   </script>
 
   <script id="tpl-chart-display-area" type="text/x-handlebars-template">
-    	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
   </script>
 
   <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-    	<span class="gs-resize-handle gs-resize-handle-both"></span>
+	<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+	<span class="gs-resize-handle gs-resize-handle-both"></span>
   </script>
 
   <script id="tpl-dashboard-doc" type="text/x-handlebars-template">

@@ -19,8 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", 'req-workspace' ,"app/ws/squashtm.workspace", "domReady", 'jquery.cookie' ], function($, ReqWorkspace,  WS, domReady) {
+	require([ "jquery", 'req-workspace' ,"app/ws/squashtm.workspace", "domReady",'backbone.wreqr', 'jquery.cookie' ], function($, ReqWorkspace,  WS, domReady,wreqr) {
 		domReady(function() {
+			//setting the event bus at global level so it will be avaible for all objects in workspace
+			window.squashtm.app.wreqr = new wreqr.EventAggregator();
 			WS.init();
 			
 			$.cookie("workspace-prefs", null, {

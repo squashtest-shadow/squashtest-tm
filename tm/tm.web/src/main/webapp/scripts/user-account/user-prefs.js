@@ -41,6 +41,11 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         }
     }
 
+    function getFavoriteDashboardIdInWorkspace(){
+        var workspace = getWorkspace();
+        return getFavoriteDashboardId(workspace);
+    }
+
     function getFavoriteDashboardId(workspace) {
        var key = getWorkspaceKey(workspace, FAVORITE_DASHBOARD_KEY);
        return getPref(key);
@@ -123,7 +128,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
     return {
         getAllPrefs : getAllPrefs,
         getPref : getPref,
-        getFavoriteDashboardId : getFavoriteDashboardId,
+        getFavoriteDashboardIdInWorkspace : getFavoriteDashboardIdInWorkspace,
         getWorkspaceContentPreferenceKey : getWorkspaceContentPreferenceKey,
         chooseDefaultContentInWorkspace : chooseDefaultContentInWorkspace,
         chooseFavoriteDashboardInWorkspace : chooseFavoriteDashboardInWorkspace,

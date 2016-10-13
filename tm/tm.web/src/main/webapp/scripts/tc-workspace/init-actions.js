@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus","workspace.routing", "squash.translator" ,
-        "workspace.tree-node-copier", "workspace.tree-event-handler","custom-report-workspace/views/dashboardView","user-account/user-prefs"], function($, Backbone, zetree, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler,DashboardView, userPrefs){
+        "workspace.tree-node-copier", "workspace.tree-event-handler","user-account/user-prefs"], function($, Backbone, zetree, rules, ctxcontent, eventBus, urlBuilder, translator, copier, treehandler, userPrefs){
 
 
 

@@ -79,11 +79,6 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
-	@Override
-	protected Map<String, String> getWorkspaceUserPref() {
-		return null;
-	}
-
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()
 	 */

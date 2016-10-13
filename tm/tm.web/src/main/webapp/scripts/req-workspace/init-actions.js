@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus","squash.translator" , 
-        "workspace.tree-node-copier", "workspace.tree-event-handler", "workspace.sessionStorage"], 
-        function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler, storage){
+        "workspace.tree-node-copier", "workspace.tree-event-handler", "workspace.sessionStorage","user-account/user-prefs"], 
+        function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler, storage,userPrefs){
 	
 	
 	function showError(messageName){	
@@ -77,24 +77,42 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 		//mode than 1 element is selected : display the dashboard
 		default :
-
-			var libIds = selected.filter(":library").map(function(i,e){
+			var shouldShowFavoriteDashboard = userPrefs.shouldShowFavoriteDashboardInWorkspace();
+			var favoriteDashboardViewLoaded = squashtm.workspace.favoriteViewLoaded;
+			var multipleSelectionDashboard = squashtm.workspace.multipleSelectionDashboard;
+			
+			if(!shouldShowFavoriteDashboard){
+				var libIds = selected.filter(":library").map(function(i,e){
 				return $(e).attr("resid");
-			}).get();
+				}).get();
 
-			var nodeIds = selected.not(":library").map(function(i,e){
-				return $(e).attr("resid");
-			}).get();
+				var nodeIds = selected.not(":library").map(function(i,e){
+					return $(e).attr("resid");
+				}).get();
 
-			params = {
-				libraries : libIds.join(","),
-				nodes : nodeIds.join(",")
-			};
+				params = {
+					libraries : libIds.join(","),
+					nodes : nodeIds.join(",")
+				};
 
-			ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard", params);
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard", params);
+			}
+
+			//if favorite dashboard is loaded and a multiselection is already loaded we only need to refresh the dashboard view
+			//and not to repull all the view from server
+			else if(favoriteDashboardViewLoaded && multipleSelectionDashboard){
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("favoriteDashboard.reload");
+			}
+
+			//if favorite dashboard is not loaded or if favorite dashboard is loaded but with a single node was selected before, 
+			//we need to clear contextual content and reload the whole thing 
+			else {
+				ctxcontent.loadWith(squashtm.app.contextRoot + "/requirement-browser/dashboard-favorite");
+			}
 
 			break;
-	}
+		}
 	}
 	
 	return {
@@ -198,6 +216,21 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 			
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
+
+			//**************** favorite dashboard **************
+			
+			var wreqr = squashtm.app.wreqr;
+			wreqr.on("favoriteDashboard.showDefault", function () {
+				//we need to unload the whole view as we cannot replace the backbone view by a new JSP fragment easily
+				//it's far easier and cleaner to reload the contextual content after backbone view has been destroyed
+				ctxcontent.unload();
+				loadFragment(tree);
+			  });
+			  
+			wreqr.on("favoriteDashboard.showFavorite", function () {
+				ctxcontent.unload();
+				loadFragment(tree);
+			  });
 			
 		}
 	};	

@@ -55,7 +55,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
             },
 
             showDashboard : function() {
-                var id = userPrefs.getFavoriteDashboardId("tc");
+                var id = userPrefs.getFavoriteDashboardIdInWorkspace();
                 var dynamicScopeModel = this.generateDynamicScopeModel();
 
                 if(id){
@@ -113,6 +113,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                     self.initView();
                 });
 
+                //removing the favorite dashboard backbone view when a loadWith event is fired by contextualContent.js in each workspace
                 wreqr.on("contextualContent.loadWith", function () {
                     self.remove();
                 });

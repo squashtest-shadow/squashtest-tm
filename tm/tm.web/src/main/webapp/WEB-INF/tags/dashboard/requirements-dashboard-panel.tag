@@ -35,21 +35,22 @@
         <f:message key="title.Dashboard"/>
       </h3>
       <div class="tg-toolbar">
-        <span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
+        <span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span>
         <input type="button" class="dashboard-refresh-button sq-btn" role="button" value="<f:message key='label.Refresh' />" title="<f:message key='label.Refresh' />"/>
+        <input type="button" class="show-favorite-dashboard-button sq-btn" role="button" value="<f:message key='label.favorite-dashboard' />" title="<f:message key='label.favorite-dashboard' />"/>
       </div>
     </div>
     <div class="tg-body">
       <div class="dashboard-figleaf">
         <div class="dashboard-figleaf-figures not-displayed">
-          
+
           <div id="dashboard-item-bound-tcs" class="dashboard-item dashboard-pie" data-def="model-attribute=boundTestCasesStatistics">
-          
+
             <div id="dashboard-bound-tcs-view" class="dashboard-item-view"></div>
-    
+
             <div class="dashboard-item-meta">
               <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.bound-tcs.title"/></h2>
-              
+
               <div class="dashboard-item-legend">
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#9CCBE0"></div>
@@ -66,15 +67,15 @@
               </div>
             </div>
           </div>
-          
+
           <div id="dashboard-item-requirements-status" class="dashboard-item dashboard-pie" data-def="model-attribute=statusesStatistics">
             <div id="dashboard-requirement-status-view" class="dashboard-item-view">
-            
+
             </div>
-                
-            <div class="dashboard-item-meta">   
+
+            <div class="dashboard-item-meta">
               <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.status.title"/></h2>
-            
+
               <div class="dashboard-item-legend">
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#C9E8AA"></div>
@@ -95,15 +96,15 @@
               </div>
             </div>
           </div>
-          
+
           <div id="dashboard-item-requirements-criticality" class="dashboard-item dashboard-pie" data-def="model-attribute=criticalityStatistics">
             <div id="dashboard-requirement-criticality-view" class="dashboard-item-view">
-            
+
             </div>
-            
-            <div class="dashboard-item-meta">         
+
+            <div class="dashboard-item-meta">
               <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.criticality.title"/></h2>
-            
+
               <div class="dashboard-item-legend">
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
@@ -124,16 +125,16 @@
               </div>
             </div>
           </div>
-          
+
           <div id="dashboard-item-bound-desc" class="dashboard-item dashboard-pie" data-def="model-attribute=boundDescriptionStatistics">
-            
+
             <div id="dashboard-bound-description-view" class="dashboard-item-view">
-            
+
             </div>
-            
-            <div class="dashboard-item-meta">   
+
+            <div class="dashboard-item-meta">
               <h2 class="dashboard-item-title"><f:message key="dashboard.requirements.bound-desc.title"/></h2>
-              
+
               <div class="dashboard-item-legend">
                 <div>
                   <div class="dashboard-legend-sample-color" style="background-color:#DFC3EF"></div>
@@ -146,24 +147,24 @@
               </div>
             </div>
           </div>
-          
+
           <div id="dashboard-item-coverage" class="dashboard-item" data-def="model-attribute=coverageStatistics">
-					
+
 			<div id="dashboard-coverage-view" class="dashboard-item-view"></div>
-						
-			<div class="dashboard-item-meta">		
+
+			<div class="dashboard-item-meta">
 
 				<h2 class="dashboard-item-title"><f:message key="dashboard.requirements.coverage.title"/></h2>
 				<div class="dashboard-item-subplot">
 					<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
-								
-					<div class="dashboard-subplot-legend success-rate-total-success" 
+
+					<div class="dashboard-subplot-legend success-rate-total-success"
 						 style="background-color:#99CC00; color:black;"></div>
-								
+
 					<div class="dashboard-subplot-legend success-rate-total-failure"
-						 style="background-color:#FF3300; color:white;"></div>							
-				</div>		
-							
+						 style="background-color:#FF3300; color:white;"></div>
+				</div>
+
 				<div class="dashboard-item-legend">
 					<div>
 						<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
@@ -181,7 +182,7 @@
 						<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
 						<span class="serie serie3"><f:message key="requirement.criticality.UNDEFINED" /></span>
 					</div>
-						
+
 					<div>
 						<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 						<span><f:message key="dashboard.requirements.coverage.covered" /></span>
@@ -193,24 +194,24 @@
 				</div>
 		  	</div>
 		  </div>
-          
+
           <div id="dashboard-item-validation" class="dashboard-item" data-def="model-attribute=validationStatistics">
-											
+
 			<div id="dashboard-validation-view" class="dashboard-item-view"></div>
-						
-			<div class="dashboard-item-meta">		
+
+			<div class="dashboard-item-meta">
 
 				<h2 class="dashboard-item-title"><f:message key="dashboard.requirements.validation.title"/></h2>
 				<div class="dashboard-item-subplot">
 					<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
-								
-					<div class="dashboard-subplot-legend success-rate-total-success" 
+
+					<div class="dashboard-subplot-legend success-rate-total-success"
 						 style="background-color:#99CC00; color:black;"></div>
-								
+
 					<div class="dashboard-subplot-legend success-rate-total-failure"
-						 style="background-color:#FF3300; color:white;"></div>							
-				</div>		
-							
+						 style="background-color:#FF3300; color:white;"></div>
+				</div>
+
 				<div class="dashboard-item-legend">
 					<div>
 						<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
@@ -228,7 +229,7 @@
 						<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
 						<span class="serie serie3"><f:message key="requirement.criticality.UNDEFINED" /></span>
 					</div>
-						
+
 					<div>
 						<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 						<span><f:message key="dashboard.requirements.validation.CONCLUSIVE" /></span>
@@ -244,12 +245,12 @@
 				</div>
 		  	</div>
 		  </div>
-          
-          <div class="unsnap"> </div>     
+
+          <div class="unsnap"> </div>
           <span class="dashboard-summary"><f:message key="dashboard.requirements.summary"/></span>
-        
+
         </div>
-      	
+
         <div class="dashboard-figleaf-notready" style="text-align : center">
           <h3 class="dashboard-figleaf-notready-title"><f:message key="dashboard.notready.title"/></h3>
         </div>

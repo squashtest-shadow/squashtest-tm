@@ -314,10 +314,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
-		return "fragment/test-cases/test-cases-favorite-dashboard";
-
-
-
+		return "fragment/dashboard/favorite-dashboard";
 	}
 
 	@ResponseBody

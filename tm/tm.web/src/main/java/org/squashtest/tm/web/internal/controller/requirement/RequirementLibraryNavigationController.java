@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -92,13 +93,13 @@ public class RequirementLibraryNavigationController extends
 
 	@Inject
 	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
-	
+
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
 	@Inject
 	private RequirementStatisticsService requirementStatisticsService;
-	
+
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
@@ -303,9 +304,9 @@ public class RequirementLibraryNavigationController extends
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
-	
+
 	// ****************************** statistics section *******************************
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {
 		LIBRARIES, NODES})
@@ -315,17 +316,17 @@ public class RequirementLibraryNavigationController extends
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
-	
+
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES })
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, @RequestParam(NODES) Collection<Long> nodeIds) {
-		
+
 		RequirementStatisticsBundle stats = requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
-		
+
 		model.addAttribute("statistics",stats);
-		
+
 		return "fragment/requirements/requirement-dashboard";
 	}
-	
+
 	/* This method is called when the user click on the refresh button in the milestone dashboard */
 	@ResponseBody
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
@@ -337,10 +338,23 @@ public class RequirementLibraryNavigationController extends
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
+
+	@RequestMapping(value = "/dashboard-favorite", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public String getFavoriteDashboard(Model model) {
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.REQUIREMENT);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
+
+
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
+		return "fragment/dashboard/favorite-dashboard";
+	}
+
 	/* This method is called when the user click on the milestone button to show the milestone dashboard */
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public String getMilestoneDashboard(Model model) {
-		
+
 		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
 		// Find ids for specific milestone
 		List<Long> nodeIds = requirementLibraryNavigationService.findAllRequirementIdsInMilestone(activeMilestone);
@@ -352,18 +366,18 @@ public class RequirementLibraryNavigationController extends
 
 		return "fragment/requirements/requirement-milestone-dashboard";
 	}
-	
+
 	@ResponseBody
-	@RequestMapping(value="/validation-statistics", 
-		method=RequestMethod.POST, 
-		produces = ContentTypes.APPLICATION_JSON, 
+	@RequestMapping(value="/validation-statistics",
+		method=RequestMethod.POST,
+		produces = ContentTypes.APPLICATION_JSON,
 		params={"selectedIds", "criticality", "validation"})
 	public Collection<Long> getValidationRequirementIds(
 			@RequestParam Collection<Long> selectedIds,
-			@RequestParam RequirementCriticality criticality, 
+			@RequestParam RequirementCriticality criticality,
 			@RequestParam Collection<String> validation) {
-		
+
 		return requirementStatisticsService.gatherRequirementIdsFromValidation(selectedIds, criticality, validation);
 	}
-	
+
 }
