@@ -24,7 +24,10 @@ define(["backbone"], function(Backbone) {
             el: "#contextual-content-wrapper",
             
             initialize : function(options) {
-               console.log("CANT SHOW INITIALIZED");
+               this.$el.html("");
+                var source = $("#tpl-default-dashboard").html();
+				var template = Handlebars.compile(source);
+                this.$el.append(template());
             }
             
     });

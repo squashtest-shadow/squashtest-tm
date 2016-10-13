@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-favorite-view","../user-account/user-prefs","app/AclModel","tree"], 
+define(["backbone","custom-report-workspace/views/dashboardView","home-workspace/default-dashboard-view","../user-account/user-prefs","app/AclModel","tree"], 
     function(Backbone,DashboardView,CantShowView,userPrefs,AclModel,zetree) {
     'use strict';
      var View = Backbone.View.extend({

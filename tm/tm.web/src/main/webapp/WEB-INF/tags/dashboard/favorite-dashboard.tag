@@ -84,6 +84,12 @@
     </div>
   </script>
 
+  <script id="tpl-default-dashboard" type="text/x-handlebars-template">
+      <div id="dashboard-doc">
+        <strong><f:message key="workspace.home.dashboard.default"/></strong>
+      </div>
+    </script>
+
   <!-- /SHOW DASHBOARD  -->
 
 
