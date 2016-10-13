@@ -45,4 +45,18 @@
 
 </div>
 
+<!-- sorry for that ugly inline script but this fragment is inside contextual content, so we have to boot the js this way...-->
+
+<script type="text/javascript">
+require(["common"], function() {
+	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
+      	$(function(){
+    		squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+    		squashtm.workspace.shouldShowFavoriteDashboard = "${shouldShowDashboard}";
+      		favoriteMain.init();
+      	});
+    });
+});
+</script>
+
 

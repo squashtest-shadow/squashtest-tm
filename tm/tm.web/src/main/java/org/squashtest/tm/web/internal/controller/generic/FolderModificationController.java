@@ -34,8 +34,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
@@ -43,6 +45,9 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public  ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
@@ -53,6 +58,15 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		mav.addObject("updateUrl", getUpdateUrl(request.getServletPath()  + StringUtils.defaultString(request.getPathInfo())));
 		mav.addObject("workspaceName", getWorkspaceName());
 		mav.addObject("attachments", findAttachments(folder));
+
+		//favorite dashboard part
+		Workspace workspace = Workspace.getWorkspaceFromShortName(getWorkspaceName());
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(workspace);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(workspace);
+
+		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("canShowDashboard", canShowDashboard);
+
 		return mav;
 	}
 

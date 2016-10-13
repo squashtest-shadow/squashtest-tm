@@ -71,8 +71,15 @@
 <div class="fragment-body">
 
 	<%-- statistics panel --%>
+<c:if test="${shouldShowDashboard}">
+    <dashboard:favorite-dashboard workspace="tc"/>
+</c:if>
 
+<c:if test="${not shouldShowDashboard}">
 	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
+</c:if>
+
+
 
 
 
@@ -92,10 +99,11 @@
 	<script type="text/javascript">
 
 	var identity = { resid : ${folder.id}, restype : 'test-case-folders'  };
+	var shouldShowDashboard = ${shouldShowDashboard};
 
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management"],
-					function($, basic, contentHandlers, TCFM){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management", "favorite-dashboard/favorite-dashboard-main"],
+					function($, basic, contentHandlers, TCFM, favoriteMain){
 		$(function(){
 
 				basic.init();
@@ -106,12 +114,18 @@
 				nameHandler.nameDisplay = "#folder-name";
 
 
-				//init the dashboard
-				TCFM.initDashboardPanel({
-					master : '#dashboard-master',
-					cacheKey : 'dashboard-tcfold${folder.id}'
-				});
-
+				//init the default dashboard
+				if(shouldShowDashboard){
+          squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+          squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+          favoriteMain.init();
+				}
+				else {
+          TCFM.initDashboardPanel({
+            master : '#dashboard-master',
+            cacheKey : 'dashboard-tcfold${folder.id}'
+          });
+         }
 			});
 		});
 	});

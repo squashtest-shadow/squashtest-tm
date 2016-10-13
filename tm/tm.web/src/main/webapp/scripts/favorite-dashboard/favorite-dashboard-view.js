@@ -43,6 +43,12 @@ define(["backbone","custom-report-workspace/views/dashboardView","./cant-show-fa
                     this.showDashboard();
                     //setting a global param so the workspace can keep trace of view all ready loaded
                     squashtm.workspace.favoriteViewLoaded = true;
+                    var selected =  this.tree.jstree("get_selected");
+                    if(selected.length > 1){
+                        squashtm.workspace.multipleSelectionDashboard = true;
+                    } else {
+                        squashtm.workspace.multipleSelectionDashboard = false;
+                    }
                 } else {
                     this.activeView = new CantShowView();
                 }

@@ -24,9 +24,9 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ attribute name="workspace" required="true" description="url where to get the data" %>
+<%@ attribute name="workspace" required="false" %>
 
-<div id="favorite-dashboard-wrapper">
+<div id="favorite-dashboard-wrapper" style="height : 80%;">
  <div id='contextual-content-wrapper' class="dashboard-grid-in-classic-workspace  ui-corner-all">
 	<!--empty -->
  </div>
@@ -80,22 +80,10 @@
 
   <script id="tpl-dashboard-doc" type="text/x-handlebars-template">
     <div id="dashboard-doc">
-    	<strong><f:message key="workspace.home.dashboard.empty" /></strong>
+    	<strong><f:message key="workspace.home.dashboard.empty"/></strong>
     </div>
   </script>
 
   <!-- /SHOW DASHBOARD  -->
 
-<!-- sorry for that ugly inline script but this tag is in several fragments inside contextual content, so we have to boot the js this way...-->
 
-<script type="text/javascript">
-require(["common"], function() {
-	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
-      	$(function(){
-    		squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
-    		squashtm.workspace.shouldShowFavoriteDashboard = "${shouldShowDashboard}";
-      		favoriteMain.init();
-      	});
-    });
-});
-</script>

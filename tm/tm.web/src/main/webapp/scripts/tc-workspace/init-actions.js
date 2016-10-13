@@ -80,21 +80,12 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 
 			//mode than 1 element is selected : display the dashboard
 			default :
-
 				var shouldShowFavoriteDashboard = userPrefs.shouldShowFavoriteDashboardInWorkspace();
 				var favoriteDashboardViewLoaded = squashtm.workspace.favoriteViewLoaded;
+				var multipleSelectionDashboard = squashtm.workspace.multipleSelectionDashboard;
 
-				if(shouldShowFavoriteDashboard && favoriteDashboardViewLoaded ){
-					var wreqr = squashtm.app.wreqr;
-					wreqr.trigger("favoriteDashboard.reload");
-				}
-
-				else if(shouldShowFavoriteDashboard && !favoriteDashboardViewLoaded){
-					ctxcontent.unload();
-					ctxcontent.loadWith(squashtm.app.contextRoot + "/test-case-browser/dashboard-favorite");
-				}
-
-				else {
+				//user prefs said no favorite dashboard...
+				if(!shouldShowFavoriteDashboard){
 					var libIds = selected.filter(":library").map(function(i,e){
 						return $(e).attr("resid");
 					}).get();
@@ -109,6 +100,19 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 					};
 
 					ctxcontent.loadWith(squashtm.app.contextRoot + "/test-case-browser/dashboard", params);
+				}
+
+				//if favorite dashboard is loaded and a multiselection is already loaded we only need to refresh the dashboard view
+				//and not to repull all the view from server
+				else if(favoriteDashboardViewLoaded && multipleSelectionDashboard){
+					var wreqr = squashtm.app.wreqr;
+					wreqr.trigger("favoriteDashboard.reload");
+				}
+
+				//if favorite dashboard is not loaded or if favorite dashboard is loaded but with a single node was selected before, 
+				//we need to clear contextual content and reload the whole thing 
+				else {
+					ctxcontent.loadWith(squashtm.app.contextRoot + "/test-case-browser/dashboard-favorite");
 				}
 
 				break;
@@ -226,10 +230,14 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 			
 			var wreqr = squashtm.app.wreqr;
 			wreqr.on("favoriteDashboard.showDefault", function () {
+				//we need to unload the whole view as we cannot replace the backbone view by a new JSP fragment easily
+				//it's far easier and cleaner to reload the contextual content after backbone view has been destroyed
+				ctxcontent.unload();
 				loadFragment(tree);
 			  });
 			  
 			wreqr.on("favoriteDashboard.showFavorite", function () {
+				ctxcontent.unload();
 				loadFragment(tree);
 			  });
 		}
