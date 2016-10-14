@@ -80,8 +80,6 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
             },
 
             generateDynamicScopeModel : function() {
-                //ugly reference to the external global tree
-                //maybe resolvable by passing tree in constructor ?
                 var selected =  this.tree.jstree("get_selected");
                 var self = this;
                 var dynamicScopeModel = {
@@ -90,7 +88,10 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                     testCaseIds : self.filterByType(selected,"test-cases"),
                     requirementLibraryIds : self.filterByType(selected,"requirement-libraries"),
                     requirementFolderIds : self.filterByType(selected,"requirement-folders"),
-                    requirementIds : self.filterByType(selected,"requirements")
+                    requirementIds : self.filterByType(selected,"requirements"),
+                    campaignFolderIds : self.filterByType(selected,"campaign-folders"),
+                    campaignIds : self.filterByType(selected,"campaigns"),
+                    iterationIds : self.filterByType(selected,"iterations")
                 };
                 return dynamicScopeModel;
             },

@@ -42,7 +42,9 @@ public class JsonDynamicScope {
 	private List<Long> testCaseIds;
 
 	//Campaign workspace
-
+	private List<Long> campaignFolderIds;
+	private List<Long> campaignIds;
+	private List<Long> iterationIds;
 
 
 	public JsonDynamicScope() {
@@ -96,6 +98,30 @@ public class JsonDynamicScope {
 		this.testCaseIds = testCaseIds;
 	}
 
+	public List<Long> getCampaignFolderIds() {
+		return campaignFolderIds;
+	}
+
+	public void setCampaignFolderIds(List<Long> campaignFolderIds) {
+		this.campaignFolderIds = campaignFolderIds;
+	}
+
+	public List<Long> getCampaignIds() {
+		return campaignIds;
+	}
+
+	public void setCampaignIds(List<Long> campaignIds) {
+		this.campaignIds = campaignIds;
+	}
+
+	public List<Long> getIterationIds() {
+		return iterationIds;
+	}
+
+	public void setIterationIds(List<Long> iterationIds) {
+		this.iterationIds = iterationIds;
+	}
+
 	public List<EntityReference> convertToEntityReferences (){
 		List<EntityReference> entityReferences = new ArrayList<>();
 		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.TEST_CASE_LIBRARY,this.testCaseLibraryIds));
@@ -104,6 +130,9 @@ public class JsonDynamicScope {
 		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.REQUIREMENT_LIBRARY,this.requirementLibraryIds));
 		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.REQUIREMENT_FOLDER,this.requirementFolderIds));
 		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.REQUIREMENT,this.requirementIds));
+		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.CAMPAIGN_FOLDER,this.campaignFolderIds));
+		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.CAMPAIGN,this.campaignIds));
+		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.ITERATION,this.iterationIds));
 		return entityReferences;
 	}
 

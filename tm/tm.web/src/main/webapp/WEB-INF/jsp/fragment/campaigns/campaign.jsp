@@ -108,12 +108,12 @@
       </a>
       <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
       <span id="campaign-raw-reference" style="display: none">
-        <c:out value="${ campaign.reference }" escapeXml="true" /> 
-      </span> 
-      
+        <c:out value="${ campaign.reference }" escapeXml="true" />
+      </span>
+
       <span id="campaign-raw-name" style="display: none">
-        <c:out value="${ campaign.name }" escapeXml="true" /> 
-      </span>      
+        <c:out value="${ campaign.name }" escapeXml="true" />
+      </span>
     </h2>
   </div>
 
@@ -156,9 +156,9 @@
 
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
-  
-  </c:if>  
-  
+
+  </c:if>
+
   <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "campaign"/>
   <div class="unsnap"></div>
 </div>
@@ -180,8 +180,8 @@
       <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${campaignUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-        </li>  
-      </c:if>    
+        </li>
+      </c:if>
       <li>
         <a href="#tabs-2">
           <f:message key="tabs.label.test-plan" />
@@ -201,8 +201,8 @@
           <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag  --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
-</c:if>      
-      
+</c:if>
+
     </ul>
 
 
@@ -218,11 +218,11 @@
                 <label class="display-table-cell" for="campaign-reference"><f:message key="label.Reference" /></label>
                 <div class="display-table-cell" id="campaign-reference">${ campaign.reference }</div>
               </div>
-              
+
               <div class="display-table-row">
                 <label for="campaign-description" class="display-table-cell"><f:message key="label.Description" /></label>
 		        <div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
-              </div> 
+              </div>
 	    </jsp:attribute>
       </comp:toggle-panel>
 
@@ -243,7 +243,7 @@
 
 
       <%--------------------------- Planning section ------------------------------------%>
-      
+
       <comp:toggle-panel id="datepicker-panel" titleKey="label.Planning" open="true">
         <jsp:attribute name="panelButtons">
 				<c:if test="${writable}">
@@ -269,7 +269,7 @@
 	</div>
 	</jsp:attribute>
       </comp:toggle-panel>
-      
+
 
       <div id="iteration-planning-popup" class="popup-dialog not-displayed" title="${iterationPlanningTitle}"
         data-def="dateformat=${dateformat}, campaignId=${campaign.id}">
@@ -315,11 +315,11 @@
 
       <%--------------------------- Test plan section ------------------------------------%>
 
-      <camp:campaign-test-plan-panel 
-          editable="${ linkable }" 
-          reorderable="${linkable}" 
+      <camp:campaign-test-plan-panel
+          editable="${ linkable }"
+          reorderable="${linkable}"
           linkable="${linkable}"
-          campaign="${campaign}" 
+          campaign="${campaign}"
           milestoneConf="${milestoneConf}"/>
 
     </div>
@@ -331,30 +331,42 @@
 
     <%------------------------------- Dashboard ---------------------------------------------------%>
     <div id="campaign-dashboard">
-      <dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"
-        allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
+
+     <%-- statistics panel --%>
+        <c:if test="${shouldShowDashboard}">
+          <dashboard:favorite-dashboard/>
+        </c:if>
+
+        <c:if test="${not shouldShowDashboard}">
+            <dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"
+                   allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
+        </c:if>
+
     </div>
 
-    
-    
-        <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
-  
+
+
+        <%-- ----------------------- bugtracker (if present)----------------------------------------%>
+
 <c:if test="${campaign.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${campaign}" />
 </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
- 
-    
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
+
+
   </div>
 </csst:jq-tab>
 
 
 <script type="text/javascript">
 
+squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
+squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+
 	require(["common"], function(){
 		require(["campaign-management"], function(manager){
-			
+
 			var conf = {
 				data : {
 					campaignId : ${campaign.id},
@@ -381,9 +393,9 @@
 					hasCUF : ${hasCUF}
 				}
 			};
-			
-			manager.init(conf);		
+
+			manager.init(conf);
 		});
 	});
-	
+
 </script>

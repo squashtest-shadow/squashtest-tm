@@ -63,6 +63,7 @@
 
 
 <f:message var="refreshLabel" key="label.Refresh" />
+<f:message var="favoriteLabel" key="label.favorite-dashboard" />
 <f:message var="campaignProgressHelper" key="dashboard.campaigns.progression.helper"/>
 
 <div id="dashboard-master" data-def="url=${url}">
@@ -71,7 +72,7 @@
 		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span>
 <c:if test="${empty printmode or (not printmode) }">
 		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" role="button" value="${refreshLabel}" title="${refreshLabel}" />
-		<input type="button" class="show-favorite-dashboard-button sq-btn btn-sm" role="button" value="${refreshLabel}" title="${refreshLabel}" />
+		<input type="button" class="show-favorite-dashboard-button sq-btn btn-sm" role="button" value="${favoriteLabel}" title="${favoriteLabel}" />
     <a id="iteration-dashboard-print" href="${printUrl}" target="_blank" class="sq-icon-btn btn-sm" role="button" title="<f:message key='label.print' />" >
       <span class="ui-icon ui-icon-print"></span>
     </a>

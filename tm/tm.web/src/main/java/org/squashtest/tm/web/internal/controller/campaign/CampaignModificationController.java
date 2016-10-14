@@ -56,6 +56,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -67,6 +68,7 @@ import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -129,6 +131,9 @@ public class CampaignModificationController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
+
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
@@ -179,6 +184,12 @@ public class CampaignModificationController {
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		populateOptionalExecutionStatuses(campaign, model);
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
+
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
 
 		return model;
 	}
