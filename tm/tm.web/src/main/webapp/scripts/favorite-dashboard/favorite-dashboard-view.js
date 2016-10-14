@@ -87,7 +87,10 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                 var dynamicScopeModel = {
                     testCaseLibraryIds : self.filterByType(selected,"test-case-libraries"),
                     testCaseFolderIds : self.filterByType(selected,"test-case-folders"),
-                    testCaseIds : self.filterByType(selected,"test-cases")
+                    testCaseIds : self.filterByType(selected,"test-cases"),
+                    requirementLibraryIds : self.filterByType(selected,"requirement-libraries"),
+                    requirementFolderIds : self.filterByType(selected,"requirement-folders"),
+                    requirementIds : self.filterByType(selected,"requirements")
                 };
                 return dynamicScopeModel;
             },

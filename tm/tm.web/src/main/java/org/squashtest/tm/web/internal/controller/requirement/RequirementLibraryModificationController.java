@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
@@ -44,6 +46,9 @@ public class RequirementLibraryModificationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showRequirementLibrary(@PathVariable long libraryId) {
 
@@ -55,6 +60,12 @@ public class RequirementLibraryModificationController {
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
 		mav.addObject("workspaceName", "requirement");
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.REQUIREMENT);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
+
+		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("canShowDashboard", canShowDashboard);
 
 		return mav;
 	}

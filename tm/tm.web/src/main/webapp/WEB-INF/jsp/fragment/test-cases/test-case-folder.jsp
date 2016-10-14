@@ -72,7 +72,7 @@
 
 	<%-- statistics panel --%>
 <c:if test="${shouldShowDashboard}">
-    <dashboard:favorite-dashboard workspace="tc"/>
+    <dashboard:favorite-dashboard />
 </c:if>
 
 <c:if test="${not shouldShowDashboard}">

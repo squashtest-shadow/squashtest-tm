@@ -43,16 +43,16 @@
 
 
 <c:if test="${empty editable}">
-	<c:set var="editable" value="${ false }" /> 
+	<c:set var="editable" value="${ false }" />
 	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ folder }">
-		<c:set var="editable" value="${ true }" /> 
+		<c:set var="editable" value="${ true }" />
 	</authz:authorized>
 </c:if>
 
 
 
 <c:if test="${ editable }">
-   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>  
+   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>
 </c:if>
 
 
@@ -69,53 +69,66 @@
 
 
 <div class="fragment-body">
-	
+
 	<%-- statistics panel --%>
-	
-	<dashboard:requirements-dashboard-panel url="${statsUrl}"/>
-	
+  <c:if test="${shouldShowDashboard}">
+      <dashboard:favorite-dashboard />
+  </c:if>
+
+  <c:if test="${not shouldShowDashboard}">
+  	<dashboard:requirements-dashboard-panel url="${statsUrl}"/>
+  </c:if>
+
 	<%-- description panel --%>
-	
+
 	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
 			<div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
-	
+
+
 	<%-- attachments panel --%>
-	
+
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
-	
+
 	<script type="text/javascript">
 
 	var identity = { resid : ${folder.id}, restype : 'requirement-folders'  };
-	
+	var shouldShowDashboard = ${shouldShowDashboard};
+
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management"], 
-					function($, basic, contentHandlers, RFM){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management", "favorite-dashboard/favorite-dashboard-main"],
+					function($, basic, contentHandlers, RFM, favoriteMain){
 		$(function(){
-				
+
 				basic.init();
-				
+
 				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
+
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
-						
-				
-				//init the dashboard
-				RFM.initDashboardPanel({
-					master : '#dashboard-master',
-					cacheKey : 'dashboard-reqfold${folder.id}'
-				});
-				
+
+
+				//init the custom dashboard
+				if(shouldShowDashboard){
+          squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+          squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+          favoriteMain.init();
+				}
+				else {
+				//init the default dashboard
+          RFM.initDashboardPanel({
+            master : '#dashboard-master',
+            cacheKey : 'dashboard-reqfold${folder.id}'
+           });
+         }
 			});
 		});
 	});
 
 </script>
-	
+
 </div>
 
 
