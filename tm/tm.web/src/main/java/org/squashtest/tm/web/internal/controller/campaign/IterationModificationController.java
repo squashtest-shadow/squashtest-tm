@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -64,6 +65,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -122,11 +124,17 @@ public class IterationModificationController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
+
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
 
 		populateIterationModel(model, iterationId);
+
+
+
 		return "fragment/iterations/iteration";
 	}
 
@@ -156,6 +164,13 @@ public class IterationModificationController {
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
 		model.addAttribute("milestoneConf", milestoneConf);
+
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
+
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
+
 
 		populateOptionalExecutionStatuses(iteration, model);
 

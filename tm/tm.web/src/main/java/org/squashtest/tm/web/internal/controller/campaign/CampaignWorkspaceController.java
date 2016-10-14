@@ -74,11 +74,6 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	}
 
 	@Override
-	protected Map<String, String> getWorkspaceUserPref() {
-		return null;
-	}
-
-	@Override
 	protected void populateModel(Model model, Locale locale) {
 		// noop
 	}

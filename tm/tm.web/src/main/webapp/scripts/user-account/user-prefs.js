@@ -118,6 +118,8 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
 
          else if(squashtm.app.requirementWorkspaceConf){return "requirement";}
 
+         else if(squashtm.app.campaignWorkspaceConf){return "campaign";}
+
          throw ("you must call this function inside a workspace. All workspace conf are undefined in your context"); 
     }
 

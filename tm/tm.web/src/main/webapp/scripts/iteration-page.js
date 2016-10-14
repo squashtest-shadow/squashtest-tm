@@ -23,8 +23,8 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing", "iteration-management",
-			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
-			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues, confman) {
+			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager","./favorite-dashboard/favorite-dashboard-main","./user-account/user-prefs", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
+			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues, confman, favoriteView, userPrefs) {
 
 		// *********** event handler ***************
 
@@ -144,9 +144,23 @@ require([ "common" ], function() {
 			});
 
 			// ********** dashboard **************
-			itermanagement.initDashboardPanel({
-				master : "#dashboard-master",
-				cacheKey : "it" + config.identity.resid
+			var shouldShowFavoriteDashboard = userPrefs.shouldShowFavoriteDashboardInWorkspace();
+
+			if(shouldShowFavoriteDashboard){
+				favoriteView.init();
+			}
+			else {
+				itermanagement.initDashboardPanel({
+					master : "#dashboard-master",
+					cacheKey : "it" + config.identity.resid
+				});
+			}
+
+			var wreqr = window.squashtm.app.wreqr;
+			//refresh when clicking on first tab so the gridster view can initialize properly.
+			//if hidden, the view grid initialize itself with 0 size...
+			$("#dashboard-tab-list-item").on("click", function() {
+				wreqr.trigger("favoriteDashboard.reload");
 			});
 
 

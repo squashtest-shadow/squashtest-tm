@@ -191,10 +191,35 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 					$("#delete-node-dialog").delcampDialog("open");
 				}
 			}
+
+			function tryToRefresh() {
+				if (!$("#dashboard-grid").size()) {
+					window.requestAnimationFrame(tryToRefresh);
+				}
+				else {
+					wreqr.trigger("favoriteDashboard.reload");
+				}
+			}
 			
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 			
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
+
+			//**************** favorite dashboard **************
+			
+			var wreqr = squashtm.app.wreqr;
+			wreqr.on("favoriteDashboard.showDefault", function () {
+				//we need to unload the whole view as we cannot replace the backbone view by a new JSP fragment easily
+				//it's far easier and cleaner to reload the contextual content after backbone view has been destroyed
+				ctxcontent.unload();
+				loadFragment(tree);
+			  });
+			  
+			wreqr.on("favoriteDashboard.showFavorite", function () {
+				ctxcontent.unload();
+				loadFragment(tree);
+			  });
+
 
 			
 		}

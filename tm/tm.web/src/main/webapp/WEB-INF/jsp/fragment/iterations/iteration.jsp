@@ -73,14 +73,14 @@
 <c:set var="writable"         value="${false}" />
 <c:set var="moreThanReadOnly" value="${false}" />
 <c:set var="attachable"       value="${false}" />
-<c:set var="linkable"         value="${false}" />  
+<c:set var="linkable"         value="${false}" />
 <c:set var="executable"       value="${false}" />
 <c:set var="deletable"        value="${false}" />
 <c:set var="extendedDeletable" value="${false}" />
-  
-  
+
+
 <c:if test="${not milestoneConf.locked}">
-  
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
   <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
@@ -143,13 +143,13 @@
 
       <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
       <span id="iteration-raw-reference" style="display: none">
-        <c:out value="${ iteration.reference }" escapeXml="true" /> 
-      </span> 
-      
+        <c:out value="${ iteration.reference }" escapeXml="true" />
+      </span>
+
       <span id="iteration-raw-name" style="display: none">
-        <c:out value="${ iteration.name }" escapeXml="true" /> 
-      </span>      
-      
+        <c:out value="${ iteration.name }" escapeXml="true" />
+      </span>
+
     </h2>
   </div>
 
@@ -176,13 +176,13 @@
     </c:if>
 
   </div>
- 
+
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
   </c:if>
-  
+
   <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "iteration"/>
-  
+
    <div class="unsnap"></div>
 </div>
 
@@ -190,7 +190,7 @@
   <div class="fragment-tabs fragment-body">
     <ul class="tab-menu">
       <li>
-        <a href="#dashboard-iteration">
+        <a href="#dashboard-iteration" id="dashboard-tab-list-item">
           <f:message key="title.Dashboard" />
         </a>
       </li>
@@ -212,15 +212,15 @@
             <span class="hasAttach">!</span>
           </c:if>
         </a>
-      </li> 
-      
+      </li>
+
 <c:if test="${iteration.project.bugtrackerConnected}">
         <li>
           <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
-</c:if>      
-      
+</c:if>
+
     </ul>
     <div id="tabs-1">
 
@@ -234,11 +234,11 @@
                 <label class="display-table-cell" for="iteration-reference"><f:message key="label.Reference" /></label>
                 <div class="display-table-cell" id="iteration-reference">${ iteration.reference }</div>
               </div>
-              
+
               <div class="display-table-row">
                 <label for="iteration-description" class="display-table-cell"><f:message key="label.Description" /></label>
                 <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
-              </div>  
+              </div>
 		</jsp:attribute>
       </comp:toggle-panel>
 
@@ -286,16 +286,16 @@
 
     <%-- ------------------ test plan ------------------------------ --%>
 
-    <it:iteration-test-plan-panel 
-        iteration="${iteration}" 
-        assignableUsers="${assignableUsers}" 
+    <it:iteration-test-plan-panel
+        iteration="${iteration}"
+        assignableUsers="${assignableUsers}"
         weights="${weights}"
-        modes="${modes}" 
-        statuses="${statuses}" 
-        linkable="${linkable}" 
-        editable="${writable}" 
+        modes="${modes}"
+        statuses="${statuses}"
+        linkable="${linkable}"
+        editable="${writable}"
         executable="${executable}"
-        reorderable="${linkable}" 
+        reorderable="${linkable}"
         deletable="${deletable}"
         extendedDeletable="${extendedDeletable}"
         milestoneConf="${milestoneConf}"/>
@@ -303,11 +303,19 @@
     <%-- ------------------ /test plan ----------------------------- --%>
 
     <%------------------------------- Dashboard ---------------------------------------------------%>
-    <div id="dashboard-iteration">
-      <dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}"
-        printUrl="${iterationStatisticsPrintUrl}" allowsSettled="${allowsSettled}"
-        allowsUntestable="${allowsUntestable}" />
-    </div>
+  <div id="dashboard-iteration">
+    <%-- statistics panel --%>
+    <c:if test="${shouldShowDashboard}">
+      <dashboard:favorite-dashboard/>
+    </c:if>
+
+    <c:if test="${not shouldShowDashboard}">
+        <dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}"
+          printUrl="${iterationStatisticsPrintUrl}" allowsSettled="${allowsSettled}"
+          allowsUntestable="${allowsUntestable}" />
+    </c:if>
+
+   </div>
 
 
     <%------------------------------ Attachments bloc ------------------------------------------- --%>
@@ -344,12 +352,12 @@
     </c:if>
     <%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
 
-    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%>
 <c:if test="${iteration.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${iteration}"/>
 </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
 
 
   </div>
@@ -383,6 +391,9 @@
 					};
 					datePickers.init(conf);
 					datePickersAuto.init(conf);
+					//favorite dashboard
+					squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+          squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
 				});
 			});
 		});

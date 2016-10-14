@@ -101,6 +101,7 @@
     				padding-bottom: .15em;
     				margin-left: 0.5em !important;
     				font-size: @small-font;
+    				color: #ffffff !important; 
     			}
 
     		}
