@@ -116,7 +116,7 @@
 
 				//init the default dashboard
 				if(shouldShowDashboard){
-          squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+          squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
           squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
           favoriteMain.init();
 				}

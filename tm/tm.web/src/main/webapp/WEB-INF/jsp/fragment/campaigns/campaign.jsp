@@ -362,7 +362,7 @@
 <script type="text/javascript">
 
 squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
-squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
 
 	require(["common"], function(){
 		require(["campaign-management"], function(manager){

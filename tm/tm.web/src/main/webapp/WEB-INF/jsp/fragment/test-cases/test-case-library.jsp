@@ -89,7 +89,7 @@ require(["common"], function() {
 			basicwidg.init();
 
 			if(shouldShowDashboard){
-        squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+        squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
         squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
         favoriteMain.init();
       }

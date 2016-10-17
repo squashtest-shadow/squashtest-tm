@@ -25,8 +25,7 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
             el: "#favorite-dashboard-wrapper",
 
             initialize : function(options) {
-                console.log("backbone view initialized");
-                this.canShowDashboard = squashtm.workspace.canShowFavoriteDashboard==="true";
+                this.canShowDashboard = squashtm.workspace.canShowFavoriteDashboard;
                 this.initializeEvents();
                 this.tree = zetree.get();
                 this.initView();

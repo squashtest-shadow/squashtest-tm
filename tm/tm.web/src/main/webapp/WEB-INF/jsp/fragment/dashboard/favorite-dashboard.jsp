@@ -48,8 +48,8 @@
 require(["common"], function() {
 	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
       	$(function(){
-    		squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
-    		squashtm.workspace.shouldShowFavoriteDashboard = "${shouldShowDashboard}";
+    		squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+    		squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
       		favoriteMain.init();
       	});
     });

@@ -392,7 +392,7 @@
 					datePickers.init(conf);
 					datePickersAuto.init(conf);
 					//favorite dashboard
-					squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+					squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
           squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
 				});
 			});
