@@ -93,10 +93,16 @@
       </ul>
 
       <div id="folder-dashboard">
-			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}"
-                                                      printUrl="${folderStatisticsPrintUrl}"
-                                                      allowsSettled="${allowsSettled}"
-                                                      allowsUntestable="${allowsUntestable}" />
+        <c:if test="${shouldShowDashboard}">
+            <dashboard:favorite-dashboard />
+        </c:if>
+
+        <c:if test="${not shouldShowDashboard}">
+          <dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}"
+                                                                printUrl="${folderStatisticsPrintUrl}"
+                                                                allowsSettled="${allowsSettled}"
+                                                                allowsUntestable="${allowsUntestable}" />
+        </c:if>
       </div>
 
       <%-- ----------------------- bugtracker (if present)----------------------------------------%>
@@ -141,6 +147,10 @@
                 		style : "fragment-tab"
                 	}
                 };
+
+                //favorite dashboard
+                squashtm.workspace.canShowFavoriteDashboard = "${canShowDashboard}";
+                squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};
 
                 CFManager.init(conf);
      	 	});

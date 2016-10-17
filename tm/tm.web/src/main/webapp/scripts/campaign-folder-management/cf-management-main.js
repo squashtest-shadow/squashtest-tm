@@ -20,8 +20,8 @@
  */
 
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel",
-        'dashboard/campaigns-dashboard/campaigns-dashboard-main'], 
-		function($, basic, ContentHandlers, Frag, Bugtracker, dashboard){
+        "dashboard/campaigns-dashboard/campaigns-dashboard-main","favorite-dashboard/favorite-dashboard-main"], 
+		function($, basic, ContentHandlers, Frag, Bugtracker, dashboard, favoriteView){
 	
 	
 	function init(conf){
@@ -43,18 +43,28 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		}
 		
 		// dashboard
-		dashboard.init({
-			master : '#dashboard-master',
-			cacheKey : 'dashboard-cfold'+conf.basic.identity.resid
-		});
+		var shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard;
+		if(shouldShowFavoriteDashboard){
+			favoriteView.init();
+		} else {
+			dashboard.init({
+				master : '#dashboard-master',
+				cacheKey : 'dashboard-cfold'+conf.basic.identity.resid
+			});
+		}
 		
 	}
 	
 	return {
 		init : init,
 		initDashboardPanel : function(conf){
-			dashboard.init(conf);
+			var shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard;
+			if(shouldShowFavoriteDashboard){
+				favoriteView.init();
+			} else {
+				dashboard.init(conf);
+			}
 		}
-	}
+	};
 	
 });

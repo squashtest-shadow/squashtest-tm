@@ -30,55 +30,57 @@
 <%@ attribute name="allowsSettled" required="true" description="whether execution status settled is allowed" %>
 <%@ attribute name="allowsUntestable" required="true" description="whether execution status  untestable is allowed" %>
 <%@ attribute name="printUrl" required="false" description="url where to fetch an html version" %>
-<%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
+<%@ attribute name="printmode" required="false" type="java.lang.Boolean"
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
 
 
 <f:message var="statisticsTitle" key="title.CampaignStatistics"/>
 <f:message var="inventoryTitle" key="title.TestInventoryByCampaign"/>
-<f:message var="refreshLabel" key="label.Refresh" />			
-<f:message var="buttonOK" key="label.Ok"/>	
+<f:message var="refreshLabel" key="label.Refresh" />
+<f:message var="buttonOK" key="label.Ok"/>
 <f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
+<f:message var="favoriteLabel" key="label.favorite-dashboard" />
 
 
 <div id="dashboard-master" data-def="url=${url}">
 
 	<div class="right btn-toolbar">
-		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 		
+		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span>
 <c:if test="${empty printmode or (not printmode) }">
-		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}" title="${refreshLabel}"/>	
+		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}" title="${refreshLabel}"/>
+		<input type="button" class="show-favorite-dashboard-button sq-btn btn-sm" role="button" value="${favoriteLabel}" title="${favoriteLabel}" />
         <a id="campaign-dashboard-print" href="${printUrl}" target="_blank" class="sq-icon-btn btn-sm"  role="button" title="<f:message key='label.print' />">
           <span class="ui-icon ui-icon-print"></span>
         </a>
 </c:if>
 	</div>
-	
-	
+
+
 	<%-- alternate contents : when no data are available we'll display an empty pane, when there are some we'll display the rest. --%>
-	
+
 	<div class="dashboard-figleaf">
-		
+
 		<div class="dashboard-figleaf-notready" style="text-align : center">
 			<h3 class="dashboard-figleaf-notready-title"><f:message key="dashboard.notready.title"/></h3>
 		</div>
-	
+
 		<div class="dashboard-figleaf-figures not-displayed">
-			
+
 			<%-- first dashboard : campaign statistics --%>
-      
+
 			<comp:toggle-panel id="dashboard-statistics" title="${statisticsTitle}">
 				<jsp:attribute name="body">
-					
-					
+
+
 					<div id="dashboard-testcase-status" class="dashboard-narrow-item dashboard-pie" data-def="model-attribute=campaignTestCaseStatusStatistics">
-						
+
 						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.status.title"/></h2>
-						
+
 						<div class="dashboard-figures">
 							<div id="dashboard-testcase-status-view" class="dashboard-item-view"></div>
 						</div>
-						
-						<div class="dashboard-item-meta">					
+
+						<div class="dashboard-item-meta">
 							<div class="dashboard-item-legend">
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#BDD3FF"></div>
@@ -92,12 +94,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
-								
+
 								<div class="${allowsSettled ? '' : 'not-displayed' }">
 									<div class="dashboard-legend-sample-color" style="background-color:#99FF99" ></div>
 									<span><f:message key="execution.execution-status.SETTLED" /></span>
 								</div>
-								
+
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
 									<span><f:message key="execution.execution-status.FAILURE" /></span>
@@ -106,36 +108,36 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#FFCC00"></div>
 									<span><f:message key="execution.execution-status.BLOCKED" /></span>
 								</div>
-								
+
 								<div class="${allowsUntestable ? '' : 'not-displayed' }">
 									<div class="dashboard-legend-sample-color" style="background-color:#969696" ></div>
 									<span><f:message key="execution.execution-status.UNTESTABLE" /></span>
 								</div>
-								
+
 							</div>
 						</div>
 					</div>
-						
+
 					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=campaignTestCaseSuccessRateStatistics">
-					
+
 						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.successrate.title"/></h2>
-											
+
 						<div class="dashboard-figures">
 							<div id="dashboard-success-rate-view" class="dashboard-item-view"></div>
 						</div>
-						
-						<div class="dashboard-item-meta">		
+
+						<div class="dashboard-item-meta">
 
 							<div class="dashboard-item-subplot">
 								<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
-								
-								<div class="dashboard-subplot-legend success-rate-total-success" 
+
+								<div class="dashboard-subplot-legend success-rate-total-success"
 									 style="background-color:#99CC00; color:black;"></div>
-								
+
 								<div class="dashboard-subplot-legend success-rate-total-failure"
-									 style="background-color:#FF3300; color:white;"></div>							
-							</div>		
-							
+									 style="background-color:#FF3300; color:white;"></div>
+							</div>
+
 							<div class="dashboard-item-legend">
 								<div >
 									<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
@@ -153,8 +155,8 @@
 									<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
 									<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
 								</div>
-						
-							
+
+
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="label.SuccessRate" /></span>
@@ -170,20 +172,20 @@
 							</div>
 						</div>
 					</div>
-	
+
 
 					<div id="dashboard-nonexecuted-testcase-importance" class="dashboard-narrow-item dashboard-pie" data-def="model-attribute=campaignNonExecutedTestCaseImportanceStatistics">
-						
+
 						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.importance.title"/><div class="icon-helper no-print small-margin-left" title="${testWeightHelper}"></div></h2>
-						
+
 						<div class="dashboard-figures">
 							<div id="dashboard-nonexecuted-testcase-importance-view" class="dashboard-item-view"></div>
 						</div>
-						
-						<div class="dashboard-item-meta">					
-	
+
+						<div class="dashboard-item-meta">
+
 							<div class="dashboard-item-legend">
-	
+
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
 									<span><f:message key="test-case.importance.LOW" /></span>
@@ -203,23 +205,23 @@
 							</div>
 						</div>
 					</div>
-	
+
 				</jsp:attribute>
 			</comp:toggle-panel>
-			
+
 			<%-- second dashboard : test inventory --%>
-			
+
 			<comp:toggle-panel id="" title="${inventoryTitle}">
 				<jsp:attribute name="body">
-				<div class="dashboard-figures">		
+				<div class="dashboard-figures">
 					<table id="dashboard-test-inventory" class="dashboard-table" data-def="model-attribute=campaignTestInventoryStatisticsList">
 						<thead>
-							<tr >				
+							<tr >
 								<th style="width:25%"><span><f:message key="label.Campaign"/></span></th>
 								<th class="status-color-ready std-border"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
-								<th class="${allowsSettled ? 'status-color-settled std-border' : 'status-color-settled std-border not-displayed' }"><span><f:message key="label.Settled"/></span></th>		
+								<th class="${allowsSettled ? 'status-color-settled std-border' : 'status-color-settled std-border not-displayed' }"><span><f:message key="label.Settled"/></span></th>
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
 								<th class="${allowsUntestable ? 'status-color-untestable std-border' : 'status-color-untestable std-border not-displayed' }"><span><f:message key="label.Untestable"/></span></th>
@@ -227,7 +229,7 @@
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
 						</thead>
-					
+
 						<tbody>
 							<tr class="dashboard-table-template-emptyrow">
 								<td colspan="9" class="std-border"><f:message key="generics.datatable.zeroRecords"/></td>
@@ -244,12 +246,12 @@
 								<td class="std-border light-border" style="font-weight:bold;">{{this.[8]}}</td>
 								<td class="std-border light-border"style="font-weight:bold;">{{this.[9]}}</td>
 							</tr>
-						</tbody>			
-					</table>		
+						</tbody>
+					</table>
 				</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
 		</div>
-	
+
 	</div>
 </div>

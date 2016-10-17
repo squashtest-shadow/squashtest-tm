@@ -88,7 +88,7 @@
       <div id="dashboard-doc">
         <strong><f:message key="workspace.home.dashboard.default"/></strong>
       </div>
-    </script>
+  </script>
 
   <!-- /SHOW DASHBOARD  -->
 
