@@ -84,7 +84,7 @@ var shouldShowDashboard = ${shouldShowDashboard};
 
 require(["common"], function() {
 
-		require(["jquery","squash.basicwidgets","test-case-library-management", "favorite-dashboard/favorite-dashboard-main"], function($,basicwidg, TCLM, favoriteMain){
+		require(["jquery","squash.basicwidgets","test-case-library-management", "favorite-dashboard"], function($,basicwidg, TCLM, favoriteMain){
 			$(function(){
 			basicwidg.init();
 

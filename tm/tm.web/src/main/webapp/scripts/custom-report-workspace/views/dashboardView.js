@@ -208,8 +208,6 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			 * Update all charts. The binding are given by this.dashboardChartBindings
 			 */
 			refreshCharts: function () {
-				console.log("REFRESH !!!!");
-				// var charts = _.values(this.dashboardChartViews);
 				var bindings = _.values(this.dashboardChartBindings);
 				for (var j = 0; j < bindings.length; j++) {
 					var binding = bindings[j];

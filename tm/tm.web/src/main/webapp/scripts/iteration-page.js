@@ -23,7 +23,7 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing", "iteration-management",
-			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager","./favorite-dashboard/favorite-dashboard-main","./user-account/user-prefs", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
+			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager","favorite-dashboard","./user-account/user-prefs", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
 			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues, confman, favoriteView, userPrefs) {
 
 		// *********** event handler ***************

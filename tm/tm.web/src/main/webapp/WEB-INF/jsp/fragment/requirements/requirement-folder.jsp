@@ -98,7 +98,7 @@
 	var shouldShowDashboard = ${shouldShowDashboard};
 
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management", "favorite-dashboard/favorite-dashboard-main"],
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "requirement-folder-management", "favorite-dashboard"],
 					function($, basic, contentHandlers, RFM, favoriteMain){
 		$(function(){
 

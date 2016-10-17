@@ -125,6 +125,11 @@ requirejs.config({
             name: 'charts-rendering',
             main: 'chart-render-main',
             location: 'charts/rendering'
+        },
+
+        {
+            name : 'favorite-dashboard',
+            main : 'favorite-dashboard-main'
         }
 
     ],

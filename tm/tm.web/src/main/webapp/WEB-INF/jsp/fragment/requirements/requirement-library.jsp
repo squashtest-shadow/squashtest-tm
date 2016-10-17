@@ -83,7 +83,7 @@
 var shouldShowDashboard = ${shouldShowDashboard};
 
 require(["common"], function() {
-		require(["jquery","squash.basicwidgets","requirement-library-management","favorite-dashboard/favorite-dashboard-main"], function($,basicwidg, RLM, favoriteMain){
+		require(["jquery","squash.basicwidgets","requirement-library-management","favorite-dashboard"], function($,basicwidg, RLM, favoriteMain){
 			$(function(){
 			basicwidg.init();
 			//init the custom dashboard

@@ -37,7 +37,7 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
         "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
-        "./test-plan-panel", "custom-field-values", "squash.configmanager","favorite-dashboard/favorite-dashboard-main", "jqueryui", "jquery.squash.formdialog"],
+        "./test-plan-panel", "custom-field-values", "squash.configmanager","favorite-dashboard", "jqueryui", "jquery.squash.formdialog"],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
         dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView){
 

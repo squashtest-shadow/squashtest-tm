@@ -46,7 +46,7 @@
 
 <script type="text/javascript">
 require(["common"], function() {
-	require(["jquery","favorite-dashboard/favorite-dashboard-main"], function($,favoriteMain){
+	require(["jquery","favorite-dashboard"], function($,favoriteMain){
       	$(function(){
     		squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
     		squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};

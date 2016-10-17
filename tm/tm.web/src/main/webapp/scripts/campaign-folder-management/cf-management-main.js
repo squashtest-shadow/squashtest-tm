@@ -20,7 +20,7 @@
  */
 
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel",
-        "dashboard/campaigns-dashboard/campaigns-dashboard-main","favorite-dashboard/favorite-dashboard-main"], 
+        "dashboard/campaigns-dashboard/campaigns-dashboard-main","favorite-dashboard"], 
 		function($, basic, ContentHandlers, Frag, Bugtracker, dashboard, favoriteView){
 	
 	
