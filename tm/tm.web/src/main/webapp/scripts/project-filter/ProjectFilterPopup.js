@@ -31,8 +31,8 @@
  * 
  * Methods : open, close
  */
- define([ "jquery",  "./ProjectFilterModel","underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
-		function($, ProjectFilterModel, _) {
+ define([ "jquery",  "./ProjectFilterModel","underscore","app/squash.handlebars.helpers", "squashtable", "jqueryui", "jquery.squash.confirmdialog",],
+		function($, ProjectFilterModel, _, Handlebars) {
 	//TODO mutualize what can be with app/report/ProjectsPickerPopup and SingleProjectPickerPopup
 	function eachCheckbox($domPicker, eachCallback) {
 			var $boxes = $domPicker.find("table .project-checkbox");
@@ -52,48 +52,74 @@
 				"click .project-picker-invsel" : "invertAllProjects"
 			},
 		 
-			initialize :function(){
-			var self = this;
-			this.filterTable = $.proxy(this._filterTable, this);
-			// process initial state
-			var ids =[];
-			this.$el.find("table tbody tr").each(function() {
-				var $checkbox = $(this).find(".project-checkbox");
-				var checked = $checkbox.is(":checked");
-				$checkbox.data("previous-checked", checked);
-				var id = $checkbox.val();
-				if(checked){
-					ids.push(id);
+			initialize :function(options){
+				var self = this;
+				this.options = options;
+				//if we are in a SPA environnement like in custom reports, perform render before init datatable and component
+				//you must also provide the model as options.initialProjectModel
+				//please don't overide the selection model declared below as this.model !
+				if(this.options && this.options.frontTemplating){
+					this.render().doInitialize();
 				}
-			});
-			// set model 
-			var url  = this.$el.data("url");
-			self.model = new ProjectFilterModel({projectIds : ids} );
-			self.model.url = url;
-			
-			// init confirm dialog
-			this.$el.confirmDialog({
-					width : 800});
-			
-			// init datatable
-			// change filter by search.dt
-			self.table = this.$el.find("table").bind('search.dt', self.filterTable).squashTable({
-					"sScrollY": "500px",
-					"bFilter":true,
-					"bPaginate" : false, 
-					"bServerSide" : false,
-					"bScrollCollapse": true,
-					"bAutoWidth" : true,
-					"bRetrieve" : false,
-					"sDom" : '<"H"lfr>t',
+				else {
+					this.doInitialize();
+				}	
+			},
+
+			doInitialize : function() {
+				var self = this;
+				this.filterTable = $.proxy(this._filterTable, this);
+				// process initial state
+				var ids =[];
+				this.$el.find("table tbody tr").each(function() {
+					var $checkbox = $(this).find(".project-checkbox");
+					var checked = $checkbox.is(":checked");
+					$checkbox.data("previous-checked", checked);
+					var id = $checkbox.val();
+					if(checked){
+						ids.push(id);
+					}
 				});
-			
+				// set model 
+				var url  = this.$el.data("url");
+				self.model = new ProjectFilterModel({projectIds : ids} );
+				self.model.url = url;
+				
+				// init confirm dialog
+				this.$el.confirmDialog({
+						width : 800});
+				
+				// init datatable
+				// change filter by search.dt
+				self.table = this.$el.find("table").bind('search.dt', self.filterTable).squashTable({
+						"sScrollY": "500px",
+						"bFilter":true,
+						"bPaginate" : false, 
+						"bServerSide" : false,
+						"bScrollCollapse": true,
+						"bAutoWidth" : true,
+						"bRetrieve" : false,
+						"sDom" : '<"H"lfr>t',
+				});
+			},
+
+			render : function() {
+				var templateSelector = this.options.templateSelector;
+				if (templateSelector){
+					var source = $(templateSelector).html();
+					var template = Handlebars.compile(source);
+					this.$el.append(template(this.options.initialProjectModel));
+				} else {
+					throw "you must specify a template selector to render this dialog with hanlebar, client side";
+				}
+				return this;
 			},
 			
 			open : function(){
 				this.$el.confirmDialog("open");
 				this.table.fnAdjustColumnSizing();
 			},
+
 			_filterTable : function(event){
 				var warning = this.$el.find(".filter-warning");
 				var filterText = this.$el.find('div.dataTables_filter input').val();
@@ -104,9 +130,17 @@
 				}
 			},
 			confirm : function(){
-				this.model.save(null,{
+				//in case of use in SPA environnement, we don't want to post project ProjectFilter
+				//And by mercy we don't want to reload page and loose our precious client state...
+				if(this.options && this.options.preventServerFilterUpdate){
+					this.trigger("projectPopup.confirm");
+				}
+				else {
+					this.model.save(null,{
 					success : function(){window.location.reload();}
 				});
+				}
+				
 			},
 			
 			cancel : function(){
