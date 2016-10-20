@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectFilterPopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectFilterPopup,chartUtils) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectSelectorPopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectSelectorPopup,chartUtils) {
 		"use strict";
 
 		translator.load({
@@ -89,7 +89,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					};
 				});
 
-				this.projectPopup = new ProjectFilterPopup({
+				this.projectPopup = new ProjectSelectorPopup({
 					el:"#project-perimeter-popup",
 					frontTemplating : true,
 					templateSelector : "#project-popup-tpl",
@@ -267,37 +267,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			},
 
 			openProjectPerimeterPopup : function(){
-				// var self = this;
-				// var projects = squashtm.workspace.projects;
-				// var initialModel = _.map(projects,function(project) {
-				// 	return {
-				// 		id: project.id,
-				// 		name: project.name,
-				// 		label: project.label
-				// 	};
-				// });
-
-				// var projectPopup = new ProjectFilterPopup({
-				// 	el:"#project-perimeter-popup",
-				// 	frontTemplating : true,
-				// 	templateSelector : "#project-popup-tpl",
-				// 	initialProjectModel : initialModel,
-				// 	preventServerFilterUpdate : true
-				// });
-
-				// //setting the callback after confirm in project popup
-				// this.listenTo(projectPopup, 'projectPopup.confirm', function() {
-				// 	var selectedIds = projectPopup.model.get("projectIds");
-				// 	self.model.set("scope", _.map(selectedIds,function(id){
-				// 		return {id:id,type:"PROJECT"};
-				// 	}));
-				// 	self.model.set("projectsScope", _.map(selectedIds,function(id){
-				// 		return parseInt(id);
-				// 	}));
-				// 	self.writeProjectPerimeter();
-				//  });
-
-
 				 this.projectPopup.open();
 			},
 
@@ -369,28 +338,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					self.model.set(instanceType,filtered);		
 				});
 			},
-
-			// recomputeSelectedAttributes : function(instanceTypes) {
-			// 	var self = this;
-			// 	var selectedAttributes = [];
-			// 	var selectedCufAttributes = [];
-
-			// 	_.each(instanceTypes, function(instanceType) {
-			// 		var instances = self.model.get(instanceType);
-			// 		var ids = _.each(instances,function(instance) {
-			// 			if (instance.column.columnType == "CUF") {
-			// 				selectedCufAttributes.push("" + instance.column.id);
-			// 			}
-			// 			selectedAttributes.push("" + instance.column.id);
-			// 		});
-			// 	});
-
-			// 	selectedAttributes = _.uniq(selectedAttributes);
-			// 	this.model.set("selectedAttributes",selectedAttributes);
-
-			// 	selectedCufAttributes = _.uniq(selectedCufAttributes);
-			// 	this.model.set("selectedCufAttributes",selectedCufAttributes);
-			// },
 
 			checkValidColumnPrototypeId : function(listIds,validsIds) {
 				var validsStringIds = _.map(validsIds,function(id) {
