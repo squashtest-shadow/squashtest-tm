@@ -101,6 +101,9 @@
     <div id="tree-panel-left" style="z-index: 1" class="left-frame noprint">
       <div class="position-layout-fix">
         <div id="tabbed-pane">
+          <!-- The page must have a first ul because jQuery make it a 'ui-widget-header' (black background)
+          and make the next ones 'ui-widget-content' (white background) -->
+          <ul></ul> 
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
             <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
