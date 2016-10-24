@@ -31,9 +31,11 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		initialize : function(conf) {
 			var self = this;
 			// properties
+			this.isAdmin = conf.isAdmin;
 			this.selectedServerId = conf.TAServerId;
-			this.updateProjectList = true;
 			this.projecUrl = conf.tmProjectURL;
+				// This flag is not used anymore, created some bugs after canceling
+				//this.updateProjectList = true;
 			// initialize
 			this.$el.formDialog();
 			this.error = this.$(".ta-projectsadd-error").popupError();
@@ -52,14 +54,32 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		},
 		open : function() {
 			var self = this;
-			if (this.updateProjectList) {
-				this.$el.formDialog('setState', 'pleasewait');
+			
+			/* If the user is Admin, we don't ask for credentials */
+			this.$el.formDialog('setState', 'pleasewait');
+			if(this.isAdmin) {
 				$.ajax({
 					url : self.projecUrl + "/available-ta-projects",
-					type : "get"
-
-				}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);
-				this.updateProjectList = false;
+					type : "get",
+				}).done(self.buildAndDisplayProjectList)
+				 .fail(self.manageFatalError);
+			/* Else, we use the credentials. */
+			} else {			
+				var authDialog = $('#add-ta-projects-login-dialog');
+				var login = authDialog.data('login');
+				var password = authDialog.data('password');
+				$.ajax({
+					url : self.projecUrl + "/available-ta-projects",
+					type : "get",
+					data: {
+						"login": login,
+						"password": password
+					}
+				}).done(self.buildAndDisplayProjectList)
+				 .fail(function(jsonFailResult) {
+					self.manageFatalError(jsonFailResult);
+					authDialog.data('login', "").data('password', "");
+				});
 			}
 		},
 		confirm : function() {
@@ -116,7 +136,6 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 				data : JSON.stringify(datas)
 			}).done(function() {
 				self.trigger("bindTAProjectPopup.confirm.success");
-				self.updateProjectList = true;
 				self.$el.formDialog('close');
 			}).fail(function(xhr) {
 				self.trigger("bindTAProjectPopup.confirm.failure");
@@ -182,23 +201,21 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 			// event listening
 			this.listenTo(self.parentPanel.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
 					self.onChangeServerConfirmed);
+			
+			/* -- These listeners are disabled since we don't use the updateProject flag anymore --
 			// refresh popup on delete project
-			this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {
-				self.updateProjectList = true;
-			});
+				this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {
+				});
 			// refresh popup on edit project
-			this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success",
-					function() {
-						self.updateProjectList = true;
-					});
-
+				this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success",
+						function() {
+			});*/
 		},
 		_onChangeServerConfirmed : function(newSelectedServer) {
 			if (newSelectedServer == this.selectedServerId) {
 				return;
 			} else {
 				this.selectedServerId = newSelectedServer;
-				this.updateProjectList = true;
 			}
 		},
 		_manageBindingError : function(request) {
@@ -243,7 +260,9 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		},
 		_showErrorMessage : function(message) {
 			this.error.find('span').html(message);
-			this.error.popupError('show');
+			/* Second error message ? */
+			//this.error.popupError('show');
+			this.$el.formDialog('close');
 		},
 		_buildAndDisplayProjectList : function(json) {
 			if (json.length > 0) {

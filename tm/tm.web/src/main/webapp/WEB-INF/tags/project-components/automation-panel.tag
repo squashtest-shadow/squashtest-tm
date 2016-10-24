@@ -34,7 +34,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 
-
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="closeLabel" key="label.Close" />
@@ -185,9 +184,40 @@
   </div>
 </div>
 
+<%-- ================================================
+	Automation Server Authentication Popup
+================================================ --%>
+
+<f:message var="testAutomationServerAuthentication" key="title.testAutomationServer.authentication" />
+<div id="add-ta-projects-login-dialog" data-def="width=300" class="popup-dialog not-displayed" title="${testAutomationServerAuthentication}" >
+
+  <div data-def="error-pane">
+    <span class="error-message"></span>
+  </div>
+
+  <div>
+    <div class="centered">
+      <div class="display-table">
+        <div class="display-table-row">
+          <div class="display-table-cell"><label><f:message key="label.Login" /></label></div>
+          <div class="display-table-cell"><input type="text" id="login-dialog-login" /></div>
+        </div>
+        <div class="display-table-row">
+          <div class="display-table-cell"><label><f:message key="label.password" /></label></div>
+          <div class="display-table-cell"><input type="password"  id="login-dialog-password"/></div>  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${confirmLabel}"  data-def="evt=confirm, mainbtn"/>
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+  </div>  
+</div> 
 
 <%-- ================================================
-	Project add popup. 
+	Add Project Popup. 
 ================================================= --%>
 
 
@@ -228,7 +258,7 @@
     <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
     <input type="button" value="${cancelLabel}" data-def="evt=cancel, state=main" />
-    <input type="button" value="${closeLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable" />
+    <input type="button" value="${closeLabel}" data-def="mainbtn=noTAProjectAvailable, evt=cancel, state=noTAProjectAvailable" />
   </div>
 
 </div>
@@ -336,6 +366,7 @@ require(["common"], function() {
       $(function(){
       
         var automationSettings = {
+        	isAdmin: ${isAdmin},
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id}

@@ -49,6 +49,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		el : "#ta-project-edit-popup",
 
 		initialize : function(conf) {
+			
+			this.isAdmin = conf.isAdmin;
 			this.projecUrl = conf.tmProjectURL;
 			this.$el.formDialog();
 			this.error = this.$(".ta-projectsedit-error").popupError();
@@ -110,22 +112,50 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			});
 
 		},
-		show : function(taProjectId, taProject) {
+		show : function() {
+			var self = this;
+			var authDialog = $('#add-ta-projects-login-dialog');
+
+			var login = authDialog.data('login');
+			var password = authDialog.data('password');
+			var taProjectId = self.$el.data('projectId');
+			var taProject = self.$el.data('taProject');
+			
 			this.$el.formDialog("setState", "pleasewait");
 			this.$el.formDialog("open");
-			var self = this;
-			this.taProjectId = taProjectId;
 			
+			this.taProjectId = taProjectId;
 			this.model = new TAProjectModel(taProject);
 			
 			// populate inputs
 			this.$el.find("input[name=label]").val(taProject.label);
 			this.$el.find("input[name=slaves]").val(taProject.slaves);
-			$.ajax({
-				url : this.projecUrl + "/available-ta-projects",
-				type : "GET"
-			}).done(self.updateComboDatasAndOpen).fail(self.manageFatalError);
-
+			
+			/* If the user is Admin, we don't ask for credentials */
+			if(this.isAdmin) {
+				$.ajax({
+					url : this.projecUrl + "/available-ta-projects",
+					type : "GET",
+				}).done(self.updateComboDatasAndOpen)
+				  .fail(self.manageFatalError);
+			/* Else, we use the credentials. */
+			} else {
+				$.ajax({
+					url : this.projecUrl + "/available-ta-projects",
+					type : "GET",
+					data: {
+						'login': login,
+						'password': password
+					}
+				}).done(self.updateComboDatasAndOpen)
+				  .fail(function(jsonFailResult) {
+					  self.manageFatalError(jsonFailResult);
+					  authDialog.data('login', "").data('password', "");
+				  });
+			}
+			// Erase data
+			self.$el.data('projectId', '');
+			self.$el.data('taProject', '');
 		},
 
 		cleanup : function() {
@@ -163,7 +193,9 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 
 		_showErrorMessage : function(message) {
 			this.error.find('span').text(message);
-			this.error.popupError('show');
+			/* Second error message ? */
+			//this.error.popupError('show');
+			this.$el.formDialog('close');
 		},
 		setParentPanel : function(parentPanel) {
 			var self = this;

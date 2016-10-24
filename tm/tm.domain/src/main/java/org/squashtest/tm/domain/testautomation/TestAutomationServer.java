@@ -55,7 +55,6 @@ import org.squashtest.tm.domain.audit.Auditable;
 @Auditable
 public class TestAutomationServer {
 
-
 	private static final String DEFAULT_KIND = "jenkins";
 
 	/**
@@ -84,7 +83,6 @@ public class TestAutomationServer {
 	@Size(min = 0, max = 50)
 	private String login;
 
-
 	/**
 	 * The password to be used with the login above
 	 */
@@ -93,14 +91,12 @@ public class TestAutomationServer {
 	@Size(max = 255)
 	private String password;
 
-
 	/**
 	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
 	 */
 	@Column
 	@Size(min = 0, max = 30)
 	private String kind = DEFAULT_KIND;
-
 
 	@Column(name="MANUAL_SLAVE_SELECTION")
 	private boolean manualSlaveSelection = false;
@@ -122,16 +118,12 @@ public class TestAutomationServer {
 		this.id = id;
 	}
 
-
-
 	public TestAutomationServer(String name, URL baseURL, String login, String password) {
 		this(name);
 		this.baseURL = baseURL;
 		this.login = login;
 		this.password = password;
 	}
-
-
 
 	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
 		this(name, baseURL, login, password);
@@ -142,34 +134,25 @@ public class TestAutomationServer {
 		return id;
 	}
 
-
-
 	public String getName() {
 		return name;
 	}
-
-
 
 	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-
-
 	public URL getBaseURL() {
 		return baseURL;
 	}
-
 
 	public String getLogin() {
 		return login;
 	}
 
-
 	public String getPassword() {
 		return password;
 	}
-
 
 	public String getKind() {
 		return kind;
@@ -183,16 +166,13 @@ public class TestAutomationServer {
 		return super.toString();
 	}
 
-
 	public void setBaseURL(URL baseURL) {
 		this.baseURL = baseURL;
 	}
 
-
 	public void setLogin(String login) {
 		this.login = login;
 	}
-
 
 	public void setPassword(String password) {
 		this.password = password;
@@ -214,4 +194,11 @@ public class TestAutomationServer {
 		this.description = description;
 	}
 
+	public TestAutomationServer createCopy() {
+		TestAutomationServer testAutomationServerCopy = new TestAutomationServer(
+				this.getName(), this.getBaseURL(), this.getLogin(), this.getPassword(), this.getKind());
+		testAutomationServerCopy.setDescription(this.getDescription());
+		testAutomationServerCopy.setManualSlaveSelection(this.isManualSlaveSelection());
+		return testAutomationServerCopy;
+	}
 }

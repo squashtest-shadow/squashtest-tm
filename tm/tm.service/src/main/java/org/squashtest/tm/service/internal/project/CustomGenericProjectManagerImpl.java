@@ -427,6 +427,33 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		return availableTaProjects;
 	}
+	/**
+	 * @see CustomGenericProjectFinder#findAllAvailableTaProjects(long, String, String)
+	 */
+	@Override
+	public Collection<TestAutomationProject> findAllAvailableTaProjectsWithCredentials(long projectId, String login, String password) {
+		TestAutomationServer server = genericProjectDao.findTestAutomationServer(projectId);
+		if(server == null) {
+			return Collections.emptyList();
+		}
+		/* We don't want to manipulate the Persistent TestAutomationServer,
+		so we create a Copy of it before setting the login and password. */
+		TestAutomationServer transientServer = server.createCopy();
+		transientServer.setLogin(login);
+		transientServer.setPassword(password);
+		
+		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(transientServer);
+		Collection<String> alreadyBoundProjectsJobNames = genericProjectDao.findBoundTestAutomationProjectJobNames(projectId);
+		Iterator<TestAutomationProject> it = availableTaProjects.iterator();
+		while(it.hasNext()) {
+			TestAutomationProject taProject = it.next();
+			if(alreadyBoundProjectsJobNames.contains(taProject.getJobName())) {
+				it.remove();
+			}
+		}
+		return availableTaProjects;
+	}
+	
 
 	// ********************************** bugtracker section
 	// *************************************

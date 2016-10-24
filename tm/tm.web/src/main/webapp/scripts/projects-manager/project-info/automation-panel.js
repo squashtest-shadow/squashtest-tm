@@ -20,6 +20,7 @@
  */
 /*
  settings :
+ - isAdmin : boolean indicating if the user is administrator
  - tmProjectURL : the url of the TM project
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
@@ -184,6 +185,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				initialize : function(conf, popups) {
 					var self = this;
+					this.isAdmin = conf.isAdmin;
 					this.popups = popups;
 					for(var popup in popups){
 						popups[popup].setParentPanel(this);
@@ -207,7 +209,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 
 				events : {
-					"click #ta-projects-bind-button" : "openBindPopup"
+					"click #ta-projects-bind-button" : "openAuthenticationPopup"
 				},
 
 				initTable : function(){
@@ -226,7 +228,8 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 											label : data["label"],
 											slaves : data["slaves"]
 									};
-									self.popups.editTAProjectPopup.show(jobId, taProject);
+									self.popups.editTAProjectPopup.$el.data('projectId', jobId).data('taProject', taProject);
+									self.openAuthenticationPopup();
 								}
 							}
 						]
@@ -235,7 +238,48 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
-
+				openAuthenticationPopup: function() {
+					var self = this;
+					if(this.isAdmin || this._isAuthenticated()) {
+						this._checkWhichPopupWasCalledAndOpenIt();
+						return;
+					}
+					var authDialog = $("#add-ta-projects-login-dialog").formDialog();
+					authDialog.formDialog('open');
+					
+					/* Unbind formdialogconfirm in order not to have multiple bound events. */
+					authDialog.off('formdialogconfirm');
+					
+					authDialog.on('formdialogconfirm', function() {
+						var login = $("#login-dialog-login").val();
+					    var password = $("#login-dialog-password").val();
+						authDialog.data('login', login).data('password', password);
+						authDialog.formDialog('close');
+					    self._checkWhichPopupWasCalledAndOpenIt();
+					});
+					
+					authDialog.on('formdialogcancel', function() {
+						authDialog.formDialog('close');
+					});
+				},
+				_checkWhichPopupWasCalledAndOpenIt: function() {
+					var self = this;
+					var projectId = self.popups.editTAProjectPopup.$el.data('projectId');
+					var taProject = self.popups.editTAProjectPopup.$el.data('taProject');
+					/* If there is a projectId and a taProject, the edit button was clicked. */
+					if(projectId && taProject) {
+						self.popups.editTAProjectPopup.show();
+					/* Else, it is the add button that was pressed. */
+					} else {
+						self.openBindPopup();
+					} 
+				},
+				_isAuthenticated: function() {
+					var authDialog = $("#add-ta-projects-login-dialog");
+					var login = authDialog.data('login');
+					var password = authDialog.data('password');
+					return (!!login && !!password); 
+				},
 				_refreshTable : function(){
 					this.table.refresh();
 				},

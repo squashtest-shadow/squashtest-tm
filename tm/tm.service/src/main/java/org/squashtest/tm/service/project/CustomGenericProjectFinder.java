@@ -62,4 +62,15 @@ public interface CustomGenericProjectFinder {
 	 * @return : the list of {@link TestAutomationProject} available and not already bound to the tm-project
 	 */
 	Collection<TestAutomationProject> findAllAvailableTaProjects(long projectId);
+	/**
+	 * Will return a list of TestAutomationProject (jobNames only) available on the server bound to the given project 
+	 * and authorized for the Jenkins account defined with the login and the password given as parameters. 
+	 * The returned list will not contain already bound ta-projects.
+	 * @param projectId The Id of the {@link GenericProject} we want the available ta-projects for.
+	 * @param login The login of the Jenkins account.
+	 * @param password The password of the Jenkins account.
+	 * @return The list of {@link TestAutomationProject} available on the server, 
+	 * authorized for this Jenkins account and not already bound to the tm-project.
+	 */
+	Collection<TestAutomationProject> findAllAvailableTaProjectsWithCredentials(long projectId, String login, String password);
 }

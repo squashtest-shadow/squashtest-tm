@@ -55,6 +55,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -72,6 +73,8 @@ public class ProjectAdministrationController {
 	/**
 	 * Finder service for generic project. We manage here both projects and templates !
 	 */
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private GenericProjectFinder projectFinder;
 	@Inject
@@ -138,6 +141,7 @@ public class ProjectAdministrationController {
 
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
+		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("jobUrls", jobUrls);
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("availableTAServers", availableTAServers);

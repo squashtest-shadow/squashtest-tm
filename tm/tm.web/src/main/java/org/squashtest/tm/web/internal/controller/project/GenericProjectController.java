@@ -392,6 +392,15 @@ public class GenericProjectController {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
 	}
 
+	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET, params = {"login", "password"})
+	@ResponseBody
+	public Collection<TestAutomationProject> getAvailableTAProjectsWithCredentials(
+			@RequestParam("login") String login, @RequestParam("password") String password, @PathVariable long projectId)
+			throws BindException {
+		return projectManager.findAllAvailableTaProjectsWithCredentials(projectId, login, password);
+
+	}
+
 	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<TestAutomationProject> getAvailableTAProjects(@PathVariable long projectId)
@@ -399,7 +408,6 @@ public class GenericProjectController {
 		return projectManager.findAllAvailableTaProjects(projectId);
 
 	}
-
 	// ************************* plugins administration ***********************
 
 	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.POST)
