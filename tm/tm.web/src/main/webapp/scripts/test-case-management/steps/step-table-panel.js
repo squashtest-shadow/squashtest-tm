@@ -787,11 +787,11 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		}, collapseButton);
 
 		var buttonCloseHandler = $.proxy(function () {
-			$this.squashButton("option", "icons", {
+			this.squashButton("option", "icons", {
 				primary: "ui-icon-zoomin"
 			});
-			$this.attr("title", language.btnExpand);
-			$this.squashButton("option", "label", language.btnExpand);
+			this.attr("title", language.btnExpand);
+			this.squashButton("option", "label", language.btnExpand);
 
 		}, collapseButton);
 
