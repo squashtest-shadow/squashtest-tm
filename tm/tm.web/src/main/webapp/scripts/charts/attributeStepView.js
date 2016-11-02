@@ -37,13 +37,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		},
 		
 		events : {
-			"click .wizard-cuf-btn" : "openCufPopup"
+			"click .wizard-cuf-btn" : "openCufPopup",
+			"click input[name='entity']" : "toggleEntityPanelVisibility"
 		},
 	
 		updateModel : function() {
 
 			var self = this;
-			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
+			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked:visible"), "name");
 			this.model.set({"selectedAttributes" : ids});
 
 			//also updating the convenient attribute selectedCufAttributes
@@ -53,6 +54,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			//now retrieve the selected entities type to updated filter and operation view
 			var allProtos = _.chain(self.model.get("computedColumnsPrototypes")).values().flatten().value();
 
+			/* Finding selected entities from all the attributes check-boxes checked. */
 			var selectedEntities = _.chain(ids)
 				.map(function(id){
 					return _.find(allProtos,function(proto){
@@ -64,6 +66,12 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				})
 				.uniq()
 				.value();
+			/* Finding which entities icons were checked. */
+			var checkedEntities = _.pluck($('[name="entity"]').filter(":checked"), "id");
+
+			/* Intersection between the two variables above. 
+			 * We don't want to include attributes that are checked but not visible. */
+			selectedEntities = _.intersection(selectedEntities, checkedEntities);
 
 			this.model.set({"selectedEntity" : selectedEntities});
 
@@ -146,6 +154,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				var wrapper = this.$el.find(checkBoxWrapperSelector);
 				wrapper.removeClass("chart-wizard-visible");
 				wrapper.addClass("chart-wizard-hidden");
+		},
+		toggleEntityPanelVisibility(event) {
+			var entityClicked = event.target.id;
+			var entityPanelToToggle = $("#" + entityClicked + "-panel");
+			entityPanelToToggle.toggleClass("not-displayed");
 		}
 	});
 	return attributesStepView;

@@ -459,8 +459,8 @@ p {
 }
 /* this class should be used along with one of the .icon-chart-* icon definition class */
 .icon-chart {
-  min-height: 50px;
-  min-width: 50px;
+  min-height: 40px;
+  min-width: 40px;
   display: table-cell;
   width: 15%;
 }

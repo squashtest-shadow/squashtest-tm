@@ -21,7 +21,6 @@
 
 -->
 <div th:fragment="chart-wizard-attributes">
-{{!--<![CDATA[--}}
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.attributes}"/>
 <br />
@@ -29,16 +28,45 @@
 <br />
 <br />
 
+{{!--<![CDATA[--}}
+
+<div style="margin: 2em 2em;">
+	{{#each attributes.entityTypes}}
+		<div style="display:inline-block; width: 8%; margin: 0px 2.5em; vertical-align: top;">
+			<div style="display: table; height: 50px; width: 100%;">
+		     	<div style="display: table-row; height: 50px;">
+			    	<div style="display: table-cell; vertical-align:middle; width: 40%;">
+			    		<input id="{{@key}}" type="checkbox" name="entity" value="{{@key}} "
+			        		{{#if (contains ../attributes.selectedEntity @key)}} checked="checked" {{/if}}
+			        	/>
+			        </div>
+			        <div style="display: table-cell; vertical-align: middle;">
+			    		<label for="{{@key}}" class="{{this}} ui-helper-reset icon-chart"
+			    			style="height: 40px; width: 40px;"></label>
+					</div>
+				</div>
+			</div>
+			<div style="text-align: center;">
+				<label
+					for="{{@key}}" class="ui-helper-reset">
+					{{i18n @key prefix="chart.entityType."}}
+				</label>
+			</div>
+        </div>
+	{{/each}}
+</div>
+
 {{#each attributes.computedColumnsPrototypes}}
 
 {{#if (contains ../attributes.selectedEntity @key)}}
-  <div class="sq-tg expand">
+  <div id="{{@key}}-panel" class="sq-tg expand">
 {{else}}
-   <div class="sq-tg collapse">
+  <div id="{{@key}}-panel" class="sq-tg expand not-displayed">
 {{/if}}
 <div class="tg-head">
 {{i18n @key prefix='chart.entityType.'}}
   {{!--]]>--}}
+
 {{#if (contains ../attributes.entityWithCuf @key)}}
 <div class="tg-toolbar">
 				<input id="refresh-btn" type="button" class="sq-btn wizard-cuf-btn" data-entity="{{@key}}"

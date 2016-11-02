@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.project.Project;
@@ -107,8 +106,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
-	public ChartInstance generateChart(ChartDefinition chartDef, Long projectId){
-		if(chartDef.getId() == null) {
+	public ChartInstance generateChart(ChartDefinition chartDef, Long projectId) {
+		if(chartDef.getProject() == null) {
 			Project project = em.find(Project.class, projectId);
 			chartDef.setProject(project);
 		}
