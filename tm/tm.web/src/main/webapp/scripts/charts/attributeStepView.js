@@ -155,7 +155,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				wrapper.removeClass("chart-wizard-visible");
 				wrapper.addClass("chart-wizard-hidden");
 		},
-		toggleEntityPanelVisibility(event) {
+		toggleEntityPanelVisibility : function(event) {
 			var entityClicked = event.target.id;
 			var entityPanelToToggle = $("#" + entityClicked + "-panel");
 			entityPanelToToggle.toggleClass("not-displayed");
