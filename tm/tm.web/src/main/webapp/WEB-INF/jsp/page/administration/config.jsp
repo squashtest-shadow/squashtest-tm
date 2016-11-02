@@ -190,7 +190,11 @@
       <div class="tg-body">
         <div>
           <div class="control-group">
-            <label class="control-label" for="case-insensitive-login"><f:message key="message.caseInsensitiveLogins" /></label>
+            <!--  
+            <label class="control-label" for="case-insensitive-login">
+            	<f:message key="message.caseInsensitiveLogins" />
+            </label>
+            -->
             <div class="controls">
               <c:if test="${ empty duplicateLogins }">
               <c:set var="checked" value="${ caseInsensitiveLogin ? 'checked=checked' : '' }" />
@@ -202,10 +206,10 @@
               <span>
                 <c:choose>
                 <c:when test="${ caseInsensitiveLogin }">
-                <f:message key="label.Enabled" />
+                <f:message key="label.insensitive" />
                 </c:when>
                 <c:otherwise>
-                <f:message key="label.disabled" />
+                <f:message key="label.sensitive" />
                 </c:otherwise>
                 </c:choose>
               </span>

@@ -23,12 +23,12 @@ require(["common"], function() {
 			function($, msg) {
 		"use strict";
 
-		msg.load(["label.Enabled", "label.disabled"]);
+		msg.load(["label.insensitive", "label.sensitive"]);
 
 		$(function() {
 			$("#case-insensitive-login").switchButton({
-				on_label: msg.get("label.Enabled"),
-				off_label: msg.get("label.disabled")
+				on_label: msg.get("label.insensitive"),
+				off_label: msg.get("label.sensitive")
 			});
 
 			$(document).on("change", "#case-insensitive-login", function onChangeCase(event) {
