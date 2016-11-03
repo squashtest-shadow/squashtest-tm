@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
@@ -224,7 +225,6 @@ public class VerifyingTestCaseManagerController {
 	public
  RequirementCoverageStat getCoverageStat(@PathVariable long requirementVersionId,
 			@RequestParam String perimeter) {
-		LOGGER.debug("JTH go controller go");
 
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
 		List<Long> iterationIds = new ArrayList<>();
@@ -234,9 +234,12 @@ public class VerifyingTestCaseManagerController {
 			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
 			try {
 				//Only one selected node for v1.13...
-				Campaign campaign = campaignFinder.findById(ids.get(0));
-				iterationIds.addAll(getIterationsIdsForCampagain(campaign));
-			} catch (IdentityUnavailableException e) {
+ 				Campaign campaign = campaignFinder.findById(ids.get(0));
+ 				/* Issue 6440: Campaign may have been removed and the line 
+ 				 * above returns a campaign, from which we can't call any method. 
+ 				 * Fix: catch EntityNotFoundException appearing in getIterationsIdsForCampaign. */
+ 				iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+			} catch (IdentityUnavailableException | EntityNotFoundException e) {
 				stat.setCorruptedPerimeter(true);
 			}
 		}
