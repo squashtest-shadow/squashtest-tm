@@ -322,6 +322,14 @@
           </div>
         </script>
 
+        <script id="NUMERIC-default-tpl" type="text/x-handlebars-template" th:inline="text">
+          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+          <div class="controls">
+            <input name="defaultValue" class="strprop" value="" size="15" maxlength="15" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </script>
+        
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
         <a  data-value="{{option}}" th:text="#{label.Delete}">Delete</a>
       </script>

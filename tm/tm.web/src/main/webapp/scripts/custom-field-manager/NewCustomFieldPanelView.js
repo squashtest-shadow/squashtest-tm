@@ -171,6 +171,9 @@ define(
 					this.renderOptional(true);
 					this.renderTagList();
 					break;
+				case "NUMERIC":
+					this.renderOptional(true);
+					break;
 				}
 				this._resize();
 				return this;
