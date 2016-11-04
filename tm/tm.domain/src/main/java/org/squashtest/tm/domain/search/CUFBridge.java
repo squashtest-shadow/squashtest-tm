@@ -127,8 +127,12 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 
 			// TODO use the correct API
 			if (StringUtils.isNotBlank(val) && inputType == InputType.NUMERIC) {
-				NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe
-				Double doubleValue = numericCustomFieldValue.getNumericValue().doubleValue();
+				/* Issue #6431: Impossible Cast because hibernate returned a proxy CustomFieldValue */
+				/*
+				* NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe
+				* Double doubleValue = numericCustomFieldValue.getNumericValue().doubleValue();
+				*/
+				Double doubleValue = Double.valueOf(val);
 				Field field = new DoubleField(code, doubleValue, luceneOptions.getStore());
 				document.add(field);
 			} else if (val != null) {
