@@ -49,6 +49,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.client.utils.URIBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.JenkinsCrumb;
 
 /**
  * This class configure and execute a unique HTTP request.
@@ -67,37 +78,49 @@ public class StartTestExecution {
 	private final HttpClientProvider clientProvider;
 
 	private final String externalId;
+        
+        private RestTemplate template;
 
 	public StartTestExecution(BuildDef buildDef, HttpClientProvider clientProvider, String externalId) {
 		super();
 		this.buildDef = buildDef;
 		this.clientProvider = clientProvider;
 		this.externalId = externalId;
+                
+                this.template = new RestTemplate(clientProvider.getRequestFactoryFor(
+			buildDef.getProject().getServer()));
 	}
 
 	public void run() {
 
 		TestAutomationProject project = buildDef.getProject();
-		TestAutomationServer server = project.getServer();
+                
+                // [Issue 6460]
+                JenkinsCrumb crumb = getCrumb(project.getServer());
 
-		RestTemplate template = new RestTemplate(clientProvider.getRequestFactoryFor(
-			project.getServer()));
-
-		String url = createUrl(server);
-		Map<String, ?> urlParams = createUrlParams(project);
+		URI url = createUrl( project);
 		MultiValueMap<String, ?> postData = createPostData(buildDef, externalId);
 
-
-		Object bime = execute(template, url, postData, urlParams);
+		Object bime = execute(url, crumb, postData);
 
 		// TODO : inspect the result to check errors and such a la RequestExecutor
 		LOGGER.info("started build {}", bime);
 
 	}
 
-	private Object execute(RestTemplate template, String url, MultiValueMap<String, ?> postData, Map<String, ?> urlParams) {
+	private Object execute(URI url, JenkinsCrumb crumb,  MultiValueMap<String, ?> postData) {
 		try {
-			return template.postForLocation(url, postData, urlParams);
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+                    
+                    // [Issue 6460]
+                    if (crumb != null){
+                        headers.add(crumb.getCrumbRequestField(), crumb.getCrumb());
+                    }
+                    
+                    RequestEntity<?> request = new RequestEntity(postData, headers, HttpMethod.POST, url);
+                    
+                    return template.exchange(request, Void.class);                    
 		} catch (ResourceAccessException ex) {
 			throw new ServerConnectionFailed(ex);
 		} catch (HttpClientErrorException ex) {
@@ -114,16 +137,56 @@ public class StartTestExecution {
 		}
 	}
 
-	private String createUrl(TestAutomationServer server) {
-		return server.getBaseURL().toString() + "/job/{jobName}/build";
+        // **************** helper for the 'fetch crumb' request ***********************
+        
+        // [Issue 6460]
+        private JenkinsCrumb getCrumb(TestAutomationServer server){
+            
+            try{
+                URI uri = new URI(server.getBaseURL()+"/crumbIssuer/api/json");                
+                return template.getForObject(uri, JenkinsCrumb.class);                
+            }
+            catch(HttpClientErrorException e){
+                // A 404 is fine if Jenkins has not enabled CSRF protection
+                if (e.getStatusCode() == HttpStatus.NOT_FOUND){
+                    return null;
+                }
+                else{
+                    throw new ServerConnectionFailed(e);
+                }
+            }
+            catch(URISyntaxException ex){
+                if (LOGGER.isErrorEnabled()){
+                    LOGGER.error("cannot fetch crumb from server '"+
+                            server.getBaseURL()+
+                            "' due to URI syntax exception. Is the server URL correct ?");
+                }
+                throw new RuntimeException(ex);
+            }
+            
+        }
+        
+        // ************ helper for the start build request itself ***************************
+
+	private URI createUrl(TestAutomationProject project) {
+            TestAutomationServer server = project.getServer();
+            try{
+                URI base = new URI(server.getBaseURL().toString());
+                return new URIBuilder(base)
+                            .setPath(base.getPath()+"/job/"+project.getJobName()+"/build")
+                            .build();
+            }
+            catch(URISyntaxException use){
+                if (LOGGER.isErrorEnabled()){
+                    LOGGER.error("cannot execute build '"+project.getJobName()+"', hosted on server '"+
+                            server.getBaseURL()+
+                            "' due to URI syntax exception. Is the server URL correct ?");
+                }
+                throw new RuntimeException(use);
+            }
 	}
 
-	private Map<String, ?> createUrlParams(TestAutomationProject project) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("jobName", project.getJobName());
-		return params;
-	}
-
+        
 	private MultiValueMap<String, ?> createPostData(BuildDef buildDef, String externalId) {
 
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
