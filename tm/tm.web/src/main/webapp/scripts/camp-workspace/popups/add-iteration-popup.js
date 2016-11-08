@@ -112,6 +112,9 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		dialog.on('formdialogcleanup', function(){
 			var cnt = dialog.formDialog('option', 'itercount') || '--';
 			dialog.find('#add-iteration-reference').val((cnt+1));
+			/* Issue #6420: The checkbox 'copy test plan' must 
+			 * not be checked by default. */
+			dialog.find('#copy-test-plan-box').attr('checked', false);
 		});
 
 		dialog.on('formdialogadd-close', function(){
