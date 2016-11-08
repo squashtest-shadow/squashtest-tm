@@ -200,7 +200,14 @@
 					<button id="execute-next-test-case" name="optimized" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
 				</c:if>
-				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
+				<td>
+					<h3 id="ieo-execution-title" class="ellipsis" >
+						${ executionStep.execution.name }
+						<c:if test="${execution.datasetLabel != null && execution.datasetLabel != ''}">
+							- ${execution.datasetLabel}
+						</c:if>
+					</h3>
+				</td>
 		<c:if test="${execution.project.allowTcModifDuringExec()}">
 		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
