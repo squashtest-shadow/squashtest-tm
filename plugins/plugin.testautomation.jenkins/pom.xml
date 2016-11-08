@@ -240,7 +240,7 @@
                 <webapp>
                   <groupId>org.squashtest.ta.test</groupId>
                   <artifactId>stub-ta-server</artifactId>
-                  <version>1.0.0</version>
+                  <version>1.0.1</version>
                   <type>war</type>
                   <asWebapp>true</asWebapp>
                 </webapp>

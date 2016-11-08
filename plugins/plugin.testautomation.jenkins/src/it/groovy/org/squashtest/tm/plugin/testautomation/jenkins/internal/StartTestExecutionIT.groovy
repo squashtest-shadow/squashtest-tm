@@ -32,6 +32,9 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackURL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
 import spock.lang.Specification
+import java.net.URL
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution
 
 /**
  * @author Gregory Fouquet
@@ -41,9 +44,32 @@ class StartTestExecutionIT extends Specification {
 
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
+        TestAutomationServer server
 
 	def setup() {
-		buildDef.project >> project
+                // server reference conf
+		def stubPort = System.getProperty("stubTaServer.webapp.port")
+                server = new TestAutomationServer("server", new URL("http://localhost:${stubPort}/stub-ta-server"), "login", "password")		
+                // this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
+		new CallbackURL().setURL("http://127.0.0.1/squashtm")
+                
+                // project conf
+                project.server >> server
+		project.jobName >> "fancy job"
+                
+                              
+                // build definition conf  
+                AutomatedExecutionExtender exec = Mock()
+		exec.getId() >> 12
+		AutomatedTest test = Mock()
+		test.fullName >> "fancy test"
+		exec.getAutomatedTest() >> test
+        
+		buildDef.project >> project		
+		buildDef.parameterizedExecutions >> [
+			new Couple(exec, [batman: "leatherpants"])
+		]
+                
 	}
 
 
@@ -54,43 +80,24 @@ class StartTestExecutionIT extends Specification {
 
 		return res
 	}
+        
+        def "should fetch a crumb on a CSRF-protected instance"(){
+            
+		given:
+                HttpClientProvider provider = new HttpClientProvider()
+
+		when:
+		def crumb = new StartTestExecution(buildDef, provider, "EXTERNAL-ID").getCrumb(server);
+                
+                then :
+                crumb.crumb == "90aa718b6091e5caef090ee450219b6b"
+                crumb.crumbRequestField == "Jenkins-Crumb"
+                
+        }
 
 	def "should start a new build"() {
 		given:
-		PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-		manager.setMaxTotal(25);
-
-		HttpClient client = HttpClients.custom()
-			.setConnectionManager(manager).build();
-//		client.getParams().setAuthenticationPreemptive(true);
-
-
-		and:
-		TestAutomationServer server = Mock()
-		def stubPort = System.getProperty("stubTaServer.webapp.port")
-		server.baseURL >> new URL("http://localhost:${stubPort}/stub-ta-server")
-		project.server >> server
-
-		and:
-		project.jobName >> "fancy job"
-
-		and:
-		AutomatedExecutionExtender exec = Mock()
-		exec.getId() >> 12
-		AutomatedTest test = Mock()
-		exec.getAutomatedTest() >> test
-		test.fullName >> "fancy test"
-
-		buildDef.parameterizedExecutions >> [
-			new Couple(exec, [batman: "leatherpants"])
-		]
-
-		and:
-		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
-		new CallbackURL().setURL("http://127.0.0.1/squashtm")
-
-		and:
-		HttpClientProvider provider = mockHttpClientProvider(client)
+                HttpClientProvider provider = new HttpClientProvider()
 
 		when:
 		new StartTestExecution(buildDef, provider, "EXTERNAL-ID").run();

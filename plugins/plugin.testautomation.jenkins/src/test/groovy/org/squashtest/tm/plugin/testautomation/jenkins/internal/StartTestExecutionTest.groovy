@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
+import org.springframework.http.client.ClientHttpRequestFactory
 
 import spock.lang.Specification
 
@@ -37,31 +38,19 @@ class StartTestExecutionTest extends Specification {
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
 	HttpClientProvider clientProvider = Mock()
-
+        
 	StartTestExecution ste
 
 
 	def setup() {
 
+                clientProvider.getRequestFactoryFor(_) >> Mock(ClientHttpRequestFactory)
+        
 		buildDef.project >> project
 
 		ste = new StartTestExecution(buildDef, clientProvider, "EXTERNAL-ID")
 	}
 
-	/*
-	 def mockContext(httpClient) {
-	 ExecuteAndWatchContext res = Mock()
-	 res.getHttpClientProvider() >> mockHttpClientProvider(httpClient)
-	 return res
-	 }
-	 def mockHttpClientProvider(httpClient) {
-	 httpClient = httpClient ?: Mock(HttpClient)
-	 HttpClientProvider res = Mock()
-	 res.getClientFor(_) >> httpClient
-	 res.getRequestFactoryFor(_) >> new CommonsClientHttpRequestFactory(httpClient);
-	 return res
-	 }
-	 */
 
 	def "should marshall model into a file"() {
 		given:

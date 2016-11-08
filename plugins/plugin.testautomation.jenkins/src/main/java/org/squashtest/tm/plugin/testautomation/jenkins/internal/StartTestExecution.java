@@ -143,12 +143,15 @@ public class StartTestExecution {
         private JenkinsCrumb getCrumb(TestAutomationServer server){
             
             try{
-                URI uri = new URI(server.getBaseURL()+"/crumbIssuer/api/json");                
+                LOGGER.trace("fetching CSRF jenkins crumb");
+                URI uri = new URI(server.getBaseURL()+"/crumbIssuer/api/json");
+                LOGGER.trace("crumb found");
                 return template.getForObject(uri, JenkinsCrumb.class);                
             }
             catch(HttpClientErrorException e){
                 // A 404 is fine if Jenkins has not enabled CSRF protection
                 if (e.getStatusCode() == HttpStatus.NOT_FOUND){
+                    LOGGER.trace("no crumb found, CSRF protection seems disabled");
                     return null;
                 }
                 else{
