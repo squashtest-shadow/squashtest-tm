@@ -189,7 +189,6 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 		},
 
 		performDeletion : function() {
-
 			this.setState("pleasewait");
 
 			var self = this;
@@ -197,7 +196,12 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			var nodes = this.uiDialog.data('selected-nodes');
 			var newSelection = this._findPrevNode(nodes);
 
-			nodes.all('deselect');
+			/* Issue #6417: While deleting a multi-selection,
+			 * the commented line below try to select 
+			 * a deleted node and creates an error. */
+			//nodes.all('deselect');
+			nodes.deselect_all();
+			
 			newSelection.select();
 
 			this.setState('pleasewait');

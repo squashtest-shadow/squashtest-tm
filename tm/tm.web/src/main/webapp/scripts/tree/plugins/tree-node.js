@@ -449,7 +449,11 @@ define(['jquery'], function($){
 		this.deselect = function() {
 			this.tree.deselect_node(this);
 		};
-
+		
+		this.deselect_all = function() {
+			this.tree.deselect_all();
+		};
+		
 		this.removeMe = function(){
 			var tr = this.tree;
 			this.each(function(elt){
