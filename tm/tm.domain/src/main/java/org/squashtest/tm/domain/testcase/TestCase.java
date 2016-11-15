@@ -156,14 +156,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
-	@ManyToOne(cascade=CascadeType.DETACH)
+	@ManyToOne
 	@JoinColumn(name = "TC_NATURE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem nature = null;
 
 	@NotNull
-	@ManyToOne(cascade=CascadeType.DETACH)
+	@ManyToOne
 	@JoinColumn(name = "TC_TYPE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
@@ -195,7 +195,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
-	@ManyToMany(cascade=CascadeType.DETACH)
+	@ManyToMany
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<>();
 

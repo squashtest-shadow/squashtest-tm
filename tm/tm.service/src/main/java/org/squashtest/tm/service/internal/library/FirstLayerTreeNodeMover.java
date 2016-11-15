@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
@@ -123,6 +124,12 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
 	private Map<EntityType, NodeCollaborators> collaboratorsByType = new EnumMap<>(EntityType.class);
 
+	//ids of moved test case for batch reindex in end of process
+	private List<Long> movedTcIds = new ArrayList<>();
+
+	//ids of moved requirement for batch reindex in end of process
+	private List<Long> movedReqVersionIds = new ArrayList<>();
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		init();
@@ -183,9 +190,16 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		case TEST_CASE:
 			NodeCollaborators nc = collaboratorsByType.get(visitedType);
 			visitLibraryNode((LibraryNode) toMove, nc.libraryDao, nc.folderDao, position);
+			movedTcIds.add(toMove.getId());
 			break;
 		case REQUIREMENT: // special
 			visitWhenNodeIsRequirement((Requirement) toMove, position);
+			List<Long> reqVersionIds = new ArrayList<>();
+			List<RequirementVersion> requirementVersions =((Requirement) toMove).getRequirementVersions();
+			for (RequirementVersion requirementVersion : requirementVersions) {
+				reqVersionIds.add(requirementVersion.getId());
+			}
+			movedReqVersionIds.addAll(reqVersionIds);
 			break;
 		case ITERATION:
 		case TEST_SUITE:
@@ -305,12 +319,12 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	@Override
 	public List<Long> getRequirementVersionToIndex() {
-		return Collections.emptyList();
+		return movedReqVersionIds;
 	}
 
 	@Override
 	public List<Long> getTestCaseToIndex() {
-		return Collections.emptyList();
+		return movedTcIds;
 	}
 
 }

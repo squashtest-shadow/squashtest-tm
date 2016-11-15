@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -37,22 +39,32 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 /**
  * This class is used after the {@link FirstLayerTreeNodeMover}.
  * It will make sure all nodes know their project are consistent with their project's parameters.
- * 
+ *
  * @author mpagnon
  *
  */
 @Component
 @Scope("prototype")
 public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
-	
+
 	@Inject
 	private TreeNodeUpdater treeNodeUpdater;
 	private NodeContainer<? extends TreeNode> destination;
+
+	@Inject
+	private EntityManager em;
+
+	//ids of moved test case for batch reindex in end of process
+	private List<Long> movedTcIds = new ArrayList<>();
+
+	//ids of moved requirement versions for batch reindex in end of process
+	private List<Long> movedReqVersionIds = new ArrayList<>();
 
 	/**
 	 * Will make sure all nodes are aware of their project and call the {@link TreeNodeUpdater} on each of them.
@@ -65,7 +77,7 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 		toMove.accept(treeNodeUpdater);
 		return toMove;
 	}
-	
+
 	/**************************************************** PRIVATE **********************************************************/
 	@Override
 	public boolean isOkToGoDeeper() {
@@ -75,7 +87,7 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		campaignFolder.notifyAssociatedWithProject((Project)destination.getProject());
-		
+
 	}
 
 	@Override
@@ -86,7 +98,7 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
 		testCaseFolder.notifyAssociatedWithProject((Project)destination.getProject());
-		
+
 	}
 
 	@Override
@@ -110,21 +122,29 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(Requirement requirement) {
 		requirement.notifyAssociatedWithProject((Project)destination.getProject());
+		List<Long> reqVersionIds = new ArrayList<>();
+		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
+		for (RequirementVersion requirementVersion : requirementVersions) {
+			reqVersionIds.add(requirementVersion.getId());
+		}
+		movedReqVersionIds.addAll(reqVersionIds);
 	}
 
 	@Override
 	public void visit(TestCase testCase) {
 		testCase.notifyAssociatedWithProject((Project)destination.getProject());
+		movedTcIds.add(testCase.getId());
 	}
 
 	@Override
 	public List<Long> getRequirementVersionToIndex() {
-		return Collections.emptyList();
+		return movedReqVersionIds;
+
 	}
 
 	@Override
 	public List<Long> getTestCaseToIndex() {
-		return Collections.emptyList();
+		return movedTcIds;
 	}
 
 }
