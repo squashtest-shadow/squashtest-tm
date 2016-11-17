@@ -75,7 +75,8 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 	var COOKIE_NAME = "testcase-tab-cookie";
 
-	var addedTestStepId = 0;
+	//module scoped variable to add new step at proper index in datatable even if the index is out of the datatable pagination
+	var targetTestStepIndex = 0;
 
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
@@ -106,7 +107,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 	// ******************************
 
 	function refresh() {
-		$(".test-steps-table").squashTable().refresh();
+		$(".test-steps-table").squashTable().refreshRestore();
 	}
 
 	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -196,10 +197,6 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 			$.cookie(COOKIE_NAME, 1, {expires: 1, path: '/'});
 			return true;
 		});
-
-		
-
-		
 	}
 
 	function stepDropHandlerFactory(dropUrl) {
@@ -501,7 +498,8 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		dialog.data("cuf-values-support").reset();
 		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
-		addedTestStepId = response;
+		//increment index counter;
+		targetTestStepIndex ++;
 		dialog.formDialog("focusMainInput");
 	}
 
@@ -513,19 +511,9 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		params.action = $("#add-test-step-action").val();
 		params.expectedResult = $("#add-test-step-result").val();
 
-		var $table = $(".test-steps-table");
-		var selectedIds = $table.squashTable().getSelectedIds();
-
-		if (addedTestStepId !== 0) {
-			params.index = $table.squashTable().getDataById(addedTestStepId)["step-index"];
-			addedTestStepId = 0;
-		} else if (selectedIds !== undefined && selectedIds !== null && selectedIds.length > 0) {
-			//multiselection -> as spec 5208 : Insert the new TestCase under the last selection
-			// ie the testCase with the greater index as datatable can't track user input
-			var idTargetStep = selectedIds[selectedIds.length - 1];
-			params.index = $table.squashTable().getDataById(idTargetStep)["step-index"];
-		}
-
+		//reading the global target index counter
+		params.index = targetTestStepIndex;
+		
 		$.extend(params, cufSupport.readValues());
 
 		return params;
@@ -560,11 +548,20 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		});
 
 		dialog.on('formdialogcancel', function () {
+			refresh();
 			dialog.formDialog('close');
 		});
 
 		$("#add-test-step-button").on('click', function () {
-			addedTestStepId = 0;
+			var $table = $(".test-steps-table");
+			var selectedIds = $table.squashTable().getSelectedIds();
+			if(selectedIds.length > 0 ){
+				var idTargetStep = selectedIds[selectedIds.length - 1];
+				targetTestStepIndex = $table.squashTable().getDataById(idTargetStep)["step-index"];
+			} else {
+				//get the number of results in datatable ie total line number on all pages
+				targetTestStepIndex = $table.squashTable().fnSettings().fnRecordsTotal();
+			}
 			dialog.formDialog('open');
 		});
 
