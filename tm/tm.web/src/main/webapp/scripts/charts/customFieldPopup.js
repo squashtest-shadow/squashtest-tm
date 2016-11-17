@@ -34,7 +34,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
             events: {
 				"confirmdialogcancel": "cancel",
-				"confirmdialogconfirm": "confirm"
+				"confirmdialogconfirm": "confirm",
+                "confirmdialogclose": "cancel"
 			},
 
             render: function(){
