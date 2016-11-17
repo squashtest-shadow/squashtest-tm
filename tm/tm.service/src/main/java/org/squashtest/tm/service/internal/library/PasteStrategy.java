@@ -142,8 +142,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	private List<NODE> internalPasteNodes(long containerId, List<Long> list, Integer position) {
 
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-		ftem.setFlushMode(FlushModeType.COMMIT);
 		// proceed : will process the nodes layer by layer.
 		init(containerId, list);
 
