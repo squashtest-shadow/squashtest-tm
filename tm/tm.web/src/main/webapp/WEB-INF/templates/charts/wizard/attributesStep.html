@@ -82,7 +82,7 @@
     <div id="wrapper-attributes-selection-{{id}}" style="float:left; min-width:240px;" class="chart-wizard-hidden">
 
       <input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" data-cuf="true"
-             {{#if (contains ../../attributes.selectedAttributes id)}} 
+             {{#if (contains ../../attributes.selectedAttributes id)}}
               checked="checked"
              {{/if}}
       />
@@ -113,7 +113,7 @@
   {{!--]]>--}}
 
   <div id="cuf-popup-container">
-    <div id="cuf-popup"  class="popup-dialog not-displayed" th:title="#{dialog.settings.filter.title}">
+    <div id="cuf-popup"  class="popup-dialog not-displayed" th:title="#{generics.customfieldvalues.title}">
     </div>
   </div>
 </div>
@@ -135,7 +135,7 @@
               {{!--<![CDATA[--}}
               <input type="checkbox" class="cuf-checkbox"
                      id="cuf-checkbox-{{id}}" name="cuf"
-                     value="{{id}}"  
+                     value="{{id}}"
                      {{#if (contains ../attributes.selectedCufAttributes id)}} checked="checked" {{/if}}
                      />
               {{!--]]>--}}
