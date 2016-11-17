@@ -45,6 +45,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -254,7 +255,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
 				r.createCell(cIdx++).setCellValue(tcm.getType().getCode());
 				r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
-				r.createCell(cIdx++).setCellValue(tcm.getDescription());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(tcm.getDescription()));
 				r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());

@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -213,7 +214,8 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		if (!keepRteFormat) {
 			escapePrerequisiteAndSteps(dataSource);
 		}
-
+		convertHtmlSpecialCharactersToUnicode(dataSource);
+		
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv", keepRteFormat);
 	}
 
@@ -280,6 +282,15 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		}
 	}
 
+	private void convertHtmlSpecialCharactersToUnicode(List<ExportTestCaseData> dataSource) {
+		for(ExportTestCaseData data : dataSource) {
+			data.setDescription(HtmlUtils.htmlUnescape(data.getDescription()));
+			for(ExportTestStepData step : data.getSteps()) {
+				step.setAction(HtmlUtils.htmlUnescape(step.getAction()));
+				step.setExpectedResult(HtmlUtils.htmlUnescape(step.getExpectedResult()));
+			}
+		}
+	}
 	// ****************************** statistics section *******************************
 
 	@ResponseBody

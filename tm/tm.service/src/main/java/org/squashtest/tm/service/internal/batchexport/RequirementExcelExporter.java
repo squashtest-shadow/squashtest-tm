@@ -43,6 +43,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -210,7 +211,7 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getCriticality().toString());
 			row.createCell(colIndex++).setCellValue(reqModel.getCategoryCode());
 			row.createCell(colIndex++).setCellValue(reqModel.getStatus().toString());
-			row.createCell(colIndex++).setCellValue(reqModel.getDescription());
+			row.createCell(colIndex++).setCellValue(HtmlUtils.htmlUnescape(reqModel.getDescription()));
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionCoveragesSize());
 			row.createCell(colIndex++).setCellValue(reqModel.getAttachmentListSize());
 			row.createCell(colIndex++).setCellValue(format(reqModel.getCreatedOn()));
