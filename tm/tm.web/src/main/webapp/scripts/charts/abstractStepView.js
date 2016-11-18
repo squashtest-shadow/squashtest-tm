@@ -55,10 +55,11 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		},
 
 		registerHelper : function(){
+
+			var genericCufLabel = translator.get("label.customField");
 			Handlebars.registerHelper("cuf-label", function(prototype){
 				var cufLabel = prototype.cufLabel;
-				var cufName = prototype.cufName;
-				var html = cufLabel  + "<span class='small txt-discreet'> ("+ cufName +")</span>";
+				var html = cufLabel  + "<span class='small txt-discreet'> ("+ genericCufLabel +")</span>";
 
 				return new Handlebars.SafeString(html);
 			});

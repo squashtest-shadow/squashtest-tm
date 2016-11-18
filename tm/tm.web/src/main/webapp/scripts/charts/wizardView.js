@@ -23,6 +23,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 
 	"use strict";
 
+	
+
 	var validation =
 		[{
 			name : "perimeter",
@@ -109,6 +111,9 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 			    perimSelect :[{text:"label.requirements" , name:"REQUIREMENT"}, {text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}],
 				validation : validation
 			});
+			this.additionnalI18nKeys = [
+				"label.customField"
+			];
 			this.loadI18n();
 		},
 
@@ -153,6 +158,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 			var keys = chartTypes.concat(chartTypeExplanation,entityTypes, operation, columns);
 
 			var result = this.addPrefix(keys, "chart.");
+
+			result = result.concat(this.additionnalI18nKeys);
 
 			translator.load(result);
 

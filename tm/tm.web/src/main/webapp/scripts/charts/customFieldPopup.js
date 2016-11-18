@@ -34,11 +34,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
             events: {
 				"confirmdialogcancel": "cancel",
-				"confirmdialogconfirm": "confirm",
-                "confirmdialogclose": "cancel"
+				"confirmdialogconfirm": "confirm"
 			},
 
             render: function(){
+                this.$el.html("");
                 var src = $("#cuf-popup-tpl").html();
                 this.template = Handlebars.compile(src);
                 this.$el.append(this.template(this.model));
