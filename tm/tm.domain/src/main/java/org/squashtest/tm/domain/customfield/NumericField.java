@@ -59,7 +59,7 @@ public class NumericField extends CustomField {
 
 	@Override
 	public String getDefaultValue() {
-		return numericDefaultValue  != null ? numericDefaultValue.toString()  : "";
+		return defaultValue  != null ? defaultValue  : "";
 	}
 
 }
