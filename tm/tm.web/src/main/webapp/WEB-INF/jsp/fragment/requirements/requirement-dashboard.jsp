@@ -36,8 +36,8 @@
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >
 	<div id="right-frame-button">
-    	<f:message var="toggleLabel" key="label.toggleTree" />
-    	<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLabel}" />
+		<f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay" />
+		<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   	</div>
 	<h2><span><f:message key="title.Dashboard" /></span></h2>
 </div>

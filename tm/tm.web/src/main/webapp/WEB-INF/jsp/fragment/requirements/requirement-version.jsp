@@ -147,8 +147,8 @@ that page won't be editable if
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 <c:if test="${ not param.isInfoPage }">
  <div id="right-frame-button">
-    <f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
-    <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
+	<f:message var="toggleLibraryTooltip" key="tooltip.toggleLibraryDisplay" />
+	<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" title="${toggleLibraryTooltip}"/>
   </div>
   </c:if>
 	<div style="float:left;height:100%;" class="small-margin-left">
