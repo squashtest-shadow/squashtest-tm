@@ -40,7 +40,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 				this.initTree(model.name);
 				
 				this.$el.confirmDialog({
-					autoOpen: true
+					autoOpen: true,
+					height: 800
 				});
 		
 				this.checkFilterChangeImpact();
@@ -68,7 +69,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 			},
 
 			events: {
-				"confirmdialogcancel": "cancel",
+				"confirmdialogclose": "cancel",
 				"confirmdialogconfirm": "confirm",
 				"confirmdialogvalidate" : "validate"
 			},
@@ -131,7 +132,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
 			remove: function () {
 				Backbone.View.prototype.remove.apply(this, arguments);
-				$("#tree-dialog-container").html('<div id="tree-dialog" style="height: 200px!important" class="not-displayed popup-dialog search-minimal-height" title="' + translator.get('report.form.tree-picker.dialog.title') + '" />');
+				$("#tree-dialog-container").html('<div id="tree-dialog" style="height: 800px!important" class="not-displayed popup-dialog search-minimal-height" title="' + translator.get('report.form.tree-picker.dialog.title') + '" />');
 			}
 		});
 
