@@ -209,6 +209,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			
 			var wreqr = squashtm.app.wreqr;
 			wreqr.on("favoriteDashboard.showDefault", function () {
+				//[Issue 6476] We want to reload the page with the dashboar tab selected
+				//as we will NOT modify contextual content and a bunch of controllers for that, we'll use a pure client side solution based on global var
+				var selectedIteration = tree.jstree("get_selected").filter("[restype='iterations']");
+				if(selectedIteration.length > 0 ){
+					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
+				}
 				//we need to unload the whole view as we cannot replace the backbone view by a new JSP fragment easily
 				//it's far easier and cleaner to reload the contextual content after backbone view has been destroyed
 				ctxcontent.unload();
@@ -216,6 +222,11 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			  });
 			  
 			wreqr.on("favoriteDashboard.showFavorite", function () {
+				//see just above
+				var selectedIteration = tree.jstree("get_selected").filter("[restype='iterations']");
+				if(selectedIteration.length > 0 ){
+					squashtm.workspace.shouldShowFavoriteDashboardTab = true;
+				}
 				ctxcontent.unload();
 				loadFragment(tree);
 			  });

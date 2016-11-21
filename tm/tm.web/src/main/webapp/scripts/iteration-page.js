@@ -79,6 +79,9 @@ require([ "common" ], function() {
 
 			// ****** tabs configuration *******
 
+			
+			
+
 			var fragConf = {
 					active : 2,
 					/*cookie : {
@@ -162,6 +165,13 @@ require([ "common" ], function() {
 			$("#dashboard-tab-list-item").on("click", function() {
 				wreqr.trigger("favoriteDashboard.reload");
 			});
+
+			//[Issue 6476] ugly hack to select properly the first tab if user just changed favorite dashboard/default dashboard
+			//we can't set properly the active tab as we do some pre styling server side and it's a bad idea to change that (fouc...)
+			if(!!squashtm.workspace.shouldShowFavoriteDashboardTab){
+				squashtm.workspace.shouldShowFavoriteDashboardTab = false;
+				$("#dashboard-tab-list-item").click();
+			}
 
 
 			console.log("iteration-page refresh.iteration");
