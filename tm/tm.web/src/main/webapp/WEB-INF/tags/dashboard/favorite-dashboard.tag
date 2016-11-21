@@ -85,6 +85,22 @@
   </script>
 
   <script id="tpl-default-dashboard" type="text/x-handlebars-template">
+  	<div id="dashboard-name-div" class="fragment-header ui-default-black">
+		<div style="float: left; height: 100%;" class="small-margin-left">
+			<h2>
+				<span><f:message key='report.view.code.dashboard' /></span>
+			</h2>
+		</div>
+
+    	<div class="dashboard-grid-toolbar">
+    		<a class="show-default-dashboard-button sq-btn" role="button"  title="<f:message key='label.default' />">
+    			<span><f:message key='label.default' /></span>
+    		</a>
+
+    		<div class="unsnap"></div>
+    	</div>
+    	</div>
+
       <div id="dashboard-doc">
         <strong><f:message key="workspace.home.dashboard.default"/></strong>
       </div>
