@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -177,10 +178,13 @@ public class GlobalSearchController {
 
 		if (activeMilestone.isPresent()) {
 			AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
+			AdvancedSearchSingleFieldModel activeMilestoneMode = new AdvancedSearchSingleFieldModel();
 			List<String> milestones = new ArrayList<>();
 			milestones.add(activeMilestone.get().getId().toString());
 			model.setValues(milestones);
+			activeMilestoneMode.setValue("true");
 			searchModel.addField("milestones.id", model);
+			searchModel.addField("activeMilestoneMode",activeMilestoneMode);
 		}
 	}
 

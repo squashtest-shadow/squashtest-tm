@@ -313,7 +313,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		boolean enabled = getFeatureManager().isEnabled(Feature.MILESTONE);
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get("searchByMilestone");
-		boolean hasCriteria = searchByMilestone != null && "true".equals(searchByMilestone.getValue());
+		AdvancedSearchSingleFieldModel activeMilestoneMode = (AdvancedSearchSingleFieldModel) model.getFields().get("activeMilestoneMode");
+		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) || (activeMilestoneMode != null && "true".equals(activeMilestoneMode.getValue()));
 
 		return enabled && hasCriteria;
 	}
