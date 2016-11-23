@@ -178,8 +178,9 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				Cell cell = valueCell(row);
-				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
-					// When a cell is numeric, we read it as a Date (which is legal fo excel)
+				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType() || 
+						Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
+					// When a cell is numeric or formula, we read it as a Date (which is legal for excel)
 					Date value = valueCell(row).getDateCellValue();
 					pseudoTestCase.setCreatedOnDate(value);
 				} else {
