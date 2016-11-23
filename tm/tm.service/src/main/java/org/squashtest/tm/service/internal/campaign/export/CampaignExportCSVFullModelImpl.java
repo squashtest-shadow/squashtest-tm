@@ -436,18 +436,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells) {
 			
-			/* Issue 6351: We also have to import ITPI without any Test Step. */
-			if (execStep == null && actionTestStep == null) {
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl(N_A));
 			
-			} else if (execStep == null && actionTestStep != null) {
+			if (execStep == null && actionTestStep != null) {
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(String.valueOf(actionTestStepIndex + 1)));
 				dataCells.add(new CellImpl(formatStepRequirements()));
@@ -467,6 +457,17 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep)))); // XXX THIS IS WAAAAAAAY TOO
 				// EXPENSIVE !
 				dataCells.add(new CellImpl(formatLongText(execStep.getComment())));
+				
+			} else {
+				/* Issue 6351: We also have to import ITPI without any Test Step. */
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
+				dataCells.add(new CellImpl(N_A));
 			}
 		}
 
