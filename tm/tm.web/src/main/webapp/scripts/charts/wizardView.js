@@ -189,6 +189,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 			this.resetView();
 			this.currentView = new View(this.model, wizrouter);
 			this.showSideView();
+			
 
 		},
 

@@ -35,6 +35,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			this.showViewTitle(currStep.viewTitle, currStep.stepNumber);
 			this.initButtons(currStep.buttons);
 			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
+			this.missingStepNames = missingStepNames;
 
 			if (_.isEmpty(missingStepNames)){
 				this.render(data, $(this.tmpl));
@@ -146,6 +147,10 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		 */
 		isModify : function () {
 		return this.model.get("chartDef") !== null;
+		},
+
+		previousStepAreValid : function() {
+			return _.isEmpty(this.missingStepNames)
 		},
 
 		//as in database we have not a real column prototype for each cu, we need to create synthetic prototype client side.

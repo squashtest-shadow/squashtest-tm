@@ -29,9 +29,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.model = data;
 			data.name = "type";
 			this._initialize(data, wizrouter);
-			this.precalculateInfoListItemData();
-			this.reloadData();
-			this.initGraphExample();
+			if(this.previousStepAreValid()){
+				this.precalculateInfoListItemData();
+				this.reloadData();
+				this.initGraphExample();
+			}
 		},
 
 		events : {
