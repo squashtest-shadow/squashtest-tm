@@ -58,9 +58,13 @@ public class JsonChartInstance {
 
 	private Map<String, List<Object>> series = new HashMap<>();
 
-        private List<String> projectScope = new ArrayList<>();
+    private List<String> projectScope = new ArrayList<>();
 
 	private List<JsonEntityReference> scope = new ArrayList<>();
+
+	private ScopeType scopeType;
+
+	private Long projectId;
 
 	public JsonChartInstance() {
 		super();
@@ -70,6 +74,7 @@ public class JsonChartInstance {
 		ChartDefinition def = instance.getDefinition();
 		this.name = def.getName();
 		this.type = def.getType();
+		this.projectId = def.getProject().getId();
 		doAuditableAttributes(def);
 
 		for (AxisColumn ax : def.getAxis()){
@@ -85,10 +90,12 @@ public class JsonChartInstance {
 		}
 
 		for (EntityReference ref : def.getScope()) {
-			scope.add(new JsonEntityReference(ref,def));
+			scope.add(new JsonEntityReference(ref));
 		}
 
-                this.projectScope = instance.getDefinition().getProjectScope();
+		this.scopeType = def.getScopeType();
+
+        this.projectScope = instance.getDefinition().getProjectScope();
 
 		ChartSeries series = instance.getSeries();
 
@@ -112,6 +119,14 @@ public class JsonChartInstance {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 
 	public String getCreatedBy() {
@@ -152,6 +167,14 @@ public class JsonChartInstance {
 
 	public void setType(ChartType type) {
 		this.type = type;
+	}
+
+	public ScopeType getScopeType() {
+		return scopeType;
+	}
+
+	public void setScopeType(ScopeType scopeType) {
+		this.scopeType = scopeType;
 	}
 
 	public List<JsonMeasureColumn> getMeasures() {
@@ -391,16 +414,9 @@ public class JsonChartInstance {
 		private long id;
 		private String name;
 
-		public JsonEntityReference(EntityReference entityReference, ChartDefinition def) {
+		public JsonEntityReference(EntityReference entityReference) {
 			this.entityType = entityReference.getType();
 			this.id = entityReference.getId();
-			findName(def);
-		}
-
-		private void findName(ChartDefinition def) {
-			if (entityType == EntityType.PROJECT &&def.getProject()!=null) {
-				name = def.getProject().getName();
-			}
 		}
 
 		public EntityType getEntityType() {

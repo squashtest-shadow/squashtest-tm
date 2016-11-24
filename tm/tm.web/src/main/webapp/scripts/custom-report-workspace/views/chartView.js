@@ -95,7 +95,8 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			 */
 			setPerimeterMessage: function (json) {
 				var projectScope = json.projectScope,
-					scope = json.scope;
+					scope = json.scope, 
+					scopeType = json.scopeType;
 
 				// extract the type of perimeter
 				var extractor = new RegExp('(PROJECT|TEST_CASE|REQUIREMENT|CAMPAIGN)');
@@ -107,16 +108,32 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var projectName;
 
 				// type 1 : the default perimeter
-				if (etype === "PROJECT") {
-					projectName = projects.findProject(projectScope[0]).name;
+				if (scopeType === "DEFAULT") {
+					projectName = projects.findProject(json.projectId).name;
 					msg = translator.get('label.project').toLowerCase() + " " + projectName;
 				}
-				// type 2 : custom perimeter with all nodes from the same project
+				// type 2: no floating project selection
+				else if (scopeType === "PROJECTS"){
+					var names = _.chain(scope)
+						.map(function(project, index) {
+							var projectName = projects.findProject(project.id).name;
+							project.name = projectName;
+							return project;
+						})
+						.sortBy('name')
+						.pluck('name')
+						.reduce(function(memo, name) {
+							return memo + ", " + name;
+						})
+						.value();
+					msg = names;
+				}
+				// type 3 : custom perimeter with all nodes from the same project
 				else if (projectScope.length === 1) {
 					projectName = projects.findProject(projectScope[0]).name;
 					msg = translator.get('wizard.perimeter.msg.custom.singleproject', entityNames, projectName);
 				}
-				// type 3 : multiple selection from multiple projects
+				// type 4 : multiple selection from multiple projects
 				else {
 					msg = translator.get('wizard.perimeter.msg.custom.multiproject', entityNames);
 				}
