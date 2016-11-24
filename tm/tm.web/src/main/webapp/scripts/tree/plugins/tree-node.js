@@ -440,6 +440,10 @@ define(['jquery'], function($){
 			if (! parents.areSameLibs()){
 				requirements.removeAttr('synchronized');
 			}
+			if(squashtm && squashtm.app && squashtm.app.wreqr){
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("tree.moveNodes.done");
+			}
 		};
 
 		this.select = function() {
