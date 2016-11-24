@@ -40,7 +40,7 @@
 				var template = Handlebars.compile(source);
 				this.$el.append(template(this.options.initialProjectModel));
 			} else {
-				throw "you must specify a template selector to render this dialog with hanlebar, client side";
+				throw "you must specify a template selector to render this dialog with handlebar, client side";
 			}
 			return this;
 		},

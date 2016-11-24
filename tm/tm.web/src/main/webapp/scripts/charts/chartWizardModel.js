@@ -33,15 +33,15 @@ return Backbone.Model.extend({
 
 		if (chartDef !== null){
 			this.set({
-						updateId : chartDef.id,
-						name : chartDef.name,
-						type : chartDef.type,
-						axis: chartDef.axis,
-						owner : chartDef.owner,
-						scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
-						projectsScope : chartDef.projectScope,
-						scopeEntity : self.getScopeEntity(chartDef.scope),
-						scopeType : chartDef.scopeType,
+				updateId : chartDef.id,
+				name : chartDef.name,
+				type : chartDef.type,
+				axis: chartDef.axis,
+				owner : chartDef.owner,
+				scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
+				projectsScope : self.getProjectScope(chartDef.projectScope),
+				scopeEntity : self.getScopeEntity(chartDef.scope),
+				scopeType : chartDef.scopeType,
 				measures : chartDef.measures,
 				operations : self.getOperations(chartDef),
 				filters : self.getFilters(chartDef),
@@ -61,7 +61,6 @@ return Backbone.Model.extend({
 		.flatten()
 		.map(function(val){return _(val).pick('column', 'operation');})
 		.value();
-
 	},
 
 	getScopeEntity : function (scope){
@@ -84,11 +83,9 @@ return Backbone.Model.extend({
 	},
 
 	getFilters : function (chartDef){
-
 		return _.chain(chartDef.filters)
 		.map(function(filter) {  filter.values = [filter.values] ; return filter;})
 		.value();
-
 	},
 
 	getSelectedAttributes : function (chartDef){
@@ -137,14 +134,20 @@ return Backbone.Model.extend({
 	getSelectedEntities : function (chartDef) {
 
 		return _.chain(chartDef)
-		.pick('filters', 'measures', 'axis')
-		.values()
-		.flatten()
-		.pluck('column')
-		.pluck('specializedType')
-		.pluck('entityType')
-		.uniq()
-		.value();
+			.pick('filters', 'measures', 'axis')
+			.values()
+			.flatten()
+			.pluck('column')
+			.pluck('specializedType')
+			.pluck('entityType')
+			.uniq()
+			.value();
+	},
+
+	getProjectScope : function(projectScope) {
+		return _.map(projectScope, function(projectId) {
+			return parseInt(projectId);
+		});
 	},
 
 

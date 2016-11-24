@@ -54,6 +54,7 @@ define(["jquery", "underscore"], function($, _){
 					.filter(function(project) {
 						return _.contains(ids,project.id);
 					})
+					.sortBy("name")
 					.pluck("name")
 					.value();
 	}

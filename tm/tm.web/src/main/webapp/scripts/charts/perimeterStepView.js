@@ -81,13 +81,18 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			initProjectPerimeterPopup : function() {
 				var self = this;
 				var projects = squashtm.workspace.projects;
-				var initialModel = _.map(projects,function(project) {
-					return {
-						id: project.id,
-						name: project.name,
-						label: project.label
-					};
-				});
+				var initialModel =  _.chain(projects)
+					.map(function(project) {
+						var checked = _.contains(self.model.get("projectsScope"),project.id);
+						return {
+							id: project.id,
+							name: project.name,
+							label: project.label,
+							checked : checked
+						};
+					})
+					.sortBy("name")
+					.value();
 
 				this.projectPopup = new ProjectSelectorPopup({
 					el:"#project-perimeter-popup",
