@@ -74,7 +74,7 @@
 	.dashboard-grid-in-classic-workspace {
      	border: 1px solid #000000;
      	background: #ffffff;
-     	height: 80%;
+     	height: 850px;
      	width: 99.2%;
      	overflow: auto;
      	position:absolute;
@@ -83,25 +83,25 @@
      /*
      * Class for mime small buttons that are in tg-head. Duplicate of tg-head -> tg-toolbar to avoid conflict is we have decided to extract this class from .tg-head
      */
-	.dashboard-grid-toolbar {
-    			display: block;
-    			float: right;
-    			text-align: right;
-    			margin-top: 0.4em;
-    			margin-right: 0.5em !important;
+.dashboard-grid-toolbar {
+		display: block;
+		float: right;
+		text-align: right;
+		margin-top: 0.4em;
+		margin-right: 0.5em !important;
 
-    			// meh... we have to redefine buttons height
-    			// for them to look good^h^h as before
-    			input {
-    				.sq-btn;
-    			}
+		// meh... we have to redefine buttons height
+		// for them to look good^h^h as before
+		input {
+			.sq-btn;
+		}
 
-    			a {
-    				padding-top: .15em;
-    				padding-bottom: .15em;
-    				margin-left: 0.5em !important;
-    				font-size: @small-font;
-    				color: #ffffff !important;
-    			}
+		a {
+			padding-top: .15em;
+			padding-bottom: .15em;
+			margin-left: 0.5em !important;
+			font-size: @small-font;
+			color: #ffffff !important;
+		}
 
-    		}
+	}
