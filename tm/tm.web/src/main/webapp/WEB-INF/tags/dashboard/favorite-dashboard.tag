@@ -26,7 +26,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ attribute name="workspace" required="false" %>
 
-<div id="favorite-dashboard-wrapper" style="height : 80%;">
+<div id="favorite-dashboard-wrapper" class="favorite-dashboard-wrapper">
  <div id='contextual-content-wrapper' class="dashboard-grid-in-classic-workspace  ui-corner-all">
 	<!--empty -->
  </div>

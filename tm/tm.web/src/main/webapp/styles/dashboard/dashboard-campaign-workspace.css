@@ -18,24 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * VARIABLES
- */
-@glass-bg-url: url("jquery/ui/images/ui-bg_glass_45_750021_1x400.png");
-@active-background: #750021;
-@active-border: #52001d;
-@hover-background: @active-background;
-@hover-border: @active-border;
-/*
- * IMPORTS
- */
-@import "global-properties.less";
-@import "master.less";
-@import "tabbed-pane.less";
-@import "jquery/ui/jquery-ui-1.9.1.custom.wine.less";
-@import (less) "datatables.wine.css";
-@import (less) "csswidgets.less";
-@import "structure.less";
-@import (less) "dashboard/gridster.css";
-@import (less) "dashboard/dashboard-common.css";
-@import (less) "dashboard/dashboard-custom-report-workspace.css";
+
+	.favorite-dashboard-wrapper {
+  		height: 780px;
+  		overflow: none;
+  	}
+
+  	.dashboard-grid {
+ 		min-width : 98%;
+   		min-height: 760px;
+  	}
+
+
+
+	.dashboard-grid-in-classic-workspace {
+     	border: 1px solid #000000;
+     	background: #ffffff;
+     	height: 780px;
+     	width: 99.2%;
+     	overflow: none;
+     	position:absolute;
+     }
+
+
