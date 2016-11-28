@@ -209,7 +209,7 @@
 	@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query = "select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
 	@NamedQuery(name = "IterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
-
+	@NamedQuery(name="IterationTestPlanItem.findAllForMilestones", query="select itpi.id from IterationTestPlanItem itpi join itpi.iteration.campaign.milestones milestone where milestone.id in (:milestonesIds)"),
 
 	// TestSuite
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),

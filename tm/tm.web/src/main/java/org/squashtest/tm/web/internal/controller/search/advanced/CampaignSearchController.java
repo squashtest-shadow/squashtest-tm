@@ -184,9 +184,8 @@ public class CampaignSearchController extends GlobalSearchController{
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = campaignAdvancedSearchService
-			.searchForIterationTestPlanItem(searchModel,
-				paging, locale);
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = 
+				campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, messageSource, permissionService)
 			.buildDataModel(holder, params.getsEcho());

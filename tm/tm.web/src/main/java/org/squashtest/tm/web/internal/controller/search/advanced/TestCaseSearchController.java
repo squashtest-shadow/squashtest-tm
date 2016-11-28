@@ -206,8 +206,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCases(searchModel,
-			paging, locale);
+		PagedCollectionHolder<List<TestCase>> holder =
+				testCaseAdvancedSearchService.searchForTestCases(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
