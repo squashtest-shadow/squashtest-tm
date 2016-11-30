@@ -39,27 +39,49 @@
 
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-	<h2><span><f:message key="label.Milestone"/>  ${milestone.label} </span></h2>			
+	<h2><span><f:message key="label.Milestone"/>  ${milestone.label} </span></h2>
 </div>
 
 <div class="fragment-body">
-	<dashboard:campaign-milestones-dashboard-panel 
-    url="${statsUrl}"  
-    printUrl="${printUrl}" 
-    printmode="${printmode}" 
-    allowsSettled="${allowsSettled}" 
-    allowsUntestable="${allowsUntestable}" />
+<%-- statistics panel --%>
+  	<c:if test="${shouldShowDashboard}">
+        <dashboard:favorite-dashboard />
+    </c:if>
+
+    <c:if test="${not shouldShowDashboard}">
+    			<dashboard:campaign-milestones-dashboard-panel
+            url="${statsUrl}"
+            printUrl="${printUrl}"
+            printmode="${printmode}"
+            allowsSettled="${allowsSettled}"
+            allowsUntestable="${allowsUntestable}" />
+    </c:if>
 </div>
 
 <script type="text/javascript">
 
 	require(["common"], function(){
-		require(["domReady","campaign-management"], function(domReady, campmanager){
+		require(["domReady","campaign-management","favorite-dashboard"], function(domReady, campmanager, favoriteMain){
 			domReady(function(){
+
+			var shouldShowDashboard = ${shouldShowDashboard};
+
+
+    //init the default dashboard
+      if(shouldShowDashboard){
+        squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+        squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+
+        var options = {};
+        options.isMilestoneDashboard = ${isMilestoneDashboard};
+
+        favoriteMain.init(options);
+      } else {
 				campmanager.initDashboardPanel({
 					master : '#dashboard-master',
 					model : ${json:serialize(dashboardModel)}
-				});	
+				});
+				}
 			});
 		});
 	});

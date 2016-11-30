@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -571,19 +572,32 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
+
+
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
-		CampaignStatisticsBundle csbundle = campaignLibraryNavigationService
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
+
+		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("canShowDashboard", canShowDashboard);
+		mav.addObject("isMilestoneDashboard", true);
+		mav.addObject("milestone", activeMilestone.get());
+
+		//if we should't or can't show favorite custom report, we calculate stat for default dashboard
+		if(!shouldShowDashboard || !canShowDashboard) {
+
+			CampaignStatisticsBundle csbundle = campaignLibraryNavigationService
 				.gatherCampaignStatisticsBundleByMilestone();
 
-		mav.addObject("milestone", activeMilestone.get());
-		mav.addObject("dashboardModel", csbundle);
+			mav.addObject("dashboardModel", csbundle);
 
-		boolean allowsSettled = csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0;
-		boolean allowsUntestable = csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0;
+			boolean allowsSettled = csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0;
+			boolean allowsUntestable = csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0;
 
-		mav.addObject("allowsSettled", allowsSettled);
-		mav.addObject("allowsUntestable", allowsUntestable);
+			mav.addObject("allowsSettled", allowsSettled);
+			mav.addObject("allowsUntestable", allowsUntestable);
+		}
 
 		return mav;
 	}
