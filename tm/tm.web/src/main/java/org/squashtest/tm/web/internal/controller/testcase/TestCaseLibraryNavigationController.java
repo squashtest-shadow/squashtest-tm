@@ -347,16 +347,21 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
-
 		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
-		// Find ids for specific milestone
-		List<Long> nodeIds = testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
-
-		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
-				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
-		model.addAttribute("statistics", stats);
 		model.addAttribute("milestone", activeMilestone);
 		model.addAttribute("isMilestoneDashboard", true);
+
+		//if we should't or can't show favorite custom report, we calculate stat for default dashboard
+		if(!shouldShowDashboard || !canShowDashboard){
+			// Find ids for specific milestone
+			List<Long> nodeIds = testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
+
+			TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
+				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
+			model.addAttribute("statistics", stats);
+		}
+
+
 
 		return "fragment/test-cases/test-cases-milestone-dashboard";
 	}

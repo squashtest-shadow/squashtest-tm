@@ -355,14 +355,23 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public String getMilestoneDashboard(Model model) {
 
-		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
-		// Find ids for specific milestone
-		List<Long> nodeIds = requirementLibraryNavigationService.findAllRequirementIdsInMilestone(activeMilestone);
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.REQUIREMENT);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
 
-		RequirementStatisticsBundle stats = requirementLibraryNavigationService
-				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
-		model.addAttribute("statistics", stats);
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
+		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
 		model.addAttribute("milestone", activeMilestone);
+		model.addAttribute("isMilestoneDashboard", true);
+
+		if(!shouldShowDashboard || !canShowDashboard) {
+			// Find ids for specific milestone
+			List<Long> nodeIds = requirementLibraryNavigationService.findAllRequirementIdsInMilestone(activeMilestone);
+
+			RequirementStatisticsBundle stats = requirementLibraryNavigationService
+				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
+			model.addAttribute("statistics", stats);
+		}
 
 		return "fragment/requirements/requirement-milestone-dashboard";
 	}

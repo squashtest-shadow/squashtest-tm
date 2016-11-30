@@ -62,24 +62,48 @@
 			</div>
 		</div>
 		</jsp:attribute>
-	</comp:toggle-panel> 
-	
-	<%-- statistics panel --%>	
-	<dashboard:requirements-dashboard-panel url="${statsUrl}"/>
+	</comp:toggle-panel>
+
+	<%-- statistics panel --%>
+  	<c:if test="${shouldShowDashboard}">
+        <dashboard:favorite-dashboard />
+    </c:if>
+
+    <c:if test="${not shouldShowDashboard}">
+    		<dashboard:requirements-dashboard-panel url="${statsUrl}"/>
+    </c:if>
+
+	<%-- statistics panel --%>
+
 
 <script type="text/javascript">
 
 require(["common"], function() {
 
-	require(["jquery","squash.basicwidgets","requirement-library-management", "milestone-manager/milestone-activation"], function($,basicwidg, RLM, milestones){
+	require(["jquery","squash.basicwidgets","requirement-library-management", "milestone-manager/milestone-activation","favorite-dashboard"], function($,basicwidg, RLM, milestones, favoriteMain){
 		$(function(){
+		var shouldShowDashboard = ${shouldShowDashboard};
+
 		basicwidg.init();
-		var mId = milestones.getActiveMilestone();
-		RLM.initDashboardPanel({
-			master : '#dashboard-master',
-			cacheKey : "dashboard-reqmilestone"+mId
-		});			
-	});	
+
+      //init the default dashboard
+      if(shouldShowDashboard){
+        squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+        squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+
+        var options = {};
+        options.isMilestoneDashboard = ${isMilestoneDashboard};
+
+        favoriteMain.init(options);
+      }
+      else {
+        var mId = milestones.getActiveMilestone();
+        RLM.initDashboardPanel({
+          master : '#dashboard-master',
+          cacheKey : "dashboard-reqmilestone"+mId
+       });
+		  }
+	});
 });
 });
 
