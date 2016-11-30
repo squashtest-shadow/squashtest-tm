@@ -42,62 +42,60 @@ define(["jquery", "./abstractCustomReportChart",
       var axis = this.getAxis()[0];
       ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
-			var finalConf = _.extend(this.getCommonConf(),{
-				seriesDefaults : {
-					renderer : $.jqplot.BarRenderer,
-					rendererOptions : {
-            animation: {
-              speed: 1000
-            },
-						fillToZero : true,
-            varyBarColor : true
-					},
-          pointLabels: {
-            show: true,
-            labelsFromSeries : true,
-            formatString :'%.1f',
-            textColor: "slategray",
-            location : 'n',
-            hideZeros : true
-          }
-				},
+      var finalConf = _.extend(this.getCommonConf(),{
+    	  seriesDefaults : {
+    		  renderer : $.jqplot.BarRenderer,
+    		  rendererOptions : {
+    			  animation: {
+    				  speed: 1000
+    			  },
+    			  fillToZero : true,
+    			  varyBarColor : true
+    		  },
+    		  pointLabels: {
+    			  show: true,
+    			  labelsFromSeries : true,
+    			  formatString :'%.1f',
+    			  textColor: "slategray",
+    			  location : 'n',
+    			  hideZeros : true
+    		  }
+    	  },
+    	  legend : {
+    		  show : false
+    	  },
+    	  axes : {
+    		  xaxis : {
+    			  renderer : $.jqplot.CategoryAxisRenderer,
+    			  tickRenderer:$.jqplot.CanvasAxisTickRenderer,
+    			  ticks : ticks,
+    			  tickOptions:{
+    				  angle : -30,
+    				  showGridline: false
+    			  },
+    			  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+    			  label : this.getXAxisLabel()
+    		  },
+    		  yaxis : {
+    			  label : this.getYAxisLabel(),
+    			  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+    			  tickOptions:{
+    				  gridStyle : {
+    					  lineDash : [5],
+    					  strokeStyle : "#c3c3c3"
+    				  },
+    				  markStyle : {
+    					  lineDash : [5],
+    					  strokeStyle : '#c3c3c3'
+    				  },
+    				  fontSize : '12px'
+    			  }
 
-				legend : {
-					show : false
-				},
-
-				axes : {
-					xaxis : {
-						renderer : $.jqplot.CategoryAxisRenderer,
-            tickRenderer:$.jqplot.CanvasAxisTickRenderer,
-						ticks : ticks,
-            tickOptions:{
-              angle : -30,
-              showGridline: false
-            },
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-            label : this.getXAxisLabel()
-					},
-          yaxis : {
-            label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-            tickOptions:{
-              gridStyle : {
-								lineDash : [5],
-								strokeStyle : "#c3c3c3"
-							},
-							markStyle : {
-								lineDash : [5],
-								strokeStyle : '#c3c3c3'
-							},
-              fontSize : '12px'
-            }
-
-          }
-				}
+    		  }
+    	  }
 
 
-			});
+      });
 
       var vueConf = this.getVueConf();
       if (vueConf) {

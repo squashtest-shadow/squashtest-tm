@@ -36,53 +36,51 @@ define(["jquery", "./abstractCustomReportChart",
 			throw "attempted to create an abstract CumulativeView !";
 		},
 
-    getConf : function(series){
+		getConf : function(series){
 
 			var ticks = this.getCategories();
-      var axis = this.getAxis()[0];
-      ticks = this.replaceInfoListDefaultLegend(ticks,axis);
+			var axis = this.getAxis()[0];
+			ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
-			var finalConf = _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(), {
 				seriesDefaults : {
 					rendererOptions : {
-            animation: {
-              speed: 1000
-            },
-            smooth: false
+						animation: {
+							speed: 1000
+						},
+						smooth: false
 					},
-          fill: true,
-          pointLabels: {
-            show: true,
-            labelsFromSeries : true,
-            formatString :'%d',
-            textColor: "slategray",
-            location : 'n',
-            hideZeros : true
-          }
+					fill: true,
+					pointLabels: {
+						show: true,
+						labelsFromSeries : true,
+						formatString :'%d',
+						textColor: "slategray",
+						location : 'n',
+						hideZeros : true
+					}
 				},
-
 				legend : {
 					show : false
 				},
-
 				axes : {
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
-            tickRenderer:$.jqplot.CanvasAxisTickRenderer,
+						tickRenderer:$.jqplot.CanvasAxisTickRenderer,
 						ticks : ticks,
-            tickOptions:{
-              angle : -30,
-              showGridline: false
-            },
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-            label : this.getXAxisLabel()
+						tickOptions:{
+							angle : -30,
+							showGridline: false
+						},
+						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+						label : this.getXAxisLabel()
 					},
-          yaxis: {
-            min : 0,
-            label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-            tickOptions:{
-              gridStyle : {
+					yaxis: {
+						min : 0,
+						label : this.getYAxisLabel(),
+						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+						tickOptions:{
+							gridStyle : {
 								lineDash : [5],
 								strokeStyle : "#c3c3c3"
 							},
@@ -90,18 +88,18 @@ define(["jquery", "./abstractCustomReportChart",
 								lineDash : [5],
 								strokeStyle : '#c3c3c3'
 							},
-              fontSize : '12px'
-            }
-          }
+							fontSize : '12px'
+						}
+					}
 				}
 			});
 
-      var vueConf = this.getVueConf();
-      if (vueConf) {
-        finalConf = _.extend(finalConf,vueConf);
-      }
+			var vueConf = this.getVueConf();
+			if (vueConf) {
+				finalConf = _.extend(finalConf,vueConf);
+			}
 
-      return finalConf;
+			return finalConf;
 
 		}
 
