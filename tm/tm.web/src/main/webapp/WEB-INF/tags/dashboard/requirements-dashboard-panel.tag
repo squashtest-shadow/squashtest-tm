@@ -24,8 +24,11 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="url" required="true" description="url where to get the data" %>
 <%@ attribute name="cacheKey" required="false" description="if set, will use the cache using that key" %>
+
+<c:set var="showMilestoneDashboardButton" value="${(empty isMilestoneDashboard) ? false : isMilestoneDashboard}" />
 
 
 <div id="dashboard-master" data-def="url=${url}">
@@ -37,7 +40,12 @@
       <div class="tg-toolbar">
         <span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span>
         <input type="button" class="dashboard-refresh-button sq-btn" role="button" value="<f:message key='label.Refresh' />" title="<f:message key='label.Refresh' />"/>
-        <input type="button" class="show-favorite-dashboard-button sq-btn" role="button" value="<f:message key='label.favorite-dashboard' />" title="<f:message key='label.favorite-dashboard' />"/>
+         <c:if test="${not showMilestoneDashboardButton}">
+			<input type="button" class="show-favorite-dashboard-button sq-btn" role="button" value="<f:message key='label.favorite-dashboard' />" title="<f:message key='label.favorite-dashboard' />"/>
+		</c:if>
+		<c:if test="${showMilestoneDashboardButton}">
+			 <input type="button" class="show-milestone-favorite-dashboard-button sq-btn" role="button" value="<f:message key='label.favorite-dashboard' />" title="<f:message key='label.favorite-dashboard' />"/>
+		</c:if>
       </div>
     </div>
     <div class="tg-body">

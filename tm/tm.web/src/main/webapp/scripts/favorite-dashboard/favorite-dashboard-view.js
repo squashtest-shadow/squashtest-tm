@@ -135,7 +135,12 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                 var self = this;
 
                 var callback = function() {
-                    wreqr.trigger("favoriteDashboard.showDefault");
+                    if(!!self.isMilestoneDashboard){
+                        wreqr.trigger("favoriteDashboard.milestone.showDefault");
+                    } else {
+                        wreqr.trigger("favoriteDashboard.showDefault");
+                    }
+                    
                     //destroying the backbone view
                     self.remove();
                 };

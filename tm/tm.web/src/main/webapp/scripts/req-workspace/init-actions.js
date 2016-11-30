@@ -231,6 +231,17 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				ctxcontent.unload();
 				loadFragment(tree);
 			  });
+
+			  wreqr.on("favoriteDashboard.milestone.showDefault", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard");
+			  });
+
+			    wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/requirement-browser/dashboard");
+			  });
+
 			
 		}
 	};	

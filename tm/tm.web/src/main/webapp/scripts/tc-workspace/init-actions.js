@@ -240,6 +240,17 @@ define(["jquery","backbone", "tree","./permissions-rules", "workspace.contextual
 				ctxcontent.unload();
 				loadFragment(tree);
 			  });
+
+			  wreqr.on("favoriteDashboard.milestone.showDefault", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");
+			  });
+
+			    wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");
+			  });
+
 		}
 	};
 

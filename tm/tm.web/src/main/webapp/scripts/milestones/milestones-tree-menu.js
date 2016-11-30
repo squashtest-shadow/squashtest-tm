@@ -118,12 +118,12 @@ define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextua
 		
 		// the test-case dashboard button
 		$("#testCaseDashboardMilestone").on('click', function(){
-	  ctxContent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");
+	  		ctxContent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");
 		});
 		
 		// the campaign dashboard button
 		$("#campaignDashboardMilestone").on('click', function(){
-	  ctxContent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
+	  		ctxContent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
 		});
 		
 	}

@@ -231,6 +231,15 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				loadFragment(tree);
 			  });
 
+			wreqr.on("favoriteDashboard.milestone.showDefault", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
+			});
+
+			wreqr.on("favoriteDashboard.milestone.showFavorite", function () {
+				ctxcontent.unload();
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
+			});
 
 			
 		}

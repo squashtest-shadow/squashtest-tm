@@ -82,7 +82,8 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 		
 		events : {
 			"click .dashboard-refresh-button" : "syncmodel",
-			"click .show-favorite-dashboard-button" : "showFavoriteDashboard"
+			"click .show-favorite-dashboard-button" : "showFavoriteDashboard",
+			"click .show-milestone-favorite-dashboard-button" : "showMilestoneFavoriteDashboard"
 		},
 
 		getBasicViews : function() {
@@ -116,6 +117,15 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 			var callback = function() {
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("favoriteDashboard.showFavorite");
+			};
+
+			userPrefs.chooseFavoriteDashboardInWorkspace(callback);
+		},
+
+		showMilestoneFavoriteDashboard : function() {
+			var callback = function() {
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("favoriteDashboard.milestone.showFavorite");
 			};
 
 			userPrefs.chooseFavoriteDashboardInWorkspace(callback);
