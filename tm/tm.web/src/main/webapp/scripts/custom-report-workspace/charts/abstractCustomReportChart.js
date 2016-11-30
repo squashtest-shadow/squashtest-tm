@@ -91,7 +91,10 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 						shadow: false,
 						shadowColor: 'transparent',
 						renderer: $.jqplot.StylableGridRenderer
-					}
+					},
+					highlighter: {
+			    		  show: false
+			    	}
 				};
 			},
 
