@@ -425,6 +425,11 @@ public class CampaignLibraryNavigationServiceImpl
 	}
 
 	@Override
+	public List<Long> findAllCampaignIdsForMilestone(Milestone milestone) {
+		return campaignDao.findAllIdsByMilestone(milestone.getId());
+	}
+
+	@Override
 	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 
 		/*

@@ -58,24 +58,45 @@
 			</div>
 		</div>
 		</jsp:attribute>
-	</comp:toggle-panel> 
-	
-	<%-- statistics panel --%>	
-	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
+	</comp:toggle-panel>
+
+	<%-- statistics panel --%>
+	<c:if test="${shouldShowDashboard}">
+      <dashboard:favorite-dashboard />
+  </c:if>
+
+  <c:if test="${not shouldShowDashboard}">
+  	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
+  </c:if>
 
 <script type="text/javascript">
 
+var shouldShowDashboard = ${shouldShowDashboard};
+
 require(["common"], function() {
 
-	require(["jquery","squash.basicwidgets","test-case-library-management", "milestone-manager/milestone-activation"], function($,basicwidg, TCLM, milestones){
+	require(["jquery","squash.basicwidgets","test-case-library-management", "milestone-manager/milestone-activation","favorite-dashboard"], function($,basicwidg, TCLM, milestones, favoriteMain){
 		$(function(){
 		basicwidg.init();
-		var mId = milestones.getActiveMilestone();
-		TCLM.initDashboardPanel({
-			master : '#dashboard-master',
-			cacheKey : "dashboard-tcmilestone"+mId
-		});			
-	});	
+
+    //init the default dashboard
+    if(shouldShowDashboard){
+      squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
+      squashtm.workspace.shouldShowFavoriteDashboard = shouldShowDashboard;
+
+      var options = {};
+      options.isMilestoneDashboard = ${isMilestoneDashboard};
+
+      favoriteMain.init(options);
+    }
+    else {
+    	var mId = milestones.getActiveMilestone();
+      TCLM.initDashboardPanel({
+        master : '#dashboard-master',
+        cacheKey : "dashboard-tcmilestone"+mId
+      });
+		}
+	});
 });
 });
 

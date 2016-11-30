@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.domain;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Created by jthebault on 30/09/2016.
@@ -30,7 +32,8 @@ public enum Workspace {
 	HOME("home"),
 	REQUIREMENT("requirement"),
 	TEST_CASE("test-case"),
-	CAMPAIGN("campaign");
+	CAMPAIGN("campaign"),
+	CUSTOM_REPORT("custom-report");
 
 	Workspace(String shortName) {
 		this.shortName = shortName;
@@ -50,5 +53,10 @@ public enum Workspace {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isWorkspaceMilestoneFilterable(Workspace workspace) {
+		List<Workspace> workspaceMilestoneFilterable = Arrays.asList(Workspace.TEST_CASE,Workspace.REQUIREMENT,Workspace.CAMPAIGN);
+		return workspaceMilestoneFilterable.contains(workspace);
 	}
 }

@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,16 +35,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.Workspace;
+import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 import com.querydsl.core.Tuple;
@@ -317,9 +313,17 @@ public class ChartDataFinder {
 	Provider<ScopePlanner> scopePlannerProvider;
 
 	@Transactional(readOnly=true)
-	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId){
+	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace){
 
-		DetailedChartQuery enhancedDefinition = new DetailedChartQuery(definition.getQuery());
+		ChartQuery chartQuery = definition.getQuery();
+		DetailedChartQuery enhancedDefinition;
+		if(milestoneId != null && workspace!=null && Workspace.isWorkspaceMilestoneFilterable(workspace)){
+			IChartQuery milestoneAwareChartQuery = new MilestoneAwareChartQuery(chartQuery,milestoneId,workspace);
+			enhancedDefinition = new DetailedChartQuery(milestoneAwareChartQuery);
+		}else{
+			enhancedDefinition = new DetailedChartQuery(chartQuery);
+		}
+
 
 		// *********** step 1 : create the query ************************
 
@@ -352,6 +356,8 @@ public class ChartDataFinder {
 		}
 
 	}
+
+
 
 	private ChartSeries makeSeries(DetailedChartQuery definition, List<Tuple> tuples){
 

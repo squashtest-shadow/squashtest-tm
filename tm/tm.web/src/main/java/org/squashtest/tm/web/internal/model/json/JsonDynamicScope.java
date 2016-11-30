@@ -46,6 +46,12 @@ public class JsonDynamicScope {
 	private List<Long> campaignIds;
 	private List<Long> iterationIds;
 
+	//Boolean for milestone dashboard (ie when clicking on the milestone button, and ignoring )
+	private boolean milestoneDashboard = false;
+
+	//Workspace, as the string identifier in domain entity Workspace
+	private String workspaceName;
+
 
 	public JsonDynamicScope() {
 	}
@@ -122,6 +128,22 @@ public class JsonDynamicScope {
 		this.iterationIds = iterationIds;
 	}
 
+	public boolean isMilestoneDashboard() {
+		return milestoneDashboard;
+	}
+
+	public void setMilestoneDashboard(boolean milestoneDashboard) {
+		this.milestoneDashboard = milestoneDashboard;
+	}
+
+	public String getWorkspaceName() {
+		return workspaceName;
+	}
+
+	public void setWorkspaceName(String workspaceName) {
+		this.workspaceName = workspaceName;
+	}
+
 	public List<EntityReference> convertToEntityReferences (){
 		List<EntityReference> entityReferences = new ArrayList<>();
 		entityReferences.addAll(convertToEntityReferencesForOneType(EntityType.TEST_CASE_LIBRARY,this.testCaseLibraryIds));
@@ -136,7 +158,7 @@ public class JsonDynamicScope {
 		return entityReferences;
 	}
 
-	private List<EntityReference> convertToEntityReferencesForOneType (EntityType type, List<Long> ids){
+	public static List<EntityReference> convertToEntityReferencesForOneType (EntityType type, List<Long> ids){
 		List<EntityReference> entityReferences = new ArrayList<>();
 		for (Long id : ids) {
 			entityReferences.add(new EntityReference(type,id));

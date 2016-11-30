@@ -51,6 +51,7 @@ class DomainGraphTest extends Specification {
 	static InternalEntityType CAT = REQUIREMENT_VERSION_CATEGORY
 	static InternalEntityType TCMIL = TEST_CASE_MILESTONE
 	static InternalEntityType RVMIL = REQUIREMENT_VERSION_MILESTONE
+	static InternalEntityType CMIL = CAMPAIGN_MILESTONE
 	static InternalEntityType TATEST = AUTOMATED_TEST
 	static InternalEntityType EXTEND = AUTOMATED_EXECUTION_EXTENDER
 
@@ -182,7 +183,7 @@ class DomainGraphTest extends Specification {
 		checkTreeHierarchy(plan, EXTEND, [])
 		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
-		checkTreeHierarchy(plan, CAMPAIGN, [])
+		checkTreeHierarchy(plan, CAMPAIGN, [CMIL])
 		checkTreeHierarchy(plan, TCMIL, [])
 		checkTreeHierarchy(plan, RVMIL, [])
 		checkTreeHierarchy(plan, US, [])

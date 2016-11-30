@@ -68,35 +68,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "CHART_QUERY")
-public class ChartQuery {
-
-
-
-	public enum NaturalJoinStyle{
-		/*
-		 * Use inner joins when a natural join is possible
-		 */
-		INNER_JOIN,
-		/*
-		 * Use left outer join when natural join is possible
-		 */
-		LEFT_JOIN;
-	}
-
-	public enum QueryStrategy{
-		/*
-		 * This query is a main query : it is the main entry point of a chart definition
-		 */
-		MAIN,
-		/*
-		 * This query corresponds to a "calculated" column prototype and will be added as a subquery
-		 */
-		SUBQUERY,
-		/*
-		 * This query can be inlined in the main query
-		 */
-		INLINED;
-	}
+public class ChartQuery implements IChartQuery {
 
 	@Id
 	@Column(name = "CHART_QUERY_ID")
@@ -125,14 +97,17 @@ public class ChartQuery {
 	private NaturalJoinStyle joinStyle = NaturalJoinStyle.INNER_JOIN;
 
 
+	@Override
 	public List<Filter> getFilters() {
 		return filters;
 	}
 
+	@Override
 	public List<AxisColumn> getAxis() {
 		return axis;
 	}
 
+	@Override
 	public List<MeasureColumn> getMeasures() {
 		return measures;
 	}
@@ -149,10 +124,12 @@ public class ChartQuery {
 		this.measures = measures;
 	}
 
+	@Override
 	public QueryStrategy getStrategy() {
 		return strategy;
 	}
 
+	@Override
 	public NaturalJoinStyle getJoinStyle() {
 		return joinStyle;
 	}
@@ -170,6 +147,7 @@ public class ChartQuery {
 	 * Returns which entities are covered by this chart, sorted by roles.
 	 * @return
 	 */
+	@Override
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 
 		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(3);

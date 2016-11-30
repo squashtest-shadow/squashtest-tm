@@ -103,8 +103,9 @@ public class CustomReportController {
 	public JsonCustomReportDashboard getDashboardDetailsWithDynamicScope(@PathVariable Long id, Locale locale, @RequestBody JsonDynamicScope dynamicScope){
 		List<EntityReference> entityReferences = dynamicScope.convertToEntityReferences();
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
+		Workspace workspace = Workspace.getWorkspaceFromShortName(dynamicScope.getWorkspaceName());
 
-		return builderProvider.get().build(dashboard, locale, entityReferences);
+		return builderProvider.get().build(dashboard, locale, entityReferences, dynamicScope.isMilestoneDashboard(), workspace);
 	}
 
 	//---- RENAME ----

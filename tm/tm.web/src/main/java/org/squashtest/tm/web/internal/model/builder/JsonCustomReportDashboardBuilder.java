@@ -29,11 +29,15 @@ import java.util.Set;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.service.chart.ChartModificationService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.i18n.MessageObject;
@@ -58,11 +62,18 @@ public class JsonCustomReportDashboardBuilder {
 
 	private String i18nKeyDateFormat = "squashtm.dateformat";
 
+	private boolean isMilestoneDashboard =false;
+
+	private Milestone milestone;
+
+	private Workspace workspace;
+
 	@Inject
-	public JsonCustomReportDashboardBuilder(ChartModificationService chartService,InternationalizationHelper i18nHelper) {
+	public JsonCustomReportDashboardBuilder(ChartModificationService chartService, InternationalizationHelper i18nHelper, ActiveMilestoneHolder activeMilestoneHolder) {
 		super();
 		this.chartService = chartService;
 		this.i18nHelper = i18nHelper;
+		this.milestone = activeMilestoneHolder.getActiveMilestone().orNull();
 	}
 
 	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale){
@@ -71,6 +82,13 @@ public class JsonCustomReportDashboardBuilder {
 
 	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale, List<EntityReference> scope){
 		this.scope = scope;
+		return getJsonCustomReportDashboard(dashboard, locale);
+	}
+
+	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale, List<EntityReference> scope, boolean isMilestoneDashboard, Workspace workspace){
+		this.scope = scope;
+		this.isMilestoneDashboard = isMilestoneDashboard;
+		this.workspace = workspace;
 		return getJsonCustomReportDashboard(dashboard, locale);
 	}
 
@@ -93,7 +111,14 @@ public class JsonCustomReportDashboardBuilder {
 			jsonBinding.setCol(binding.getCol());
 			jsonBinding.setSizeX(binding.getSizeX());
 			jsonBinding.setSizeY(binding.getSizeY());
-			ChartInstance chartInstance = chartService.generateChart(binding.getChart(),this.scope,dashboard.getId());
+			ChartInstance chartInstance;
+			if(isMilestoneDashboard){
+				chartInstance = chartService.generateChartForMilestoneDashboard(binding.getChart(),milestone.getId(),workspace);
+			} else if(milestone != null) {
+				chartInstance = chartService.generateChartInMilestoneMode(binding.getChart(),this.scope,workspace);
+			} else {
+				chartInstance = chartService.generateChart(binding.getChart(),this.scope,dashboard.getId());
+			}
 			jsonBinding.setChartInstance(new JsonChartInstance(chartInstance));
 			json.getChartBindings().add(jsonBinding);
 		}

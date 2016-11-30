@@ -35,6 +35,7 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.CAMPAIGN_MILESTONE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
@@ -206,6 +207,7 @@ class DomainGraph {
 		TraversableEntity tctypNode = new TraversableEntity(TEST_CASE_TYPE);
 		TraversableEntity rvcatNode = new TraversableEntity(REQUIREMENT_VERSION_CATEGORY);
 		TraversableEntity tcmilNode = new TraversableEntity(TEST_CASE_MILESTONE);
+		TraversableEntity campmilNode = new TraversableEntity(CAMPAIGN_MILESTONE);
 		TraversableEntity rvmilNode = new TraversableEntity(REQUIREMENT_VERSION_MILESTONE);
 		TraversableEntity autoNode = new TraversableEntity(AUTOMATED_TEST);
 		TraversableEntity extNode = new TraversableEntity(AUTOMATED_EXECUTION_EXTENDER);
@@ -215,7 +217,7 @@ class DomainGraph {
 		nodes.addAll(Arrays.asList(new TraversableEntity[]{
 				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
 				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
-				tctypNode, rvcatNode, tcmilNode, rvmilNode, autoNode, extNode
+				tctypNode, rvcatNode, tcmilNode, rvmilNode,campmilNode, autoNode, extNode
 		}));
 
 
@@ -257,6 +259,8 @@ class DomainGraph {
 
 		addEdge(rversionNode, rvcatNode, "category");
 		addEdge(rversionNode, rvmilNode, "milestones");
+
+		addEdge(campaignNode, campmilNode, "milestones");
 
 		addEdge(testcaseNode, autoNode, "automatedTest");
 
@@ -309,7 +313,7 @@ class DomainGraph {
 	 */
 
 	/*
-	 * Developper from the Future, read this !
+	 * Developer from the Future, read this !
 	 *
 	 * Step 1 details :
 	 * 	by default any outbound node from the root entity (and thereafter) is legit for joining. However

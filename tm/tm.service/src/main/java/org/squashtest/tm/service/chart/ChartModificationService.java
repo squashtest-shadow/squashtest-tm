@@ -27,6 +27,7 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
@@ -57,6 +58,15 @@ public interface ChartModificationService {
 	void update(ChartDefinition chartDef);
 
 	/**
+	 * Generate a chart with the given definition for the given projectId.
+	 * Use only for transient {@link ChartDefinition} which are not linked to project and aren't no persisted...
+	 * @param definition
+	 * @param projectId
+	 * @return
+	 */
+	ChartInstance generateChart(ChartDefinition definition, Long projectId);
+
+	/**
 	 * Instanciate a ChartDefinition given its id.
 	 *
 	 * @param chartDefinitionId
@@ -66,15 +76,13 @@ public interface ChartModificationService {
 
 	ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId);
 
-	/**
-	 * Generate a chart with the given definition for the given projectId.
-	 * Use only for transient {@link ChartDefinition} which are not linked to project and aren't no persisted...
-	 * @param definition
-	 * @param projectId
-     * @return
-     */
-	ChartInstance generateChart(ChartDefinition definition, Long projectId);
+	ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace);
+
+
 
 	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
 
+	ChartInstance generateChartForMilestoneDashboard(ChartDefinition chart, Long milestoneId, Workspace workspace);
+
+	ChartInstance generateChartInMilestoneMode(ChartDefinition chart, List<EntityReference> scope, Workspace workspace);
 }

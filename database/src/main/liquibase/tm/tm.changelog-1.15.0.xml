@@ -254,4 +254,12 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.15.0-feat-5417-3" author="jthebault">
+    <sql>
+      insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID,COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+      values
+      (125,'ATTRIBUTE', FALSE, 'CAMPAIGN_MILESTONE_ID', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'NUMERIC', 'id', null);
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

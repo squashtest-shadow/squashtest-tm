@@ -24,11 +24,11 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy;
+import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnType;
 import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy.*;
+import static org.squashtest.tm.domain.chart.QueryStrategy.*;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 

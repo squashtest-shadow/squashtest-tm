@@ -215,7 +215,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			escapePrerequisiteAndSteps(dataSource);
 		}
 		convertHtmlSpecialCharactersToUnicode(dataSource);
-		
+
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv", keepRteFormat);
 	}
 
@@ -342,6 +342,12 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public String getDashboardByMilestone(Model model) {
 
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.TEST_CASE);
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.TEST_CASE);
+
+		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("canShowDashboard", canShowDashboard);
+
 		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
 		// Find ids for specific milestone
 		List<Long> nodeIds = testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
@@ -350,6 +356,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 		model.addAttribute("statistics", stats);
 		model.addAttribute("milestone", activeMilestone);
+		model.addAttribute("isMilestoneDashboard", true);
 
 		return "fragment/test-cases/test-cases-milestone-dashboard";
 	}

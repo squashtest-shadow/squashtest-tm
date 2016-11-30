@@ -29,15 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.*;
 
 
 /**
@@ -67,7 +59,7 @@ class DetailedChartQuery extends ChartQuery{
 	 *
 	 * @param parent
 	 */
-	DetailedChartQuery(ChartQuery parent){
+	DetailedChartQuery(IChartQuery parent){
 
 		super();
 

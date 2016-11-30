@@ -90,6 +90,28 @@ define(['jquery','underscore'], function($,_){
 					.value();
 
 				return cufMap;
+			},
+
+			getCurrentWorkspace :  function() {
+				if(!squashtm || !squashtm.app){
+					throw ("Unknown workspace, app seems to not be initialized properly");
+				}
+				if(squashtm.app.testCaseWorkspaceConf){
+                    return "test-case";
+                }
+				if(squashtm.app.requirementWorkspaceConf){
+					return "requirement";
+				}
+				if(squashtm.app.campaignWorkspaceConf){
+					return "campaign";
+				}
+				if(squashtm.app.homeWorkspaceConf){
+					return "home";
+				}
+				if(squashtm.app.customReportWorkspaceConf){
+					return "custom-report";
+				}
+				throw ("Unknown workspace");
 			}
 	};
 });

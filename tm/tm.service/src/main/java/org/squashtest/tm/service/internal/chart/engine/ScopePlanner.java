@@ -204,15 +204,20 @@ class ScopePlanner {
 
 
 	protected void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+		//If a dynamic scope is provided whe substitute the chart def scope by the client provided scope
 		if(dynamicScope != null && !dynamicScope.isEmpty()){
 			this.setScope(dynamicScope);
 		}
 		else{
+			//If scope type is default, the perimeter is either :
+			// The chart def project if the chart is visualized alone
+			// The dashboard project if the chart is visualized in a dashboard
 			ScopeType scopeType = chartDefinition.getScopeType();
 			if (scopeType==ScopeType.DEFAULT){
 				setDefaultScope(chartDefinition,dashboardId);
 			}
 			else{
+				//Else the scope is the original scope when visualizing in custom report workspace
 				this.setScope(chartDefinition.getScope());
 			}
 		}

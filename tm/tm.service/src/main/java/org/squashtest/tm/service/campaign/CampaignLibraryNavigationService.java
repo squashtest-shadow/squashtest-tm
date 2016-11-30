@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -185,6 +186,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 
 	List<String> getParentNodesAsStringList(Long elementId);
+
+	List<Long> findAllCampaignIdsForMilestone(Milestone milestone);
 
 	// ####################### PREVENT CONCURRENCY OVERIDES ############################
 

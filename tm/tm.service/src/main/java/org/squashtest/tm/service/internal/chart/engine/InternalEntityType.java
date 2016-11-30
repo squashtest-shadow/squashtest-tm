@@ -183,6 +183,13 @@ enum InternalEntityType {
 		}
 
 	},
+	CAMPAIGN_MILESTONE(Milestone.class, new QMilestone("campaignMilestone")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
+		}
+
+	},
 
 	AUTOMATED_EXECUTION_EXTENDER(AutomatedExecutionExtender.class, QAutomatedExecutionExtender.automatedExecutionExtender){
 		@Override

@@ -22,8 +22,10 @@ package org.squashtest.tm.service.internal.chart;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
+import static org.squashtest.tm.domain.milestone.QMilestone.milestone;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,11 +34,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.google.common.base.Optional;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
@@ -44,13 +48,20 @@ import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.QMilestone;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
+import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.project.ProjectFinder;
 
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {
@@ -66,6 +77,12 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
+
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Override
 	public void persist(ChartDefinition newChartDefinition) {
@@ -101,8 +118,13 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public ChartInstance generateChart(long chartDefId, List<EntityReference> dynamicScope, Long dashboardId){
 		ChartDefinition def = findById(chartDefId);
-		return generateChart(def,dynamicScope,dashboardId);
+		return generateChart(def,dynamicScope,dashboardId, null, null);
 
+	}
+
+	@Override
+	public ChartInstance generateChart(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+		return generateChart(chartDefinition,dynamicScope,dashboardId, null, null);
 	}
 
 	@Override
@@ -111,7 +133,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 			Project project = em.find(Project.class, projectId);
 			chartDef.setProject(project);
 		}
-		return generateChart(chartDef,null,null);
+		return generateChart(chartDef,null,null,null,null);
 	}
 
 
@@ -120,8 +142,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
-	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId) {
-		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId);
+	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
+		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId, milestoneId, workspace);
 		return new ChartInstance(definition, series);
 	}
 
@@ -143,8 +165,35 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
+	public ChartInstance generateChartForMilestoneDashboard(ChartDefinition chart, Long milestoneId, Workspace workspace) {
+		List<EntityReference> scope = generateScopeForMilestoneDashboard(milestoneId);
+		return generateChart(chart, scope, null, milestoneId, workspace);
+	}
+
+	@Override
+	public ChartInstance generateChartInMilestoneMode(ChartDefinition chart, List<EntityReference> scope, Workspace workspace) {
+		Optional<Milestone> optional = activeMilestoneHolder.getActiveMilestone();
+		if(optional.isPresent()){
+			Milestone milestone = optional.get();
+			return generateChart(chart, scope, null, milestone.getId(), workspace);
+		} else {
+			return generateChart(chart, scope, null, null, null);
+		}
+	}
+
+	@Override
 	public boolean hasChart(List<Long> userIds) {
 		return chartDefinitionDao.hasChart(userIds);
+	}
+
+	private List<EntityReference> generateScopeForMilestoneDashboard (Long milestoneId){
+		List<Project> projects = projectFinder.findAllReadable();
+
+		List<EntityReference> entityReferences = new ArrayList<>();
+		for (Project project : projects) {
+			entityReferences.add(new EntityReference(EntityType.PROJECT,project.getId()));
+		}
+		return  entityReferences;
 	}
 
 }

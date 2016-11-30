@@ -18,14 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["backbone","custom-report-workspace/views/dashboardView","home-workspace/default-dashboard-view","../user-account/user-prefs","app/AclModel","tree"], 
-    function(Backbone,DashboardView,CantShowView,userPrefs,AclModel,zetree) {
+define(["backbone","custom-report-workspace/views/dashboardView","home-workspace/default-dashboard-view","user-account/user-prefs","app/AclModel","tree","custom-report-workspace/utils"], 
+    function(Backbone,DashboardView,CantShowView,userPrefs,AclModel,zetree, chartUtils) {
     'use strict';
      var View = Backbone.View.extend({
             el: "#favorite-dashboard-wrapper",
 
             initialize : function(options) {
                 this.canShowDashboard = squashtm.workspace.canShowFavoriteDashboard;
+                this.isMilestoneDashboard = options.isMilestoneDashboard || false;
                 this.initializeEvents();
                 this.tree = zetree.get();
                 this.initView();
@@ -90,7 +91,9 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                     requirementIds : self.filterByType(selected,"requirements"),
                     campaignFolderIds : self.filterByType(selected,"campaign-folders"),
                     campaignIds : self.filterByType(selected,"campaigns"),
-                    iterationIds : self.filterByType(selected,"iterations")
+                    iterationIds : self.filterByType(selected,"iterations"),
+                    milestoneDashboard : self.isMilestoneDashboard,
+                    workspaceName : self.getCurrentWorkspace()
                 };
                 return dynamicScopeModel;
             },
@@ -149,6 +152,10 @@ define(["backbone","custom-report-workspace/views/dashboardView","home-workspace
                 wreqr.off("contextualContent.loadWith");
                 this.activeView.remove();
                 Backbone.View.prototype.remove.call(this);
+            },
+
+            getCurrentWorkspace : function() {
+               return chartUtils.getCurrentWorkspace();
             }
 
            
