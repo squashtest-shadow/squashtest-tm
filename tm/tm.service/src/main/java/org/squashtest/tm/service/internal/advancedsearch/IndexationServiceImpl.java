@@ -278,7 +278,7 @@ public class IndexationServiceImpl implements IndexationService {
 			}
 
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			LOGGER.error("Error during indexing", e);
+			LOGGER.debug("Error during indexing", e);
 		}
 
 	}
