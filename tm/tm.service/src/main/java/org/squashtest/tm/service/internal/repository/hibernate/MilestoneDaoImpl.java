@@ -287,6 +287,9 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 				session.clear();
 			}
 		}
+		// flush remaining items
+		session.flush();
+		session.clear();
 	}
 
 	@Override

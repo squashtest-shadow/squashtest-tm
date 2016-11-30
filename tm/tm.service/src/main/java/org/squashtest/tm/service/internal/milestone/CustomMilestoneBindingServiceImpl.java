@@ -20,6 +20,13 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
@@ -37,12 +44,6 @@ import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
@@ -160,7 +161,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	@Override
 	public void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId) {
 
-		GenericProject project = projectDao.findById(projectId);
+		GenericProject project = projectDao.findOne(projectId);
 		List<Milestone> milestones = milestoneDao.findAll(milestoneIds);
 		unbindMilestonesFromProject(project, milestones);
 	}
@@ -174,7 +175,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
 		}
-
 		// save the test case and requirement ids for reindexation later
 		Collection<Long> milestoneIds = CollectionUtils.collect(milestones, ID_COLLECTOR);
 
@@ -185,7 +185,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 			// that thing will probably clear the session, be careful
 			milestoneDao.unbindAllObjectsForProject(milestone.getId(), project.getId());
 		}
-
+		
 		// reindex
 		indexService.batchReindexTc(tcIds);
 		indexService.batchReindexReqVersion(reqIds);
