@@ -149,7 +149,7 @@
 					
 				});
 				this.model.select(selectIds);
-				this.model.select(deselectIds);
+				this.model.deselect(deselectIds);
 			},
 			
 			notifyModel : function(event){
