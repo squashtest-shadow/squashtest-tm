@@ -53,9 +53,14 @@ class RowImpl implements Row {
 
 		for (Cell cell : cells) {
 			String value = cell.getValue();
-			// escape separators from the cell content or it could spurriously mess with the column layout
-			String escaped = value.replaceAll(strSeparator, " ");
-			builder.append(escaped).append(separator);
+			String escaped = value.replaceAll(strSeparator, ";");
+			/* Issue #6509: 
+			 * Inserting quotation mark around each cell value
+			 * so one can put semicolons in cells values. */
+			builder.append("\"")
+				   .append(escaped)
+				   .append("\"")
+				   .append(separator);
 		}
 
 		return builder.toString().replaceAll(separator + "$", "");
