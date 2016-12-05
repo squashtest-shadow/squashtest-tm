@@ -84,7 +84,15 @@ return Backbone.Model.extend({
 
 	getFilters : function (chartDef){
 		return _.chain(chartDef.filters)
-		.map(function(filter) {  filter.values = [filter.values] ; return filter;})
+		.map(function(filter) {
+			switch(filter.operation){
+				case "BETWEEN":
+					break;
+				default : 
+					filter.values = [filter.values] ; 
+			}
+			return filter;
+		})
 		.value();
 	},
 
