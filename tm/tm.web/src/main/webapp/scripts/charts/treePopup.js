@@ -34,14 +34,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 				this.render();
 				
 				$("#tree").on('reselect.jstree', function(event, data) {
-		               data.inst.findNodes(model.nodes).select();
-					});
+					data.inst.findNodes(model.nodes).select();
+				});
 				
 				this.initTree(model.name);
 				
 				this.$el.confirmDialog({
 					autoOpen: true,
-					height: 800
+					height: 800,
+					//issue 6503 hiding the close cross that is completly bugged. And if i use comfirmdialogclose event, it
+					//prevent the confirm event to be fired... 
+					open: function(event, ui) { $("#tree-dialog").prev().children(".ui-dialog-titlebar-close").hide(); }
 				});
 		
 				this.checkFilterChangeImpact();
@@ -69,7 +72,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 			},
 
 			events: {
-				"confirmdialogclose": "cancel",
+				"confirmdialogcancel": "cancel",
 				"confirmdialogconfirm": "confirm",
 				"confirmdialogvalidate" : "validate"
 			},
