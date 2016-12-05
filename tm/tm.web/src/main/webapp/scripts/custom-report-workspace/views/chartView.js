@@ -271,8 +271,10 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var operations = this.model.get("entityOperation");
 				_.each(operations, function (operationsByType) {
 					_.each(operationsByType, function (op) {
-						if(!!op.isCuf){
-						keys.push(_.values(op));
+						keys.push(op.entityType);
+						keys.push(op.operationLabel);
+						if(!op.isCuf){
+							keys.push(op.columnLabel);
 						}
 					});
 				});
@@ -282,7 +284,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				_.each(filters, function (filtersByType) {
 					_.each(filtersByType, function (filter) {
 						keys.push(filter.entityType);
-						keys.push(filter.columnLabel);
+						if(!filter.isCuf){
+							keys.push(filter.columnLabel);
+						}
 						if (filter.hasI18nValues && !filter.isCuf) {
 							_.each(filter.values, function (value) {
 								keys.push(value);
