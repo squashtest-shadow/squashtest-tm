@@ -192,7 +192,7 @@ return Backbone.Model.extend({
 				if(measure.column.isCuf){
 					var newMeasure = _.clone(measure);
 					var newColumn = _.clone(measure.column);
-					newColumn.id = measure.originalPrototypeId;
+					newColumn.id = measure.column.originalPrototypeId;
 					newMeasure.column= newColumn;
 					newMeasure.cufId = measure.column.cufId;
 					return newMeasure;
