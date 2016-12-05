@@ -43,7 +43,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 					autoOpen: true,
 					height: 800,
 					//issue 6503 hiding the close cross that is completly bugged. And if i use comfirmdialogclose event, it
-					//prevent the confirm event to be fired... 
+					//prevent the confirm event to be fired. ConfirmDialog was a bad choice, FormDialog would have been better for this complex popup... 
 					open: function(event, ui) { $("#tree-dialog").prev().children(".ui-dialog-titlebar-close").hide(); }
 				});
 		

@@ -81,6 +81,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			initProjectPerimeterPopup : function() {
 				var self = this;
 				var projects = squashtm.workspace.projects;
+				var isModifyMode = this.model.get('chartDef');
 				var initialModel =  _.chain(projects)
 					.map(function(project) {
 						var checked = _.contains(self.model.get("projectsScope"),project.id);
@@ -88,7 +89,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 							id: project.id,
 							name: project.name,
 							label: project.label,
-							checked : checked
+							checked : isModifyMode ? checked : false
 						};
 					})
 					.sortBy("name")
