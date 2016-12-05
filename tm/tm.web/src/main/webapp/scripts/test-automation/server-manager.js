@@ -118,62 +118,7 @@ require([ "common", ], function() {
 			});
 
 
-			dialog = $("#add-user-automation-server-popup");
-			dialog.formDialog();
-
-			dialog.on('formdialogopen', function() {
-
-				dialog.formDialog('setState', 'loading');
-				$.getJSON("${permissionPopupUrl}").done(function(json){
-					if (json.length === 0) {
-						dialog.formDialog('setState', "allbound");
-					}
-					else {
-						dialog.data('source', json);
-						$("#party-input-user").autocomplete({
-							source : json
-						});
-						dialog.formDialog('setState', 'normal');
-					}
-				});
-				});
-
-			dialog.on('formdialogcancel', function() {
-				dialog.formDialog('close');
-			});
-
-			dialog.on('formdialogconfirm', function() {
-
-			console.log("ouverture popup ajout")
-
-				var partyname = $("#party-input-user").val();
-				var permission = $("#permission-input-user").val();
-				var valideselection = $.grep(dialog.data('source'), function(e) {return (e.label === partyname);});
-
-				if (valideselection.length === 1){
-					var partyId = valideselection[0].id;
-					var url = squashtm.app.contextRoot+"/administration/test-automation-servers/${serverId}/permissions/"+permission+"/";
-					dialog.formDialog('setState', 'loading');
-					$.ajax({
-						url : url,
-						type : 'PUT',
-						success : function() {
-							$("#test-automation-server-users").squashTable().refresh();
-							dialog.formDialog('close');
-						}
-					})
-				}else {
-					dialog.formDialog('setState', 'noselect');
-				}
-
-			});
-
-			dialog = $("#remove-user-automation-server-confirm-dialog");
-			dialog.formDialog();
-
-			dialog.on('formdialogopen', function() {
-
-			});
+			
 		}
 
 		function initEnd() {
