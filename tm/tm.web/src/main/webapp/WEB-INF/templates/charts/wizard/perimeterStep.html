@@ -121,7 +121,11 @@
         {{#each this}}
             <tr>
                <td class="td-check">
-                <input type="checkbox" class="project-checkbox" id="project-perimeter-checkbox-{{id}}" name="project-scope" value="{{id}}" checked="{{checked}}" />
+                 {{!--<![CDATA[--}}
+
+                <input type="checkbox" class="project-checkbox" id="project-perimeter-checkbox-{{id}}" name="project-scope" value="{{id}}" {{#if checked}} checked="checked" {{/if}} />
+
+                 {{!--]]>--}}
                </td>
               <td class="project-name">{{name}}</td>
               <td class="project-label">{{label}}</td>
