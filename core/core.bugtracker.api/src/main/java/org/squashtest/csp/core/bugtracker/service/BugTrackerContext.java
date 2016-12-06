@@ -72,7 +72,7 @@ public class BugTrackerContext implements Serializable {
 			Long id = anotherEntry.getKey();
 			AuthenticationCredentials creds = anotherEntry.getValue();
 
-			if (! bugTrackersCredentials.containsKey(id)){
+			if (! bugTrackersCredentials.containsKey(id) && creds!= null){
 				LOGGER.trace("BugTrackerContext : Trying to set credentials : BugTrackerContext : {} . bugTrackersCredentials : {}", this.toString(), creds.toString());
 				LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (via merge)",this.toString(), creds.getUsername());
 				bugTrackersCredentials.put(id, creds);

@@ -189,6 +189,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 				LOGGER.trace("BugTrackerAutoconnectCallback : done merging into session #{} and context #{}", session.getId(),existingContext.toString());
 			}
 
+			//I don't understand why we put new content in session ? new content has been merged into existing content... why override it ?
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
 		}
