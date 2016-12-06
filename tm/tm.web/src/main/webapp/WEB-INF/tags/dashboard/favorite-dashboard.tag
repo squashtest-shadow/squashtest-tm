@@ -86,10 +86,8 @@
 
   <script id="tpl-default-dashboard" type="text/x-handlebars-template">
   	<div id="dashboard-name-div" class="fragment-header ui-default-black">
-		<div style="float: left; height: 100%;" class="small-margin-left">
-			<h2>
+		<div class="ui-favorite-dashboard-name small-margin-left">
 				<span><f:message key='report.view.code.dashboard' /></span>
-			</h2>
 		</div>
 
     	<div class="dashboard-grid-toolbar">
