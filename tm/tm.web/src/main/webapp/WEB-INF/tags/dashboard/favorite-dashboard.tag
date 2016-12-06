@@ -34,15 +34,15 @@
 
 <!-- SHOW DASHBOARD -->
   <script id="tpl-show-dashboard" type="text/x-handlebars-template">
-	<div id="dashboard-name-div" class="fragment-header ui-default-black">
-		<div style="float: left; height: 100%;" class="small-margin-left">
-			<h2>
+	<div id="dashboard-name-div" class="ui-default-black">
+		<div class="ui-favorite-dashboard-name small-margin-left">
+
 				{{name}}
-			</h2>
+
 		</div>
 
 	<div class="dashboard-grid-toolbar">
-		<span><f:message key="workspace.custom-report.timestamp.label"/></span>
+		<span>(<f:message key="workspace.custom-report.timestamp.label"/>)</span>
 		<a class="favorite-dashboard-refresh-button sq-btn" role="button" title="<f:message key='label.Refresh' />">
 			<span><f:message key='label.Refresh' /></span>
 		</a>
