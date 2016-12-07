@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
@@ -208,7 +210,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			entityManager.flush();
+			flush();
 		}
 
 	}
@@ -223,7 +225,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			entityManager.flush();
+			flush();
 		}
 	}
 
@@ -258,7 +260,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	}
 
 	private void bindTestPlanOfCopiedTestSuite(Iteration iterationCopy,
-			Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, 
+			Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry,
                         TestSuite testSuiteCopy) {
 		List<Integer> testSuiteTpiIndexesInIterationList = testSuitePastableCopyEntry.getValue();
 		List<IterationTestPlanItem> testPlanItemsToBind = new ArrayList<>();
@@ -386,6 +388,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	 */
 	private void flush() {
 		entityManager.flush();
+		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
+		ftem.flushToIndexes();
 	}
 
 	@Override

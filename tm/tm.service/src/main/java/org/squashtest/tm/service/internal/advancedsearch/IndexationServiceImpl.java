@@ -227,7 +227,7 @@ public class IndexationServiceImpl implements IndexationService {
 				ftem.clear();
 			}
 		}
-		// commit remaining item
+		// flush remaining item
 		ftem.flushToIndexes();
 		ftem.clear();
 	}

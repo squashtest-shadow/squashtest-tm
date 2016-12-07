@@ -250,9 +250,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	/**
 	 * feeds next layer avoiding nodes from the outputList.
-	 *
-	 * @param destNode
-	 * @param sourceNode
 	 */
 	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode) {
 		NextLayerFeeder feeder = nextLayerFeederOperationFactory.get();
@@ -276,6 +273,11 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 		// if we cont flush and then evict, some entities might not be persisted
 		em.flush();
+		// We shouldn't forget to flush to indexes or we will raise ClosedSessionExeception
+		// The logic behind is that Lucene queued some work, and when he will need the entities they will be evicted...
+		//So we need to flush lucene queue before cleaning.
+		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+		ftem.flushToIndexes();
 
 		Collection<TreeNode> nextNodes = new HashSet<>();
 		for (NodePairing nextPairing : nextLayer){

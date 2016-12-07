@@ -109,6 +109,7 @@ tm/tomcat-work
 tm/tm.web/src/main/resources/config/application-jth_mysql.properties
 tm/tm.web/.vscode/settings.json
 tm/tm.web/src/main/resources/config/application-jth_h2.properties
+depTree.txt
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
