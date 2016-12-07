@@ -1146,10 +1146,17 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		CoverageTarget target = instr.getTarget();
 
-		Long tcId = checkTcForCoverage(target, logs);
+		/* Issue #6513:
+		 * We only need to check if the coverage already exists
+		 * in the case where the TC already exists in database. */
+		TargetStatus targetStatus = getModel().getStatus(new TestCaseTarget(target.getTcPath()));
 		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
-		checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
-
+		if(targetStatus.getStatus() == Existence.EXISTS) {
+			Long tcId = checkTcForCoverage(target, logs);
+			checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
+		} else if(targetStatus.getStatus() != Existence.TO_BE_CREATED) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, target.getTcPath()));
+		}
 		//if something is wrong here, the coverage isn't valid so
 		//return to avoid nasty exception in nexts checks
 		if (logs.hasCriticalErrors()) {
