@@ -47,7 +47,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
             remove: function () {
 				Backbone.View.prototype.remove.apply(this, arguments);
-				$("#cuf-popup-container").html('<div id="cuf-popup" style="height: 200px!important" class="not-displayed popup-dialog" title="' + translator.get('report.form.tree-picker.dialog.title') + '" />');
+				$("#cuf-popup-container").html('<div id="cuf-popup" style="height: 200px!important" class="not-displayed popup-dialog" title="' + translator.get('generics.customfieldvalues.title') + '" />');
 			},
 
 			cancel: function (event) {
