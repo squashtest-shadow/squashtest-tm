@@ -511,6 +511,11 @@
 			"select bt.id 	 from ExecutionStep estep 	 inner join estep.execution exec 	 inner join exec.testPlan tp 	 inner join tp.iteration it 	 inner join it.campaign cp 	 inner join cp.project proj 	 inner join proj.bugtrackerBinding binding 	 inner join binding.bugtracker bt 	 where estep.id in (:executionStepsIds) " +
 		") "),
 
+	@NamedQuery(name = "Issue.countIssuesfromEmptyExecutions",
+		query="select count(Issue) from Issue Issue where	 " +
+			"Issue.id in ( 	 " +
+			"select isExec.id 	 from Execution exec 	 inner join exec.issueList ile 	 inner join ile.issues isExec 	 where exec.id in (:executionsIds))"),
+
 
 	//BugTrackersEntities
 	@NamedQuery(name = "BugTracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),

@@ -71,10 +71,21 @@ public interface IssueDao extends JpaRepository<Issue, Long>, CustomIssueDao {
 	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each
 	 * execution/execution-step's project.
 	 *
+	 * WARNING : Will crash on MySQL if the executionStepsIds is empty... use countIssuesfromEmptyExecutions in that case
+	 *
 	 * @return the number of Issues detected by the given execution / execution Steps
 	 */
 	@Query
 	Integer countIssuesfromExecutionAndExecutionSteps(@Param("executionsIds") List<Long> executionsIds, @Param("executionStepsIds") List<Long> executionStepsIds);
+
+	/**
+	 * Will count all Issues from the given executions if they have no steps at all
+	 * Used to prevent empty list exception from MySQL with the request countIssuesfromExecutionAndExecutionSteps
+	 * @return the number of Issues detected by the given executions
+	 */
+	@Query
+	Integer countIssuesfromEmptyExecutions(@Param("executionsIds") List<Long> executionsIds);
+
 
 	/**
 	 * Counts all issues for a campaign
