@@ -112,7 +112,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 				validation : validation
 			});
 			this.additionnalI18nKeys = [
-				"label.customField"
+				"label.customField","squashtm.dateformatShort"
 			];
 			this.loadI18n();
 		},
@@ -145,14 +145,14 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./peri
 		loadI18n : function (){
 
 			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
-      var chartTypeExplanation = this.addPrefix(this.model.get("chartTypes"), "chartType.explanation.");
+      		var chartTypeExplanation = this.addPrefix(this.model.get("chartTypes"), "chartType.explanation.");
 			var entityTypes = this.addPrefix(_.keys(this.model.get("entityTypes")), "entityType.");
 			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
-      var columnsWithoutCuf = _.map(this.model.get("columnPrototypes"),function (protosForEntityType) {
-        return _.filter(protosForEntityType, function (proto) {
-          return proto.columnType != "CUF";
-        });
-      });
+			var columnsWithoutCuf = _.map(this.model.get("columnPrototypes"),function (protosForEntityType) {
+				return _.filter(protosForEntityType, function (proto) {
+				return proto.columnType != "CUF";
+				});
+			});
 			var columns = this.addPrefix(_.pluck(this.flatten(columnsWithoutCuf), "label") ,"column.");
 
 			var keys = chartTypes.concat(chartTypeExplanation,entityTypes, operation, columns);

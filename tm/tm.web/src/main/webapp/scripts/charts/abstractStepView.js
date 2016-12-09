@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "squash.translator","../custom-report-workspace/utils" ], function($,
-		backbone, _, Handlebars, translator,chartUtils) {
+define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "squash.translator","../custom-report-workspace/utils", "squash.dateutils" ], function($,
+		backbone, _, Handlebars, translator,chartUtils,dateutils) {
 	"use strict";
 
 	var abstractStepView = Backbone.View.extend({
@@ -361,6 +361,10 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 					break;
 			}
 			return suffix;
+		},
+
+		i18nFormatDate : function(date) {
+			return dateutils.format(date, translator.get('squashtm.dateformatShort'));
 		}
 
 	});

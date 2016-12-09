@@ -213,6 +213,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 						}
 
 						var formatedFilter = {
+							dataType : columnPrototype.dataType,
 							entityType: self.addPrefix(columnPrototype.specializedEntityType.entityType, "chart.entityType."),
 							columnLabel: columnLabel,
 							values: self.getI18nKeyForFilterValues(columnPrototype.label, filter.values),
@@ -221,6 +222,14 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 							isCuf : isCuf
 						};
 						return formatedFilter;
+					})
+					.map(function(filter) {//Formating the filters values of date type 
+						if(filter.dataType === "DATE"){
+							filter.values = _.map(filter.values, function(date) {
+								return dateutils.format(date, self.i18nString.dateFormatShort);
+							});
+						}
+						return filter;
 					})
 					.groupBy("entityType")
 					.values()

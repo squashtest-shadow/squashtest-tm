@@ -326,6 +326,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 					values = self.translateEnum (values, execStatus);
 
 					break;
+				
+				case "DATE":
+
+					values = _.map(values, function(value) {
+						return self.i18nFormatDate(value);
+					});
+
+					break;
 
 
 				default :
