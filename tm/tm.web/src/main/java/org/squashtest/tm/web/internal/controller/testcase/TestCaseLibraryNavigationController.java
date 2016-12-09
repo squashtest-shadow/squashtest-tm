@@ -285,6 +285,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	private void convertHtmlSpecialCharactersToUnicode(List<ExportTestCaseData> dataSource) {
 		for(ExportTestCaseData data : dataSource) {
 			data.setDescription(HtmlUtils.htmlUnescape(data.getDescription()));
+			data.setPrerequisite(HtmlUtils.htmlUnescape(data.getPrerequisite()));
+			data.setFirstAction(HtmlUtils.htmlUnescape(data.getFirstAction()));
+			data.setFirstExpectedResult(HtmlUtils.htmlUnescape(data.getFirstExpectedResult()));
 			for(ExportTestStepData step : data.getSteps()) {
 				step.setAction(HtmlUtils.htmlUnescape(step.getAction()));
 				step.setExpectedResult(HtmlUtils.htmlUnescape(step.getExpectedResult()));

@@ -197,6 +197,7 @@ class ExcelExporter {
 	private void removeRteFormatFromTestCases(List<TestCaseModel> testCases) {
 		for (TestCaseModel tc : testCases) {
 			tc.setDescription(removeHtml(tc.getDescription()));
+			tc.setPrerequisite(removeHtml(tc.getPrerequisite()));
 		}
 	}
 
@@ -256,7 +257,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getType().getCode());
 				r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
 				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(tcm.getDescription()));
-				r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(tcm.getPrerequisite()));
 				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
 				r.createCell(cIdx++).setCellValue(tcm.getNbAttachments());
@@ -311,8 +312,8 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tsm.getOrder());
 				r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
 				r.createCell(cIdx++).setCellValue(tsm.getDsName());
-				r.createCell(cIdx++).setCellValue(tsm.getAction());
-				r.createCell(cIdx++).setCellValue(tsm.getResult());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(tsm.getAction()));
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(tsm.getResult()));
 				r.createCell(cIdx++).setCellValue(tsm.getNbReq());
 				r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
 
@@ -353,7 +354,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
 				r.createCell(cIdx++).setCellValue(pm.getId());
 				r.createCell(cIdx++).setCellValue(pm.getName());
-				r.createCell(cIdx++).setCellValue(pm.getDescription());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(pm.getDescription()));
 			} catch (IllegalArgumentException wtf) {
 
 				if (LOGGER.isWarnEnabled()){
