@@ -78,5 +78,11 @@ public interface CustomCampaignModificationService {
 
 	Collection<Milestone> findAllMilestones(long campaignId);
 
+	/**
+	 * This method retrieves a {@link Campaign} with the given id.
+	 * @param campaignId The id of the campaign to retrieve
+	 * @return The campaign with the given id or null if it does not exist
+	 */
+	Campaign findCampaigWithExistenceCheck(long campaignId);
 
 }

@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
-import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -107,7 +106,7 @@ public class VerifyingTestCaseManagerController {
 	private MilestoneUIConfigurationService milestoneConfService;
 
 	@Inject
-	private CampaignFinder campaignFinder;
+	private CampaignModificationService campaignModificationService;
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
@@ -234,12 +233,13 @@ public class VerifyingTestCaseManagerController {
 			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
 			try {
 				//Only one selected node for v1.13...
- 				Campaign campaign = campaignFinder.findById(ids.get(0));
- 				/* Issue 6440: Campaign may have been removed and the line 
- 				 * above returns a campaign, from which we can't call any method. 
- 				 * Fix: catch EntityNotFoundException appearing in getIterationsIdsForCampaign. */
- 				iterationIds.addAll(getIterationsIdsForCampagain(campaign));
-			} catch (IdentityUnavailableException | EntityNotFoundException e) {
+ 				Campaign campaign = campaignModificationService.findCampaigWithExistenceCheck(ids.get(0));
+ 				if(campaign != null) {
+ 					iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+ 				} else {
+ 					stat.setCorruptedPerimeter(true);
+ 				}
+			} catch (IdentityUnavailableException e) {
 				stat.setCorruptedPerimeter(true);
 			}
 		}

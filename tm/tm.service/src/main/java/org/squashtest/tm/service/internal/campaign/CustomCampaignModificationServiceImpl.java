@@ -27,6 +27,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
@@ -57,6 +60,9 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	private static final String WRITE_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE')" + OR_HAS_ROLE_ADMIN;
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Inject
 	private CampaignDao campaignDao;
 
@@ -69,7 +75,9 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@Inject
 	private MilestoneMembershipManager milestoneService;
 
-
+	@Inject
+	private CampaignFinder campaignFinder;
+	
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
 	private NodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> campaignManagementService;
@@ -156,5 +164,19 @@ Long folderId) {
 		return milestoneService.findCampaignsByMilestoneId(milestoneId);
 	}
 
+	/** 
+	* This method calls the {@link org.squashtest.tm.service.campaign#findById() findById()}
+	* method of {@link CampaignFinder} after checking the existence
+	* of the {@link Campaign} in database. Avoiding an AccessDeniedException 
+	* in case the id does not exist in database.
+	*/
+	@Override
+	public Campaign findCampaigWithExistenceCheck(long campaignId) {
+		Campaign campaign = em.find(Campaign.class, campaignId);
+		if(campaign == null) {
+			return null;
+		}
+		return campaignFinder.findById(campaignId);
+	}
 
 }

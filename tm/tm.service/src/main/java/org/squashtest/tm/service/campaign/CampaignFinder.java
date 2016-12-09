@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.project.Project;
 @Transactional(readOnly = true)
 public interface CampaignFinder {
 
-	@PreAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)
+	@PostAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)
 	Campaign findById(long campaignId);
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') "
