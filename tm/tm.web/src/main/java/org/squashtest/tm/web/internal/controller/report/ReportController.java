@@ -128,23 +128,6 @@ public class ReportController {
 	}
 
 	/**
-	 * Populates model and returns the full page showing a report.
-	 *
-	 * @param namespace
-	 *            namespace of the report
-	 * @param index
-	 *            0-based index of the report in its namespace
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "/viewer", method = RequestMethod.GET)
-	public String showReportViewer(@PathVariable String namespace, @PathVariable int index, Model model) {
-		populateModelWithReport(namespace, index, model);
-		model.addAttribute("hasBackButton", Boolean.TRUE);
-		return "report-viewer.html";
-	}
-
-	/**
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
 	 *
 	 * @param namespace

@@ -40,7 +40,7 @@
       var squashtm = {};
       squashtm.app = {
     	locale : /*[[#{squashtm.locale}]]*/ 'fr',
-      
+
 
           reportWorkspaceConf: {
             expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
@@ -95,11 +95,7 @@
 
       <div class="snap-left" style="height: 100%;">
         <h2>
-          <span th:text="#{report.header.title}">Rapport</span>
-          &nbsp;:&nbsp;
-          <a id="view-report" href="report-viewer.html"
-            th:href="@{'/reports/' + ${report.namespace} + '/' + ${report.index} + '/viewer'}">
-            <span th:text="${report.label}">Sample report</span>
+          <span th:text="#{report.header.title}">Rapport</span> :&nbsp;<span th:text="${report.label}">Sample report</span>
           </a>
         </h2>
       </div>
