@@ -281,6 +281,9 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 	visibility : visible;
 }
 
+textarea {
+	font-family: Arial, Verdana, sans-serif;
+}
 .search-input {
 	width: 200px;
 }
