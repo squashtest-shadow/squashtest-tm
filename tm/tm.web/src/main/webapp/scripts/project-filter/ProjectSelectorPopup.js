@@ -46,6 +46,12 @@
 		},
 		
 		confirm : function(){
+			this.$el.find("table tbody tr").each(function() {
+				var $checkbox = $(this).find(".project-checkbox");
+				var checked = $checkbox.is(":checked");
+				$checkbox.data("previous-checked", checked);
+				
+			});
 			this.trigger("projectPopup.confirm");
 		}
 	});

@@ -44,6 +44,7 @@
 		var AbstractProjectFilterPopup = Backbone.View.extend({
 		 
 			events : {
+				"confirmdialogclose" : "close",
 				"confirmdialogcancel" : "cancel",
 				"confirmdialogconfirm" : "confirm",
 				"click .project-checkbox" : "notifyModel",
@@ -155,6 +156,15 @@
 			notifyModel : function(event){
 				var checkbox = event.currentTarget;
 				this.model.changeProjectState(checkbox.value, checkbox.checked);				
+			},
+
+			// This popup is bugged as hell. It fire a close event on confirm and closing by click on the closethick
+			// We need to cancel if clicked on closethick and do nothing if clicked on confirm as the confirm method will handle it
+			// If we cancel on close, the confirm will be ignored...
+			close : function(event) {
+				if(event && event.originalEvent && event.originalEvent.target.className === "ui-icon ui-icon-closethick"){
+					this.cancel();
+				}
 			}
 		});
 
