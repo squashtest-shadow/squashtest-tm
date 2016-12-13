@@ -224,7 +224,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 						return formatedFilter;
 					})
 					.map(function(filter) {//Formating the filters values of date type 
-						if(filter.dataType === "DATE"){
+						if(filter.dataType === "DATE" || filter.dataType === "DATE_AS_STRING"){
 							filter.values = _.map(filter.values, function(date) {
 								return dateutils.format(date, self.i18nString.dateFormatShort);
 							});

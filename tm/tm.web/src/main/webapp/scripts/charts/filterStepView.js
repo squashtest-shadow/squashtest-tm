@@ -225,7 +225,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var result = filter.values[pos];
 
-			if (datatype == "DATE" && result !== undefined){
+			if ((datatype === "DATE" || datatype === "DATE_AS_STRING") && result !== undefined){
 			var date = $.datepicker.parseDate(self.dateISOFormat, result);
 			result = $.datepicker.formatDate(self.datePickerFormat, date);
 			}

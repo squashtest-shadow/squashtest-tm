@@ -328,7 +328,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 					break;
 				
 				case "DATE":
-
+				case "DATE_AS_STRING":
 					values = _.map(values, function(value) {
 						return self.i18nFormatDate(value);
 					});

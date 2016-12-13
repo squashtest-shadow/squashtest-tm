@@ -28,8 +28,9 @@
  *
  *
  */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars", "text!./empty-chart.html!strip","../utils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils) {
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars", 
+        "text!./empty-chart.html!strip","../utils", "squash.dateutils", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+	function ($, Backbone, attrparser, eventbus, _, translator, Handlebars, emptyChartTemplate, chartUtils, dateUtils) {
 		"use strict";
 		var squashtm = window.squashtm;
 
@@ -109,6 +110,13 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				var protoDatatype = axis.columnPrototype.dataType;
 
 				if (protoDatatype === "DATE") {
+					return this._formatDateLegend(legends, axis);
+				}
+				
+				if (protoDatatype === "DATE_AS_STRING") {
+					legends = _.map(legends, function(legend) { 
+						return dateUtils.format(legend, "yyyyMMdd", "yyyy-MM-dd")
+						});
 					return this._formatDateLegend(legends, axis);
 				}
 
