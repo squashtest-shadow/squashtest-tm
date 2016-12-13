@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
@@ -80,6 +81,9 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private EntityManager em;
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
+
+	@Inject
+	private CustomReportLibraryNodeService crlnService;
 
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
@@ -137,7 +141,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		//deleting the node associated to custom report library
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
-		deleteCustomReportLibraryNode(customReportLibrary);
+		deleteCustomReportLibraryContent(customReportLibrary);
+
 
 		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.findById(projectId);
@@ -155,6 +160,17 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		removeACLsForProjectAndLibraries(project);
 		genericProjectDao.delete(project);
+	}
+
+	private void deleteCustomReportLibraryContent(CustomReportLibrary customReportLibrary) {
+		//1 delete library content ie folders as we cannot have other things because eit was checked early
+		List<Long> descendantIds = crlnDao.findAllNodeIdsForLibraryEntity(customReportLibrary.getId());
+		crlnService.delete(descendantIds);
+		//2 Check if node exist because of Issue 6499 which was basically executing only part of the process (Thanks to the re-indexation optimization mess)
+		if(crlnDao.countNodeFromEntity(customReportLibrary).equals(1L)){
+			//3 delete the node representing the library. The deletion of the CustomReportLibrary entity will be handled by cascade delete on Project in the last part of the deletion process
+			deleteCustomReportLibraryNode(customReportLibrary);
+		}
 	}
 
 	private void deleteCustomReportLibraryNode(

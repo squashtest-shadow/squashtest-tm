@@ -130,4 +130,43 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 		return (CustomReportLibraryNode) query.getSingleResult();
 	}
 
+	@Override
+	public Long countNodeFromEntity(TreeEntity treeEntity) {
+		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
+		TreeEntityVisitor visitor = new TreeEntityVisitor() {
+
+			@Override
+			public void visit(ChartDefinition chartDefinition) {
+				type[0] = CustomReportTreeDefinition.CHART;
+			}
+
+			@Override
+			public void visit(CustomReportDashboard crf) {
+				type[0] = CustomReportTreeDefinition.DASHBOARD;
+			}
+
+			@Override
+			public void visit(CustomReportLibrary crl) {
+				type[0] = CustomReportTreeDefinition.LIBRARY;
+			}
+
+			@Override
+			public void visit(CustomReportFolder crf) {
+				type[0] = CustomReportTreeDefinition.FOLDER;
+			}
+		};
+		treeEntity.accept(visitor);
+		Query query = em.createNamedQuery("CustomReportLibraryNode.countNodeFromEntity");
+		query.setParameter("entityType", type[0]);
+		query.setParameter("entityId", treeEntity.getId());
+		return (Long) query.getSingleResult();
+	}
+
+	@Override
+	public List<Long> findAllNodeIdsForLibraryEntity(Long libraryId) {
+		Query query = em.createNamedQuery("CustomReportLibraryNode.findAllNodeForCustomReportLibrary");
+		query.setParameter("libraryId", libraryId);
+		return query.getResultList();
+	}
+
 }

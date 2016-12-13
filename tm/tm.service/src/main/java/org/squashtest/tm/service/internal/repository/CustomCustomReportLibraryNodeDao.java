@@ -36,4 +36,7 @@ public interface CustomCustomReportLibraryNodeDao {
 	List<CustomReportLibraryNode> findAllConcreteLibraries();
 	List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds);
 	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
+	Long countNodeFromEntity(TreeEntity treeEntity);
+
+	List<Long> findAllNodeIdsForLibraryEntity(Long libraryId);
 }

@@ -900,7 +900,8 @@
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendant",query="select distinct path from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllAncestorIds",query="select distinct path.ancestorId from CustomReportLibraryNodePathEdge path where path.descendantId=:id"),
 	@NamedQuery(name="CustomReportLibraryNode.findNodeFromEntity",query="from CustomReportLibraryNode crln where crln.entityType = :entityType and crln.entityId = :entityId"),
-
+	@NamedQuery(name="CustomReportLibraryNode.countNodeFromEntity",query="select count(crln.id) from CustomReportLibraryNode crln where crln.entityType = :entityType and crln.entityId = :entityId"),
+	@NamedQuery(name="CustomReportLibraryNode.findAllNodeForCustomReportLibrary",query="select crln.id from CustomReportLibraryNode crln where crln.library.id = :libraryId and crln.entityType is not 'LIBRARY'"),
 
 	//Coverage stat 5433 and 5434
 	@NamedQuery(name = "iteration.findITPIByTestCaseGroupByStatus", query = "select  itpi.executionStatus,tc.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),
