@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.chart;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
-import static org.squashtest.tm.domain.milestone.QMilestone.milestone;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.google.common.base.Optional;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -49,19 +47,16 @@ import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.QMilestone;
-import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
-import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
-import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
-
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
+
+import com.google.common.base.Optional;
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {

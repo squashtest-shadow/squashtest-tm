@@ -29,7 +29,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;

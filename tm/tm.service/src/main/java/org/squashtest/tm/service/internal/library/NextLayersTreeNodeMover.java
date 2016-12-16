@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;

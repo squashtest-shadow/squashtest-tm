@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
@@ -35,7 +37,6 @@ import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
@@ -43,8 +44,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.i18n.MessageObject;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
-
-import javax.inject.Inject;
 
 @Component("customReport.dashboardBuilder")
 @Scope("prototype")
