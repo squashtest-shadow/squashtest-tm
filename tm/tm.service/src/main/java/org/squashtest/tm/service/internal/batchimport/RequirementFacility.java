@@ -239,7 +239,11 @@ class RequirementFacility extends EntityFacilitySupport {
 
 			finalRequirement = reqLibNavigationService.addRequirementToRequirementLibrary(
 				requirementLibrairyId, dto, Collections.<Long>emptyList());
-			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
+			//Issue 6533
+			//We need to deactivate the move node because it change the EntityManager.fushMode due to "Dark Magic"...
+			//See IndexationServiceImpl.getFullTextSession()
+			//With the time remaining for the 1.15 and risk of side effect we decided to neutralize this feature in order to preserve import
+			//moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
 			milestoneService.bindRequirementVersionToMilestones(finalRequirement.getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		} else {
 			List<String> paths = PathUtils.scanPath(target.getPath());
@@ -586,20 +590,28 @@ class RequirementFacility extends EntityFacilitySupport {
 
 		@Override
 		public void visit(Requirement requirement) {
-			Integer finalPosition = target.getRequirement().getOrder();
+			//Integer finalPosition = target.getRequirement().getOrder();
 			finalRequirement = reqLibNavigationService.addRequirementToRequirement(finalParentId, dto, boundMilestonesIds(instruction));
-			if (finalPosition != null && finalPosition > 0) {
-				reqLibNavigationService.moveNodesToRequirement(finalParentId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
-			}
+			//Issue 6533
+			//We need to deactivate the move node because it change the EntityManager.fushMode due to "Dark Magic"...
+			//See IndexationServiceImpl.getFullTextSession()
+			//With the time remaining for the 1.15 and risk of side effect we decided to neutralize this feature in order to preserve import
+//			if (finalPosition != null && finalPosition > 0) {
+//				reqLibNavigationService.moveNodesToRequirement(finalParentId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
+//			}
 		}
 
 		@Override
 		public void visit(RequirementFolder folder) {
-			Integer finalPosition = target.getRequirement().getOrder();
+			//Integer finalPosition = target.getRequirement().getOrder();
 			finalRequirement = reqLibNavigationService.addRequirementToRequirementFolder(finalParentId, dto, boundMilestonesIds(instruction));
-			if (finalPosition != null && finalPosition > 0) {
-				reqLibNavigationService.moveNodesToFolder(finalParentId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
-			}
+			//Issue 6533
+			//We need to deactivate the move node because it change the EntityManager.fushMode due to "Dark Magic"...
+			//See IndexationServiceImpl.getFullTextSession()
+			//With the time remaining for the 1.15 and risk of side effect we decided to neutralize this feature in order to preserve import
+//			if (finalPosition != null && finalPosition > 0) {
+//				reqLibNavigationService.moveNodesToFolder(finalParentId, new Long[]{finalRequirement.getId()}, target.getRequirement().getOrder());
+//			}
 		}
 	}
 }
