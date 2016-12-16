@@ -1149,16 +1149,20 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		/* Issue #6513:
 		 * We only need to check if the coverage already exists
 		 * in the case where the TC already exists in database. */
-		TargetStatus targetStatus = getModel().getStatus(new TestCaseTarget(target.getTcPath()));
 		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
-		if(targetStatus.getStatus() == Existence.EXISTS) {
-			Long tcId = checkTcForCoverage(target, logs);
-			checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
-		} else if(targetStatus.getStatus() != Existence.TO_BE_CREATED) {
-			logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, target.getTcPath()));
-		}
+		Long tcId = checkTcForCoverage(target, logs);
+
+
 		//if something is wrong here, the coverage isn't valid so
 		//return to avoid nasty exception in nexts checks
+		if (logs.hasCriticalErrors()) {
+			return logs;
+		}
+
+		if(reqVersionId != null && tcId != null){
+			checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
+		}
+
 		if (logs.hasCriticalErrors()) {
 			return logs;
 		}
@@ -1178,6 +1182,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) { // NOSONAR methods not extracted on purpose, ValidationFacility too huge/uncohesive to extract meaningful method names
 		if (!checkRequirementVersionPathIsValid(target, logs)) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
 			return null;
 		}
 
@@ -1245,7 +1250,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		} else {
 			Long id = tcLibNavigationService.findNodeIdByPath(tcPath);
 			if (id == null) {
-				logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, tcPath));
+				TargetStatus targetStatus = getModel().getStatus(new TestCaseTarget(target.getTcPath()));
+				if(targetStatus.getStatus() != Existence.TO_BE_CREATED) {
+					logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, target.getTcPath()));
+				}
 			} else {
 				return id;
 			}

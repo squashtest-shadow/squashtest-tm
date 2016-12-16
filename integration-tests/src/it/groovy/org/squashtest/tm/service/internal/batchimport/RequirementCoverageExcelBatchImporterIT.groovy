@@ -102,6 +102,7 @@ class RequirementCoverageExcelBatchImporterIT extends DbunitServiceSpecification
 
 		def errors = [
 			Messages.ERROR_FIELD_MANDATORY,
+			Messages.ERROR_REQUIREMENT_NOT_EXISTS,
 			Messages.ERROR_MALFORMED_PATH,
 			Messages.ERROR_FIELD_MANDATORY,
 			Messages.ERROR_UNPARSABLE_INTEGER,
