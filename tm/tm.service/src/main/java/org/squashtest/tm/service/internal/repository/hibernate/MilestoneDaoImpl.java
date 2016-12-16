@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.*;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -277,6 +279,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 
 	private void unbindFromMilestone(Long milestoneId, Session session, ScrollableResults holders) {
 		int count = 0;
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
 		while (holders.next()) {
 			MilestoneHolder holder = (MilestoneHolder) holders.get(0);
@@ -284,12 +287,14 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
 				session.flush();
-				session.clear();
+				fullTextEntityManager.flushToIndexes();
+				fullTextEntityManager.clear();
 			}
 		}
 		// flush remaining items
 		session.flush();
-		session.clear();
+		fullTextEntityManager.flushToIndexes();
+		fullTextEntityManager.clear();
 	}
 
 	@Override
