@@ -36,8 +36,8 @@ public class GenericProjectCopyParameter {
 	private boolean copyAllowTcModifFromExec;
 
 	public GenericProjectCopyParameter() {
+		//default constructor
 	}
-
 
 
 	public GenericProjectCopyParameter(boolean copyPermissions,

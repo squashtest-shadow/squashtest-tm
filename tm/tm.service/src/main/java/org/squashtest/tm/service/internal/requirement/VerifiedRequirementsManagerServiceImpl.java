@@ -502,10 +502,7 @@ List<Long> requirementsIds) {
 			pagedVersionVerifiedByCalles);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#findisReqCoveredOfCallingTCWhenisReqCoveredChanged(long,
-	 *      List)
-	 */
+
 	@Override
 	public Map<Long, Boolean> findisReqCoveredOfCallingTCWhenisReqCoveredChanged(
 		long updatedTestCaseId, Collection<Long> toUpdateIds) {
@@ -529,9 +526,7 @@ List<Long> requirementsIds) {
 		return result;
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#testCaseHasUndirectRequirementCoverage(long)
-	 */
+
 	@Override
 	public boolean testCaseHasUndirectRequirementCoverage(long updatedTestCaseId) {
 		List<Long> calledTestCaseIds = testCaseDao
@@ -547,9 +542,7 @@ List<Long> requirementsIds) {
 		return false;
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#testCaseHasDirectCoverage(long)
-	 */
+
 	@Override
 	public boolean testCaseHasDirectCoverage(long updatedTestCaseId) {
 		return requirementVersionDao.countVerifiedByTestCase(updatedTestCaseId) > 0;
@@ -636,7 +629,6 @@ List<Long> requirementsIds) {
 	 * <li>The descendant list must be filtered by {@link Milestone} and exclude {@link RequirementVersion} with {@link RequirementStatus#OBSOLETE}</li>
 	 * </ul>
 	 * </code>
-	 * @param mainRequirement
 	 * @param mainVersion
 	 * @param descendants
 	 * @param stats pojo containing the computed stats
@@ -654,7 +646,7 @@ List<Long> requirementsIds) {
 		Map<ExecutionStatus, Long> mainStatusMap = new EnumMap<>(ExecutionStatus.class);
 		makeStatusMap(mainVersion.getRequirementVersionCoverages(), mainUntestedElementsCount, mainStatusMap, iterationsIds);
 		verificationRate.setRequirementVersionRate(doRateVerifiedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
-		validationRate.setRequirementVersionRate(doRateValidatedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
+		validationRate.setRequirementVersionRate(doRateValidatedCalculation(mainStatusMap));
 
 		if (hasDescendant) {
 			verificationRate.setAncestor(true);
@@ -664,13 +656,13 @@ List<Long> requirementsIds) {
 			Map<ExecutionStatus, Long> descendantStatusMap = new EnumMap<>(ExecutionStatus.class);
 			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
 			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
-			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
+			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap));
 
 			Long[] allUntestedElementsCount = new Long[]{0L};
 			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantUntestedElementsCount[0];
 			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap, descendantStatusMap);
 			verificationRate.setRequirementVersionGlobalRate(doRateVerifiedCalculation(allStatusMap, allUntestedElementsCount[0]));
-			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap, allUntestedElementsCount[0]));
+			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap));
 		}
 
 		stats.addRate("verification", verificationRate);
@@ -776,9 +768,9 @@ List<Long> requirementsIds) {
 		List<Long> steppedCoverageTCIdsWithoutExecution = filterTCIds(steppedCoverageTCIdsWithITPI, steppedCoverageTCIdsWithExecution);
 
 		//TC With ITPI but no execution are treated like simple testcase
-		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage, steppedCoverageTCIdsWithoutExecution, iterationsIds, nbSteppedCoverageByTestCase);
+		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage, steppedCoverageTCIdsWithoutExecution, iterationsIds);
 		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds, nbSimpleCoverageByTestCase, stepedCoverage, steppedCoverageTCIdsWithoutITPI);
-		Map<ExecutionStatus, Long> statusMapForSteppedWithExecution = findResultsForSteppedCoverageWithExecution(stepedCoverage, steppedCoverageTCIdsWithExecution, nbSteppedCoverageByTestCase);
+		Map<ExecutionStatus, Long> statusMapForSteppedWithExecution = findResultsForSteppedCoverageWithExecution(stepedCoverage, steppedCoverageTCIdsWithExecution);
 
 		//merging the three map of results
 		fusionMapResult(statusMap, statusMapForSimple);
@@ -790,8 +782,7 @@ List<Long> requirementsIds) {
 	@SuppressWarnings("unchecked")
 	private Map<ExecutionStatus, Long> findResultsForSteppedCoverageWithoutExecution(
 		List<RequirementVersionCoverage> stepedCoverage, List<Long> testCaseIds,
-		List<Long> iterationsIds,
-		Map<Long, Long> nbSteppedCoverageByTestCase) {
+		List<Long> iterationsIds) {
 		MultiMap testCaseExecutionStatus = iterationDao.findVerifiedITPI(testCaseIds, iterationsIds);
 		Map<ExecutionStatus, Long> result = new EnumMap<>(ExecutionStatus.class);
 		for (RequirementVersionCoverage cov : stepedCoverage) {
@@ -809,7 +800,7 @@ List<Long> requirementsIds) {
 
 	@SuppressWarnings("unchecked")
 	private Map<ExecutionStatus, Long> findResultsForSteppedCoverageWithExecution(
-		List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
+		List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds) {
 		List<Long> testStepsIds = new ArrayList<>();
 		Map<ExecutionStatus, Long> result = new EnumMap<>(ExecutionStatus.class);
 		//First we compute all testStep id in a list, to allow multiple occurrence of the same step.
@@ -880,7 +871,7 @@ List<Long> requirementsIds) {
 		return doRateCalculation(statusSet, fullCoverageResult, untestedElementsCount);
 	}
 
-	private double doRateValidatedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
+	private double doRateValidatedCalculation(Map<ExecutionStatus, Long> fullCoverageResult) {
 		Set<ExecutionStatus> validStatusSet = getValidatedStatus();
 		Set<ExecutionStatus> verifiedStatusSet = getVerifiedStatus();
 		return doRateCalculation(validStatusSet, verifiedStatusSet, fullCoverageResult);
