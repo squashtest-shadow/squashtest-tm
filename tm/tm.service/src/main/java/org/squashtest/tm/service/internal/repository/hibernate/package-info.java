@@ -584,6 +584,7 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
+	@NamedQuery(name = "RequirementVersion.findAllForMilestones", query = "select reqVer.id from RequirementVersion reqVer join reqVer.milestones milestone where milestone.id in (:milestonesIds)"),
 //	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
 
 	/*

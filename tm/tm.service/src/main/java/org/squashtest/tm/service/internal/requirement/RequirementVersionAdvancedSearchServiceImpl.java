@@ -20,6 +20,16 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -29,19 +39,20 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.*;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -53,6 +64,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Inject
 	private ProjectDao projectDao;
 
+	@Inject
+	private RequirementVersionDao requirementVersionDao;
+	
 	private static final SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[]{
 		new SortField("requirement.project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
@@ -62,6 +76,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
 		"requirement.versions", "testcases", "attachments");
 
+	private static final String FAKE_REQUIREMENT_VERSION_ID = "-9000";
+	
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
@@ -150,9 +166,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
-		Query luceneQuery = buildLuceneQuery(qb, model);
+		Query luceneQuery = searchForRequirementVersionQuery(model, ftSession, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
@@ -168,5 +183,50 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
+	protected Query searchForRequirementVersionQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
+		/* Creating a copy of the model to keep a model with milestones criteria */
+		AdvancedSearchModel modelCopy = model.shallowCopy();
+		/* Removing these criteria from the main model */
+		removeMilestoneSearchFields(model);
+		
+		/* Building main Lucene Query with this main model */
+		Query luceneQuery = buildCoreLuceneQuery(qb, model);
+		/* If requested, add milestones criteria with the copied model */
+		if(shouldSearchByMilestones(modelCopy)) {
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+		}
+		return luceneQuery;
+	}
+	
+public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+		
+		addMilestoneFilter(modelCopy);
+		
+		/* Find the milestones ids. */
+		List<String> strMilestoneIds = 
+				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
+		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
+		for (String str : strMilestoneIds) {
+			milestoneIds.add(Long.valueOf(str));
+		}
+		
+		/* Find the RequirementVersions ids. */
+		List<Long> lReqVerIds = requirementVersionDao.findAllForMilestones(milestoneIds);
+		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
+		for(Long l : lReqVerIds) {
+			itpiIds.add(l.toString());
+		}
+		
+		/* Fake Id to find no result via Lucene if no Requirement Version found */
+		if(itpiIds.isEmpty()) {
+			itpiIds.add(FAKE_REQUIREMENT_VERSION_ID);
+		}
+		
+		/* Add Criteria to restrict Requirement Versions ids */
+		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
+		
+		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+	}
 
 }
