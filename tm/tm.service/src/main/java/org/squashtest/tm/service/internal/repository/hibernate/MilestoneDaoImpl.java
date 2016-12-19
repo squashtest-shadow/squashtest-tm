@@ -286,15 +286,18 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 			holder.unbindMilestone(milestoneId);
 			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
-				session.flush();
-				fullTextEntityManager.flushToIndexes();
-				fullTextEntityManager.clear();
+				flushAndClearSession(session, fullTextEntityManager);
 			}
 		}
 		// flush remaining items
+		flushAndClearSession(session, fullTextEntityManager);
+	}
+	
+	private void flushAndClearSession(Session session, FullTextEntityManager fullTextEntityManager) {
 		session.flush();
 		fullTextEntityManager.flushToIndexes();
 		fullTextEntityManager.clear();
+		
 	}
 
 	@Override
