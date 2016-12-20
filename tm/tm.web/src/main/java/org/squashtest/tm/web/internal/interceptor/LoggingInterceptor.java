@@ -37,7 +37,7 @@ public class LoggingInterceptor implements WebRequestInterceptor {
 
 	@Override
 	public void postHandle(WebRequest webRequest, ModelMap modelMap) throws Exception {
-
+		//Nothing to do here
 	}
 
 	@Override

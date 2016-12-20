@@ -88,10 +88,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// Log4j output enhancement
-//		Log4jNestedDiagnosticContextInterceptor ndc = new Log4jNestedDiagnosticContextInterceptor();
-//		ndc.setIncludeClientInfo(true);
-//		registry.addWebRequestInterceptor(ndc);
-
 		LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
 		registry.addWebRequestInterceptor(loggingInterceptor);
 
