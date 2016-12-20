@@ -37,6 +37,7 @@ import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.squashtest.tm.web.internal.interceptor.ActiveMilestoneInterceptor;
+import org.squashtest.tm.web.internal.interceptor.LoggingInterceptor;
 import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.CampaignViewInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.ExecutionViewInterceptor;
@@ -87,9 +88,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// Log4j output enhancement
-		Log4jNestedDiagnosticContextInterceptor ndc = new Log4jNestedDiagnosticContextInterceptor();
-		ndc.setIncludeClientInfo(true);
-		registry.addWebRequestInterceptor(ndc);
+//		Log4jNestedDiagnosticContextInterceptor ndc = new Log4jNestedDiagnosticContextInterceptor();
+//		ndc.setIncludeClientInfo(true);
+//		registry.addWebRequestInterceptor(ndc);
+
+		LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+		registry.addWebRequestInterceptor(loggingInterceptor);
 
 		// OSIV
 		OpenEntityManagerInViewInterceptor osiv = new OpenEntityManagerInViewInterceptor();
