@@ -236,7 +236,7 @@
 <div th:fragment="chart-wizard-cuf-list">
  <select id="first-filter-value-{{id}}" name="{{id}}">
 {{#each items}}
- <option value="{{this.code}}">
+ <option value="{{this.label}}">
   {{this.label}}
  </option>
 {{/each}}

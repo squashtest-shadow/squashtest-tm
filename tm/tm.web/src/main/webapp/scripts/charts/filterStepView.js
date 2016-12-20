@@ -66,7 +66,9 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 				var $val = $("#list-filter-container-" + liste.id);
 
-				var items = liste.cufListOptions;
+				var items = _.filter(liste.cufListOptions, function(cufOption) {
+					return cufOption.label && cufOption.label !== "";
+				});
 
 				$val.html(self.cufListTemplate({id : liste.id,items : items}));
 
@@ -215,6 +217,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			self.reloadInfoList(filter);
 			self.showFilterValues(id, filter.operation);
+			self.reloadCufValues(filter);
 
 			$("#first-filter-value-" + id).val(self.getValueFromFilter(filter, 0));
 			$("#second-filter-value-" + id).val(self.getValueFromFilter(filter, 1));
@@ -263,6 +266,16 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			}
 		},
 
+		reloadCufValues : function(filter) {
+			var self = this;
+			var datatype = filter.column.dataType;
+			if(datatype === "TAG"){
+				var id = filter.column.id;
+				var value = filter.values[0];
+				$("#first-filter-value-" + id).val(value);
+			}
+		},
+
 		updateModel : function() {
 			//get ids of selecteds columns
 			var ids = _.pluck($('[id^="filter-selection-"]').filter(":checked"), "name");
@@ -274,9 +287,25 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 					values : self.getFilterValues(id) };
 				});
 
+			//filtering filters
+			//a filter is valid only if his values are :
+			//	- not empty
+			//	- none of the values are undefined, null or equals to empty string
 			filters = _.chain(filters)
-			.filter(function(filter){return ! _.isEmpty(filter.values);})
-			.value();
+				.filter(function(filter){
+					var filterValuesAreValid = true;
+					if( _.isEmpty(filter.values)){
+						filterValuesAreValid = false;
+					} else {
+						_.each(filter.values,function(value) {
+							if(value === null || value === "" )	{
+								filterValuesAreValid = false;
+							}
+						});
+					}
+					return filterValuesAreValid;
+				})
+				.value();
 			this.model.set({ filters : filters });
 			this.model.set({filtered : [true]});
 
