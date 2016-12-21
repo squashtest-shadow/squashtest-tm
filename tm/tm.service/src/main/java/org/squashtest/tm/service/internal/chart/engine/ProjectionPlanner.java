@@ -41,37 +41,37 @@ import com.querydsl.core.types.dsl.Expressions;
  * 	This class is responsible for adding the "select" and "group by" clauses. See main documentation on
  * 	{@link ChartDataFinder} for more details on how it is done.
  * </p>
- * 
+ *
  * <p>
  * 	Depending on the chosen profile, the projection will be :
  * 	<ul>
  * 		<li>MAIN_QUERY : the full projection will be applied (that is, axis then measures)</li>
  * 		<li>SUBSELECT_QUERY : only the measures will be projected - the axis only value is implicit because the outer query will drive it</li>
- * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not, 
+ * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not,
  * 			the outer  query can then test with 'exists (subquery)'  </li>
  * 	</ul>
  * </p>
- * 
+ *
  * <h3>Hacked section, pay attention</h3>
  * <p>
- * 	Last detail, about grouping on subqueries (which happens when a subquery is defined as axis). The Hibernate HQL parser wont allow 
+ * 	Last detail, about grouping on subqueries (which happens when a subquery is defined as axis). The Hibernate HQL parser wont allow
  * 	group by/ order by on subqueries because it doesn't allow AST nodes of type query at that position. However it will allow column aliases.
  * 	So when this situation arise we have to give :
  * 		<ul>
  * 			<li>an alias to the subquery in the 'from' clause, </li>
  * 			<li>use that alias in the group by/order by</li>
- * 		</ul> 
- * 
+ * 		</ul>
+ *
  * 	<b>Gotcha #1 : </b> such notation is not supported by all databases, fortunately mysql and postgres do <br/>
- * 	<b>Gotcha #2 : </b> we cannot specify our own aliases because the aliases that Hibernate generates in the 'from' clause and 
+ * 	<b>Gotcha #2 : </b> we cannot specify our own aliases because the aliases that Hibernate generates in the 'from' clause and
  * the 'group by' clause are inconsistent. A query is not supposed to be expressed that way in the first place. So we have to guess what
- * the alias will be, and follow the pattern col_0_0, col_0_1. This is highly dependent on Hibernate implementation and might break 
+ * the alias will be, and follow the pattern col_0_0, col_0_1. This is highly dependent on Hibernate implementation and might break
  * any day.
- * 	<b>Gotcha #3 : </b> it's safer to specify aliases for subqueries only because hibernate would generate more meaningful aliases when 
+ * 	<b>Gotcha #3 : </b> it's safer to specify aliases for subqueries only because hibernate would generate more meaningful aliases when
  * the aliases column is a regular column, thoses aliases wouldn't follow the generic pattern col_x_y.
  * </p>
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -84,12 +84,12 @@ class ProjectionPlanner {
 	private QuerydslToolbox utils;
 
 	private QueryProfile profile = MAIN_QUERY;
-	
+
 	// see comment on that hack above
 	private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
-	
-	private static enum SubqueryAliasStrategy{
-		NONE, 
+
+	private enum SubqueryAliasStrategy{
+		NONE,
 		APPEND_ALIAS,
 		REPLACE_BY_ALIAS;
 	}
@@ -175,10 +175,10 @@ class ProjectionPlanner {
 
 
 	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
-		
+
 		int count = 0;
 		for (ColumnPrototypeInstance col : columns){
-			
+
 			Expression<?> expr = null;
 
 			// regular column
@@ -188,19 +188,19 @@ class ProjectionPlanner {
 			else{
 				String alias = genAlias(count);
 				switch(aliasStrategy){
-				case APPEND_ALIAS : 
+				case APPEND_ALIAS :
 					expr = utils.createAsSelect(col);
 					expr = Expressions.as(expr, alias);
 					break;
-				case REPLACE_BY_ALIAS :					
+				case REPLACE_BY_ALIAS :
 					expr = Expressions.stringPath(alias);
 					break;
-				case NONE : 
+				case NONE :
 					expr = utils.createAsSelect(col);
-					break;							
+					break;
 				}
 			}
-			
+
 			toPopulate.add(expr);
 			count++;
 		}
@@ -213,7 +213,7 @@ class ProjectionPlanner {
 			orders.add(spec);
 		}
 	}
-	
+
 	private String genAlias(int count){
 		return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(count));
 	}

@@ -66,8 +66,6 @@ public class ConciseFormToCriteriaConverter {
 	private static final String EXP_VALUE = "value";
 	private static final String EXP_SEL = "selected";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConciseFormToCriteriaConverter.class);
-
 	private final FormToCriteriaConverter delegate = new FormToCriteriaConverter();
 	private final Map<String, Input> flattenedInputByName = new HashMap<>();
 	private final List<Project> projects;
