@@ -579,7 +579,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 		public AddRequirementVisitor(RequirementVersionInstruction instruction, Long finalParentId, NewRequirementVersionDto dto) {
 			this.instruction = instruction;
-			target = instruction.getTarget();
+			this.target = instruction.getTarget();
 			this.finalParentId = finalParentId;
 			this.dto = dto;
 		}
@@ -593,7 +593,7 @@ class RequirementFacility extends EntityFacilitySupport {
 			//Integer finalPosition = target.getRequirement().getOrder();
 			finalRequirement = reqLibNavigationService.addRequirementToRequirement(finalParentId, dto, boundMilestonesIds(instruction));
 			//Issue 6533
-			//We need to deactivate the move node because it change the EntityManager.fushMode due to "Dark Magic"...
+			//We need to deactivate the move node because it change the EntityManager.flushMode due to "Dark Magic"...
 			//See IndexationServiceImpl.getFullTextSession()
 			//With the time remaining for the 1.15 and risk of side effect we decided to neutralize this feature in order to preserve import
 //			if (finalPosition != null && finalPosition > 0) {
@@ -606,7 +606,7 @@ class RequirementFacility extends EntityFacilitySupport {
 			//Integer finalPosition = target.getRequirement().getOrder();
 			finalRequirement = reqLibNavigationService.addRequirementToRequirementFolder(finalParentId, dto, boundMilestonesIds(instruction));
 			//Issue 6533
-			//We need to deactivate the move node because it change the EntityManager.fushMode due to "Dark Magic"...
+			//We need to deactivate the move node because it change the EntityManager.flushMode due to "Dark Magic"...
 			//See IndexationServiceImpl.getFullTextSession()
 			//With the time remaining for the 1.15 and risk of side effect we decided to neutralize this feature in order to preserve import
 //			if (finalPosition != null && finalPosition > 0) {

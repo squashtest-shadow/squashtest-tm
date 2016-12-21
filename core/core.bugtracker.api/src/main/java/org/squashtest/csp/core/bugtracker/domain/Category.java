@@ -27,16 +27,16 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 
 	public static final Category NO_CATEGORY = new Category(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 
-	
+
 	private String id;
 	private String name;
 
-	
+
 	public Category(){
-		
+		//Default constructor
 	}
-	
-	
+
+
 	public Category(String id, String name) {
 		super();
 		this.id = id;
@@ -47,14 +47,14 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 	public String getId(){
 		return id;
 	}
-	
+
 	@Override
 	public String getName(){
 		return name;
 	}
 
-	
-	
+
+
 	@Override
 	public boolean isDummy(){
 		return this.id.equals(NO_CATEGORY.id);
@@ -69,10 +69,10 @@ public class Category implements Identifiable<Category>, RemoteCategory{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-		
+		//exists for the purpose of being javabean compliant
 	}
 
 }

@@ -48,11 +48,10 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 public class MethodArgumentNotValidExceptionHandler extends
 		AbstractHandlerExceptionResolver {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MethodArgumentNotValidExceptionHandler.class);
 
 	public MethodArgumentNotValidExceptionHandler() {
 		super();
-		//Setting order property to have this handler be placed before DefaultExceptionHandler in spring exception queu resolution
+		//Setting order property to have this handler be placed before DefaultExceptionHandler in spring exception queue resolution
 		this.setOrder(Ordered.HIGHEST_PRECEDENCE);
 	}
 

@@ -98,8 +98,7 @@ import com.google.common.base.Optional;
 public class TestCaseLibraryNavigationServiceImpl
 	extends AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>
 	implements TestCaseLibraryNavigationService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationServiceImpl.class);
+	
 	private static final String EXPORT = "EXPORT";
 	private static final String TEST_CASE_CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String DESTINATION_ID = "destinationId";

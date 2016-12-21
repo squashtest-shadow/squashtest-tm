@@ -21,18 +21,18 @@
 package org.squashtest.csp.core.bugtracker.domain;
 
 public class Permission implements Identifiable<Permission> {
-	
+
 
 	public static final Permission NO_PERMISSION = new Permission(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
-	
-	
+
+
 	private String id;
 	private String name;
 
 	public Permission(){
-		
+		//Default constructor
 	}
-	
+
 	public Permission(String id, String name) {
 		super();
 		this.id = id;
@@ -43,13 +43,13 @@ public class Permission implements Identifiable<Permission> {
 	public String getId(){
 		return id;
 	}
-	
+
 	@Override
 	public String getName(){
 		return name;
 	}
-	
-	
+
+
 	/**
 	 * is hopefully never a dummy
 	 */
@@ -57,7 +57,7 @@ public class Permission implements Identifiable<Permission> {
 	public boolean isDummy(){
 		return false;
 	}
-	
+
 
 	public void setId(String id) {
 		this.id = id;
@@ -67,10 +67,10 @@ public class Permission implements Identifiable<Permission> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-		
+		//exists for the purpose of being javabean compliant
 	}
-	
+
 }

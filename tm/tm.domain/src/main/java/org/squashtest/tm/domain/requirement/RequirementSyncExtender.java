@@ -38,7 +38,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 /**
  * This is an optional dependency to a Requirement. A Requirement having this extender
- * will be treated as synchronized. The extension holds additional informations
+ * will be treated as synchronized. The extension holds additional information
  * regarding the source of this synchronized requirement.
  *
  *

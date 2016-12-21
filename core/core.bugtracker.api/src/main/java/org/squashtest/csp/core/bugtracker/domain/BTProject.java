@@ -48,7 +48,7 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 	private Priority defaultIssuePriority = Priority.NO_PRIORITY;
 
 	public BTProject() {
-
+		//Default constructor
 	}
 
 	public BTProject(String id, String name) {
@@ -233,7 +233,7 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	/** exists for the purpose of being java-bean compliant */
 	public void setDummy(Boolean dummy) {
-
+		//exists for the purpose of being javabean compliant
 	}
 
 	/**

@@ -23,24 +23,24 @@ package org.squashtest.csp.core.bugtracker.domain;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 
 public class Status implements Identifiable<Status>, RemoteStatus {
-	
+
 
 	public static final Status NO_STATUS = new Status(Identifiable.DUMMY_ID,Identifiable.DUMMY_NAME);
-	
+
 	private String id;
 	private String name;
-	
-	
+
+
 	public Status(){
-		
+		//Default constructor
 	}
-	
+
 	public Status(String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getId() {
 		return id;
@@ -65,10 +65,10 @@ public class Status implements Identifiable<Status>, RemoteStatus {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-		
+
 	}
-	
+
 }

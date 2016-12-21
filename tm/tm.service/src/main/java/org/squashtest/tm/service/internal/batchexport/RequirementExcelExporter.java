@@ -185,7 +185,7 @@ public class RequirementExcelExporter {
 		doOptionalCreateSheetHeader(h, cIdx);
 	}
 
-	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
+	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {//NOSONAR this is an extension point
 		// Extension point for additional export columns (example : search columns)
 		return cIdx;
 	}
@@ -231,8 +231,7 @@ public class RequirementExcelExporter {
 		}
 	}
 
-	protected int doOptionnalAppendRequirement(Row row, int colIndex,
-											   RequirementModel reqModel) {
+	protected int doOptionnalAppendRequirement(Row row, int colIndex, RequirementModel reqModel) {//NOSONAR this is an extension point
 		// Extension point for additional export columns (example : search columns)
 		return colIndex;
 	}

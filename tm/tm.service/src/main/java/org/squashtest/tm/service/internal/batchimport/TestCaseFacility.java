@@ -115,17 +115,13 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
 
 		InfoListItem nature = testCase.getNature();
-		if (nature != null) {
-			if (!listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
+		if (nature != null && !listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
 				testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
-			}
 		}
 
 		InfoListItem type = testCase.getType();
-		if (type != null) {
-			if (!listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
+		if (type != null && !listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
 				testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
-			}
 		}
 
 	}

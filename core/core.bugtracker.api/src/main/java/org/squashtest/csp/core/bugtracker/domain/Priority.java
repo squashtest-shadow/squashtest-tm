@@ -23,16 +23,16 @@ package org.squashtest.csp.core.bugtracker.domain;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 
 public class Priority implements Identifiable<Priority>, RemotePriority{
-	
+
 	public static final Priority NO_PRIORITY = new Priority(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
-	
+
 	private String id;
 	private String name;
 
 	public Priority(){
-		
+		//Default constructor
 	}
-	
+
 	public Priority(String id, String name) {
 		super();
 		this.id = id;
@@ -43,23 +43,23 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 	public String getId(){
 		return id;
 	}
-	
+
 	@Override
 	public String getName(){
 		return name;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * is hopefully never a dummy
-	 * 
+	 *
 	 */
 	@Override
 	public boolean isDummy(){
 		return false;
 	}
-	
+
 
 	public void setId(String id) {
 		this.id = id;
@@ -69,10 +69,10 @@ public class Priority implements Identifiable<Priority>, RemotePriority{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-		
+
 	}
 }
 

@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/test-cases/import-logs")
 public class TestCaseImportLogController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogController.class);
 
 	@Inject
 	private TestCaseImportLogHelper logHelper;

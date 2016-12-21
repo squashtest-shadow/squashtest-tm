@@ -27,14 +27,14 @@ package org.squashtest.csp.core.bugtracker.domain;
  *
  */
 public class Severity implements Identifiable<Severity>{
-	
+
 	private String id;
 	private String name;
 
 	public Severity(){
-		
+		//Default constructor
 	}
-	
+
 	public Severity(String id, String name) {
 		super();
 		this.id = id;
@@ -45,22 +45,22 @@ public class Severity implements Identifiable<Severity>{
 	public String getId(){
 		return id;
 	}
-	
+
 	@Override
 	public String getName(){
 		return name;
 	}
-	
-	
+
+
 	/**
 	 * Severity is hopefully never a dummy
-	 * 
+	 *
 	 */
 	@Override
 	public boolean isDummy(){
 		return false;
 	}
-	
+
 
 	public void setId(String id) {
 		this.id = id;
@@ -70,10 +70,10 @@ public class Severity implements Identifiable<Severity>{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
 	public void setDummy(Boolean dummy){
-		
+
 	}
 
 }
