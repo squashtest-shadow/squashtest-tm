@@ -53,7 +53,8 @@ public class RequirementSyncExtender {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_sync_extender_req_sync_id_seq")
 	@SequenceGenerator(
 			name = "requirement_sync_extender_req_sync_id_seq",
-			sequenceName = "requirement_sync_extender_req_sync_id_seq"
+			sequenceName = "requirement_sync_extender_req_sync_id_seq",
+			allocationSize=1
 			)
 	private Long id;
 
