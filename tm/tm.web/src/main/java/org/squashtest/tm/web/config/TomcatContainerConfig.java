@@ -25,39 +25,52 @@
  */
 package org.squashtest.tm.web.config;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.webresources.StandardRoot;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * Initiated as a workaround  for http://stackoverflow.com/questions/31605129/spring-file-upload-with-multipart-resolver-causes-connection-reset-when-file-is
- * 
+ *
  * @author bsiri
  */
 @Configuration
 public class TomcatContainerConfig {
-    
+
     /**
      * This method defines a modified servlet container that will run Squash TM when deployed as a standalone application.
      * If Squash TM is deployed as a war, the prefered way to configure the container is via the standard file server.xml.
      * Therefore you should turn this method off by setting the property squash.run-as-war to "true".
-     * 
-     * @return 
+     *
+     * @return
      */
     @Bean
     @ConditionalOnProperty(prefix="squash", name="run-as-war", havingValue = "false", matchIfMissing = true)
     public TomcatEmbeddedServletContainerFactory containerFactory(){
-        return new TomcatEmbeddedServletContainerFactory(){
-            @Override
-            protected void customizeConnector(Connector connector) {
-                super.customizeConnector(connector);
-                if (connector.getProtocolHandler() instanceof AbstractHttp11Protocol) {
-                    ((AbstractHttp11Protocol <?>) connector.getProtocolHandler()).setMaxSwallowSize(-1);
-               }
-            }
-        };
-    }
+		TomcatEmbeddedServletContainerFactory tomcatEmbeddedServletContainerFactory = new TomcatEmbeddedServletContainerFactory() {
+			@Override
+			protected void customizeConnector(Connector connector) {
+				super.customizeConnector(connector);
+				if (connector.getProtocolHandler() instanceof AbstractHttp11Protocol) {
+					((AbstractHttp11Protocol<?>) connector.getProtocolHandler()).setMaxSwallowSize(-1);
+				}
+			}
+
+			@Override
+			protected void postProcessContext(Context context) {
+				final int cacheSize = 40 * 1024;
+				StandardRoot standardRoot = new StandardRoot(context);
+				standardRoot.setCacheMaxSize(cacheSize);
+				context.setResources(standardRoot);
+			}
+		};
+
+		return tomcatEmbeddedServletContainerFactory;
+	}
 }
