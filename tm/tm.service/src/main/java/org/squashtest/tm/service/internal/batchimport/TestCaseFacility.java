@@ -29,7 +29,6 @@ import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -65,7 +64,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
 
-	private final FacilityImplHelper helper = new FacilityImplHelper();
+	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
 	public LogTrain createTestCase(TestCaseInstruction instr) {
 		LogTrain train = validator.createTestCase(instr);

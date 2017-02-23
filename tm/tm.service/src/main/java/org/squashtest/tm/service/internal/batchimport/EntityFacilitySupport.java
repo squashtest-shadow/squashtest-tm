@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -45,12 +44,10 @@ abstract class EntityFacilitySupport {
 	@Inject
 	protected MilestoneImportHelper milestoneHelper;
 	@Inject
-	private CustomFieldDao cufDao;
-	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
 
         
-        //manually-injected attributes        
+    //manually-injected attributes        
 	private CustomFieldTransator customFieldTransator;
         
 	protected ValidationFacility validator;
@@ -88,6 +85,17 @@ abstract class EntityFacilitySupport {
 		}
 		return customFieldTransator.toAcceptableCufs(origCufs);
 	}
+	
+	/**
+	 * Returns the input type of a customfield given its code. Returns null 
+	 * if no such customfield exists.
+	 * 
+	 * @param cufCode
+	 * @return
+	 */
+	protected final InputType getInputTypeFor(String cufCode){
+		return customFieldTransator.getInputTypeFor(cufCode);
+	}
 
 	protected final void doUpdateCustomFields(Map<String, String> cufValues, BoundEntity bindableEntity) {
 
@@ -107,7 +115,7 @@ abstract class EntityFacilitySupport {
 		this.customFieldTransator = customFieldTransator;
 	}
         
-        public void initializeValidator(ValidationFacility validator){
-            this.validator = validator;
-        }
+    public void initializeValidator(ValidationFacility validator){
+        this.validator = validator;
+    }
 }

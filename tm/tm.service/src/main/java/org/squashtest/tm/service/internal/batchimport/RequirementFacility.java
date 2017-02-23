@@ -110,7 +110,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	@Inject
 	private RequirementLibraryNavigationService reqLibNavigationService;
 
-	private final FacilityImplHelper helper = new FacilityImplHelper();
+	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
 	private ImportPostProcessHandler postProcessHandler;
 
