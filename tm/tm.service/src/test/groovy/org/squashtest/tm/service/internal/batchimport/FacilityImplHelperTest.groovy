@@ -21,7 +21,11 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
+import org.apache.log4j.pattern.RelativeTimePatternConverter.CachedTimestamp
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.internal.batchimport.FacilityImplHelperTest.MockFacilitySupport
 
 import spock.lang.Specification;
 
@@ -50,6 +54,7 @@ class FacilityImplHelperTest extends Specification {
 		param.name.size() == 255
 	}
 
+	
 	def "shohuld fill parameter nulls with defaults"() {
 		given: Parameter p = new Parameter()
 		use (ReflectionCategory) {
@@ -64,4 +69,39 @@ class FacilityImplHelperTest extends Specification {
 		p.name == ""
 		p.description == ""
 	}
+	
+	
+	
+	def "should truncate long custom field values unless they are for rich text"(){
+		
+		given :
+			def longtext  = 'a' * 500
+			def customfields = ['text' : longtext, 'rich' : longtext]
+			
+		and :
+			MockFacilitySupport support = new MockFacilitySupport()
+		
+		when :
+			def helper = new FacilityImplHelper(support)
+			helper.truncateCustomfields(customfields)
+		
+		then :	
+			customfields['text'].size() == CustomFieldValue.MAX_SIZE
+			customfields['rich'].size() == 500
+		
+	}
+	
+	
+	// ******************************************
+	
+	class MockFacilitySupport extends EntityFacilitySupport{
+		MockFacilitySupport(){
+			def customFieldTransator = new CustomFieldTransator()
+			customFieldTransator.cufInfosCache['text'] = new CustomFieldInfos(1L, InputType.PLAIN_TEXT)
+			customFieldTransator.cufInfosCache['rich'] = new CustomFieldInfos(2L, InputType.RICH_TEXT) 
+			initializeCustomFieldTransator(customFieldTransator)
+			
+		}
+	}
+	
 }

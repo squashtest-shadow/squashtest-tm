@@ -20,16 +20,20 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
-
-import javax.inject.Inject;
-import java.util.*;
 
 /**
  * @author Gregory Fouquet
@@ -39,10 +43,9 @@ import java.util.*;
 @Scope("prototype")
 class CustomFieldTransator {
 	private final Map<String, CustomFieldInfos> cufInfosCache = new HashMap<>();
+	
 	@Inject
 	private CustomFieldDao customFieldDao;
-	@Inject
-	private PrivateCustomFieldValueService cufvalueService;
 
 	/**
 	 * because the service identifies cufs by their id, not their code<br/>
@@ -61,20 +64,7 @@ class CustomFieldTransator {
 			String requestedCode = entry.getKey();
 
 			if (!cufInfosCache.containsKey(requestedCode)) {
-
-				CustomField customField = customFieldDao.findByCode(requestedCode);
-
-				// that bit of code checks that if the custom field doesn't
-				// exist, the hashmap entry contains
-				// a dummy value for this code.
-				CustomFieldInfos infos = null;
-				if (customField != null) {
-					Long id = customField.getId();
-					InputType type = customField.getInputType();
-					infos = new CustomFieldInfos(id, type);
-				}
-
-				cufInfosCache.put(requestedCode, infos);
+				loadCustomFieldByCode(requestedCode);
 			}
 
 			// now add to our map the id of the custom field, except if null :
@@ -97,5 +87,43 @@ class CustomFieldTransator {
 
 		return result;
 
+	}
+	
+	/**
+	 * Returns the input type of a customfield given its code. Returns null 
+	 * if no such customfield exists.
+	 * 
+	 * @param cufCode
+	 * @return
+	 */
+	protected final InputType getInputTypeFor(String cufCode){
+		InputType response = null;
+		
+		if (!cufInfosCache.containsKey(cufCode)) {
+			loadCustomFieldByCode(cufCode);
+		}
+		
+		CustomFieldInfos infos = cufInfosCache.get(cufCode);
+		if (infos != null) {
+			response = infos.getType();
+		}
+
+		return response;
+	}
+	
+	private void loadCustomFieldByCode(String code){
+		CustomField customField = customFieldDao.findByCode(code);
+
+		// that bit of code checks that if the custom field doesn't
+		// exist, the hashmap entry contains
+		// a dummy value for this code.
+		CustomFieldInfos infos = null;
+		if (customField != null) {
+			Long id = customField.getId();
+			InputType type = customField.getInputType();
+			infos = new CustomFieldInfos(id, type);
+		}
+
+		cufInfosCache.put(code, infos);
 	}
 }

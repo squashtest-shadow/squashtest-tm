@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -40,11 +40,12 @@ final class FacilityImplHelper {
 
 	static final int STD_TRUNCATE_SIZE = 255;
 
-
-	FacilityImplHelper() {
+	private EntityFacilitySupport facility;
+	
+	FacilityImplHelper(EntityFacilitySupport facility) {
 		super();
+		this.facility = facility;
 	}
-
 
 
 	/**
@@ -57,7 +58,6 @@ final class FacilityImplHelper {
 	 * The nullity regarding the Nature and Type will be handled by
 	 * the TestCaseLibraryNavigationService itself. No need to
 	 * worry about them here and now.
-	 *
 	 */
 	void fillNullWithDefaults(TestCase testCase) {
 
@@ -146,41 +146,48 @@ final class FacilityImplHelper {
 		}
 	}
 
-	// truncate what ? data from database ? strings ? which ones ?
+	/*
+	 * Truncates string content that would exceed their maximum length
+	 */
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
 		testCase.setName(truncate(name, Sizes.NAME_MAX));
+		
 		String ref = testCase.getReference();
 		testCase.setReference(truncate(ref, TestCase.MAX_REF_SIZE));
 
-		for (Entry<String, String> cuf : cufValues.entrySet()) {
-			String value = cuf.getValue();
-			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
-		}
+		truncateCustomfields(cufValues);
 	}
 
+	/*
+	 * Truncates string content that would exceed their maximum length
+	 */
 	void truncate(RequirementVersion reqVersion, Map<String, String> cufValues) {
 		String ref = reqVersion.getReference();
 		reqVersion.setReference(truncate(ref, RequirementVersion.MAX_REF_SIZE));
 
-		for (Entry<String, String> cuf : cufValues.entrySet()) {
-			String value = cuf.getValue();
-			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
-		}
+		truncateCustomfields(cufValues);
 	}
 
+	/*
+	 * Truncates string content that would exceed their maximum length
+	 */
 	void truncate(ActionTestStep step, Map<String, String> cufValues) {
-		for (Entry<String, String> cuf : cufValues.entrySet()) {
-			String value = cuf.getValue();
-			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
-		}
+		truncateCustomfields(cufValues);
 	}
+	
 
+	/*
+	 * Truncates string content that would exceed their maximum length
+	 */
 	void truncate(Parameter param) {
 		String name = param.getName();
 		param.setName(truncate(name, Parameter.MAX_NAME_SIZE));
 	}
 
+	/*
+	 * Truncates string content that would exceed their maximum length
+	 */
 	void truncate(Dataset ds) {
 		String name = ds.getName();
 		ds.setName(truncate(name, Dataset.MAX_NAME_SIZE));
@@ -203,9 +210,19 @@ final class FacilityImplHelper {
 		}
 	}
 
+	
 	String truncate(String str){
 		return truncate(str, STD_TRUNCATE_SIZE);
 	}
 
-
+	
+	void truncateCustomfields(Map<String, String> cufValues){
+		for (Entry<String, String> cuf : cufValues.entrySet()) {
+			InputType type = facility.getInputTypeFor(cuf.getKey());
+			if (type != InputType.RICH_TEXT){
+				String value = cuf.getValue();
+				cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
+			}
+		}
+	}
 }

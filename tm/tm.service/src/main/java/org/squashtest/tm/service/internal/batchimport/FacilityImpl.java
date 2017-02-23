@@ -113,15 +113,15 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 	private TestCaseFacility testCaseFacility;
 
         
-        // the following attributes shaddow the same attributes defined in EntityFacilitySupport
-        // here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
+    // the following attributes shadow the same attributes defined in EntityFacilitySupport
+    // here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
 	@Inject
 	private CustomFieldTransator customFieldTransator;
         
 	@Inject
 	private ValidationFacility validator;
 
-	private final FacilityImplHelper helper = new FacilityImplHelper();
+	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
 
 	// ************************ public (and nice looking) code
@@ -673,9 +673,9 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		testCaseFacility.initializeCustomFieldTransator(customFieldTransator);
 		requirementFacility.initializeCustomFieldTransator(customFieldTransator);
                 
-                this.initializeValidator(validator);
-                testCaseFacility.initializeValidator(validator);
-                requirementFacility.initializeValidator(validator);
+        this.initializeValidator(validator);
+        testCaseFacility.initializeValidator(validator);
+        requirementFacility.initializeValidator(validator);
 	}
 
 }

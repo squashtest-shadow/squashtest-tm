@@ -106,4 +106,31 @@ class CustomFieldTransatorTest extends Specification {
 		where:
 		strVal << [null, "", "  ", "the goddamn batman", "  the spaced batman  "]
 	}
+	
+	
+	def "should return the input type of a customfield (that exists)"(){
+		
+		given :
+			transator.cufInfosCache['hero'] = new CustomFieldInfos(1L, InputType.PLAIN_TEXT) 
+		
+		when :
+			def typ = transator.getInputTypeFor('hero')
+		
+		then :
+			typ == InputType.PLAIN_TEXT
+	}
+	
+	
+	
+	def "should return the input type of a customfield (when not exists)"(){
+		
+		given :
+			customFieldDao.findByCode("hero") >> null
+		
+		when :
+			def typ = transator.getInputTypeFor('hero')
+		
+		then :
+			typ == null
+	}
 }
