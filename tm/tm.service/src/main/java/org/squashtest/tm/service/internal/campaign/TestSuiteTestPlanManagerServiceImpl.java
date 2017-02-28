@@ -46,6 +46,8 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
@@ -184,7 +186,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
@@ -198,7 +201,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<>();
@@ -213,7 +217,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds,@Id long suiteId) {
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();

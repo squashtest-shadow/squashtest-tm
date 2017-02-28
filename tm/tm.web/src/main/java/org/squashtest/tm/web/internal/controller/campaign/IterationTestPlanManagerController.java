@@ -168,16 +168,7 @@ public class IterationTestPlanManagerController {
 	public void addIterationTestPlanItemToIteration(
 			@RequestParam(ITPI_IDS_REQUEST_PARAM) List<Long> iterationTestPlanIds, @PathVariable long iterationId) {
 
-		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.findTestPlanItems(iterationTestPlanIds);
-
-		for (IterationTestPlanItem itpi : itpis) {
-
-			if (!itpi.isTestCaseDeleted()) {
-				Long datasetId = itpi.getReferencedDataset() == null ? null : itpi.getReferencedDataset().getId();
-				iterationTestPlanManagerService.addTestCaseToIteration(itpi.getReferencedTestCase().getId(), datasetId,
-						iterationId);
-			}
-		}
+		iterationTestPlanManagerService.copyTestPlanItems(iterationTestPlanIds, iterationId);
 
 	}
 

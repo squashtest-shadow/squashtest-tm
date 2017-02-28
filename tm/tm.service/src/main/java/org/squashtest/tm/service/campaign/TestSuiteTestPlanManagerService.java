@@ -29,6 +29,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 
 /**
  * Service that aims at managing the test cases of a test suite (i.e. its test plan)
@@ -131,11 +133,14 @@ public interface TestSuiteTestPlanManagerService {
 	 */
 	void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds);
 
-	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId);
 
-	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId);
 
-	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
+	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId);
 
 	/**
 	 * Will find the distinct ids of the test cases referenced in the suite matching the given id 
