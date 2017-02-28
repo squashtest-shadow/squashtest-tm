@@ -130,32 +130,49 @@
 
   <jsp:attribute name="foot"> 
   	<script type="text/javascript">
+  		  		
     	require([ "common" ], function() {
           	require(["jquery", "iteration-management", "tree", "workspace.event-bus", "squash.translator", "app/ws/squashtm.notification", "app/ws/squashtm.workspace"], function($, iterManager, zetree, eventBus, msg, notification) {
+          		
+          	  function lock(){
+        		  $('#add-items-button').button('disable');
+        		  $('#remove-items-button').button('disable');
+        	  }
+        	  
+        	  function unlock(){
+        		  $('#add-items-button').button('enable');
+        		  $('#remove-items-button').button('enable');
+        	  }
+          	  
           		$(function(){
           			
           			 $( '#add-items-button' ).on('click', function() {
-          					var tree = zetree.get('#linkable-test-cases-tree'); 
-          					var ids =	[];
-          					var nodes = 0;
-          					if( tree.jstree('get_selected').length > 0 ) {
-          						 nodes = tree.jstree('get_selected').not(':library').treeNode();
-          						 ids = nodes.all('getResId');
-          					}	
+          				lock();
+       					var tree = zetree.get('#linkable-test-cases-tree'); 
+       					var ids =	[];
+       					var nodes = 0;
+       					if( tree.jstree('get_selected').length > 0 ) {
+       						 nodes = tree.jstree('get_selected').not(':library').treeNode();
+       						 ids = nodes.all('getResId');
+       					}	
 
-
-          					if (ids.length === 0) {
-          						notification.showError(msg.get('message.emptySelectionTestCase'));
-          						
-          					}
-          					
-          					if (ids.length > 0) {
-          						 $.post('${ testPlanUrl }', { testCasesIds: ids})
-                    				   .done(function(){
-                     				    eventBus.trigger('context.content-modified');
-          							})
-          					}
-                       tree.jstree('deselect_all'); 
+       					if (ids.length === 0) {
+       						notification.showError(msg.get('message.emptySelectionTestCase'));
+       						
+       					}
+       					
+                        tree.jstree('deselect_all');
+       					
+       					if (ids.length > 0) {						
+       						 $.post('${ testPlanUrl }', { testCasesIds: ids})
+                 				   .done(function(){
+                 					unlock();
+                  				    eventBus.trigger('context.content-modified');
+       							})
+       					}
+       					else{
+       						unlock();
+       					}
                      });
                      
                      $("#remove-items-button").on('click', function(){

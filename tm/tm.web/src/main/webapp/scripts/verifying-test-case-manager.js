@@ -34,6 +34,17 @@ require([ "common" ], function() {
 			"requirement-version.verifying-test-case.not-linkable-rejection",
 			"dialog.unbind-ta-project.tooltip"
 		]);
+		
+        
+  	  function lock(){
+  		  $('#add-items-button').button('disable');
+  		  $('#remove-items-button').button('disable');
+  	  }
+  	  
+  	  function unlock(){
+  		  $('#add-items-button').button('enable');
+  		  $('#remove-items-button').button('enable');
+  	  }
 
 		function sendUpdateTree(ids){
 			eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
@@ -117,6 +128,7 @@ require([ "common" ], function() {
 			var bind = VerifyingTestCasesPanel.bindingActionCallback(window.squashtm.bindingsManager.bindingsUrl, "POST");
 
 			$("#add-items-button").on("click", function() {
+				lock();
 				var tree = $('#linkable-test-cases-tree');
 				var ids = getTestCasesIds();
 			
@@ -125,13 +137,15 @@ require([ "common" ], function() {
 					return;
 				}
 
+				tree.jstree('deselect_all');
+				
 				bind(ids).success(function(data){
 					showAddSummary(data);
 					table().refresh();
-					sendUpdateTree(data.linkedIds); 
+					unlock();
+					sendUpdateTree(data.linkedIds);
 				});
 
-				tree.jstree('deselect_all');
 			});
 			
 			

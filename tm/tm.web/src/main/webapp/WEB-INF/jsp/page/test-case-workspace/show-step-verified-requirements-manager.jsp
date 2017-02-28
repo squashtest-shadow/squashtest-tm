@@ -44,7 +44,16 @@
 	require([ "common" ], function() {
 		require([ "jquery", "squash.translator", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.messagedialog", "datatables", "app/ws/squashtm.workspace" ], function($, msg, notification) {
 			
-		
+      	  function lock(){
+    		  $('#add-items-button').button('disable');
+    		  $('#remove-items-button').button('disable');
+    	  }
+    	  
+    	  function unlock(){
+    		  $('#add-items-button').button('enable');
+    		  $('#remove-items-button').button('enable');
+    	  }
+    	  
 			$(function() {
 				$( "#add-summary-dialog" ).messageDialog();
 				
@@ -74,6 +83,7 @@
 				};
 				
 				var addHandler = function(data) {
+					unlock();
 					showAddSummary(data);
 					<%-- uh, dependency on something defined in decorate-verified-requirements-table --%>
 					squashtm.verifiedRequirementsTable.refresh();
@@ -88,6 +98,7 @@
 				
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
+					lock();
 					var tree = $("#linkable-requirements-tree");
 					var ids =	[];
 					var nodes = 0;
@@ -96,16 +107,19 @@
 						 ids = nodes.all('getResId');
 					}	
 
-
 					if (ids.length === 0) {
 						notification.showError(msg.get('message.emptySelectionRequirement'));
 						return;
 					}
+
+					tree.jstree('deselect_all');
 					
 					if (ids.length > 0) {
 						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}
-					tree.jstree('deselect_all');
+					else{
+						unlock();
+					}
 				});				
 			});				
 		});
