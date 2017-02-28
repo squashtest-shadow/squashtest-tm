@@ -70,7 +70,9 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param datasetId, may be null
 	 * @param iterationId
 	 */
-	void addTestCaseToIteration(Long testCaseId, Long datasetId, long iterationId);
+
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	void addTestCaseToIteration(Long testCaseId, Long datasetId, @Id long iterationId);
 
 	/**
 	 * Adds a list of test cases to an iteration. If a test case have one or several datasets, that test case will be planned
@@ -79,6 +81,16 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iteration
 	 */
 	List<IterationTestPlanItem> addTestPlanItemsToIteration(List<Long> testCaseIds, Iteration iteration);
+	
+	/**
+	 * Will copy each items into the test plan of the given iteration. In business terms it means that each designated pair of testcase + dataset  
+	 * will be replanned in the target iteration.
+	 * 
+	 * @param iterationTestPlanIds
+	 * @param iterationId
+	 */
+	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId);
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
