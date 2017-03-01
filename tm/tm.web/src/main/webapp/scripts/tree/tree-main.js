@@ -115,12 +115,24 @@ define(["jquery",
 
 		get: function (arg) {
 			if (arg === undefined) {
-				return $("#tree");
+				var zetree = $("#tree");
+				
+				// if not found, try to find if there is one matching .tree.jstree
+				if (zetree.length === 0){
+					zetree = $(".tree.jstree")
+				}
+				
+				// if 0 or more instances were found, that's no good 
+				// return null instead to fail-fast
+				if (zetree.length !== 1){
+					zetree = null;
+				}
+				
+				return zetree
 			}
 			else {
 				return $(arg);
 			}
-			//return window.squashtm.tree;
 		}
 	};
 
