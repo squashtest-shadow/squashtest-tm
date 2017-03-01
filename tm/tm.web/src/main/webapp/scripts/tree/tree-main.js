@@ -119,7 +119,7 @@ define(["jquery",
 				
 				// if not found, try to find if there is one matching .tree.jstree
 				if (zetree.length === 0){
-					zetree = $(".tree.jstree")
+					zetree = $(".tree.jstree");
 				}
 				
 				// if 0 or more instances were found, that's no good 
@@ -128,7 +128,7 @@ define(["jquery",
 					zetree = null;
 				}
 				
-				return zetree
+				return zetree;
 			}
 			else {
 				return $(arg);
