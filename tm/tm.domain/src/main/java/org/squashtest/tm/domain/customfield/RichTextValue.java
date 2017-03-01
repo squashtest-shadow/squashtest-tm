@@ -64,5 +64,12 @@ public class RichTextValue extends CustomFieldValue {
 	public void accept(CustomFieldValueVisitor visitor) {
 		visitor.visit(this);
 	}
+	
+	
+	@Override
+	public RawValue asRawValue() {
+		return new RawValue(largeValue);
+	}
+	
 
 }
