@@ -88,7 +88,7 @@ public class UserConcurrentRequestLockFilter implements Filter {
 		if (excludePatterns != null){
 			Pattern p = Pattern.compile(excludePatterns);
 			Matcher m = p.matcher(url);
-			result = m.find();
+			result = m.matches();
 		}
 
 		return result;
