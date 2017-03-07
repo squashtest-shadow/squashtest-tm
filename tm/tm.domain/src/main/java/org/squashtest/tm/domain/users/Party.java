@@ -20,21 +20,10 @@
  */
 package org.squashtest.tm.domain.users;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import org.squashtest.tm.domain.Identified;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "CORE_PARTY")
@@ -55,6 +44,9 @@ public abstract class Party implements Identified{
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "PARTY_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
 	private UsersGroup group;
+
+	@OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE)
+	private List<PartyPreference> preferences;
 
 	public UsersGroup getGroup() {
 		return group;
