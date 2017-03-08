@@ -110,6 +110,7 @@ tm/tm.web/src/main/resources/config/application-jth_mysql.properties
 tm/tm.web/.vscode/settings.json
 tm/tm.web/src/main/resources/config/application-jth_h2.properties
 depTree.txt
+tm/tm.web/src/main/resources/config/application-jlo_mysql.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
