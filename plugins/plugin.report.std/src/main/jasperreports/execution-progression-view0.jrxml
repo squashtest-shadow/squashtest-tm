@@ -55,10 +55,10 @@
 					<datasetRun subDataset="Table Dataset 1">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -66,10 +66,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="66">
+					<jr:column width="62">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="66" height="29"/>
+								<reportElement x="0" y="0" width="62" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -77,11 +77,11 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<property name="&quot;net.sf.jasperreports.export.html.class&quot;" value="&quot;columnHeader&quot;"/>
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -89,10 +89,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -100,10 +100,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -111,10 +111,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -122,10 +122,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -133,10 +133,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -144,10 +144,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -155,10 +155,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -166,10 +166,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -177,10 +177,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
@@ -188,10 +188,21 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell height="29" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
+								<reportElement x="0" y="0" width="52" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.testsuite.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="52">
+						<jr:detailCell height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="52" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>

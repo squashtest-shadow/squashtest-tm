@@ -80,6 +80,12 @@
 		<field name="testCaseName" class="java.lang.String">
 			<fieldDescription><![CDATA[testCaseName]]></fieldDescription>
 		</field>
+		<field name="iteration" class="java.lang.Object">
+			<fieldDescription><![CDATA[iteration]]></fieldDescription>
+		</field>
+		<field name="testSuites" class="java.util.List">
+			<fieldDescription><![CDATA[iteration.testSuites]]></fieldDescription>
+		</field>
 	</subDataset>
 	<parameter name="project_name_l2" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="campaign_name_l2" class="java.lang.String" isForPrompting="false"/>
@@ -153,10 +159,10 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testPlans})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
@@ -164,10 +170,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="66">
+					<jr:column width="62">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="62" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
@@ -175,10 +181,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -186,10 +192,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -197,10 +203,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -208,10 +214,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -219,10 +225,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
@@ -230,10 +236,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -241,10 +247,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -252,10 +258,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -263,10 +269,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -274,10 +280,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
@@ -285,10 +291,21 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="56">
+					<jr:column width="52">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[( $F{testSuites}.isEmpty() ) ?  $R{report.executionprogression.main.testsuite.nodata} : $F{iteration}.toString()]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="52">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
