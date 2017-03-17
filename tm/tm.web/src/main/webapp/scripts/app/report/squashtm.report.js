@@ -102,7 +102,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			});
 		}
 
-	
+
 
 		var checkerByControl = {
 				"PROJECT_PICKER" : hasProjectPicked,
@@ -126,13 +126,13 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function generateView() {
 
-		
+
 		if (formModel.hasBoundary()) {
 			formState.save();
 
 			// collapses the form
 			$("#report-criteria-panel.expand .tg-head").click();
-	
+
 			var tabPanel = $("#view-tabed-panel");
 
 			if (!selectedTab) {
@@ -143,14 +143,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			} else {
 				loadTab(selectedTab);
 			}
-					
+
 			$("#view-tabed-panel:hidden").show("blind", {}, 500);
-			
+
 		} else {
 			var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
 			invalidPerimeterDialog.messageDialog("open");
 		}
-		
+
 	}
 
 	/*jshint validthis: true */
@@ -171,7 +171,10 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var url = buildViewUrl(viewIndex, format);
 		var data = stringModel();
 
-		window.open(url+"?json="+data, "_blank", "resizable=yes, scrollbars=yes");
+		/* Issue #6752: One must encode datas before writing it in the URL, in case of special characters. */
+		var encodedData = encodeURIComponent(data);
+
+		window.open(url+"?json="+encodedData, "_blank", "resizable=yes, scrollbars=yes");
 	}
 
 	function initViewTabs() {
