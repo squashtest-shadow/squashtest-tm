@@ -159,14 +159,135 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testPlans})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="52">
+					<jr:column width="62">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="62" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$P{project_name_l3}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="68">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="68" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{campaign_name_l3}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{iteration_name_l3}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedstart_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedend_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actstart_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="46">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actend_l3})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="68">
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true" evaluationTime="Auto">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="68" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[($F{testCaseName}  == null ) ? $R{report.executionprogression.main.testcase.deleted.label}  : $F{testCaseName}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -177,135 +298,14 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$P{campaign_name_l3}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="10"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$P{iteration_name_l3}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedstart_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedend_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actstart_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actend_l3})]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="10"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[($F{testCaseName}  == null ) ? $R{report.executionprogression.main.testcase.deleted.label}  : $F{testCaseName}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="52">
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="10"/>
-								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[( $F{testSuites}.isEmpty() ) ?  $R{report.executionprogression.main.testsuite.nodata} : $F{iteration}.toString()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="52">
+					<jr:column width="50">
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="20"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
