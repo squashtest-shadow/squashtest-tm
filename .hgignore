@@ -111,6 +111,8 @@ tm/tm.web/.vscode/settings.json
 tm/tm.web/src/main/resources/config/application-jth_h2.properties
 depTree.txt
 tm/tm.web/src/main/resources/config/application-jlo_mysql.properties
+tm/tm.web/src/main/resources/config/application-jpr_mysql.properties
+tm/tm.web/src/main/resources/config/application-jpr_postgresql.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
