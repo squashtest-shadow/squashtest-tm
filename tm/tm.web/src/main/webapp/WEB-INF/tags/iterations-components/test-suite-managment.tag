@@ -28,48 +28,49 @@
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" 		uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
+<%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
- 
-<s:url var="baseSuiteUrl" value="/test-suites" /> 
+
+<s:url var="baseSuiteUrl" value="/test-suites" />
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
   <s:param name="iterId" value="${iteration.id}" />
 </s:url>
- 
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
   <c:set var="deletable" value="${true}" />
-</authz:authorized> 
+</authz:authorized>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
   <c:set var="creatable" value="${true}" />
 </authz:authorized>
- 
- 
- 
+
+
+
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
- 
+
  <f:message var="manageTSDialog" key="dialog.testsuites.title" />
  <f:message var="closeLabel" key="label.Close" />
  <div id="manage-test-suites-popup" class="popup-dialog not-displayed" title="${manageTSDialog}">
-  
+
   <div class="main-div-suites not-displayed">
   <c:if test="${ creatable }">
     <div class="create-suites-section">
       <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
       <f:message var="createLabel" key="label.Add"/>
-      <input type="text" size="30" placeholder="${defaultMessage}"/><input type="button" class="button" value="${createLabel}"/><br/>
-      <comp:error-message forField="name" />      
-    </div>  
+      <input id="ts-popup-text" type="text" size="30" placeholder="${defaultMessage}"/>
+      <input id="ts-popup-addButton" onClick="$('#ts-popup-text').focus()" type="button" class="button" value="${createLabel}"/><br/>
+      <comp:error-message forField="name" />
+    </div>
     </c:if>
     <div class="display-suites-section">
     </div>
-    
+
     <div class="rename-suites-section">
       <f:message var="renameLabel" key="dialog.testsuites.rename.label" />
       <input type="text" size="30"/><input type="button" class="button" value="${renameLabel}" />
-    </div> 
+    </div>
     <c:if test="${ deletable }">
     <div class="remove-suites-section">
       <f:message var="removeLabel" key="dialog.testsuites.remove.label" />
@@ -77,11 +78,11 @@
     </div>
   </c:if>
   </div>
- 
+
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${closeLabel}" data-def="evt=closemanager"/>
   </div>
- 
+
  </div>
 
 
@@ -99,60 +100,67 @@
 
 <script type="text/javascript">
 require( ["common"], function(){
-	
+
 	require(["jquery","iteration-management"], function($,main){
-$(function(){	
-		
+$(function(){
+
 		<%-- for this JSON serialisation is not an option because we don't iterate over pojos here : these
-          are full fledged hibernate entities 
-		--%> 
+          are full fledged hibernate entities
+		--%>
 		var initData = [
 						<c:forEach var="suite" items="${iteration.testSuites}" varStatus="status">
 							{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
 						</c:forEach>
 					];
-	
+
 		var tableListener = {
 				redraw : function(evt_name){
 					//"add" is none of our business.
 					if ((evt_name===undefined) || (evt_name=="node.remove") || (evt_name=="node.rename") || (evt_name =="node.bind")){
-						$('#iteration-test-plans-table').squashTable().refreshRestore();	
+						$('#iteration-test-plans-table').squashTable().refreshRestore();
 					}
 				}
 			};
-		
+
 		var modelSettings = {
-				createUrl : "${testSuitesUrl}/new",	
+				createUrl : "${testSuitesUrl}/new",
 				baseUpdateUrl : "${baseSuiteUrl}",
 				getUrl : "${testSuitesUrl}",
 				removeUrl : "${testSuitesUrl}/delete",
 				initData : initData
 			};
-		
+
 		var managerSettings = {
 				dialog : $("#manage-test-suites-popup"),
 				instance : $("#manage-test-suites-popup .main-div-suites"),
 				deleteConfirmMessage : "${deleteMessage}",
 				deleteConfirmTitle : "${deleteTitle}"
 			};
-		
+
 		var menuSettings = {
 				instanceSelector : "#manage-test-suites-buttonmenu",
 				datatableSelector : "#iteration-test-plans-table"
 			};
-		
+
 		var config = {
 				modelSettings : modelSettings,
 				managerSettings: managerSettings,
 				menuSettings : menuSettings,
 				tableListener : tableListener
 			};
-		
+
 		main.initTestSuiteMenu(config);
 
 		//now we can make reappear
 		$("#manage-test-suites-popup .main-div-suites").removeClass("not-displayed");
 	});
 });
+});
+
+/* Enhancement #6754 - press 'enter' to add a test suite when the focus is on the inputText */
+$("#ts-popup-text").keyup(function(event) {
+	if (event.keyCode == 13) {
+		$("#ts-popup-addButton").click();
+	}
 });
 </script>
