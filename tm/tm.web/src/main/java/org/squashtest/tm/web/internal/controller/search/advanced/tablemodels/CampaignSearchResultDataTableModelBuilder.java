@@ -104,9 +104,9 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 	private String formatDateItem(IterationTestPlanItem item) {
 		String reportDate = "-";
 		// Get the i18n thing
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		/* Issue #6766 - the 'last executed on' date was only in the following format : MM/dd/yyyy HH:mm:ss */
 		if (item.getLastExecutedOn() != null) {
-			reportDate = df.format(item.getLastExecutedOn());
+			reportDate = messageSource.localizeDate(item.getLastExecutedOn(), locale);
 		}
 		return reportDate;
 	}
