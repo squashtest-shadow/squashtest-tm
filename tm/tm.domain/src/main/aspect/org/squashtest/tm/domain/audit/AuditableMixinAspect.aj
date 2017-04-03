@@ -38,15 +38,15 @@ import org.squashtest.tm.domain.search.NotGMTDateBridge;
 
 /**
  * This aspect adds the {@link AuditableMixin} mixin to entities annotated with @Audidable
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public aspect AuditableMixinAspect {
 	declare parents : @Auditable  @Entity * implements AuditableMixin;
 
 	/**
-	 * Introduced field name is not predictible which means not queryable. Workaround is forcing hibernate to access the field through getter/setter (the @Access annotation on getter below). The field must then be annotated @Transient otherwise hibernate persists both the field and the "property". 
+	 * Introduced field name is not predictible which means not queryable. Workaround is forcing hibernate to access the field through getter/setter (the @Access annotation on getter below). The field must then be annotated @Transient otherwise hibernate persists both the field and the "property".
 	 */
 	@Transient private
 	AuditableSupport AuditableMixin.audit = new AuditableSupport();
@@ -56,6 +56,7 @@ public aspect AuditableMixinAspect {
 	public Date AuditableMixin.getCreatedOn() {
 		return this.getAudit().getCreatedOn();
 	}
+
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	public String AuditableMixin.getCreatedBy() {
 		return this.getAudit().getCreatedBy();
@@ -66,11 +67,18 @@ public aspect AuditableMixinAspect {
 	public Date AuditableMixin.getLastModifiedOn() {
 		return this.getAudit().getLastModifiedOn();
 	}
+
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	public String AuditableMixin.getLastModifiedBy() {
 		return this.getAudit().getLastModifiedBy();
 	}
-	
+
+	@Transient
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	public boolean AuditableMixin.isSkipModifyAudit() {
+		return this.getAudit().isSkipModifyAudit();
+	}
+
 	public void AuditableMixin.setCreatedBy(String createdBy) {
 		this.getAudit().setCreatedBy(createdBy);
 	}
@@ -85,10 +93,13 @@ public aspect AuditableMixinAspect {
 
 	public void AuditableMixin.setLastModifiedOn(Date lastModifiedOn) {
 		this.getAudit().setLastModifiedOn(lastModifiedOn);
-	}	
-	
-	
-	
+	}
+
+	@Transient
+	public void AuditableMixin.setSkipModifyAudit(boolean skipModifyAudit) {
+		this.getAudit().setSkipModifyAudit(skipModifyAudit);
+	}
+
 	@Embedded @Access(AccessType.PROPERTY)
 	public AuditableSupport AuditableMixin.getAudit() {
 		return this.audit;

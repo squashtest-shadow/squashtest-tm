@@ -29,12 +29,16 @@ define(["jquery", "squash.dateutils", "./general-information-panel-controller"],
 		var newModifiedOn = (infos.modifiedOn !== null && infos.modifiedOn.length>0) ? dateutils.format(infos.modifiedOn, options.format) : "";
 		var newModifiedBy = (infos.modifiedBy !== null && infos.modifiedBy.length>0) ? '('+infos.modifiedBy+')' : options.never;
 
+		var newConnectedOn = (infos.connectedOn !== null && infos.connectedOn.length>0) ? dateutils.format(infos.connectedOn, options.format) : options.never;
+
+
 		$("#created-on > .datetime").text(newCreatedOn);
 		$("#created-on > .author").text(newCreatedBy);
 
 		$("#last-modified-on > .datetime").text(newModifiedOn);
 		$("#last-modified-on > .author").text(newModifiedBy);
 
+		$("#last-connected-on > .datetime").text(newConnectedOn);
 	}
 
 	function defaults() {
@@ -42,7 +46,8 @@ define(["jquery", "squash.dateutils", "./general-information-panel-controller"],
 			createdOn : $("#created-on > .datetime").text(),
 			createdBy : $("#created-on > .author").text(),
 			modifiedOn : $("#last-modified-on > .datetime").text(),
-			modifiedBy : $("#last-modified-on > .author").text()
+			modifiedBy : $("#last-modified-on > .author").text(),
+			connectedOn : $("#last-connected-on > .datetime").text(),
 		};
 	}
 

@@ -20,16 +20,9 @@
  */
 package org.squashtest.tm.domain.users;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -66,6 +59,11 @@ public class User extends Party {
 
 	// TODO is it nullable ? Aint "boolean" ok ?
 	private Boolean active = true;
+
+	// Enhancement 6763 - Add a new column 'last connected on'
+	@Column(insertable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastConnectedOn;
 
 	@NotNull
 	@ManyToMany(mappedBy = "members")
@@ -113,6 +111,14 @@ public class User extends Party {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public void setLastConnectedOn(Date lastConnectedOn) {
+		this.lastConnectedOn = lastConnectedOn;
+	}
+
+	public Date getLastConnectedOn() {
+		return lastConnectedOn;
 	}
 
 	public Set<Team> getTeams() {

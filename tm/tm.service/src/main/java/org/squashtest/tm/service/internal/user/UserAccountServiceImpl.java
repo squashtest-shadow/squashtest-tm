@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.user;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
@@ -147,6 +149,16 @@ public class UserAccountServiceImpl implements UserAccountService {
 			throw new WrongPasswordException("wrong password", bce);
 		}
 
+	}
+
+	// Enhancement 6763 - Update the last connection date, before doing it we set a boolean to true,
+	// that's how the 'last modified on' date is not updated.
+	@Override
+	public void updateUserLastConnectionDate() {
+		User user = findCurrentUser();
+		AuditableMixin audit = (AuditableMixin) user;
+		audit.setSkipModifyAudit(true);
+		user.setLastConnectedOn(new Date());
 	}
 
 	/* ******************* admin only *********** */

@@ -43,7 +43,7 @@
 <f:message var="addAnotherLabel" key="label.addAnother" />
 <f:message var="addLabel" key="label.Add" />
 <f:message var="cancelLabel" key="label.Close"/>
-  
+
 <f:message var="missingNewPassword" key="user.account.newpass.error"/>
 <f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
 <f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
@@ -51,8 +51,8 @@
 
 
 <layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
-  <jsp:attribute  name="head">  
-    <comp:sq-css name="squash.grey.css" />  
+  <jsp:attribute  name="head">
+    <comp:sq-css name="squash.grey.css" />
     <script type="text/javascript">
     //<![CDATA[
       squashtm.app.teamsManager = {
@@ -61,7 +61,7 @@
             popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
             tooltip : "<f:message key='label.deleteTeam' />"
           }
-        }, 
+        },
       settings : {
           data : {
             tableData : ${tableModel}
@@ -81,20 +81,20 @@
         }
       }
     //]]>
-    </script>  
+    </script>
   </jsp:attribute>
-  
+
   <jsp:attribute name="titlePane">
-    <h2 class="admin"><f:message key="label.administration" /></h2>  
+    <h2 class="admin"><f:message key="label.administration" /></h2>
   </jsp:attribute>
   <jsp:attribute name="subPageTitle">
     <h2><f:message key="workspace.user.title" /></h2>
   </jsp:attribute>
-  
+
   <jsp:attribute name="subPageButtons">
     <a id="back" type="button" href="<s:url value='/administration' />" class="sq-btn"><f:message key="label.Back" /></a>&nbsp;
   </jsp:attribute>
-  <jsp:attribute name="informationContent">  
+  <jsp:attribute name="informationContent">
       <div class="fragment-tabs fragment-body">
       <ul class="tab-menu">
         <li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
@@ -122,13 +122,13 @@
           </button>
         </div>
         <div class="table-tab-wrap">
-          <table id="users-list-table"  class="unstyled-table" 
+          <table id="users-list-table"  class="unstyled-table"
               data-def="ajaxsource=${tableModelUrl}, datakeys-id=user-id, deferLoading=${tableModelLength},
               pagesize=50, filter, pre-sort=2-asc">
             <thead>
               <tr>
                 <th class="user-index"               data-def="map=user-index, select">#</th>
-                <th class="user-active"              data-def="map=user-active, narrow, center, sClass=user-active-cell"><f:message key="label.active"/></th>                
+                <th class="user-active"              data-def="map=user-active, narrow, center, sClass=user-active-cell"><f:message key="label.active"/></th>
                 <th class="user-login datatable-filterable"   data-def="map=user-login, sortable, link=${userInfoUrl}"><f:message key="label.Login" /></th>
                 <th class="user-group"               data-def="map=user-group, sortable"><f:message key="label.Group" /></th>
                 <th class="user-firstname datatable-filterable" data-def="map=user-firstname, sortable"><f:message key="label.FirstName" /></th>
@@ -136,8 +136,9 @@
                 <th class="user-email datatable-filterable"    data-def="map=user-email, sortable"><f:message key="label.Email" /></th>
                 <th class="user-created-on"            data-def="map=user-created-on, sortable"><f:message key="label.CreatedOn" /></th>
                 <th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
-                <th class="user-modified-on"          data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>  
+                <th class="user-modified-on"          data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>
                 <th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
+                <th class="user-connected-on"          data-def="map=user-connected-on, sortable"><f:message key="label.connectedOn" /></th>
                 <th class="empty-delete-holder"         data-def="map=empty-delete-holder, delete-button=#delete-user-dialog"></th>
               </tr>
             </thead>
@@ -147,49 +148,49 @@
           </table>
 
         </div>
-    
+
       </div><%-- /div#users-table-pane --%>
-  
+
       <teams:teams-table-tab />
-  
-  
+
+
   </div><%-- /div.fragment-body.fragment-tabs --%>
-  
-  
+
+
   <%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
-  
+
         <f:message var="adduserTitle" key="title.AddUser"/>
         <div id="add-user-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
-        
+
         <table id="add-user-table">
-          <tr> 
+          <tr>
             <td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
             <td><input type="text" id="add-user-login" size="30" data-def="maininput"/></td>
           </tr>
           <tr><td> <comp:error-message forField="user-login" /> </td>
           </tr>
-          <tr> 
+          <tr>
             <td><label  for="add-user-firstName"><f:message key="label.FirstName" /></label></td>
-            <td><input type="text" id="add-user-firstName" size="30"/></td> 
+            <td><input type="text" id="add-user-firstName" size="30"/></td>
           </tr>
           <tr>
             <td><comp:error-message forField="user-firstName" /></td>
-          </tr> 
-          <tr> 
+          </tr>
+          <tr>
             <td><label  for="add-user-lastName"><f:message key="label.LastName" /></label></td>
             <td><input type="text" id="add-user-lastName" size="30"/></td>
           </tr>
           <tr>
             <td><comp:error-message forField="user-lastName" /></td>
           </tr>
-          <tr> 
+          <tr>
             <td><label  for="add-user-email"><f:message key="label.Email" /></label></td>
             <td><input type="email" id="add-user-email" size="30"/></td>
           </tr>
           <tr>
             <td><comp:error-message forField="user-email" /></td>
           </tr>
-          <tr> 
+          <tr>
             <td><label  for="add-user-group"><f:message key="label.Group" /></label></td>
             <td>
             <select id="add-user-group">
@@ -204,7 +205,7 @@
                 </c:choose>
               </c:forEach>
             </select>
-            </td> 
+            </td>
           </tr>
 <c:if test="${ not authenticationProvider.managedPassword }">
                 <tr>
@@ -213,7 +214,7 @@
                 </tr>
                 <tr>
                   <td><comp:error-message forField="password" /></td>
-                </tr> 
+                </tr>
                 <tr>
                   <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
                   <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
@@ -228,18 +229,18 @@
                   <td><span><f:message key="message.managedPassword" /></span></td>
                 </tr>
 </c:if>
-        </table>       
-          
-        
+        </table>
+
+
           <div class="popup-dialog-buttonpane">
       <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
             <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
-            <input type="button" value="${cancelLabel}" data-def="evt=cancel" />        
-          </div>        
+            <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+          </div>
         </div>
-  
-    
-    
+
+
+
     <f:message var="deleteUsersTitle" key="title.delete-users" />
     <div id="delete-user-dialog" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
 
@@ -247,15 +248,15 @@
               <jsp:attribute name="htmlcontent">
                 <div class="display-table-cell">
           <span> <f:message key="message.user.remove"/></span>
-        </div>      
+        </div>
               </jsp:attribute>
-            </comp:notification-pane>         
-      
+            </comp:notification-pane>
+
       <div class="popup-dialog-buttonpane">
           <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
-          <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />        
+          <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
       </div>
-    
-    </div>  
+
+    </div>
   </jsp:attribute>
 </layout:info-page-layout>

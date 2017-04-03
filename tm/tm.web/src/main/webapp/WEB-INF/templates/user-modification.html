@@ -138,7 +138,7 @@
           <div class="fragment-body unstyled">
             <div id="user-toolbar" class="toolbar-class ui-corner-all ">
 
-              <div th:include="fragments-utils/general-information-panel :: general-information-panel"
+              <div th:include="fragments-utils/general-information-panel-user :: general-information-panel-user"
                 th:with="auditableEntity=${user},entityUrl=@{/users/__${user.id}__}" th:remove="tag"></div>
 
               <div class="toolbar-button-panel">

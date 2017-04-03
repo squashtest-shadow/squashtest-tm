@@ -174,6 +174,24 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 
 	/**
 	 * @return
+	 * @see org.squashtest.tm.domain.users.User#getLastConnectedOn()
+	 */
+	@Override
+	public Date getLastConnectedOn() {
+		return decorated.getLastConnectedOn();
+	}
+
+	/**
+	 * @param lastConnectedOn
+	 * @see org.squashtest.tm.domain.users.User#setLastConnectedOn(java.util.Date)
+	 */
+	@Override
+	public void setLastConnectedOn(Date lastConnectedOn) {
+		decorated.setLastConnectedOn(lastConnectedOn);
+	}
+
+	/**
+	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getTeams()
 	 */
 	@Override
@@ -293,6 +311,14 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	}
 
 	/**
+	 * @see org.squashtest.tm.domain.audit.AuditableMixin#isSkipModifyAudit()
+	 */
+	@Override
+	public boolean isSkipModifyAudit() {
+		return getAuditable().isSkipModifyAudit();
+	}
+
+	/**
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setCreatedBy(java.lang.String)
 	 */
 	@Override
@@ -326,5 +352,13 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	public void setLastModifiedOn(Date lastModifiedOn) {
 		getAuditable().setLastModifiedOn(lastModifiedOn);
 
+	}
+
+	/**
+	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setSkipModifyAudit(boolean)
+	 */
+	@Override
+	public void setSkipModifyAudit(boolean skipModifyAudit) {
+		getAuditable().setSkipModifyAudit(skipModifyAudit);
 	}
 }

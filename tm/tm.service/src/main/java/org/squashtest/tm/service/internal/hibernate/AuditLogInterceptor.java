@@ -44,7 +44,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
 		if (isAuditable(entity)) {
-			logModificationData(entity, currentState);
+			checkAndLogModificationData(entity, currentState);
 			return true;
 		}
 		return false;
@@ -54,11 +54,15 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		return AnnotationUtils.findAnnotation(entity.getClass(), Auditable.class) != null;
 	}
 
-	private void logModificationData(Object entity, Object[] currentState) {
+	private void checkAndLogModificationData(Object entity, Object[] currentState) {
 		try {
 			AuditableSupport audit = findAudit(currentState);
-			audit.setLastModifiedBy(getCurrentUser());
-			audit.setLastModifiedOn(new Date());
+			// Enhancement 6763 - the 'last connected on' date was also updating the 'last modified on' date
+			// so we added a boolean and now we check that the boolean is false before making changes.
+			if (!audit.isSkipModifyAudit()) {
+				audit.setLastModifiedBy(getCurrentUser());
+				audit.setLastModifiedOn(new Date());
+			}
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Non Auditable entity is : " + entity, e);
 		}

@@ -100,7 +100,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 			.map("user-active", "active").map("user-login", "login").map("user-group", "group")
 			.map("user-firstname", "firstName").map("user-lastname", "lastName").map("user-email", "email")
 			.map("user-created-on", "audit.createdOn").map("user-created-by", "audit.createdBy")
-			.map("user-modified-on", "audit.lastModifiedOn").map("user-modified-by", "audit.lastModifiedBy");
+			.map("user-modified-on", "audit.lastModifiedOn").map("user-modified-by", "audit.lastModifiedBy")
+			.map("user-connected-on", "lastConnectedOn");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute(
 			DataTableModelConstants.PROJECT_NAME_KEY, "project.name", ProjectPermission.class).mapAttribute(
@@ -384,6 +385,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-created-by", formatString(newP.getCreatedBy(), locale));
 			result.put("user-modified-on", formatDate(newP.getLastModifiedOn(), locale));
 			result.put("user-modified-by", formatString(newP.getLastModifiedBy(), locale));
+			// Enhancement 6763 - Add 'last connected on' column
+			result.put("user-connected-on", formatDate(item.getLastConnectedOn(), locale));
 			result.put("empty-delete-holder", null);
 
 			return result;

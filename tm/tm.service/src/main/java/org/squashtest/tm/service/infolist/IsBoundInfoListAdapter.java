@@ -26,11 +26,11 @@ import org.squashtest.tm.domain.infolist.InfoList;
 
 /**
  * Adapts an InfoList into a consolidated view of list + does it have any bound projects.
- * 
+ *
  * Strictly not a Decorator because it does not 100% match the {@link InfoList} api.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class IsBoundInfoListAdapter extends InfoListAdapter {
 	private final boolean bound;
@@ -49,5 +49,15 @@ public class IsBoundInfoListAdapter extends InfoListAdapter {
 
 	public String getDefaultLabel() {
 		return delegate.getDefaultItem().getLabel();
+	}
+
+	@Override
+	public boolean isSkipModifyAudit() {
+		return false;
+	}
+
+	@Override
+	public void setSkipModifyAudit(boolean skipModifyAudit) {
+
 	}
 }

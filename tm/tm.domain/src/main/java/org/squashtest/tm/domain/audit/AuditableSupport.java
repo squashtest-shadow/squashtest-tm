@@ -22,16 +22,16 @@ package org.squashtest.tm.domain.audit;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  * Embeddable delegate for Auditable entities.
- * 
+ *
+ * Enhancement 6763 - Add a transient boolean for checking the necessity of modifying the 'last modified on' date.
+ * This date was automatically modified and it wasn't relevant for the update of the 'last connected on' date.
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Embeddable
 public class AuditableSupport {
@@ -45,10 +45,14 @@ public class AuditableSupport {
 	@Column(insertable = false)
 	private String lastModifiedBy;
 
-
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastModifiedOn;
+
+	// Enhancement 6763 - Add a transient boolean, initialized at false, its purpose is to not modify the 'last modified on'
+	// when the 'last connected on' is modified, at each connection.
+	@Transient
+	private boolean skipModifyAudit = false;
 
 	public String getCreatedBy() {
 		return createdBy;
@@ -81,4 +85,15 @@ public class AuditableSupport {
 	public Date getLastModifiedOn() {
 		return lastModifiedOn;
 	}
+
+	@Transient
+	public void setSkipModifyAudit(boolean isSkipModifyAudit) {
+		this.skipModifyAudit = isSkipModifyAudit;
+	}
+
+	@Transient
+	public boolean isSkipModifyAudit() {
+		return skipModifyAudit;
+	}
+
 }
