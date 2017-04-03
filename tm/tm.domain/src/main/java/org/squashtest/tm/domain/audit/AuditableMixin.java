@@ -25,8 +25,9 @@ import java.util.Date;
 /**
  * Defines interface for @Auditable entities. Any @Auditable entity will be modified to implement this interface.
  *
- * Enhancement 6763 - Add a transient boolean for checking the necessity of modifying the 'last modified on' date.
+ * Feature 6763 - Add a transient boolean for checking the necessity of modifying the 'last modified on' date.
  * This date was automatically modified and it wasn't relevant for the update of the 'last connected on' date.
+ * 
  *
  * @author Gregory Fouquet
  *

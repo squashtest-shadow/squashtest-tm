@@ -28,7 +28,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 
 /*
- * Enhancement 6763 : the "updateUserLastConnectionDate()" method is called after success authentication,
+ * Feature 6763 : the "updateUserLastConnectionDate()" method is called after success authentication,
  * therefore the last connection date is updated.
  *
  * @author: jprioux

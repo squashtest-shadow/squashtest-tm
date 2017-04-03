@@ -61,7 +61,7 @@ public interface UserAccountService {
 
 	Collection<Milestone> findAllMilestonesForUser(long userId);
 
-	// Enhancement 6763 - Add a new method for updating the user's last connection date at each authentication success.
+	// Feature 6763 - Add a new method for updating the user's last connection date at each authentication success.
 	void updateUserLastConnectionDate();
 
 }

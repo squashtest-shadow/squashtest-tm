@@ -57,7 +57,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	private void checkAndLogModificationData(Object entity, Object[] currentState) {
 		try {
 			AuditableSupport audit = findAudit(currentState);
-			// Enhancement 6763 - the 'last connected on' date was also updating the 'last modified on' date
+			// Feature 6763 - the 'last connected on' date was also updating the 'last modified on' date
 			// so we added a boolean and now we check that the boolean is false before making changes.
 			if (!audit.isSkipModifyAudit()) {
 				audit.setLastModifiedBy(getCurrentUser());

@@ -51,13 +51,4 @@ public class IsBoundInfoListAdapter extends InfoListAdapter {
 		return delegate.getDefaultItem().getLabel();
 	}
 
-	@Override
-	public boolean isSkipModifyAudit() {
-		return false;
-	}
-
-	@Override
-	public void setSkipModifyAudit(boolean skipModifyAudit) {
-
-	}
 }

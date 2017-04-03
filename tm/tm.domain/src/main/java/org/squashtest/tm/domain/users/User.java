@@ -60,7 +60,7 @@ public class User extends Party {
 	// TODO is it nullable ? Aint "boolean" ok ?
 	private Boolean active = true;
 
-	// Enhancement 6763 - Add a new column 'last connected on'
+	// Feature 6763 - Add a new column 'last connected on'
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastConnectedOn;

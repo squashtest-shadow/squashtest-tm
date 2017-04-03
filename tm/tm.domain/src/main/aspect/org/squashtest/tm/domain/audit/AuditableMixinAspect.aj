@@ -73,8 +73,6 @@ public aspect AuditableMixinAspect {
 		return this.getAudit().getLastModifiedBy();
 	}
 
-	@Transient
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	public boolean AuditableMixin.isSkipModifyAudit() {
 		return this.getAudit().isSkipModifyAudit();
 	}
@@ -95,7 +93,6 @@ public aspect AuditableMixinAspect {
 		this.getAudit().setLastModifiedOn(lastModifiedOn);
 	}
 
-	@Transient
 	public void AuditableMixin.setSkipModifyAudit(boolean skipModifyAudit) {
 		this.getAudit().setSkipModifyAudit(skipModifyAudit);
 	}

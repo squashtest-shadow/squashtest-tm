@@ -122,7 +122,7 @@
             <div class="sub-page-fragment-title controls control-group" >
             <div class="display-table-row controls control-group" >
               <h2>
-                <label for="user-login-header" th:text="#{user.header.title}">User</label>
+                <label for="user-name-header" th:text="#{user.header.title}">User</label>
                 <a id="user-name-header" href="#" th:text="${user.login}">Machin</a>
                 <span class="help-inline">&nbsp;</span>
                 <span id="user-name-deactivated-hint" th:text="'(' + #{label.Deactivated} + ')'"
@@ -140,7 +140,7 @@
 
               <div th:include="fragments-utils/general-information-panel-user :: general-information-panel-user"
                 th:with="auditableEntity=${user},entityUrl=@{/users/__${user.id}__}" th:remove="tag"></div>
-
+              <span class="help-inline">&nbsp;</span>
               <div class="toolbar-button-panel">
                 <input type="button" th:value="#{ user.delete.label }" value="Remove" id="delete-user-button"
                   class="sq-btn" />

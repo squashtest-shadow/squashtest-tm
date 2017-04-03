@@ -36,7 +36,7 @@ DEV NOTES :
  	- ripped from general-information-panel.tag
  -->
   <!--
-  Enhancement 6763 - Add a new information 'last connected on'. This is a new panel only for "user" because the panels in "teams" and "user" were the same.
+  Feature 6763 - Add a new information 'last connected on'. This is a new panel only for "user" because the panels in "teams" and "user" were the same.
   -->
 </div>
 
@@ -69,7 +69,7 @@ DEV NOTES :
 
       <br/>
 
-      <!-- Enhancement 6763 - Add a new line with the 'last connected on' date  -->
+      <!-- Feature 6763 - Add a new line with the 'last connected on' date  -->
       <span th:text="#{label.connectedOn}+'&nbsp;:&nbsp;'">last connected on </span>
       <span  id="last-connected-on">
 				<span class="datetime" th:text="${user.lastConnectedOn} ? ${#dates.format(user.lastConnectedOn, rawDateformat)}"></span>

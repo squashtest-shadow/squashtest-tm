@@ -27,7 +27,7 @@ import javax.persistence.*;
 /**
  * Embeddable delegate for Auditable entities.
  *
- * Enhancement 6763 - Add a transient boolean for checking the necessity of modifying the 'last modified on' date.
+ * Feature 6763 - Add a transient boolean for checking the necessity of modifying the 'last modified on' date.
  * This date was automatically modified and it wasn't relevant for the update of the 'last connected on' date.
  *
  * @author Gregory Fouquet
@@ -49,7 +49,7 @@ public class AuditableSupport {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastModifiedOn;
 
-	// Enhancement 6763 - Add a transient boolean, initialized at false, its purpose is to not modify the 'last modified on'
+	// Feature 6763 - Add a transient boolean, initialized at false, its purpose is to not modify the 'last modified on'
 	// when the 'last connected on' is modified, at each connection.
 	@Transient
 	private boolean skipModifyAudit = false;

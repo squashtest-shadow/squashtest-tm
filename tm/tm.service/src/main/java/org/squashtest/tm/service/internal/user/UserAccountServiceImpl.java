@@ -151,7 +151,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	}
 
-	// Enhancement 6763 - Update the last connection date, before doing it we set a boolean to true,
+	// Feature 6763 - Update the last connection date, before doing it we set a boolean to true,
 	// that's how the 'last modified on' date is not updated.
 	@Override
 	public void updateUserLastConnectionDate() {

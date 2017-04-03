@@ -47,7 +47,7 @@ define(["jquery", "squash.dateutils", "./general-information-panel-controller"],
 			createdBy : $("#created-on > .author").text(),
 			modifiedOn : $("#last-modified-on > .datetime").text(),
 			modifiedBy : $("#last-modified-on > .author").text(),
-			connectedOn : $("#last-connected-on > .datetime").text(),
+			connectedOn : $("#last-connected-on > .datetime").text()
 		};
 	}
 

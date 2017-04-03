@@ -385,7 +385,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-created-by", formatString(newP.getCreatedBy(), locale));
 			result.put("user-modified-on", formatDate(newP.getLastModifiedOn(), locale));
 			result.put("user-modified-by", formatString(newP.getLastModifiedBy(), locale));
-			// Enhancement 6763 - Add 'last connected on' column
+			// Feature 6763 - Add 'last connected on' column
 			result.put("user-connected-on", formatDate(item.getLastConnectedOn(), locale));
 			result.put("empty-delete-holder", null);
 

@@ -45,7 +45,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#getCreatedOn()
 	 */
-	
+
 	public Date getCreatedOn() {
 		return auditable.getCreatedOn();
 	}
@@ -151,5 +151,15 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	public AuditableSupport getAudit() {
 		// Requested by compiler, hopefully wont be read and won't break.
 		return DUMMY_AUDITABLE_SUPPORT;
+	}
+
+	@Override
+	public boolean isSkipModifyAudit() {
+		return false;
+	}
+
+	@Override
+	public void setSkipModifyAudit(boolean skipModifyAudit) {
+
 	}
 }
