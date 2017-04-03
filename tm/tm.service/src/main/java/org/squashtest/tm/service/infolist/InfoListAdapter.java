@@ -153,13 +153,13 @@ public abstract class InfoListAdapter implements AuditableMixin {
 		return DUMMY_AUDITABLE_SUPPORT;
 	}
 
-	@Override
+	// Feature 6763 - This class implements AuditableMixin, so it must also have the new attribute (getter + setter)
 	public boolean isSkipModifyAudit() {
-		return false;
+		return getAudit().isSkipModifyAudit();
 	}
 
-	@Override
 	public void setSkipModifyAudit(boolean skipModifyAudit) {
-
+		getAudit().setSkipModifyAudit(skipModifyAudit);
 	}
+
 }
