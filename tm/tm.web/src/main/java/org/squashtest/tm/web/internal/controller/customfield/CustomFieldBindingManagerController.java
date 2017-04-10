@@ -56,9 +56,8 @@ public class CustomFieldBindingManagerController {
 
 		if (!customFields.isEmpty()){
 
-			List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
-					(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();
-
+			// Issue 6781 - only 10 CUFS were displaying for test case, just use the same method than the others
+			List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
 			List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
 			List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
 			List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
