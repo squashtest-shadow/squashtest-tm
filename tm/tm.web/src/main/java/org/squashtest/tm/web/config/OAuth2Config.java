@@ -48,6 +48,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.NEV
  */
 @Configuration
 public class OAuth2Config {
+	
+	private static final String OAUTH_SUBPATH = "/whatever"; 
+	
+	
 	public static class AuthenticationServerConfig extends AuthorizationServerConfigurerAdapter {
 		@Inject
 		private
@@ -116,10 +120,10 @@ public class OAuth2Config {
 				.sessionCreationPolicy(NEVER)
 
 			.and().requestMatchers()
-				.antMatchers("/api/**")
+				.antMatchers(OAUTH_SUBPATH+"/**")
 
 			.and().authorizeRequests()
-				.antMatchers(GET, "/api/**").fullyAuthenticated();
+				.antMatchers(GET, OAUTH_SUBPATH+"/**").fullyAuthenticated();
 			// @formatter:on
 		}
 	}
