@@ -36,11 +36,12 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Identified;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class InfoListItem {
+public abstract class InfoListItem implements Identified {
 
 	public static final String NO_ICON = "noicon";
 
@@ -116,6 +117,7 @@ public abstract class InfoListItem {
 		this.iconName = iconName;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

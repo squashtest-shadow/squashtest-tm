@@ -37,6 +37,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.execution.Execution;
 
 @Entity
@@ -58,7 +59,7 @@ import org.squashtest.tm.domain.execution.Execution;
 										"where  issue.id = :id "
 										)
 })
-public class Issue {
+public class Issue implements Identified{
 	@Id
 	@Column(name = "ISSUE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "issue_issue_id_seq")
@@ -94,6 +95,7 @@ public class Issue {
 
 	private String remoteIssueId;
 
+	@Override
 	public Long getId() {
 		return id;
 	}

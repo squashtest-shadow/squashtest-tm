@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 
@@ -33,7 +34,7 @@ import java.util.*;
  * @author Gregory Fouquet
  */
 @Entity
-public class CustomFieldBinding {
+public class CustomFieldBinding implements Identified{
 	@Id
 	@Column(name = "CFB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_binding_cfb_id_seq")
@@ -102,6 +103,7 @@ public class CustomFieldBinding {
 		this.boundProject = boundProject;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

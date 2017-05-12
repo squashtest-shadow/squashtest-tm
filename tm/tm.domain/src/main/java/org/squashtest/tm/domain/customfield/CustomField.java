@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
@@ -51,7 +52,7 @@ import java.util.Date;
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired
-public class CustomField {
+public class CustomField implements Identified{
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
 
 	public static final String CODE_REGEXP = "^[A-Za-z0-9_^;]*$";
@@ -157,6 +158,7 @@ public class CustomField {
 		this.defaultValue = dValue;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

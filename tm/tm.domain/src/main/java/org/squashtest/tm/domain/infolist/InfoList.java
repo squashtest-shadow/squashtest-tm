@@ -40,13 +40,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.validation.constraint.HasDefaultItem;
 import org.squashtest.tm.validation.constraint.UniqueItems;
 
 @Entity
 @Auditable
-public class InfoList implements Comparable<InfoList> {
+public class InfoList implements Comparable<InfoList>, Identified {
 
 	@Id
 	@Column(name = "INFO_LIST_ID")
@@ -100,6 +101,7 @@ public class InfoList implements Comparable<InfoList> {
 		this.code = code;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

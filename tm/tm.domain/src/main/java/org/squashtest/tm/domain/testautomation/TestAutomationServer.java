@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 
 
@@ -53,7 +54,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 })
 @Entity
 @Auditable
-public class TestAutomationServer {
+public class TestAutomationServer implements Identified{
 
 	private static final String DEFAULT_KIND = "jenkins";
 
@@ -130,6 +131,7 @@ public class TestAutomationServer {
 		this.kind = kind;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

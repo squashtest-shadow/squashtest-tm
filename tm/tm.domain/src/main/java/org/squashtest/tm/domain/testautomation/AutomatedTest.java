@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testautomation;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 
 import javax.persistence.Column;
@@ -43,7 +44,7 @@ import javax.validation.constraints.Size;
 	query="from AutomatedTest auto where not exists (from TestCase where automatedTest = auto) and not exists (from AutomatedExecutionExtender where automatedTest = auto)")
 })
 @Entity
-public class AutomatedTest {
+public class AutomatedTest implements Identified{
 
 	@Id
 	@Column(name="TEST_ID")
@@ -68,6 +69,7 @@ public class AutomatedTest {
 		this.project = project;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

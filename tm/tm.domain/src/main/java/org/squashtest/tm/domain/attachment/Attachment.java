@@ -38,9 +38,10 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.squashtest.tm.domain.Identified;
 
 @Entity
-public class Attachment {
+public class Attachment implements Identified {
 	private static final float MEGA_BYTE = 1048576.000f;
 
 	@Id
@@ -75,6 +76,7 @@ public class Attachment {
 		doSetName(name);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

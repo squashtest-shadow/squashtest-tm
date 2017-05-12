@@ -39,6 +39,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -53,7 +54,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
  *
  */
 @Entity
-public class AutomatedExecutionExtender {
+public class AutomatedExecutionExtender implements Identified{
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
 
@@ -108,6 +109,7 @@ public class AutomatedExecutionExtender {
 
 	/* ******************** accessors ************************************ */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

@@ -34,8 +34,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.squashtest.tm.domain.Identified;
+
 @Entity
-public class AttachmentList {
+public class AttachmentList implements Identified{
 
 	@Id
 	@Column(name = "ATTACHMENT_LIST_ID")
@@ -47,6 +49,7 @@ public class AttachmentList {
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", nullable = false, updatable = false)
 	private final Set<Attachment> attachments = new HashSet<>();
 
+	@Override
 	public Long getId() {
 		return id;
 	}
