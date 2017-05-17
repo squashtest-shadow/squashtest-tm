@@ -911,6 +911,8 @@
 	@NamedQuery(name = "executionStep.findByTestStepAndIt", query = "from ExecutionStep exstep where exstep.referencedTestStep.id in (:testStepIds) and exstep.execution.testPlan.iteration.id in (:iterationsIds) "),
 	@NamedQuery(name = "execution.findAllByTestCaseIdAndItIdOrderByRunDate", query = "from Execution e where e.referencedTestCase.id = :testCaseId order by e.lastExecutedOn desc"),
 
+	//Requirement Version Links
+	@NamedQuery(name="RequirementVersionLink.findAllByReqVersionId", query="from RequirementVersionLink rvl where rvl.requirementVersion1.id = :requirementVersionId or rvl.requirementVersion2 = :requirementVersionId"),
 
 })
 //@formatter:on
