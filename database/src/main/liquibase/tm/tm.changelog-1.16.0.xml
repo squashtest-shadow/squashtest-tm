@@ -41,4 +41,63 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.16.0-feature-6799" author="jlor">
+
+    <!-- REQUIREMENT_VERSION_LINK_TYPE TABLE -->
+    <createTable tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="ROLE_1" type="VARCHAR(50)"/>
+
+      <column name="ROLE_2" type="VARCHAR(50)"/>
+    </createTable>
+
+    <!-- REQUIREMENT_VERSION_LINK TABLE -->
+    <createTable tableName="REQUIREMENT_VERSION_LINK">
+      <column name="REQUIREMENT_VERSION_LINK_ID" type="BIGINT"
+            autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="LINK_TYPE_ID" type="BIGINT" remarks="foreign key to the requirement_version_link_type table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_req_version_link_req_version_link_type_link_type_id"
+                   references="REQUIREMENT_VERSION_LINK_TYPE(REQUIREMENT_VERSION_LINK_TYPE_ID)" />
+      </column>
+
+      <column name="REQUIREMENT_VERSION_1_ID" type="BIGINT" remarks="foreign key for requirement version 1 to requirement_version table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_requirement_version_link_requirement_version_1_id"
+                   references="REQUIREMENT_VERSION(RES_ID)" />
+      </column>
+
+      <column name="REQUIREMENT_VERSION_2_ID" type="BIGINT" remarks="foreign key for requirement version 2 to requirement_version table">
+        <constraints nullable="false"
+                   foreignKeyName="fk_requirement_version_link_requirement_version_2_id"
+                   references="REQUIREMENT_VERSION(RES_ID)" />
+      </column>
+    </createTable>
+
+    <!-- Inserting default Requirement Version Link Type -->
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="1" />
+      <column name="ROLE_1" value="requirement-version.link.type.related" />
+      <column name="ROLE_2" value="requirement-version.link.type.related" />
+    </insert>
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="2" />
+      <column name="ROLE_1" value="requirement-version.link.type.parent" />
+      <column name="ROLE_2" value="requirement-version.link.type.child" />
+    </insert>
+    <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
+      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="3" />
+      <column name="ROLE_1" value="requirement-version.link.type.originalduplicate" />
+      <column name="ROLE_2" value="requirement-version.link.type.duplicate" />
+    </insert>
+
+  </changeSet>
+
 </databaseChangeLog>
