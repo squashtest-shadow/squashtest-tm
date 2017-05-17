@@ -132,6 +132,7 @@ define([], function(){
 		'requirements.info'	:				root + '/requirements/{\\d+}/info',
 		'requirements.versions.new' :		root + '/requirements/{\\d+}/versions/new',
 		'requirements.currentversion'	:	root + '/requirement-versions/{\\d+}"',
+		'requirements.linkedRequirementVersions' : root + '/requirement-versions/{\\d+}/linked-requirement-versions',
 		'requirements.statuses'			:	root + '/requirements/{\\d+}/next-status',
 		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
 		'requirements.testcases' :			root + '/requirement-versions/{\\d+}/verifying-test-cases',

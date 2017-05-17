@@ -113,6 +113,7 @@ that page won't be editable if
 	            criticalities : ${json:serialize(criticalityList)},
 	            categories : ${json:serialize(categoryList)},
 	            verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
+	            linkedRequirementVersions : ${json:serialize(linkedRequirementVersionsModel.aaData)},
 	            attachments : ${json:serialize(attachmentsModel.aaData)},
 	            audittrail : ${json:serialize(auditTrailModel.aaData)},
 	            hasCufs : ${hasCUF},
@@ -343,6 +344,38 @@ publish('reload.requirement.toolbar');
   <script type="text/javascript">
   publish('reload.requirement.verifyingtestcases');
   </script>
+
+  <%--------------------------- Linked Requirements Section ------------------------------------%>
+
+  <comp:toggle-panel id="linked-requirement-version-panel" titleKey="requirement-version.linked-requirement-version.panel.title" open="true">
+
+    <jsp:attribute name="panelButtons">
+    	<c:if test="${ linkable }">
+    		<f:message var="associateLabel" key="requirement-version.linked-requirement-version.panel.button.add.label"/>
+    		<f:message var="removeLabel" key="requirement-version.linked-requirement-version.panel.button.remove.label"/>
+    		<button id="bind-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${associateLabel}">
+    		  <span class="ui-icon ui-icon-plus squared-icons">+</span>
+    		</button>
+    		<button id="unbind-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${removeLabel}">
+    		  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+    		  </button>
+    	</c:if>
+    </jsp:attribute>
+
+    <jsp:attribute name="body">
+      <reqs:linked-requirements-table batchRemoveButtonId="unbind-requirements-button"
+          requirementVersion="${requirementVersion}"
+          editable="${ linkable }" model="${linkedRequirementVersions}"
+          milestoneConf="${milestoneConf}" />
+    </jsp:attribute>
+
+  </comp:toggle-panel>
+  <script type="text/javascript">
+    publish('reload.requirement.linkedrequirementversions');
+  </script>
+
+  <%--------------------------- /Linked Requirements Section ------------------------------------%>
+
 
 	<reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}"/>
 <script type="text/javascript">

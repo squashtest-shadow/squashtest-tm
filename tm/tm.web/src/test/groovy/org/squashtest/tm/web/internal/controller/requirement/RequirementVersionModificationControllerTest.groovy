@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
+
 import javax.inject.Provider
 import org.springframework.data.domain.Page
 import org.springframework.ui.ExtendedModelMap
@@ -66,6 +68,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()
 	VerifyingTestCaseManagerService verifTCService = Mock()
+	LinkedRequirementVersionManagerService linkedReqVersionService = Mock();
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
 	RequirementAuditTrailService auditTrailService = Mock()
 	MilestoneUIConfigurationService milestoneConfigurer = Mock()
@@ -81,6 +84,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 		controller.levelFormatterProvider = levelFormatterProvider
 		controller.cufValueService = Mock(CustomFieldValueFinderService)
 		controller.verifyingTestCaseManager = verifTCService
+		controller.linkedReqVersionManager = linkedReqVersionService;
 		controller.attachmentsHelper = attachmentsHelper
 		controller.auditTrailService = auditTrailService;
 		controller.infoListBuilder = infoListBuilder
@@ -165,11 +169,16 @@ class RequirementVersionModificationControllerTest extends Specification {
 		ch.getFirstItemIndex() >> 0
 		ch.getPagedItems() >> []
 
+		PagedCollectionHolder<?> reqch = Mock();
+		reqch.getFirstItemIndex() >> 0
+		reqch.getPagedItems() >> []
+
 		Project p = mockFactory.mockProject()
 		r.getProject() >> p
 		v.getProject() >> p
 
 		verifTCService.findAllByRequirementVersion(_,_)>> ch
+		linkedReqVersionService.findAllByRequirementVersion(_,_) >> reqch
 
 		return v
 	}

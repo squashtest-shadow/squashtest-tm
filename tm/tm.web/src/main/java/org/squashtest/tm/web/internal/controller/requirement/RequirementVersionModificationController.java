@@ -61,16 +61,14 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -113,6 +111,9 @@ public class RequirementVersionModificationController {
 
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
+
+	@Inject
+	private LinkedRequirementVersionManagerService linkedReqVersionManager;
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
@@ -218,6 +219,7 @@ public class RequirementVersionModificationController {
 		JsonInfoList categories = infoListBuilder.toJson(requirementVersion.getProject().getRequirementCategories());
 
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
+		DataTableModel linkedReqVersionsModel = getLinkedReqVersionsModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
 
@@ -226,6 +228,7 @@ public class RequirementVersionModificationController {
 		model.addAttribute("categoryList", categories);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
+		model.addAttribute("linkedRequirementVersionsModel", linkedReqVersionsModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
 
@@ -245,6 +248,14 @@ public class RequirementVersionModificationController {
 
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
+
+	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version){
+		PagedCollectionHolder<List<LinkedRequirementVersion>> holder = linkedReqVersionManager.findAllByRequirementVersion(
+			version.getId(), new DefaultPagingAndSorting("Project.name"));
+
+		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, "0");
+	}
+
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody

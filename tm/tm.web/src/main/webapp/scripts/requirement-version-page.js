@@ -3,11 +3,11 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 	        "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs",
 	        "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification",
 	        "workspace.routing",  "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
-	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel","req-workspace/requirement-coverage-stat-view",
+	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
 	         "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 			function(module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
 					cufvalues, confman, notification, routing, translator, upload, milestoneNotifier,
-					squash, VerifyingTestCasesPanel, CoveverageStatView) {
+					squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView) {
 
 		// event subscription
 			pubsub.subscribe('reload.requirement.toolbar', initToolbar);
@@ -15,6 +15,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			pubsub.subscribe('reload.requirement.generalinfo', initGeneralinfos);
 
 			pubsub.subscribe('reload.requirement.verifyingtestcases', initVerifyingtestcases);
+
+			pubsub.subscribe('reload.requirement.linkedrequirementversions', initLinkedRequirementsPanel);
 
 			pubsub.subscribe('reload.requirement.requirementversionrate', initRequirementVersionRates);
 
@@ -246,6 +248,57 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 		}
 	}
 
+	function initLinkedRequirementsPanel() {
+		var config = module.config();
+
+    var table = $("#linked-requirement-versions-table").squashTable(
+    {
+    	aaData : config.basic.linkedRequirementVersions
+    }, {
+    	unbindButtons : {
+    		delegate : "#unbind-active-row-dialog",
+    		tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+    	}
+    });
+
+    if (config.permissions.linkable) {
+
+			$("#bind-requirements-button").on('click', function(){
+			/* --- PAGE LEVEL 2 --
+			L'url est définie dans 'workspace.routing' et est gérée par 'VerifyingTestCaseManagerController'
+			Il renvoie à la page 'show-verifying-testcase-manager'
+
+				var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
+				document.location.href=url;
+				*/
+			});
+
+			/* -- Trigger Unbind-Selected EVENT */
+			$( '#unbind-requirements-button' ).on("click", function(event) {
+				squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
+			});
+
+			/* -- Listening to Unbound EVENT */
+			squash.vent.on("linkedrequirementversions:unbound", function(event) {
+				var table = $("#linked-requirement-versions-table").squashTable();
+				eventBus.onContextual('req-versions-links-updated', function(evt) { // Cet évènement ne semble jamais triggered ?
+					table.refresh();
+				});
+			});
+
+			var linkedReqPanel = new LinkedRequirementsPanel({
+				apiUrl: routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId)
+			});
+
+			eventBus.one("contextualcontent.clear", function() {
+				linkedReqPanel.remove();
+				linkedReqPanel = undefined;
+			});
+    }
+	}
+
+
+
 			function initAudittrail(){
 
 				var config = module.config();
@@ -271,14 +324,14 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 					// synchronized requirements
 					if (data['event-type'] === 'sync-creation' || data['event-type'] === 'sync-update'){
-						
+
 						var msgcell = $(row).find('.event-message-cell');
-						
+
 						var srclabel = translator.get('label.source');
 						var url = data['event-meta'];
-						
+
 						var link='<a href="'+url+'">'+srclabel+'</a>';
-						
+
 						var msgTemplate = msgcell.html();
 						var newmsg = msgTemplate.replace('{url}', link);
 						msgcell.html(newmsg);
