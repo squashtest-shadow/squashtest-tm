@@ -47,4 +47,20 @@ public interface RequirementVersionLinkDao extends Repository<RequirementVersion
 	 * @return The List of all the {@link RequirementVersionLink} in which the given RequirementVersion is involved.
 	 */
 	List<RequirementVersionLink> findAllByReqVersionId(@Param("requirementVersionId") long requirementVersionId);
+
+	/**
+	 * Find all the {@link RequirementVersionLink}s in which the single {@link RequirementVersion} given is involved with
+	 * the several other RequirementVersions given in the List.
+	 * @param requirementVersionId The ID of the single {@link RequirementVersion}.
+	 * @param otherRequirementVersionsIds The IDs of the several other {@link RequirementVersion}s.
+	 * @return The List of {@link RequirementVersionLink}s linking the single RequirementVersion given as first parameter
+	 * and the other RequirementVersions given in the second parameter.
+	 */
+	List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
+	/**
+	 * Deletes the given {@link RequirementVersionLink}s.
+	 *
+	 * @param requirementVersionLinks
+	 */
+	void delete(@Param("reqVerLinks") Iterable<? extends RequirementVersionLink> requirementVersionLinks);
 }

@@ -70,4 +70,13 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, requirementVersionLinksList.size(), linkedReqVersionsList);
 	}
 
+	@Override
+	public void removeLinkedRequirementVersionsFromRequirementVersion(
+		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
+
+		List<RequirementVersionLink> requirementVersionLinksToRemove =
+			reqVersionLinkDao.findByOneReqVersionAndSeveralOthers(requirementVersionId, requirementVersionIdsToUnlink);
+
+		reqVersionLinkDao.delete(requirementVersionLinksToRemove);
+	}
 }

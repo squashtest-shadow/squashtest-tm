@@ -913,7 +913,8 @@
 
 	//Requirement Version Links
 	@NamedQuery(name="RequirementVersionLink.findAllByReqVersionId", query="from RequirementVersionLink rvl where rvl.requirementVersion1.id = :requirementVersionId or rvl.requirementVersion2 = :requirementVersionId"),
-
+	@NamedQuery(name="RequirementVersionLink.findByOneReqVersionAndSeveralOthers", query="from RequirementVersionLink rvl where rvl.requirementVersion1.id = :requirementVersionId and rvl.requirementVersion2.id in (:otherRequirementVersionsIds) or rvl.requirementVersion2 = :requirementVersionId and rvl.requirementVersion1.id in (:otherRequirementVersionsIds)"),
+	@NamedQuery(name="RequirementVersionLink.delete", query="delete RequirementVersionLink rvl where rvl in (:reqVerLinks)")
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

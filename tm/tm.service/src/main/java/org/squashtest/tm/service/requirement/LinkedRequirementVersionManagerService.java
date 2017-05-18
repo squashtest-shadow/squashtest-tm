@@ -42,13 +42,10 @@ import java.util.Map;
  */
 public interface LinkedRequirementVersionManagerService {
 
-	/**
-	 * @param requirementVersionId
-	 * @param pagingAndSorting
-	 * @return
-	 */
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<LinkedRequirementVersion>> findAllByRequirementVersion(long requirementVersionId,
-																					PagingAndSorting pagingAndSorting);
+	PagedCollectionHolder<List<LinkedRequirementVersion>> findAllByRequirementVersion(
+		long requirementVersionId, PagingAndSorting pagingAndSorting);
 
+	void removeLinkedRequirementVersionsFromRequirementVersion(
+		long requirementVersionId, List<Long> requirementVersionIdsToUnlink);
 }
