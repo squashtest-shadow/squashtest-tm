@@ -74,18 +74,18 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			this.apiUrl = options.apiUrl;
 
 			// slaps unbind dialogs in dom
-			var tpl = Handlebars.compile($("#unbind-dialog-tpl").html());
+			var tpl = Handlebars.compile($("#unbind-linked-reqs-dialog-tpl").html());
 			var dlgs = tpl({
-				dialogId : "unbind-selected-rows-dialog"
+				dialogId : "unbind-selected-linked-reqs-rows-dialog"
 			}) + tpl({
-				dialogId : "unbind-active-row-dialog"
+				dialogId : "unbind-active-linked-reqs-row-dialog"
 			});
 			this.$el.append(dlgs);
 
 			var unbind = bindingActionCallback(this.apiUrl, "delete");
 
 			// unbind multiple items dialog
-			var $batch = this.$("#unbind-selected-rows-dialog");
+			var $batch = this.$("#unbind-selected-linked-reqs-rows-dialog");
 			$batch.formDialog();
 
 			$batch.on("formdialogopen", this.onOpenBatch);
@@ -93,15 +93,15 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			$batch.on("formdialogcancel", this.onCloseBatch);
 
 			// unbind single item dialog
-			var $single = this.$("#unbind-active-row-dialog");
+			var $single = this.$("#unbind-active-linked-reqs-row-dialog");
 			$single.formDialog();
 
 			$single.on("formdialogopen", this.onOpenSingle);
 			$single.on('formdialogconfirm', this.onConfirmSingleCallback(unbind, unbindDialogSucceed($single)));
 			$single.on('formdialogcancel', this.onCloseSingle);
 
-			this.listenTo(squash.vent, "verifying-test-cases:unbind-selected", function(event) {
-				$("#unbind-selected-rows-dialog").formDialog("open");
+			this.listenTo(squash.vent, "linkedrequirementversions:unbind-selected", function(event) {
+				$("#unbind-selected-linked-reqs-rows-dialog").formDialog("open");
 			});
 		},
 

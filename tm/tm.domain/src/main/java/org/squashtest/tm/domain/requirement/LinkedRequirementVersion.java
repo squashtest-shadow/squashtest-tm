@@ -31,8 +31,7 @@ import java.util.Set;
  *
  * Created by jlor on 17/05/2017.
  */
-// Should it extend RequirementVersion ?
-public class LinkedRequirementVersion {
+public class LinkedRequirementVersion extends RequirementVersion {
 
 	/**
 	 * The decorated RequirementVersion.
@@ -56,24 +55,33 @@ public class LinkedRequirementVersion {
 		return role;
 	}
 
+	@Override
 	public Long getId() {
 		return decoratedRequirementVersion.getId();
 	}
 
+	@Override
 	public Project getProject() {
 		return decoratedRequirementVersion.getProject();
 	}
 
+	@Override
 	public String getReference() {
 		return decoratedRequirementVersion.getReference();
 	}
 
+	@Override
 	public String getName() {
 		return decoratedRequirementVersion.getName();
 	}
 
+	@Override
 	public Set<Milestone> getMilestones() {
 		return decoratedRequirementVersion.getMilestones();
 	}
 
+	@Override
+	public int getVersionNumber() {
+		return decoratedRequirementVersion.getVersionNumber();
+	}
 }

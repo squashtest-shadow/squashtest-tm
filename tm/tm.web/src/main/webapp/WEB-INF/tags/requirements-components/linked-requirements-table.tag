@@ -61,6 +61,7 @@
       <th data-def="sortable, map=milestone-dates, tooltip-target=milestone ${milestoneVisibility}"><f:message key="label.Milestones"/></th>
       <th data-def="map=rv-reference, sortable"><f:message key="label.reference" /></th>
       <th data-def="map=rv-name, sortable, link=${requirementVersionUrl}/{rv-id}/info"><f:message key="requirement.name.label" /></th>
+      <th data-def="map=rv-version"><f:message key="requirement-version.version-number.label" /></th>
       <th data-def="map=rv-role, sortable"><f:message key="requirement-version.linked-requirement-version.table.col-header.role"/></th>
       <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>
       <th data-def="map=milestone, invisible"></th>
@@ -70,14 +71,13 @@
   </tbody>
 </table>
 
-<%-- Là pour la supression...
-<script type="text/x-handlebars-template" id="unbind-dialog-tpl">
-  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
+<script type="text/x-handlebars-template" id="unbind-linked-reqs-dialog-tpl">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-requirement-version-links.title'/>">
     <div data-def="state=confirm-deletion">
-      <span><f:message key="dialog.remove-testcase-requirement-association.message"/></span>
+      <span><f:message key="dialog.remove-requirement-version-link.message"/></span>
     </div>
     <div data-def="state=multiple-tp">
-      <span><f:message key="dialog.remove-testcase-requirement-associations.message"/></span>
+      <span><f:message key="dialog.remove-requirement-version-links.message.message"/></span>
     </div>
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
@@ -85,4 +85,3 @@
     </div>
   </div>
 </script>
---%>

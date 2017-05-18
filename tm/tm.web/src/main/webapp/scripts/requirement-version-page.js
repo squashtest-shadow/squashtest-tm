@@ -68,7 +68,6 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				milestoneNotifier.newHandler(config.basic.identity);
 			}
 
-
 			function initGeneralinfos(){
 				// config
 				var config = module.config(),
@@ -209,95 +208,93 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			}
 
 
-	function initVerifyingtestcases() {
-		var config = module.config();
+			function initVerifyingtestcases() {
+				var config = module.config();
 
-		var table = $("#verifying-test-cases-table").squashTable({
-			aaData : config.basic.verifyingTestcases
-		}, {
-			unbindButtons : {
-				delegate : "#unbind-active-row-dialog",
-				tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+				var table = $("#verifying-test-cases-table").squashTable({
+					aaData : config.basic.verifyingTestcases
+				}, {
+					unbindButtons : {
+						delegate : "#unbind-active-row-dialog",
+						tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+					}
+				});
+
+				if (config.permissions.linkable) {
+
+					$("#verifying-test-case-button").on('click', function(){
+						var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
+						document.location.href=url;
+					});
+
+					$( '#remove-verifying-test-case-button' ).on("click", function(event) {
+						squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
+					});
+
+					squash.vent.on("verifyingtestcasespanel:unbound", function(event) {
+						var table = $("#verifying-test-cases-table").squashTable();
+						eventBus.onContextual('tc-req-links-updated', function(evt) {
+							table.refresh();
+						});
+					});
+
+					var verifPanel = new VerifyingTestCasesPanel({ apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId) });
+
+					eventBus.one("contextualcontent.clear", function() {
+						verifPanel.remove();
+						verifPanel = undefined;
+					});
+				}
 			}
-		});
 
-		if (config.permissions.linkable) {
+			function initLinkedRequirementsPanel() {
+				var config = module.config();
 
-			$("#verifying-test-case-button").on('click', function(){
-				var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
-				document.location.href=url;
-			});
-
-			$( '#remove-verifying-test-case-button' ).on("click", function(event) {
-				squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
-			});
-
-			squash.vent.on("verifyingtestcasespanel:unbound", function(event) {
-				var table = $("#verifying-test-cases-table").squashTable();
-				eventBus.onContextual('tc-req-links-updated', function(evt) {
-					table.refresh();
+				var table = $("#linked-requirement-versions-table").squashTable(
+				{
+					aaData : config.basic.linkedRequirementVersions
+				}, {
+					unbindButtons : {
+						delegate : "#unbind-active-linked-reqs-row-dialog",
+						tooltip : translator.get('label.Unbind')
+					}
 				});
-			});
 
-			var verifPanel = new VerifyingTestCasesPanel({ apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId) });
+				if (config.permissions.linkable) {
 
-			eventBus.one("contextualcontent.clear", function() {
-				verifPanel.remove();
-				verifPanel = undefined;
-			});
-		}
-	}
+					$("#bind-requirements-button").on('click', function(){
+					/* --- PAGE LEVEL 2 --
+					L'url est définie dans 'workspace.routing' et est gérée par 'VerifyingTestCaseManagerController'
+					Il renvoie à la page 'show-verifying-testcase-manager'
 
-	function initLinkedRequirementsPanel() {
-		var config = module.config();
+						var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
+						document.location.href=url;
+						*/
+					});
 
-    var table = $("#linked-requirement-versions-table").squashTable(
-    {
-    	aaData : config.basic.linkedRequirementVersions
-    }, {
-    	unbindButtons : {
-    		delegate : "#unbind-active-row-dialog",
-    		tooltip : translator.get('dialog.unbind-ta-project.tooltip')
-    	}
-    });
+					/* -- Trigger Unbind-Selected EVENT */
+					$( '#unbind-requirements-button' ).on("click", function(event) {
+						squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
+					});
 
-    if (config.permissions.linkable) {
+					/* -- Listening to Unbound EVENT */
+					squash.vent.on("linkedrequirementversions:unbound", function(event) {
+						var table = $("#linked-requirement-versions-table").squashTable();
+						eventBus.onContextual('req-versions-links-updated', function(evt) { // Cet évènement ne semble jamais triggered ?
+							table.refresh();
+						});
+					});
 
-			$("#bind-requirements-button").on('click', function(){
-			/* --- PAGE LEVEL 2 --
-			L'url est définie dans 'workspace.routing' et est gérée par 'VerifyingTestCaseManagerController'
-			Il renvoie à la page 'show-verifying-testcase-manager'
+					var linkedReqPanel = new LinkedRequirementsPanel({
+						apiUrl: routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId)
+					});
 
-				var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
-				document.location.href=url;
-				*/
-			});
-
-			/* -- Trigger Unbind-Selected EVENT */
-			$( '#unbind-requirements-button' ).on("click", function(event) {
-				squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
-			});
-
-			/* -- Listening to Unbound EVENT */
-			squash.vent.on("linkedrequirementversions:unbound", function(event) {
-				var table = $("#linked-requirement-versions-table").squashTable();
-				eventBus.onContextual('req-versions-links-updated', function(evt) { // Cet évènement ne semble jamais triggered ?
-					table.refresh();
-				});
-			});
-
-			var linkedReqPanel = new LinkedRequirementsPanel({
-				apiUrl: routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId)
-			});
-
-			eventBus.one("contextualcontent.clear", function() {
-				linkedReqPanel.remove();
-				linkedReqPanel = undefined;
-			});
-    }
-	}
-
-
+					eventBus.one("contextualcontent.clear", function() {
+						linkedReqPanel.remove();
+						linkedReqPanel = undefined;
+					});
+				}
+			}
 
 			function initAudittrail(){
 

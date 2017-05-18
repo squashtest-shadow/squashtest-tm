@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -43,7 +44,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 /**
- * Controller for the management screen of Requirement Versions linked to other Requirement Versions.
+ * Controller for the management of Requirement Versions linked to other Requirement Versions.
  *
  * Created by jlor on 11/05/2017.
  */
@@ -62,7 +63,8 @@ public class LinkedRequirementVersionsManagerController {
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 		.mapAttribute("rv-reference", "reference", RequirementVersion.class)
 		.mapAttribute("rv-name", "name", RequirementVersion.class)
-		.mapAttribute("rv-role", "role", String.class)
+		.mapAttribute("rv-version", "version", RequirementVersion.class)
+		.mapAttribute("rv-role", "role", LinkedRequirementVersion.class)
 		.map("milestone-dates", "endDate");
 
 	@RequestMapping("/table")
@@ -80,4 +82,13 @@ public class LinkedRequirementVersionsManagerController {
 
 		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{requirementVersionIdsToUnbind}", method = RequestMethod.DELETE)
+	public void removeLinkedRequirementVersionsFromRequirementVersion(
+		@PathVariable long requirementVersionId,
+		@PathVariable List<Long> requirementVersionIdsToUnbind) {
+
+		linkedReqVersionManager.removeLinkedRequirementVersionsFromRequirementVersion(requirementVersionId, requirementVersionIdsToUnbind);
+	};
 }

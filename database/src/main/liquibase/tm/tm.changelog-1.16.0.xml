@@ -94,7 +94,7 @@
     </insert>
     <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
       <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="3" />
-      <column name="ROLE_1" value="requirement-version.link.type.originalduplicate" />
+      <column name="ROLE_1" value="requirement-version.link.type.duplicate" />
       <column name="ROLE_2" value="requirement-version.link.type.duplicate" />
     </insert>
 
