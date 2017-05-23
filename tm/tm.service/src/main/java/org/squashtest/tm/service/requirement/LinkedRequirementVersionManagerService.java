@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,4 +49,7 @@ public interface LinkedRequirementVersionManagerService {
 
 	void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink);
+
+	Collection<LinkedRequirementVersionException> addLinkedReqVersionsToReqVersion(
+		Long singleReqVersionId, List<Long> otherReqVersionsIds);
 }

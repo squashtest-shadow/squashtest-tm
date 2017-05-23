@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -39,7 +40,7 @@ import java.util.List;
  *
  * Note: This Dao uses NamedQueries written in hibernate/package-info.
  */
-public interface RequirementVersionLinkDao extends Repository<RequirementVersionLink, Long> {
+public interface RequirementVersionLinkDao extends CrudRepository<RequirementVersionLink, Long>, CustomRequirementVersionLinkDao {
 
 	/**
 	 * Find all the {@link RequirementVersionLink} in which the given {@link RequirementVersion} is involved.
@@ -57,10 +58,4 @@ public interface RequirementVersionLinkDao extends Repository<RequirementVersion
 	 * and the other RequirementVersions given in the second parameter.
 	 */
 	List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
-	/**
-	 * Deletes the given {@link RequirementVersionLink}s.
-	 *
-	 * @param requirementVersionLinks
-	 */
-	void delete(@Param("reqVerLinks") Iterable<? extends RequirementVersionLink> requirementVersionLinks);
 }

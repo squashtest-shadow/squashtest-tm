@@ -20,14 +20,20 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.google.common.base.*;
+import com.google.common.base.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.UnlikableLinkedRequirementVersionException;
 import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 
 import javax.inject.Inject;
@@ -38,7 +44,17 @@ import java.util.*;
 public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequirementVersionManagerService {
 
 	@Inject
+	private RequirementVersionDao reqVersionDao;
+	@Inject
 	private RequirementVersionLinkDao reqVersionLinkDao;
+	@Inject
+	private RequirementVersionLinkTypeDao reqVersionLinkTypeDao;
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+	@SuppressWarnings("rawtypes")
+	@Inject
+	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
+	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 
 	@Override
 	public PagedCollectionHolder<List<LinkedRequirementVersion>>
@@ -70,6 +86,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, requirementVersionLinksList.size(), linkedReqVersionsList);
 	}
 
+	/*TODO: Optimisable en créant et appelant une seule fonction dans le DAO non ? :O */
 	@Override
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
@@ -78,5 +95,63 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			reqVersionLinkDao.findByOneReqVersionAndSeveralOthers(requirementVersionId, requirementVersionIdsToUnlink);
 
 		reqVersionLinkDao.delete(requirementVersionLinksToRemove);
+	}
+
+	@Override
+	public Collection<LinkedRequirementVersionException> addLinkedReqVersionsToReqVersion(
+		Long mainReqVersionId, List<Long> otherReqVersionsIds) {
+
+		List<RequirementVersion> requirementVersions = findRequirementVersions(otherReqVersionsIds);
+		List<LinkedRequirementVersionException> rejections = new ArrayList<>();
+		RequirementVersion mainReqVersion = reqVersionDao.findOne(mainReqVersionId);
+		for(RequirementVersion otherRequirementVersion : requirementVersions) {
+			if(!reqVersionLinkDao.linkAlreadyExists(mainReqVersionId, otherRequirementVersion.getId())) {
+				//TODO: Implement getDefault() thing.
+				RequirementVersionLink newReqVerLink = new RequirementVersionLink(mainReqVersion, otherRequirementVersion);
+				RequirementVersionLinkType newReqVerLinkType = reqVersionLinkTypeDao.findOne(1l);
+				newReqVerLink.setLinkType(newReqVerLinkType);
+				reqVersionLinkDao.save(newReqVerLink);
+			} else {
+				//TODO: Manage Exceptions in a Try !.
+				rejections.add(new UnlikableLinkedRequirementVersionException(mainReqVersion, otherRequirementVersion));
+			}
+		}
+		return rejections;
+	}
+
+	private List<RequirementVersion> findRequirementVersions(
+		List<Long> requirementNodesIds) {
+
+		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao
+			.findAllByIds(requirementNodesIds);
+
+		if (!nodes.isEmpty()) {
+			List<Requirement> requirements = new RequirementNodeWalker()
+				.walk(nodes);
+			if (!requirements.isEmpty()) {
+				return extractVersions(requirements);
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {
+
+		List<RequirementVersion> rvs = new ArrayList<>(requirements.size());
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		for (Requirement requirement : requirements) {
+
+			// normal mode
+			if (!activeMilestone.isPresent()) {
+				rvs.add(requirement.getResource());
+			}
+			// milestone mode
+			else {
+				rvs.add(requirement.findByMilestone(activeMilestone.get()));
+			}
+		}
+		return rvs;
 	}
 }

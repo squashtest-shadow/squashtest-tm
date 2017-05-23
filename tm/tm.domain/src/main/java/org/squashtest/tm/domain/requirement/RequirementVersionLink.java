@@ -49,8 +49,20 @@ public class RequirementVersionLink {
 	@JoinColumn(name="LINK_TYPE_ID", referencedColumnName = "REQUIREMENT_VERSION_LINK_TYPE_ID")
 	private RequirementVersionLinkType linkType;
 
+
 	public Long getId() {
 		return id;
+	}
+
+	public RequirementVersionLink() {
+	}
+
+	public RequirementVersionLink(
+		RequirementVersion requirementVersion1,
+		RequirementVersion requirementVersion2) {
+
+		this.requirementVersion1 = requirementVersion1;
+		this.requirementVersion2 = requirementVersion2;
 	}
 
 	public RequirementVersion getRequirementVersion1() {

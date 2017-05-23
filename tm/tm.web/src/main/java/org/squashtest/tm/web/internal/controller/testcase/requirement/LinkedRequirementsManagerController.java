@@ -29,17 +29,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for the management screen of Requirements linked to a given TestCase
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
+ * 	Cette classe semble inutilisée! (non-existence de la page & aucune référence à l'url dans les scripts.
+ * 	--> Suppression ?
  */
 @Controller
 @RequestMapping("/test-cases/{testCaseId}/linked-requirements-manager")
 public class LinkedRequirementsManagerController {
-	@RequestMapping(method = RequestMethod.GET)
+	/*@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long testCaseId) {
 		ModelAndView mav = new ModelAndView("page/test-cases/show-linked-requirements-manager");
 		mav.addObject("testCaseId", testCaseId);
 		return mav;
-	}
+	}*/
 }

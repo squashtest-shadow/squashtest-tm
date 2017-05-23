@@ -77,7 +77,7 @@
       <span><f:message key="dialog.remove-requirement-version-link.message"/></span>
     </div>
     <div data-def="state=multiple-tp">
-      <span><f:message key="dialog.remove-requirement-version-links.message.message"/></span>
+      <span><f:message key="dialog.remove-requirement-version-links.message"/></span>
     </div>
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>

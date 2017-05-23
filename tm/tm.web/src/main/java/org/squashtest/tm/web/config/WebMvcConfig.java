@@ -114,7 +114,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			.addPathPatterns(
 				"/requirement-versions/*",
 				"/requirement-versions/*/info",
-				"/requirement-versions/*/verifying-test-cases/manager"
+				"/requirement-versions/*/verifying-test-cases/manager",
+				"/requirement-versions/*/linked-requirement-versions/manager"
 			);
 
 		// Opened campaigns handling

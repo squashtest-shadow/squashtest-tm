@@ -264,12 +264,11 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 					$("#bind-requirements-button").on('click', function(){
 					/* --- PAGE LEVEL 2 --
-					L'url est définie dans 'workspace.routing' et est gérée par 'VerifyingTestCaseManagerController'
-					Il renvoie à la page 'show-verifying-testcase-manager'
+					L'url est définie dans 'workspace.routing' et est gérée par 'LinkedRequirementVersionsManagerController'
+					Il renvoie à la page 'show-linked-requirement-version-manager' */
 
-						var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
+						var url = routing.buildURL('requirements.linkedRequirementVersions.manager', config.basic.currentVersionId);
 						document.location.href=url;
-						*/
 					});
 
 					/* -- Trigger Unbind-Selected EVENT */

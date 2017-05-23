@@ -47,6 +47,10 @@ public class RequirementVersionLinkType {
 	@NotBlank
 	private String role2 = "";
 
+	public RequirementVersionLinkType() {
+		this.id = 1l;
+	}
+
 	public Long getId() {
 		return id;
 	}

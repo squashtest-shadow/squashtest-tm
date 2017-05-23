@@ -20,28 +20,53 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import com.google.common.base.Optional;
+import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.
@@ -54,8 +79,29 @@ public class LinkedRequirementVersionsManagerController {
 
 	@Inject
 	private InternationalizationHelper i18nHelper;
+
+	@Inject
+	private RequirementVersionManagerService requirementVersionFinder;
+
 	@Inject
 	private LinkedRequirementVersionManagerService linkedReqVersionManager;
+
+	@Inject
+	private RequirementLibraryFinderService requirementLibraryFinder;
+
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
+
+	@Inject
+	@Named("requirement.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	/*
 	 * See VerifyingTestCaseManagerController.verifyingTCMapper
 	 */
@@ -91,4 +137,68 @@ public class LinkedRequirementVersionsManagerController {
 
 		linkedReqVersionManager.removeLinkedRequirementVersionsFromRequirementVersion(requirementVersionId, requirementVersionIdsToUnbind);
 	};
+
+	@RequestMapping(value = "/manager", method = RequestMethod.GET)
+	public String showManager(@PathVariable long requirementVersionId, Model model,
+							  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+
+		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
+		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(requirementVersion, "LINK"));
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
+
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
+		DataTableModel linkedReqVersionsModel = buildLinkedReqVersionsModel(requirementVersionId, pas, "");
+
+		model.addAttribute("requirement", requirementVersion.getRequirement()); // this is done because of RequirementViewInterceptor
+		model.addAttribute("requirementVersion", requirementVersion);
+		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
+		model.addAttribute("linkedReqVersionsModel", linkedReqVersionsModel);
+		model.addAttribute("milestoneConf", milestoneConf);
+
+		return "page/requirement-workspace/show-linked-requirement-version-manager";
+	}
+
+	protected DataTableModel buildLinkedReqVersionsModel(long requirementVersionId, PagingAndSorting pas, String sEcho) {
+		PagedCollectionHolder<List<LinkedRequirementVersion>> holder =
+			linkedReqVersionManager.findAllByRequirementVersion(requirementVersionId, pas);
+
+		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
+	}
+
+	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes) {
+		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
+
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+
+		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
+
+		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (milestone.isPresent()) {
+			nodeBuilder.filterByMilestone(milestone.get());
+		}
+
+		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
+			.expand(expansionCandidates)
+			.setModel(linkableLibraries)
+			.build();
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST)
+	public Map<String, Object> addLinkedReqVersionsToReqVersion(
+		@PathVariable("requirementVersionId") long requirementVersionId,
+		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds) {
+
+		Collection<LinkedRequirementVersionException> rejections =
+			linkedReqVersionManager.addLinkedReqVersionsToReqVersion(requirementVersionId, requirementNodesIds);
+		return buildSummary(rejections);
+
+	}
+
+	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
+		return null;
+	}
 }
