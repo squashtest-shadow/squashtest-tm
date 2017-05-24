@@ -111,13 +111,15 @@ require([ "common" ], function() {
 
 
 			// init the table
-			$("#linked-requirement-versions-table").squashTable({
+			$("#linked-requirement-versions-table").squashTable(
+			{
 				aaData : window.squashtm.bindingsManager.model
-			},{
-	          unbindButtons : {
-	            delegate : "#unbind-active-row-dialog",
-	            tooltip : msg.get('dialog.unbind-ta-project.tooltip')
-	          }
+			},
+			{
+	    	unbindButtons : {
+	      	delegate : "#unbind-active-linked-reqs-row-dialog",
+	        tooltip : msg.get('label.Unbind')
+	      }
 			});
 
 			// init the panel

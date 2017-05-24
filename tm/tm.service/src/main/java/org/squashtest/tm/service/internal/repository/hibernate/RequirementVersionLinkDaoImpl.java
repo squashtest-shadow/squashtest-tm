@@ -20,20 +20,35 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jlor on 19/05/2017.
  */
-public class RequirementVersionLinkDaoImpl implements CustomRequirementVersionLinkDao {
+public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<RequirementVersionLink> implements CustomRequirementVersionLinkDao {
 
 	@PersistenceContext
 	EntityManager entityManager;
+
+	@Override
+	public List<RequirementVersionLink> findAllByReqVersionId(long requirementVersionId, PagingAndSorting pagingAndSorting) {
+
+		Query query = entityManager.createNamedQuery("RequirementVersionLink.findAllByReqVersionId");
+		query.setParameter("requirementVersionId", requirementVersionId);
+		return query.getResultList();
+	}
 
 	@Override
 	public boolean linkAlreadyExists(Long reqVersionId1, Long reqVersionId2) {

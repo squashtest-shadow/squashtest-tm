@@ -20,13 +20,24 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+
+import java.util.List;
 
 /**
  * Created by jlor on 19/05/2017.
  */
 public interface CustomRequirementVersionLinkDao {
 
+	/**
+	 * Returns a paged and ordered list of all the {@link RequirementVersionLink} in which the given {@link RequirementVersion} is involved.
+	 * @param requirementVersionId The ID of the Requirement Version of which we want all the Links.
+	 * @return The List of all the {@link RequirementVersionLink} in which the given RequirementVersion is involved.
+	 */
+	List<RequirementVersionLink> findAllByReqVersionId(@Param("requirementVersionId") long requirementVersionId, PagingAndSorting pagingAndSorting);
 	/**
 	 *  Verifies if a link already exists between the two RequirementVersions which Ids are given as parameters.
 	 * @param reqVersionId1

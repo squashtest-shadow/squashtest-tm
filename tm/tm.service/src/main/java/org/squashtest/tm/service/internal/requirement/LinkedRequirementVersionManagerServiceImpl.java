@@ -61,7 +61,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 
 		List<RequirementVersionLink> requirementVersionLinksList =
-			reqVersionLinkDao.findAllByReqVersionId(requirementVersionId);
+			reqVersionLinkDao.findAllByReqVersionId(requirementVersionId, pagingAndSorting);
 
 		List<LinkedRequirementVersion> linkedReqVersionsList =
 			new ArrayList<LinkedRequirementVersion>();

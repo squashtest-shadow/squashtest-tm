@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -41,13 +42,6 @@ import java.util.List;
  * Note: This Dao uses NamedQueries written in hibernate/package-info.
  */
 public interface RequirementVersionLinkDao extends CrudRepository<RequirementVersionLink, Long>, CustomRequirementVersionLinkDao {
-
-	/**
-	 * Find all the {@link RequirementVersionLink} in which the given {@link RequirementVersion} is involved.
-	 * @param requirementVersionId The ID of the Requirement Version of which we want all the Links.
-	 * @return The List of all the {@link RequirementVersionLink} in which the given RequirementVersion is involved.
-	 */
-	List<RequirementVersionLink> findAllByReqVersionId(@Param("requirementVersionId") long requirementVersionId);
 
 	/**
 	 * Find all the {@link RequirementVersionLink}s in which the single {@link RequirementVersion} given is involved with
