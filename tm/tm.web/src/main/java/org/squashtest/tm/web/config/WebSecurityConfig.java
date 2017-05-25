@@ -23,7 +23,12 @@ package org.squashtest.tm.web.config;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,6 +40,8 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
@@ -88,9 +95,46 @@ public class WebSecurityConfig {
 			// @formatter:on
 		}
 	}
-
+	
 	@Configuration
 	@Order(20)
+	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			// @formatter:off
+			http
+			.antMatcher("/api/**")
+				.authorizeRequests()
+					.anyRequest()
+						.authenticated()
+				.and()
+					.httpBasic()
+						.realmName("squash-api")
+						.authenticationEntryPoint(new AuthenticationEntryPoint() {
+							
+							@Override
+							public void commence(HttpServletRequest request,
+									HttpServletResponse response, AuthenticationException authException)
+									throws IOException, ServletException {
+								// TODO Auto-generated method stub
+
+								response.addHeader("WWW-Authenticate", "Basic realm=\"squah-api\"");
+								response.addHeader("Content-Type", "application/json");
+								response.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
+										authException.getMessage() +
+										". You may authenticate using "+
+										"1/ basic authentication or " +
+										"2/ fetching a cookie JSESSIONID from /login");
+							}
+						});
+			// @formatter:on
+		}
+	}
+	
+	
+
+	@Configuration
+	@Order(30)
 	public static class StandardWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
 		@Value("${squash.security.filter.debug.enabled:false}")

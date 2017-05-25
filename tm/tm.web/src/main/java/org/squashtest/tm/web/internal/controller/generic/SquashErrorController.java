@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -65,6 +66,15 @@ public class SquashErrorController implements ErrorController {
     	
     	
     }
+    
+    @RequestMapping(value = PATH, produces={"application/json", "application/*+json"})
+    @ResponseBody
+    public Map<String,Object> errorJson(HttpServletRequest request, HttpServletResponse response, Model model) throws Throwable{
+        
+    	return getErrorAttributes(request);
+    	
+    }
+    
 
     @Override
     public String getErrorPath() {
