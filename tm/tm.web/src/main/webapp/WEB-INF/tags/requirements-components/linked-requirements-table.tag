@@ -61,7 +61,7 @@
       <th data-def="sortable, map=milestone-dates, tooltip-target=milestone ${milestoneVisibility}"><f:message key="label.Milestones"/></th>
       <th data-def="map=rv-reference, sortable"><f:message key="label.reference" /></th>
       <th data-def="map=rv-name, sortable, link=${requirementVersionUrl}/{rv-id}/info"><f:message key="requirement.name.label" /></th>
-      <th data-def="map=rv-version"><f:message key="requirement-version.version-number.label" /></th>
+      <th data-def="map=rv-version, sortable"><f:message key="requirement-version.version-number.label" /></th>
       <th data-def="map=rv-role, sortable"><f:message key="requirement-version.linked-requirement-version.table.col-header.role"/></th>
       <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>
       <th data-def="map=milestone, invisible"></th>

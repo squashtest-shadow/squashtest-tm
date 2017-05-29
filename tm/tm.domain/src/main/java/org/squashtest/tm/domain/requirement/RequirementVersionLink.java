@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.requirement;
 
 import com.sun.javafx.beans.IDProperty;
+import org.squashtest.tm.domain.Identified;
 
 import javax.persistence.*;
 
@@ -29,7 +30,7 @@ import javax.persistence.*;
  */
 
 @Entity
-public class RequirementVersionLink {
+public class RequirementVersionLink implements Identified {
 
 	@Id
 	@Column(name = "REQUIREMENT_VERSION_LINK_ID")
@@ -38,18 +39,25 @@ public class RequirementVersionLink {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "REQUIREMENT_VERSION_1_ID", referencedColumnName = "RES_ID")
-	private RequirementVersion requirementVersion1;
+	@JoinColumn(name = "REQUIREMENT_VERSION_ID", referencedColumnName = "RES_ID")
+	private RequirementVersion requirementVersion;
 
 	@ManyToOne
-	@JoinColumn(name = "REQUIREMENT_VERSION_2_ID", referencedColumnName = "RES_ID")
-	private RequirementVersion requirementVersion2;
+	@JoinColumn(name = "RELATED_REQUIREMENT_VERSION_ID", referencedColumnName = "RES_ID")
+	private RequirementVersion relatedRequirementVersion;
 
 	@ManyToOne
 	@JoinColumn(name="LINK_TYPE_ID", referencedColumnName = "REQUIREMENT_VERSION_LINK_TYPE_ID")
 	private RequirementVersionLinkType linkType;
 
+	/**
+	 * If linkDirection is false, it means that the role of requirementVersion is linkType.role1 and the role of
+	 * relatedRequirementVersion is linkType.role2. If linkDirection is true, it is the other way around.
+	 * */
+	@Column(name="LINK_DIRECTION")
+	private boolean linkDirection;
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -57,35 +65,63 @@ public class RequirementVersionLink {
 	public RequirementVersionLink() {
 	}
 
+	public RequirementVersionLink(RequirementVersion requirementVersion, RequirementVersion relatedRequirementVersion) {
+		this.requirementVersion = requirementVersion;
+		this.relatedRequirementVersion = relatedRequirementVersion;
+	}
+
 	public RequirementVersionLink(
-		RequirementVersion requirementVersion1,
-		RequirementVersion requirementVersion2) {
+		RequirementVersion requirementVersion,
+		RequirementVersion relatedRequirementVersion,
+		RequirementVersionLinkType linkType,
+		boolean linkDirection) {
 
-		this.requirementVersion1 = requirementVersion1;
-		this.requirementVersion2 = requirementVersion2;
+		this.requirementVersion = requirementVersion;
+		this.relatedRequirementVersion = relatedRequirementVersion;
+		this.linkType = linkType;
+		this.linkDirection = linkDirection;
 	}
 
-	public RequirementVersion getRequirementVersion1() {
-		return requirementVersion1;
+	private String getRequirementVersionRole() {
+		if(!linkDirection) {
+			return this.linkType.getRole1();
+		} else {
+			return this.linkType.getRole2();
+		}
 	}
 
-	public RequirementVersion getRequirementVersion2() {
-		return requirementVersion2;
+	private String getRelatedRequirementVersionRole() {
+		if(linkDirection) {
+			return this.linkType.getRole1();
+		} else {
+			return this.linkType.getRole2();
+		}
 	}
 
-	public void setRequirementVersion1(RequirementVersion requirementVersion1) {
-		this.requirementVersion1 = requirementVersion1;
+	public LinkedRequirementVersion getLinkedRequirementVersion() {
+		return new LinkedRequirementVersion(this.requirementVersion, getRequirementVersionRole());
 	}
 
-	public void setRequirementVersion2(RequirementVersion requirementVersion2) {
-		this.requirementVersion2 = requirementVersion2;
+	public LinkedRequirementVersion getRelatedLinkedRequirementVerison() {
+		return new LinkedRequirementVersion(this.relatedRequirementVersion, getRelatedRequirementVersionRole());
 	}
-
 	public RequirementVersionLinkType getLinkType() {
 		return linkType;
 	}
 
 	public void setLinkType(RequirementVersionLinkType linkType) {
 		this.linkType = linkType;
+	}
+
+	public boolean getLinkDirection() {
+		return this.linkDirection;
+	}
+
+	public RequirementVersionLink createSymmetricalRequirementVersionLink() {
+		return new RequirementVersionLink(
+				this.relatedRequirementVersion,
+				this.requirementVersion,
+				this.linkType,
+				!this.linkDirection);
 	}
 }

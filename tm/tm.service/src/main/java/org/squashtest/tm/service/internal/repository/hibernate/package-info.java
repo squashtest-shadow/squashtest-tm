@@ -912,9 +912,19 @@
 	@NamedQuery(name = "execution.findAllByTestCaseIdAndItIdOrderByRunDate", query = "from Execution e where e.referencedTestCase.id = :testCaseId order by e.lastExecutedOn desc"),
 
 	//Requirement Version Links
-	@NamedQuery(name="RequirementVersionLink.findAllByReqVersionId", query="from RequirementVersionLink rvl where rvl.requirementVersion1.id = :requirementVersionId or rvl.requirementVersion2 = :requirementVersionId"),
-	@NamedQuery(name="RequirementVersionLink.findByOneReqVersionAndSeveralOthers", query="from RequirementVersionLink rvl where rvl.requirementVersion1.id = :requirementVersionId and rvl.requirementVersion2.id in (:otherRequirementVersionsIds) or rvl.requirementVersion2 = :requirementVersionId and rvl.requirementVersion1.id in (:otherRequirementVersionsIds)"),
-	@NamedQuery(name="RequirementVersionLink.linkAlreadyExists", query="select count(*) from RequirementVersionLink rvl where rvl.requirementVersion1.id = :reqVersionId1 and rvl.requirementVersion2.id = :reqVersionId2 or rvl.requirementVersion1.id = :reqVersionId2 and rvl.requirementVersion2.id = :reqVersionId1"),
+	@NamedQuery(name="RequirementVersionLink.findAllByReqVersionId",
+				query="select distinct rvl, case when rvl.linkDirection = false then rvl.linkType.role2 else rvl.linkType.role1 end as role, " +
+					"(select min(m.endDate) from rvl.relatedRequirementVersion rv inner join rv.milestones m) as endDate " +
+					"from RequirementVersionLink rvl " +
+					"inner join rvl.relatedRequirementVersion RequirementVersion " +
+					"inner join RequirementVersion.requirement.project Project " +
+					"where rvl.requirementVersion.id = :requirementVersionId"),
+	//@NamedQuery(name="RequirementVersionLink.findByOneReqVersionAndSeveralOthers", query="from RequirementVersionLink rvl where rvl.requirementVersion.id = :requirementVersionId and rvl.relatedRequirementVersion.id in (:otherRequirementVersionsIds)"),
+	@NamedQuery(name="RequirementVersionLink.linkAlreadyExists", query="select count(*) from RequirementVersionLink rvl where rvl.requirementVersion.id = :reqVersionId and rvl.relatedRequirementVersion.id = :relatedReqVersionId"),
+	@NamedQuery(name="RequirementVersionLink.deleteAllLinks",
+				query="delete RequirementVersionLink rvl " +
+					  "where rvl.requirementVersion.id = :singleRequirementVersionId and rvl.relatedRequirementVersion.id in (:requirementVersionIdsToUnlink) " +
+					  "or rvl.requirementVersion.id in (:requirementVersionIdsToUnlink) and rvl.relatedRequirementVersion.id = :singleRequirementVersionId"),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;
@@ -923,4 +933,3 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
-

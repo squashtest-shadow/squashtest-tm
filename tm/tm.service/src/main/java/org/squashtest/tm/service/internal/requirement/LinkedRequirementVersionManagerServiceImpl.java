@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import com.google.common.base.*;
 import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
-import org.squashtest.tm.exception.requirement.UnlikableLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
@@ -67,34 +66,18 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			new ArrayList<LinkedRequirementVersion>();
 
 		for(RequirementVersionLink reqVerLink : requirementVersionLinksList) {
-			if(requirementVersionId == reqVerLink.getRequirementVersion1().getId()) {
-			/* The current RequirementVersion is the requirementVersion1 of the Link,
-				so we want to display the requirementVersion2 */
 				linkedReqVersionsList.add(
-					new LinkedRequirementVersion(
-						reqVerLink.getRequirementVersion2(),
-						reqVerLink.getLinkType().getRole2()));
-			} else {
-			// It is the requirementVersion2 of the Link.
-				linkedReqVersionsList.add(
-					new LinkedRequirementVersion(
-						reqVerLink.getRequirementVersion1(),
-						reqVerLink.getLinkType().getRole1()));
-			}
+					reqVerLink.getRelatedLinkedRequirementVerison());
 		}
 
 		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, requirementVersionLinksList.size(), linkedReqVersionsList);
 	}
 
-	/*TODO: Optimisable en créant et appelant une seule fonction dans le DAO non ? :O */
 	@Override
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
 
-		List<RequirementVersionLink> requirementVersionLinksToRemove =
-			reqVersionLinkDao.findByOneReqVersionAndSeveralOthers(requirementVersionId, requirementVersionIdsToUnlink);
-
-		reqVersionLinkDao.delete(requirementVersionLinksToRemove);
+		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
 
 	@Override
@@ -103,17 +86,20 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		List<RequirementVersion> requirementVersions = findRequirementVersions(otherReqVersionsIds);
 		List<LinkedRequirementVersionException> rejections = new ArrayList<>();
+
 		RequirementVersion mainReqVersion = reqVersionDao.findOne(mainReqVersionId);
 		for(RequirementVersion otherRequirementVersion : requirementVersions) {
 			if(!reqVersionLinkDao.linkAlreadyExists(mainReqVersionId, otherRequirementVersion.getId())) {
 				//TODO: Implement getDefault() thing.
-				RequirementVersionLink newReqVerLink = new RequirementVersionLink(mainReqVersion, otherRequirementVersion);
-				RequirementVersionLinkType newReqVerLinkType = reqVersionLinkTypeDao.findOne(1l);
-				newReqVerLink.setLinkType(newReqVerLinkType);
-				reqVersionLinkDao.save(newReqVerLink);
+				RequirementVersionLink newReqVerLink =
+					new RequirementVersionLink(
+						mainReqVersion,
+						otherRequirementVersion,
+						reqVersionLinkTypeDao.findOne(1l),false);
+				reqVersionLinkDao.addLink(newReqVerLink);
 			} else {
 				//TODO: Manage Exceptions in a Try !.
-				rejections.add(new UnlikableLinkedRequirementVersionException(mainReqVersion, otherRequirementVersion));
+				rejections.add(new UnlinkableLinkedRequirementVersionException(mainReqVersion, otherRequirementVersion));
 			}
 		}
 		return rejections;

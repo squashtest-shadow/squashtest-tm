@@ -53,8 +53,8 @@ require([ "common" ], function() {
 		function showAddSummary(summary) {
 			if (summary) {
 				var summaryMessages = {
-						alreadyVerifiedRejections: msg.get("requirement-version.verifying-test-case.already-verified-rejection"),
-						notLinkableRejections: msg.get("requirement-version.verifying-test-case.not-linkable-rejection")
+						alreadyLinkedRejections: msg.get("requirement-version.linked-requirement-versions.already-linked-rejection"),
+						notLinkableRejections: msg.get("requirement-version.linked-requirement-versions.not-linkable-rejection")
 				};
 
 				var summaryRoot = $( "#add-summary-dialog > ul" );
@@ -135,7 +135,7 @@ require([ "common" ], function() {
 				var ids = getReqVersionsIds();
 
 				if (ids.length === 0) {
-					notification.showError(msg.get('message.emptySelectionTestCase'));
+					notification.showError(msg.get('message.emptySelectionRequirement'));
 					return;
 				}
 
@@ -145,7 +145,7 @@ require([ "common" ], function() {
 					showAddSummary(data);
 					table().refresh();
 					unlock();
-					sendUpdateTree(data.linkedIds);
+//					sendUpdateTree(data.linkedIds);
 				});
 
 			});

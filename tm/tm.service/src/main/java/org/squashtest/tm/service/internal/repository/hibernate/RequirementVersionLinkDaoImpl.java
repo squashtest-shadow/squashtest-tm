@@ -31,6 +31,7 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLin
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +46,45 @@ public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<Requiremen
 	@Override
 	public List<RequirementVersionLink> findAllByReqVersionId(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 
-		Query query = entityManager.createNamedQuery("RequirementVersionLink.findAllByReqVersionId");
-		query.setParameter("requirementVersionId", requirementVersionId);
-		return query.getResultList();
+		org.hibernate.Query baseQuery = currentSession().getNamedQuery("RequirementVersionLink.findAllByReqVersionId");
+		String queryString = baseQuery.getQueryString();
+		queryString = SortingUtils.addOrder(queryString, pagingAndSorting);
+
+		org.hibernate.Query finalQuery = currentSession().createQuery(queryString);
+		finalQuery.setParameter("requirementVersionId", requirementVersionId);
+
+		PagingUtils.addPaging(finalQuery, pagingAndSorting);
+
+		List<Object[]> resultList = finalQuery.list();
+		List<RequirementVersionLink> reqVerLinkList = new ArrayList<>(resultList.size());
+		for(Object[] object : resultList) {
+			reqVerLinkList.add((RequirementVersionLink) object[0]);
+		}
+		return reqVerLinkList;
+
 	}
 
 	@Override
-	public boolean linkAlreadyExists(Long reqVersionId1, Long reqVersionId2) {
+	public boolean linkAlreadyExists(Long reqVersionId, Long relatedReqVersionId) {
 		Query existQuery = entityManager.createNamedQuery("RequirementVersionLink.linkAlreadyExists");
-		existQuery.setParameter("reqVersionId1", reqVersionId1);
-		existQuery.setParameter("reqVersionId2", reqVersionId2);
+		existQuery.setParameter("reqVersionId", reqVersionId);
+		existQuery.setParameter("relatedReqVersionId", relatedReqVersionId);
 		return (Long)existQuery.getSingleResult() > 0;
+	}
+
+	@Override
+	public RequirementVersionLink addLink(RequirementVersionLink requirementVersionLink) {
+		/* Because of the particular model, for each RequirementVersionLink persisted, we persist another symmetrical one.
+		* (Which RequirementVersions and LinkDirections were inverted). */
+		entityManager.persist(requirementVersionLink);
+		/* Except if this is the same RequirementVersion, linking to itself. */
+		if(requirementVersionLink.getLinkedRequirementVersion().getId()
+			!= requirementVersionLink.getRelatedLinkedRequirementVerison().getId()) {
+
+			RequirementVersionLink symmetricalRequirementVersionLink =
+				requirementVersionLink.createSymmetricalRequirementVersionLink();
+			entityManager.persist(symmetricalRequirementVersionLink);
+		}
+		return requirementVersionLink;
 	}
 }

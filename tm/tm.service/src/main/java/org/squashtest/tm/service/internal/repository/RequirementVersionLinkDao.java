@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -46,10 +47,21 @@ public interface RequirementVersionLinkDao extends CrudRepository<RequirementVer
 	/**
 	 * Find all the {@link RequirementVersionLink}s in which the single {@link RequirementVersion} given is involved with
 	 * the several other RequirementVersions given in the List.
+	 * It returns the entries for both directions.
 	 * @param requirementVersionId The ID of the single {@link RequirementVersion}.
 	 * @param otherRequirementVersionsIds The IDs of the several other {@link RequirementVersion}s.
 	 * @return The List of {@link RequirementVersionLink}s linking the single RequirementVersion given as first parameter
 	 * and the other RequirementVersions given in the second parameter.
 	 */
-	List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
+	//List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
+
+	/**
+	 * Deletes all the RequirementVersionLinks that exist between the single given RequirementVersion and all the several others.
+	 * The request deletes two RequirementVersionLink per pair of ids, one for each link direction.
+	 * @param singleRequirementVersionId
+	 * @param requirementVersionIdsToUnlink
+	 */
+	@Modifying
+	void deleteAllLinks(@Param("singleRequirementVersionId") long singleRequirementVersionId,
+						@Param("requirementVersionIdsToUnlink") Iterable<Long> requirementVersionIdsToUnlink);
 }

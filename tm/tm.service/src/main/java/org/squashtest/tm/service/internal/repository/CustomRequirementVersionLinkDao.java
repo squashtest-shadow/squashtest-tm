@@ -34,15 +34,27 @@ public interface CustomRequirementVersionLinkDao {
 
 	/**
 	 * Returns a paged and ordered list of all the {@link RequirementVersionLink} in which the given {@link RequirementVersion} is involved.
+	 * This method is used to display the returned list: it only returns the {@link RequirementVersionLink} in which the given RequirementVersion
+	 * is the requirementVersion and not the relatedRequirementVersion. See {@link RequirementVersionLink}
 	 * @param requirementVersionId The ID of the Requirement Version of which we want all the Links.
 	 * @return The List of all the {@link RequirementVersionLink} in which the given RequirementVersion is involved.
 	 */
 	List<RequirementVersionLink> findAllByReqVersionId(@Param("requirementVersionId") long requirementVersionId, PagingAndSorting pagingAndSorting);
 	/**
 	 *  Verifies if a link already exists between the two RequirementVersions which Ids are given as parameters.
-	 * @param reqVersionId1
-	 * @param reqVersionId2
+	 *  It only check the existence of the link in a single direction, since the other direction should also appear in the database.
+	 * @param reqVersionId
+	 * @param relatedReqVersionId
 	 * @return true if the link already exists between the two RequirementVersions, false otherwise.
 	 */
-	boolean linkAlreadyExists(Long reqVersionId1, Long reqVersionId2);
+	boolean linkAlreadyExists(Long reqVersionId, Long relatedReqVersionId);
+	/**
+	 * Saves a given RequirementVersionLink. Given the particular model, the link must be saved twice: one time for each
+	 * linkDirection.
+	 * Use the returned instance for further operations as the save operation might have changed the
+	 * entity instance completely.
+	 * @param requirementVersionLink The RequirementVersionLink to persist.
+	 * @return The persisted RequirementVersionLink given as parameter.
+	 */
+	RequirementVersionLink addLink(RequirementVersionLink requirementVersionLink);
 }

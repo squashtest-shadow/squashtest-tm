@@ -30,10 +30,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -50,6 +47,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
+import org.squashtest.tm.web.internal.helper.LinkedRequirementVersionActionSummaryBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
@@ -109,8 +107,8 @@ public class LinkedRequirementVersionsManagerController {
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 		.mapAttribute("rv-reference", "reference", RequirementVersion.class)
 		.mapAttribute("rv-name", "name", RequirementVersion.class)
-		.mapAttribute("rv-version", "version", RequirementVersion.class)
-		.mapAttribute("rv-role", "role", LinkedRequirementVersion.class)
+		.mapAttribute("rv-version", "versionNumber", RequirementVersion.class)
+		.map("rv-role", "role")
 		.map("milestone-dates", "endDate");
 
 	@RequestMapping("/table")
@@ -199,6 +197,6 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
-		return null;
+		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 }

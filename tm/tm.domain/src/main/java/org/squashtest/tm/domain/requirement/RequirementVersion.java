@@ -99,7 +99,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	public static final int MAX_REF_SIZE = 50;
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "requirementVersion1", fetch=FetchType.LAZY)
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH }, mappedBy = "requirementVersion", fetch=FetchType.LAZY)
 	private Set<RequirementVersionLink> requirementVersionLinks = new HashSet<>();
 
 	@NotNull

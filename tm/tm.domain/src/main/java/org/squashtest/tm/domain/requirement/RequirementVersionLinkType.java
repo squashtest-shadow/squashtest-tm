@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.requirement;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Identified;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -29,7 +30,7 @@ import javax.validation.constraints.Size;
  * Created by jlor on 09/05/2017.
  */
 @Entity
-public class RequirementVersionLinkType {
+public class RequirementVersionLinkType implements Identified {
 
 	@Id
 	@Column(name = "REQUIREMENT_VERSION_LINK_TYPE_ID")
@@ -47,10 +48,14 @@ public class RequirementVersionLinkType {
 	@NotBlank
 	private String role2 = "";
 
+	@Column(name="IS_DEFAULT")
+	private boolean isDefault;
+
 	public RequirementVersionLinkType() {
 		this.id = 1l;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
