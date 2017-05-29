@@ -105,6 +105,10 @@ public class TomcatContainerConfig {
     	 * This fix patches the problem for the version 1.15. The proper fix for 1.16 would rather 
     	 * rely on the correct version of Tomcat, and fix what is wrong with it instead. 
     	 */
+    	
+    	/*
+    	 * 29/05/2017 : looks like the temporary fix made it to Squash 16 too.
+    	 */
     	@Override
     	protected void configureSsl(AbstractHttp11JsseProtocol<?> protocol, Ssl ssl) {
     		// first, call the super method as usual
