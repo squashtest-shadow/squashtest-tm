@@ -18,23 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception.requirement;
+package org.squashtest.tm.exception.requirement.link;
 
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-import javax.validation.constraints.NotNull;
-
 /**
+ * Exception for Requirement Versions that can't be linked because they belong to the same Requirement.
  * @author jlor
  */
-public class UnlinkableLinkedRequirementVersionException extends LinkedRequirementVersionException {
+public class SameRequirementLinkedRequirementVersionException extends LinkedRequirementVersionException {
 
 	private static final long serialVersionUID = -1907643035129595448L;
 
 	private final RequirementVersion requirementVersion1;
 	private final RequirementVersion requirementVersion2;
 
-	public UnlinkableLinkedRequirementVersionException(RequirementVersion requirementVersion1, RequirementVersion requirementVersion2) {
+	public SameRequirementLinkedRequirementVersionException(RequirementVersion requirementVersion1, RequirementVersion requirementVersion2) {
 		this.requirementVersion1 = requirementVersion1;
 		this.requirementVersion2 = requirementVersion2;
 	}
@@ -49,6 +48,6 @@ public class UnlinkableLinkedRequirementVersionException extends LinkedRequireme
 
 	@Override
 	public String getShortName() {
-		return "unlinkable-version-exception";
+		return "same-requirement-linked-version-exception";
 	}
 }

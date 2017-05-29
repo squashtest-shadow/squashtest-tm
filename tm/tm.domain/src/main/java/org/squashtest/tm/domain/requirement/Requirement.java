@@ -90,9 +90,9 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	private List<RequirementVersion> versions = new ArrayList<>();
 
 
-        
+
         /*
-        Note about cascading: 
+        Note about cascading:
         CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
         CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
         */
@@ -259,7 +259,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 *
-	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
+	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases or new requirement version
 	 */
 	public boolean isLinkable() {
 		return getStatus().isRequirementLinkable();

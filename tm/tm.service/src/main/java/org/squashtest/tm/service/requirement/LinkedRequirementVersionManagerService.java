@@ -24,16 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementVersionLink;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service for management of Requirement Versions linked to other Requirement Versions.

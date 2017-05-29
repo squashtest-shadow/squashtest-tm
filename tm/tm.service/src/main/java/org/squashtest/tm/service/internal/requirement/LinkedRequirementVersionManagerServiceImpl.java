@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import com.google.common.base.Optional;
+import org.mockito.internal.matchers.Same;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,10 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.*;
-import org.squashtest.tm.exception.requirement.LinkedRequirementVersionException;
-import org.squashtest.tm.exception.requirement.UnlinkableLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
@@ -89,8 +92,13 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		RequirementVersion mainReqVersion = reqVersionDao.findOne(mainReqVersionId);
 		for(RequirementVersion otherRequirementVersion : requirementVersions) {
-			if(!reqVersionLinkDao.linkAlreadyExists(mainReqVersionId, otherRequirementVersion.getId())) {
-				//TODO: Implement getDefault() thing.
+
+			try {
+				checkIfLinkAlreadyExists(mainReqVersion, otherRequirementVersion);
+				checkIfSameRequirement(mainReqVersion, otherRequirementVersion);
+				checkIfVersionsAreLinkable(mainReqVersion, otherRequirementVersion);
+
+				/* Aucune exception -> Ajout */
 				RequirementVersionLink newReqVerLink =
 					new RequirementVersionLink(
 						mainReqVersion,
@@ -98,13 +106,34 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 						reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType(),
 						false);
 				reqVersionLinkDao.addLink(newReqVerLink);
-			} else {
-				//TODO: Manage Exceptions in a Try !.
-				rejections.add(new UnlinkableLinkedRequirementVersionException(mainReqVersion, otherRequirementVersion));
+			} catch(LinkedRequirementVersionException exception) {
+
+				rejections.add(exception);
 			}
 		}
 		return rejections;
 	}
+
+	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
+		throws AlreadyLinkedRequirementVersionException {
+		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {
+			throw new AlreadyLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+		}
+	};
+
+	private void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
+		throws SameRequirementLinkedRequirementVersionException {
+			if (reqVersion.getRequirement().getId() == relatedReqVersion.getRequirement().getId()) {
+				throw new SameRequirementLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+			}
+		};
+
+	private void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
+		throws UnlinkableLinkedRequirementVersionException {
+		if (!reqVersion.isLinkable() || !relatedReqVersion.isLinkable()) {
+			throw new UnlinkableLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+		}
+	};
 
 	private List<RequirementVersion> findRequirementVersions(
 		List<Long> requirementNodesIds) {

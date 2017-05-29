@@ -18,20 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception.requirement;
+package org.squashtest.tm.exception.requirement.link;
+
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
- * Exception thrown while doing linked requirement versions related operation
- *
+ * Exception for Requirement Versions that are already linked together.
  * @author jlor
- *
  */
-public abstract class LinkedRequirementVersionException extends RuntimeException {
+public class AlreadyLinkedRequirementVersionException extends LinkedRequirementVersionException {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -1907643035129595448L;
 
-	public abstract String getShortName();
+	private final RequirementVersion requirementVersion1;
+	private final RequirementVersion requirementVersion2;
+
+	public AlreadyLinkedRequirementVersionException(RequirementVersion requirementVersion1, RequirementVersion requirementVersion2) {
+		this.requirementVersion1 = requirementVersion1;
+		this.requirementVersion2 = requirementVersion2;
+	}
+
+	public RequirementVersion getRequirementVersion1() {
+		return requirementVersion1;
+	}
+
+	public RequirementVersion getRequirementVersion2() {
+		return requirementVersion2;
+	}
+
+	@Override
+	public String getShortName() {
+		return "already-linked-version-exception";
+	}
 }

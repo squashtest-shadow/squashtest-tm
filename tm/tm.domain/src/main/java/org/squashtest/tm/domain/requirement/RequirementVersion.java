@@ -292,7 +292,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/**
 	 *
-	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
+	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases or new requirement version
 	 */
 	public boolean isLinkable() {
 		return getStatus().isRequirementLinkable();

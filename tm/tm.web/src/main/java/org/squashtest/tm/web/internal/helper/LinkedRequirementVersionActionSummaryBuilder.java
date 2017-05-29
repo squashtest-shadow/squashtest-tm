@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
-import org.squashtest.tm.exception.requirement.*;
+import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,11 +57,11 @@ public final class LinkedRequirementVersionActionSummaryBuilder {
 		/*TODO: Adapter avec les classes d'exception qu'on aura créées. */
 		for (LinkedRequirementVersionException rejection : rejections) {
 			if (rejection instanceof UnlinkableLinkedRequirementVersionException) {
+				summary.put("notLinkableRejections", Boolean.TRUE);
+			} else if (rejection instanceof AlreadyLinkedRequirementVersionException) {
 				summary.put("alreadyLinkedRejections", Boolean.TRUE);
-			} else if (rejection instanceof UnlinkableLinkedRequirementVersionException) {
-				summary.put("alreadyLinkedRejections", Boolean.TRUE);
-			} else if (rejection instanceof UnlinkableLinkedRequirementVersionException) {
-				summary.put("alreadyLinkedRejections", Boolean.TRUE);
+			} else if (rejection instanceof SameRequirementLinkedRequirementVersionException) {
+				summary.put("sameRequirementRejections", Boolean.TRUE);
 			}
 		}
 		return summary;

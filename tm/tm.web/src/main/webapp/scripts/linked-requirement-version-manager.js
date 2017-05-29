@@ -53,8 +53,9 @@ require([ "common" ], function() {
 		function showAddSummary(summary) {
 			if (summary) {
 				var summaryMessages = {
-						alreadyLinkedRejections: msg.get("requirement-version.linked-requirement-versions.already-linked-rejection"),
-						notLinkableRejections: msg.get("requirement-version.linked-requirement-versions.not-linkable-rejection")
+						alreadyLinkedRejections: msg.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
+						notLinkableRejections: msg.get("requirement-version.linked-requirement-versions.rejection.not-linkable-rejection"),
+						sameRequirementRejections: msg.get("requirement-version.linked-requirement-versions.rejection.same-requirement-rejection")
 				};
 
 				var summaryRoot = $( "#add-summary-dialog > ul" );
