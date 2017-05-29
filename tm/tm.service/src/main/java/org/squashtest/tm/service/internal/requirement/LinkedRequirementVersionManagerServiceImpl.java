@@ -95,7 +95,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 					new RequirementVersionLink(
 						mainReqVersion,
 						otherRequirementVersion,
-						reqVersionLinkTypeDao.findOne(1l),false);
+						reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType(),
+						false);
 				reqVersionLinkDao.addLink(newReqVerLink);
 			} else {
 				//TODO: Manage Exceptions in a Try !.

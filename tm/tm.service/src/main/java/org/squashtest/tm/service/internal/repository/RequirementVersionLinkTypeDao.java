@@ -37,4 +37,9 @@ import java.util.List;
  */
 public interface RequirementVersionLinkTypeDao extends CrudRepository<RequirementVersionLinkType, Long> {
 
+	/**
+	 * Get the only {@link RequirementVersionLinkType} set as the Default one.
+	 * @return
+	 */
+	RequirementVersionLinkType getDefaultRequirementVersionLinkType();
 }
