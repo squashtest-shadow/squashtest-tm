@@ -106,6 +106,7 @@ public class ConciseFormToCriteriaConverter {
 
 		switch (type) {
 			case TEXT:
+			case PASSWORD:
 			case DATE: {
 				Map exp = new HashMap();
 				exp.put(EXP_TYPE, concise.get(CON_TYPE));

@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.api.report.form.InputType.CHECKBOX;
-import static org.squashtest.tm.api.report.form.InputType.DATE;
-import static org.squashtest.tm.api.report.form.InputType.TEXT;
-import static org.squashtest.tm.api.report.form.InputType.TREE_PICKER;
-import static org.squashtest.tm.api.report.form.InputType.MILESTONE_PICKER;
-import static org.squashtest.tm.api.report.form.InputType.TAG_PICKER;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
+
+import static org.squashtest.tm.api.report.form.InputType.*;
 
 /**
  * This class builds a map of {@link Criteria} from the map of objects which was submitted by a report form.
@@ -62,6 +57,7 @@ public class FormToCriteriaConverter {
 		simpleEntryConverterByType.put(DATE, new DateEntryConverter());
 		simpleEntryConverterByType.put(CHECKBOX, new CheckboxEntryConverter());
 		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
+		simpleEntryConverterByType.put(PASSWORD, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(TREE_PICKER, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(MILESTONE_PICKER, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(TAG_PICKER, simpleEntryDefaultConverter);

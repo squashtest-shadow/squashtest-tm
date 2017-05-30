@@ -33,7 +33,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		var type = $(domTree).data("nodetype");
 		return type.toLowerCase().replace(/_/g, "-");
 	}
-	
+
 	function jsTreeType(domTree) {
 		var type = $(domTree).data("jstreenodetype");
 		return type.toLowerCase().replace(/_/g, "-");
@@ -43,7 +43,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
   		var limit = $(domTree).data("nodelimit");
   		return parseInt(limit);
   	}
-	  
+
 	function isStrictSelection(domTree) {
   		var isStrict = $(domTree).data("isstrict");
   		return isStrict;
@@ -97,6 +97,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		render: function() {
 			this._renderTexts();
+			this._renderPasswords();
 			this._renderCheckboxes();
 			this._renderCheckboxesGroups();
 			this._renderDropdownLists();
@@ -126,6 +127,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		events: {
 			"blur input:text.rpt-text-crit": "changeValuedInput",
+			"blur input:password.rpt-password-crit": "changeValuedInput",
 			"change input:checkbox[data-grouped!='true']": "changeSingleCheckbox",
 			"change input:checkbox[data-grouped='true']": "changeGroupedCheckbox",
 			"change .rpt-drop select": "changeValuedInput",
@@ -148,6 +150,18 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				}
 			});
 		},
+
+		_renderPasswords: function() {
+    			var self = this;
+
+    			this.$("input:password").each(function() {
+    				var dom = this;
+    				var attr = self.model.get(dom.name);
+    				if (!!attr && !_.isUndefined(attr.val)) {
+    					dom.value = attr.val;
+    				}
+    			});
+    		},
 
 		_renderCheckboxes: function() {
 			var self = this;
@@ -299,6 +313,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		_initModel: function() {
 			this._initTexts();
+			this._initPasswords();
 			this._initCheckboxes();
 			this._initCheckboxesGroups();
 			this._initSingleOptionInputs(".rpt-drop select", "DROPDOWN_LIST");
@@ -316,6 +331,15 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this.$("input:text").each(function() {
 				var dom = this;
 				self.model.set(dom.name, new FormModel.Input("TEXT", dom.value));
+			});
+		},
+
+		_initPasswords: function() {
+			var self = this;
+
+			this.$("input:password").each(function() {
+				var dom = this;
+				self.model.set(dom.name, new FormModel.Input("PASSWORD", dom.value));
 			});
 		},
 

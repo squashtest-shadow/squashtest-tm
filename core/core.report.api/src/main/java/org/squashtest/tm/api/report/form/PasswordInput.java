@@ -21,22 +21,17 @@
 package org.squashtest.tm.api.report.form;
 
 /**
- * Represents the different types of Input. They should also be managed on the client side (javascript).
- * @author Gregory Fouquet
+ * @author jprioux
  *
  */
-public enum InputType {
-	TEXT,
-	PASSWORD,
-	LABEL,
-	DATE,
-	DROPDOWN_LIST,
-	RADIO_BUTTONS_GROUP,
-	CHECKBOX,
-	CHECKBOXES_GROUP,
-	TREE_PICKER,
-	PROJECT_PICKER,
-	MILESTONE_PICKER,
-	TAG_PICKER,
-	INPUTS_GROUP
+public class PasswordInput extends BasicInput {
+
+	/**
+	 * @see Input#getType()
+	 */
+	@Override
+	public InputType getType() {
+		return InputType.PASSWORD;
+	}
+
 }

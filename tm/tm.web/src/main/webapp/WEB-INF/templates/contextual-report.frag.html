@@ -117,6 +117,10 @@
 
             <span th:case="'TEXT'" th:include="contextual-report-inputs.frag :: text"> TEXT </span>
 
+            <span th:case="'PASSWORD'" th:include="contextual-report-inputs.frag :: password"> PASSWORD </span>
+
+            <span th:case="'LABEL'" th:include="contextual-report-inputs.frag :: labelText"> LABEL </span>
+
             <span th:case="'CHECKBOX'" th:include="contextual-report-inputs.frag :: checkbox">
               CHECKBOX </span>
 
@@ -218,6 +222,7 @@
                   <span th:case="'DATE'" th:include="contextual-report-inputs.frag :: datepicker ">
                     DATE </span>
                   <span th:case="'TEXT'" th:include="contextual-report-inputs.frag :: text "> TEXT </span>
+                  <span th:case="'PASSWORD'" th:include="contextual-report-inputs.frag :: password "> PASSWORD </span>
                   <span th:case="'CHECKBOX'" th:include="contextual-report-inputs.frag :: checkbox ">
                     CHECKBOX </span>
                   <div th:case="'DROPDOWN_LIST'" class="rpt-drop"
@@ -234,7 +239,6 @@
             th:value="#{report.criteria.panel.button.generate.label}" />
         </div>
       </div>
-
       <div id="invalid-perimeter" class="popup-dialog not-displayed" th:title="#{popup.title.Info}">
         <span th:text="#{message.invalidPerimeter}"></span>
       </div>
@@ -295,6 +299,50 @@
       });
 
       /* ]]> */
+
+      /* TODO : Create a new type of Inputs Group for "Anomalies Details" (CheckboxInput with disable function for TextInput + PasswordInput + LabelInput). Now, we only have separate inputs, so we added css and js this way. */
+      $("input#includeLogin").css("margin", "5px 0px");
+      $("input#includePassword").css("margin-bottom", "5px");
+      $("label#includeLogin").css("padding-left", "48px").css("font-style", "normal");
+      $("label#includePassword").css("padding-left", "48px").css("font-style", "normal");
+      $("#includeBugtrackerConnection").css("font-style", "italic").css("padding-left", "20px").css("font-size", "11px");
+      function cacher() {
+          $("input#includeLogin").hide();
+          $("input#includePassword").hide();
+          $("label#includeLogin").hide();
+          $("label#includePassword").hide();
+          $("#includeBugtrackerConnection").hide();
+      }
+      function afficher() {
+          $("input#includeLogin").show();
+          $("input#includePassword").show();
+          $("label#includeLogin").show();
+          $("label#includePassword").show();
+          $("#includeBugtrackerConnection").show();
+      }
+
+      /* If a report has already been generated, then when the page is reloading, there is a time lapse between the "anomalies details"
+      checkbox generation (always false) and the value from the previous report (may be true)  */
+      $(document).ready( function() {
+          cacher();
+          setTimeout(function(){
+              if ($("#includeAnomaliesDetails").is(":checked") == true) {
+                afficher();
+              } else {
+                cacher();
+              }
+          }, 75);
+      });
+
+      $("#includeAnomaliesDetails").click(function() {
+          if ($("#includeAnomaliesDetails").is(":checked") == true) {
+              afficher();
+          } else {
+              cacher();
+          }
+      });
+
+
   </script>
   </div>
   <!-- ======================================/SCRIPT FRAGMENT==================================================== -->

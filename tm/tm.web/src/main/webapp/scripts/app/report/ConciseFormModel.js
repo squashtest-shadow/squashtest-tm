@@ -44,6 +44,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 
 	var valueTypeChecker = {
 		"TEXT": _.isString,
+		"PASSWORD": _.isString,
 		"DROPDOWN_LIST": _.isString,
 		"RADIO_BUTTONS_GROUP": _.isString,
 		"DATE": dateChecker,
@@ -117,7 +118,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 
 			if(!_.isUndefined(boundarySelector)) {
 				boundary = _.some(this.values(), pickedBoundary(boundarySelector.val));
-			} else { 
+			} else {
 				boundary = _.some(this.values(), pickedBoundary(PROJECT_PICKER)) ||
 				_.some(this.values(), pickedBoundary(TREE_PICKER)) ||
 				_.some(this.values(), pickedBoundary(MILESTONE_PICKER)) ||

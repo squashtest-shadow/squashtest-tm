@@ -57,15 +57,29 @@
   <!-- TEXT INPUT -->
   <!--  params = input -->
   <div th:fragment="text">
-    <label for="rpt-text-crit" th:for="${input.name}" th:text="${input.label}" class="rpt-text-crit">Text criteria</label>
-    <input name="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" th:attr="data-disabledby=${input.disabledBy}"/>
+    <label for="rpt-text-crit" th:for="${input.name}" th:id="${input.name}" th:text="${input.label}" class="rpt-text-crit">Text criteria</label>
+    <input name="rpt-text-crit" class="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" th:attr="data-disabledby=${input.disabledBy}"/>
+  </div>
+
+
+  <!-- PASSWORD INPUT -->
+  <!--  params = input -->
+  <div th:fragment="password">
+    <label for="rpt-password-crit" th:for="${input.name}" th:id="${input.name}" th:text="${input.label}" class="rpt-password-crit">Password criteria</label>
+    <input name="rpt-password-crit" class="rpt-password-crit" th:id="${input.name}" th:name="${input.name}" type="password" value="" th:attr="data-disabledby=${input.disabledBy}"/>
+  </div>
+
+  <!-- LABEL INPUT -->
+  <!--  params = input -->
+  <div th:fragment="labelText">
+    <span th:id="${input.name}" th:text="${input.label}" class="rpt-label-crit">Label criteria</span>
   </div>
 
 
   <!-- CHECKBOX -->
   <!--  params = input -->
   <div th:fragment="checkbox">
-    <input name="rpt-chk-crit" th:id="${checkboxId}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
+    <input name="rpt-chk-crit" th:id="${input.name}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
       th:checked="${input.defaultSelected}" th:attr="data-grouped=${grouped ne null and grouped}, data-disabledby=${input.disabledBy}"/>
     <label for="rpt-chk-crit" th:for="${checkboxId}" th:text="${input.label}">Checkbox criteria</label>
   </div>
