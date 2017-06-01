@@ -56,6 +56,15 @@ public interface RequirementVersionLinkDao extends CrudRepository<RequirementVer
 	//List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
 
 	/**
+	 *  Find the unique {@link RequirementVersionLink} between the two RequirementVersions which Ids are given as parameters.
+	 *  It gets the link with the natural direction given by the two parameters.
+	 * @param reqVersionId
+	 * @param relatedReqVersionId
+	 * @return The unique RequirementVersionLink if it exists between the two RequirementVersions. Null otherwise.
+	 */
+	RequirementVersionLink findByReqVersionsIds(@Param("reqVersionId") Long reqVersionId, @Param("relatedReqVersionId") Long relatedReqVersionId);
+
+	/**
 	 * Deletes all the RequirementVersionLinks that exist between the single given RequirementVersion and all the several others.
 	 * The request deletes two RequirementVersionLink per pair of ids, one for each link direction.
 	 * @param singleRequirementVersionId

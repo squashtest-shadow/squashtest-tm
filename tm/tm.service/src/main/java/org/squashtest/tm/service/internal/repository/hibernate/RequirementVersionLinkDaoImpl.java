@@ -77,14 +77,11 @@ public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<Requiremen
 		/* Because of the particular model, for each RequirementVersionLink persisted, we persist another symmetrical one.
 		* (Which RequirementVersions and LinkDirections were inverted). */
 		entityManager.persist(requirementVersionLink);
-		/* Except if this is the same RequirementVersion, linking to itself. */
-		if(requirementVersionLink.getLinkedRequirementVersion().getId()
-			!= requirementVersionLink.getRelatedLinkedRequirementVerison().getId()) {
 
-			RequirementVersionLink symmetricalRequirementVersionLink =
-				requirementVersionLink.createSymmetricalRequirementVersionLink();
-			entityManager.persist(symmetricalRequirementVersionLink);
-		}
+		RequirementVersionLink symmetricalRequirementVersionLink =
+			requirementVersionLink.createSymmetricalRequirementVersionLink();
+		entityManager.persist(symmetricalRequirementVersionLink);
+
 		return requirementVersionLink;
 	}
 }

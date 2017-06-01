@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function(){
+define(["workspace.event-bus"], function(eventBus){
 	"use strict";
 	return {
 		generate : function(){
@@ -39,7 +39,25 @@ define(function(){
 							"valid_children" : [ "requirement", "folder" ]
 						}
 					}
-				}
+				},
+				"dnd" : {
+        					drop_finish : function(data) {
+										var selection = data.o.not(':library, :folder');
+										var calledids = [];
+										if(selection.length > 0) {
+        							var node = data.o.treeNode();
+        							calledids = [node.getResId()];
+										}
+        						var callerid = this.get_selected().treeNode().getResId();
+
+										var data = {
+											reqNodeId: callerid,
+											relatedReqNodeIds: calledids
+										};
+        						eventBus.trigger('link-req-node-from-tree', data);
+        					}
+
+        				}
 			};
 		}
 

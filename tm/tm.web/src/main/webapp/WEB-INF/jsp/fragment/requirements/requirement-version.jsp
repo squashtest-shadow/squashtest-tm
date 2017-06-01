@@ -346,7 +346,6 @@ publish('reload.requirement.toolbar');
   </script>
 
   <%--------------------------- Linked Requirements Section ------------------------------------%>
-
   <comp:toggle-panel id="linked-requirement-version-panel" titleKey="requirement-version.linked-requirement-version.panel.title" open="true">
 
     <jsp:attribute name="panelButtons">
@@ -363,13 +362,16 @@ publish('reload.requirement.toolbar');
     </jsp:attribute>
 
     <jsp:attribute name="body">
-      <reqs:linked-requirements-table batchRemoveButtonId="unbind-requirements-button"
-          requirementVersion="${requirementVersion}"
-          editable="${ linkable }" model="${linkedRequirementVersions}"
-          milestoneConf="${milestoneConf}" />
+      <div class="jstree-drop">
+        <reqs:linked-requirements-table batchRemoveButtonId="unbind-requirements-button"
+            requirementVersion="${requirementVersion}"
+            editable="${ linkable }" model="${linkedRequirementVersions}"
+            milestoneConf="${milestoneConf}" />
+       </div>
     </jsp:attribute>
 
   </comp:toggle-panel>
+
   <script type="text/javascript">
     publish('reload.requirement.linkedrequirementversions');
   </script>

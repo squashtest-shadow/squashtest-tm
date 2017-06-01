@@ -925,8 +925,13 @@
 				query="delete RequirementVersionLink rvl " +
 					  "where rvl.requirementVersion.id = :singleRequirementVersionId and rvl.relatedRequirementVersion.id in (:requirementVersionIdsToUnlink) " +
 					  "or rvl.requirementVersion.id in (:requirementVersionIdsToUnlink) and rvl.relatedRequirementVersion.id = :singleRequirementVersionId"),
+	@NamedQuery(name="RequirementVersionLink.findByReqVersionsIds",
+				query="from RequirementVersionLink rvl where rvl.requirementVersion.id = :reqVersionId and rvl.relatedRequirementVersion.id = :relatedReqVersionId"),
+	//Requirement Version Link Types
 	@NamedQuery(name="RequirementVersionLinkType.getDefaultRequirementVersionLinkType",
-				query="from RequirementVersionLinkType rvlt where rvlt.isDefault = true")
+				query="from RequirementVersionLinkType rvlt where rvlt.isDefault = true"),
+	@NamedQuery(name="RequirementVersionLinkType.getAllRequirementVersionLinkTypes",
+				query="from RequirementVersionLinkType"),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

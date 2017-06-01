@@ -288,10 +288,146 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						apiUrl: routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId)
 					});
 
+					var chooseLinkTypeDialog = $("#choose-link-type-dialog").formDialog();
+					var addSummaryDialog = $("#add-summary-dialog").messageDialog();
+
 					eventBus.one("contextualcontent.clear", function() {
 						linkedReqPanel.remove();
 						linkedReqPanel = undefined;
 					});
+
+					var bind = LinkedRequirementsPanel.bindingActionCallback(routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId), "POST");
+
+					function lock(){
+          	$('#add-items-button').button('disable');
+          	$('#remove-items-button').button('disable');
+          };
+
+          function unlock(){
+          	$('#add-items-button').button('enable');
+          	$('#remove-items-button').button('enable');
+          };
+
+					eventBus.on("link-req-node-from-tree", function(evt, data) {
+						lock();
+						/* REAL VERSION ID*/
+						var reqVersionId = config.basic.currentVersionId;
+						var relatedReqNodeIds = data.relatedReqNodeIds;
+
+						if(relatedReqNodeIds.length !== 1) {
+							notification.showError('Veuillez sélectionner une et une seule exigence.');
+							unlock();
+							return;
+						} else {
+							var relatedReqNodeId = relatedReqNodeIds[0];
+							bind(relatedReqNodeId).success(function(rejections) {
+								// Si le lien n'a pas été crée, on show summary.
+								if(Object.keys(rejections).length > 0) {
+		            	showAddSummary(rejections);
+		              unlock();
+								// Sinon, on ouvre la popup.
+								} else {
+									chooseLinkTypeDialog.data('reqVersionId', reqVersionId);
+									chooseLinkTypeDialog.data('relatedReqNodeId', relatedReqNodeId);
+									chooseLinkTypeDialog.formDialog('open');
+									//table().refresh();
+									//unlock();
+								}
+
+							});
+						}
+					});
+
+					function showAddSummary(summary) {
+          			if (summary) {
+          				var summaryMessages = {
+          						alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
+          						notLinkableRejections: translator.get("requirement-version.linked-requirement-versions.rejection.not-linkable-rejection"),
+          						sameRequirementRejections: translator.get("requirement-version.linked-requirement-versions.rejection.same-requirement-rejection")
+          				};
+
+          				var summaryRoot = $( "#add-summary-dialog > ul" );
+          				summaryRoot.empty();
+
+          				for(var rejectionType in summary) {
+          					var message = summaryMessages[rejectionType];
+
+          					if (message) {
+          						summaryRoot.append('<li>' + message + '</li>');
+          					}
+          				}
+
+          				if (summaryRoot.children().length > 0) {
+          					$( "#add-summary-dialog" ).messageDialog("open");
+          				}
+          			}
+          		};
+
+						chooseLinkTypeDialog.on('formdialogopen', function() {
+
+						chooseLinkTypeDialog.formDialog('setState', 'wait');
+          	/* Fetching related RequirementVersion attributes in order to display them in the popup. */
+          	var getRelatedReqVersionInfos = LinkedRequirementsPanel.bindingActionCallback(routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId), "GET");
+          	var id = chooseLinkTypeDialog.data('relatedReqNodeId')
+          	var reqVersionsInfos = getRelatedReqVersionInfos(id).success(function(data) {
+          		var relatedVersionName = data[0];
+          		var relatedVersionDescription = data[1];
+          		chooseLinkTypeDialog.find("#relatedRequirementName").html(relatedVersionName);
+          		chooseLinkTypeDialog.find("#relatedRequirementDescription").html(relatedVersionDescription);
+
+          		/* Fetching whole list of RequirementVersionTypes to populate comboBox */
+          		var comboBox = chooseLinkTypeDialog.find("#link-types-options");
+          		comboBox.empty();
+          		$.ajax({
+          			url: routing.buildURL('requirements.linkedRequirementVersions', config.basic.currentVersionId) + "/requirement-versions-link-types",
+          			method: 'GET',
+          			datatype: 'json'
+          		}).success(function(typesList) {
+          						var length = typesList.length;
+          						for(var i=0; i < length; i++) {
+          							var type = typesList[i];
+          							var id = type.id, role1 = translator.get(type.role1), role2 = translator.get(type.role2);
+          							var optionKey_1 = id + "_" + 0;
+          							var optionLabel_1 = role1 +  " - " + role2;
+          							comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');
+
+          							if(role1 !== role2) {
+          								var optionKey_2 = id + "_" + 1;
+          								var optionLabel_2 = role2 + " - " + role1;
+          								comboBox.append('<option value = "' + optionKey_2 + '">' + optionLabel_2 + '</option>');
+          							}
+          						}
+          						chooseLinkTypeDialog.formDialog('setState', 'confirm');
+          						});
+          	});
+
+          });
+
+						chooseLinkTypeDialog.on('formdialogconfirm', function() {
+            				/* This popup can be opened only if a unique requirement was selected in the tree. */
+            				var relatedReqVersionId = chooseLinkTypeDialog.data("relatedReqNodeId");
+            				var selectedKey = $(this).find('option:selected').val();
+            				var selectedTypeIdAndDirection = selectedKey.split("_");
+            				var selectedTypeId = parseInt(selectedTypeIdAndDirection[0]);
+            				var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
+                    var params = {
+                    	reqVersionLinkTypeId: selectedTypeId,
+                    	reqVersionLinkTypeDirection: selectedTypeDirection
+                    };
+
+                    bind(relatedReqVersionId, params).success(function(data){
+            					chooseLinkTypeDialog.formDialog('close');
+                    	//showAddSummary(data);
+                    	table.refresh();
+                    	unlock();
+                    //					sendUpdateTree(data.linkedIds);
+                    });
+            			});
+
+            			chooseLinkTypeDialog.on('formdialogcancel', function() {
+                  	chooseLinkTypeDialog.formDialog('close');
+            				unlock();
+                  });
 				}
 			}
 

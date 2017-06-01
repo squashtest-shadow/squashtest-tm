@@ -35,6 +35,7 @@ import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionExce
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -43,6 +44,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfi
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.LinkedRequirementVersionActionSummaryBuilder;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
@@ -83,6 +85,9 @@ public class LinkedRequirementVersionsManagerController {
 	private RequirementLibraryFinderService requirementLibraryFinder;
 
 	@Inject
+	private RequirementLibraryNavigationService requirementFinder;
+
+	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
 	@Inject
@@ -115,7 +120,7 @@ public class LinkedRequirementVersionsManagerController {
 		return buildLinkedRequirementVersionsModel(requirementVersionId, pas, params.getsEcho());
 	}
 
-	protected DataTableModel buildLinkedRequirementVersionsModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
+	protected DataTableModel buildLinkedRequirementVersionsModel(long requirementVersionId, PagingAndSorting pas, String sEcho) {
 		PagedCollectionHolder<List<LinkedRequirementVersion>> holder = linkedReqVersionManager.findAllByRequirementVersion(
 			requirementVersionId, pas);
 
@@ -129,7 +134,9 @@ public class LinkedRequirementVersionsManagerController {
 		@PathVariable List<Long> requirementVersionIdsToUnbind) {
 
 		linkedReqVersionManager.removeLinkedRequirementVersionsFromRequirementVersion(requirementVersionId, requirementVersionIdsToUnbind);
-	};
+	}
+
+	;
 
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
@@ -181,17 +188,60 @@ public class LinkedRequirementVersionsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{requirementNodesIds}", method = RequestMethod.POST)
-	public Map<String, Object> addLinkedReqVersionsToReqVersion(
+	public Map<String, Object> addDefaultLinkWithVersionIdAndNodeId(
 		@PathVariable("requirementVersionId") long requirementVersionId,
 		@PathVariable("requirementNodesIds") List<Long> requirementNodesIds) {
 
 		Collection<LinkedRequirementVersionException> rejections =
 			linkedReqVersionManager.addLinkedReqVersionsToReqVersion(requirementVersionId, requirementNodesIds);
 		return buildSummary(rejections);
+	}
 
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"reqVersionNodeId", "relatedReqVersionNodeId"})
+	public Map<String, Object> addDefaultLinkWithNodeIds(
+		@RequestParam("reqVersionNodeId") long reqVersionNodeId,
+		@RequestParam("relatedReqVersionNodeId") long relatedReqVersionNodeId) {
+
+		Collection<LinkedRequirementVersionException> rejections =
+			linkedReqVersionManager.addDefaultLinkWithNodeIds(reqVersionNodeId, relatedReqVersionNodeId);
+		return buildSummary(rejections);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{requirementNodeId}", method = RequestMethod.POST, params = {"reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
+	public void updateLinkTypeAndDirection (
+		@PathVariable("requirementVersionId") long requirementVersionId,
+		@PathVariable("requirementNodeId") long relatedRequirementNodeId,
+		@RequestParam("reqVersionLinkTypeId") long reqVersionLinkTypeId,
+		@RequestParam("reqVersionLinkTypeDirection") boolean reqVersionLinkTypeDirection) {
+
+		linkedReqVersionManager.updateLinkTypeAndDirection(
+			requirementVersionId, relatedRequirementNodeId,
+			reqVersionLinkTypeId, reqVersionLinkTypeDirection);
 	}
 
 	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
 		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{relatedReqNodeId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public String[] getRequirementVersionInformation(@PathVariable long relatedReqNodeId) {
+
+		/* The node is necessarily a Requirement because client side filters other nodes.
+		* It would be much better to check again on this side. */
+		Requirement selectedRequirement = requirementFinder.findRequirement(relatedReqNodeId);
+		RequirementVersion latestRequirement = selectedRequirement.findLastNonObsoleteVersion();
+		String[] reqAttributes = new String[2];
+		reqAttributes[0] = latestRequirement.getName();
+		reqAttributes[1] = latestRequirement.getDescription();
+		return reqAttributes;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/requirement-versions-link-types", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes() {
+		return linkedReqVersionManager.getAllReqVersionLinkTypes();
 	}
 }

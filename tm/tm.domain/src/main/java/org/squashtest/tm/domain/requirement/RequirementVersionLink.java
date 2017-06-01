@@ -117,6 +117,10 @@ public class RequirementVersionLink implements Identified {
 		return this.linkDirection;
 	}
 
+	public void setLinkDirection(boolean linkDirection) {
+		this.linkDirection = linkDirection;
+	}
+
 	public RequirementVersionLink createSymmetricalRequirementVersionLink() {
 		return new RequirementVersionLink(
 				this.relatedRequirementVersion,

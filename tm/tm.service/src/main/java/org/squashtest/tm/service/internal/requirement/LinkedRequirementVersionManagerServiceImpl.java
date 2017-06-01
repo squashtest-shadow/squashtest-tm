@@ -98,7 +98,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 				checkIfSameRequirement(mainReqVersion, otherRequirementVersion);
 				checkIfVersionsAreLinkable(mainReqVersion, otherRequirementVersion);
 
-				/* Aucune exception -> Ajout */
+				/* No exception -> Adding */
 				RequirementVersionLink newReqVerLink =
 					new RequirementVersionLink(
 						mainReqVersion,
@@ -107,11 +107,53 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 						false);
 				reqVersionLinkDao.addLink(newReqVerLink);
 			} catch(LinkedRequirementVersionException exception) {
-
 				rejections.add(exception);
 			}
 		}
 		return rejections;
+	}
+
+	@Override
+	public Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(Long reqVersionNodeId, Long relatedReqVersionNodeId) {
+		/* Trouver l'Id de la Version */
+		List<Long> reqVerNodeIds = new ArrayList<>(1);
+		reqVerNodeIds.add(reqVersionNodeId);
+
+		List<Long> relatedReqVerNodeIds = new ArrayList<>(1);
+		relatedReqVerNodeIds.add(relatedReqVersionNodeId);
+
+ 		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
+		/* Appeler la méthode du dessus... */
+		return addLinkedReqVersionsToReqVersion(requirementVersions.get(0).getId(), relatedReqVerNodeIds);
+	}
+
+	@Override
+	public void updateLinkTypeAndDirection(
+		long reqVersionId, long relatedReqNodeId,
+		long linkTypeId, boolean linkDirection) {
+
+		/* Récupérer l'id de la ReqVersion */
+		List<Long> reqVerNodeIds = new ArrayList<Long>();
+		reqVerNodeIds.add(relatedReqNodeId);
+		List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
+		RequirementVersion relatedReqVersion = list.get(0);
+		long relatedReqVersionId = relatedReqVersion.getId();
+
+		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(reqVersionId, relatedReqVersionId);
+		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedReqVersionId, reqVersionId);
+
+		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+
+		linkToUpdate.setLinkType(newLinkType);
+		linkToUpdate.setLinkDirection(linkDirection);
+
+		symmetricalLinkToUpdate.setLinkType(newLinkType);
+		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
+	}
+
+	@Override
+	public List<RequirementVersionLinkType> getAllReqVersionLinkTypes() {
+		return reqVersionLinkTypeDao.getAllRequirementVersionLinkTypes();
 	}
 
 	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
@@ -170,4 +212,5 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		}
 		return rvs;
 	}
+
 }

@@ -45,6 +45,7 @@
       var squashtm = squashtm || {};
       squashtm.bindingsManager = {
     		  bindingsUrl: "${linkedReqVersionsUrl}",
+    		  requirementVersion: "${requirementVersion}",
     		  model : ${json:serialize(linkedReqVersionsModel.aaData)}
    	  };
     </script>
@@ -73,9 +74,6 @@
             batchRemoveButtonId="none"
             milestoneConf="${milestoneConf}"/>
 
-    <div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.linked-requirement-versions.add-summary-dialog.title' />">
-      <ul><li>summary message here</li></ul>
-    </div>
   </jsp:attribute>
 
   <jsp:attribute name="subPageTitle">
@@ -90,5 +88,6 @@
 
   <jsp:attribute name="foot">
   </jsp:attribute>
+
 </layout:tree-picker-layout>
 

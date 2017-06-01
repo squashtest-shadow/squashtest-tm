@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog" ],
-	function($, squash, Backbone, Handlebars, _, api, msg) {
+define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator", 'app/ws/squashtm.notification', "jquery.squash.formdialog" ],
+	function($, squash, Backbone, Handlebars, _, api, msg, notification) {
 	"use strict";
 
 	msg.load([
@@ -28,25 +28,28 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 	]);
 
 	/**
-	 * Creates an binding action functino with the given configuration
+	 * Creates a binding action function with the given configuration.
 	 *
-	 * @param conf
-	 *          the configuration for the created function
+	 * @param apiUrl
+	 *					the Url of the request to send.
 	 * @param method
+	 *          the method for the created function.
 	 *
-	 * @return function which posts an unbind request for the given id(s)
-	 * @param ids
-	 *          either an id or an array of ids
-	 * @return a promise (the xhr's)
+	 * @return function which send a request for the given id(s)
+	 *
+	 * 		@param ids
+	 *    			either an id or an array of ids which will be send as parameters
+	 * 		@return a promise (the xhr's)
 	 */
 	function bindingActionCallback(apiUrl, method) {
-		return function(ids) {
+		return function(ids, data) {
 			var url = apiUrl + "/" + (_.isArray(ids) ? ids.join(',') : ids);
 
 			return $.ajax({
 				url : url,
 				type : method,
-				dataType : 'json'
+				dataType : 'json',
+				data : data
 			});
 		};
 	}
@@ -82,6 +85,16 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			});
 			this.$el.append(dlgs);
 
+			var tmplLinkType = Handlebars.compile($("#choose-link-type-dialog-tpl").html());
+			var linkTypeDialog = tmplLinkType({
+				dialogId : "choose-link-type-dialog"
+			});
+			this.$el.append(linkTypeDialog);
+
+			var tmplSummaryDialog = Handlebars.compile($("#add-summary-dialog-tpl").html());
+      var addSummaryDialog = tmplSummaryDialog();
+      this.$el.append(addSummaryDialog);
+
 			var unbind = bindingActionCallback(this.apiUrl, "delete");
 
 			// unbind multiple items dialog
@@ -96,7 +109,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			var $single = this.$("#unbind-active-linked-reqs-row-dialog");
 			$single.formDialog();
 
-			$single.on("formdialogopen", this.onOpenSingle);
+			$single.on("formdialogopen", this.onOpenBatch);
 			$single.on('formdialogconfirm', this.onConfirmSingleCallback(unbind, unbindDialogSucceed($single)));
 			$single.on('formdialogcancel', this.onCloseSingle);
 
@@ -148,7 +161,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 
 			if (id === undefined) {
 				$(this).formDialog("close");
-				notification.showError(translator.get('message.EmptyTableSelection'));
+				notification.showError(msg.get('message.EmptyTableSelection'));
 			} else {
 				$(this).formDialog("setState", "confirm-deletion");
 			}

@@ -54,7 +54,6 @@ public final class LinkedRequirementVersionActionSummaryBuilder {
 	public static Map<String, Object> buildAddActionSummary(Collection<LinkedRequirementVersionException> rejections) {
 		Map<String, Object> summary = new HashMap<>();
 
-		/*TODO: Adapter avec les classes d'exception qu'on aura créées. */
 		for (LinkedRequirementVersionException rejection : rejections) {
 			if (rejection instanceof UnlinkableLinkedRequirementVersionException) {
 				summary.put("notLinkableRejections", Boolean.TRUE);

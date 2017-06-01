@@ -42,4 +42,8 @@ public interface RequirementVersionLinkTypeDao extends CrudRepository<Requiremen
 	 * @return
 	 */
 	RequirementVersionLinkType getDefaultRequirementVersionLinkType();
+	/**
+	 * Find all the RequirementVersionLinkTypes that exist.
+	 */
+	List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes();
 }

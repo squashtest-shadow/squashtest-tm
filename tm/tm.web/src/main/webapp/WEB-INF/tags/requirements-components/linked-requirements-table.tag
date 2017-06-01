@@ -42,6 +42,7 @@
 
 <f:message var="labelConfirm" key="label.Confirm"/>
 <f:message var="labelCancel"  key="label.Cancel"/>
+<f:message var="labelClose"  key="label.Close"/>
 
 <c:set var="tblRemoveBtnClause" value=""/>
 <c:if test="${editable}" >
@@ -84,4 +85,48 @@
       <input type="button" class="button" value="${labelCancel}" data-def="evt=cancel"/>
     </div>
   </div>
+</script>
+
+<script type="text/x-handlebars-template" id="choose-link-type-dialog-tpl">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='requirement-version.link.type.dialog.title'/>">
+
+    <div data-def="state=confirm">
+      <table id="involved-req-versions">
+      	<tr>
+      		<td>
+				<span>${requirementVersion.name}</span>
+      		</td>
+      		<td>
+      			<span id="relatedRequirementName">${{relatedRequirement.name}}</span>
+      		</td>
+      	</tr>
+      	<tr>
+      		<td>
+      			<span>${requirementVersion.description}</span>
+      		</td>
+      		<td>
+      			<span id="relatedRequirementDescription">${{relatedRequirement.description}}</span>
+      		</td>
+      	</tr>
+      </table>
+      <label>Link types: </label>
+      <select id="link-types-options">
+      	<option value="1_0">Related - Related</option>
+      	<option value="2_0">Parent - Child</option>
+      	<option value="2_1">Child - Parent</option>
+      </select>
+    </div>
+	<div data-def="state=wait">
+	</div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
+      <input type="button" class="button" value="${labelClose}" data-def="evt=cancel"/>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-handlebars-template" id="add-summary-dialog-tpl">
+	<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.linked-requirement-versions.add-summary-dialog.title' />">
+		<ul><li>summary message here</li></ul>
+	</div>
 </script>
