@@ -95,7 +95,7 @@ public class WebSecurityConfig {
 			// @formatter:on
 		}
 	}
-	
+
 	@Configuration
 	@Order(20)
 	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
@@ -103,35 +103,36 @@ public class WebSecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http
-			.antMatcher("/api/**")
-				.authorizeRequests()
-					.anyRequest()
-						.authenticated()
-				.and()
-					.httpBasic()
-						.realmName("squash-api")
-						.authenticationEntryPoint(new AuthenticationEntryPoint() {
-							
-							@Override
-							public void commence(HttpServletRequest request,
-									HttpServletResponse response, AuthenticationException authException)
-									throws IOException, ServletException {
-								// TODO Auto-generated method stub
+				.csrf().disable()
+				.antMatcher("/api/**")
+					.authorizeRequests()
+						.anyRequest()
+					.authenticated()
+					.and()
+						.httpBasic()
+							.realmName("squash-api")
+							.authenticationEntryPoint(new AuthenticationEntryPoint() {
 
-								response.addHeader("WWW-Authenticate", "Basic realm=\"squah-api\"");
-								response.addHeader("Content-Type", "application/json");
-								response.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
-										authException.getMessage() +
-										". You may authenticate using "+
-										"1/ basic authentication or " +
-										"2/ fetching a cookie JSESSIONID from /login");
-							}
-						});
+								@Override
+								public void commence(HttpServletRequest request,
+										HttpServletResponse response, AuthenticationException authException)
+										throws IOException, ServletException {
+									// TODO Auto-generated method stub
+
+									response.addHeader("WWW-Authenticate", "Basic realm=\"squah-api\"");
+									response.addHeader("Content-Type", "application/json");
+									response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+											authException.getMessage() +
+											". You may authenticate using "+
+											"1/ basic authentication or " +
+											"2/ fetching a cookie JSESSIONID from /login");
+								}
+							});
 			// @formatter:on
 		}
 	}
-	
-	
+
+
 
 	@Configuration
 	@Order(30)
