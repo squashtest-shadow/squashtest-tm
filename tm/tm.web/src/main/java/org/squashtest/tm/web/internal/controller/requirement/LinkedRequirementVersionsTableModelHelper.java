@@ -56,6 +56,7 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 		row.put("rv-version", Integer.toString(rv.getVersionNumber()));
 		row.put("rv-role", formatRole(rv.getRole()));
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(rv.getMilestones(), helper, locale));
+		row.put("empty-edit-holder", null);
 		row.put("empty-delete-holder", null);
 		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(rv.getMilestones()));
 

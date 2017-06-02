@@ -60,6 +60,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -209,39 +210,50 @@ public class LinkedRequirementVersionsManagerController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{requirementNodeId}", method = RequestMethod.POST, params = {"reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
+	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {"isRelatedIdANodeId", "reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
 	public void updateLinkTypeAndDirection (
 		@PathVariable("requirementVersionId") long requirementVersionId,
-		@PathVariable("requirementNodeId") long relatedRequirementNodeId,
+		@PathVariable("relatedId") long relatedId,
+		@RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId,
 		@RequestParam("reqVersionLinkTypeId") long reqVersionLinkTypeId,
 		@RequestParam("reqVersionLinkTypeDirection") boolean reqVersionLinkTypeDirection) {
 
+		if(!isRelatedIdANodeId) {
+			RequirementVersion relatedVersion = requirementVersionFinder.findById(relatedId);
+			relatedId = relatedVersion.getRequirement().getId();
+		}
 		linkedReqVersionManager.updateLinkTypeAndDirection(
-			requirementVersionId, relatedRequirementNodeId,
+			requirementVersionId, relatedId,
 			reqVersionLinkTypeId, reqVersionLinkTypeDirection);
 	}
 
-	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
-		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
-	}
-
 	@ResponseBody
-	@RequestMapping(value = "/{relatedReqNodeId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public String[] getRequirementVersionInformation(@PathVariable long relatedReqNodeId) {
+	@RequestMapping(value = "/{relatedId}", params = {"isRelatedIdANodeId"},method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public Map<String, String> getRequirementVersionInformation(@PathVariable long relatedId, @RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId) {
 
-		/* The node is necessarily a Requirement because client side filters other nodes.
-		* It would be much better to check again on this side. */
-		Requirement selectedRequirement = requirementFinder.findRequirement(relatedReqNodeId);
-		RequirementVersion latestRequirement = selectedRequirement.findLastNonObsoleteVersion();
-		String[] reqAttributes = new String[2];
-		reqAttributes[0] = latestRequirement.getName();
-		reqAttributes[1] = latestRequirement.getDescription();
-		return reqAttributes;
+		Map<String, String> versionInfosMap = new HashMap<>();
+
+		RequirementVersion latestVersion;
+		if(isRelatedIdANodeId) {
+			// If the relatedId is a node's one, we have to get the corresponding latest version.
+			Requirement selectedRequirement = requirementFinder.findRequirement(relatedId);
+			latestVersion = selectedRequirement.findLastNonObsoleteVersion();
+		} else {
+			latestVersion = requirementVersionFinder.findById(relatedId);
+		}
+		versionInfosMap.put("versionName", latestVersion.getName());
+		versionInfosMap.put("versionDescription", latestVersion.getDescription());
+
+		return versionInfosMap;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/requirement-versions-link-types", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes() {
 		return linkedReqVersionManager.getAllReqVersionLinkTypes();
+	}
+
+	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
+		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 }

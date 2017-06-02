@@ -48,6 +48,10 @@
 <c:if test="${editable}" >
 	<c:set var="tblRemoveBtnClause" value=", unbind-button" />
 </c:if>
+<c:set var="tblEditTypeBtnClause" value=""/>
+<c:if test="${editable}" >
+	<c:set var="tblEditTypeBtnClause" value="edit-link-type-button" />
+</c:if>
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
@@ -64,6 +68,7 @@
       <th data-def="map=rv-name, sortable, link=${requirementVersionUrl}/{rv-id}/info"><f:message key="requirement.name.label" /></th>
       <th data-def="map=rv-version, sortable"><f:message key="requirement-version.version-number.label" /></th>
       <th data-def="map=rv-role, sortable"><f:message key="requirement-version.linked-requirement-version.table.col-header.role"/></th>
+      <th data-def="map=empty-edit-holder, narrow, sClass=${tblEditTypeBtnClause}">&nbsp;</th>
       <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>
       <th data-def="map=milestone, invisible"></th>
     </tr>
