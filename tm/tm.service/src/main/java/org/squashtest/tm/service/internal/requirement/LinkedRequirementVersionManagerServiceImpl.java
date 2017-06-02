@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.requirement;
 import com.google.common.base.Optional;
 import org.mockito.internal.matchers.Same;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -40,6 +41,8 @@ import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerServ
 
 import javax.inject.Inject;
 import java.util.*;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional
@@ -59,6 +62,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 
 	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" +
+		OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<LinkedRequirementVersion>>
 		findAllByRequirementVersion(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 
@@ -77,12 +82,15 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
+		OR_HAS_ROLE_ADMIN)
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
 
 		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
 
+	@Deprecated
 	@Override
 	public Collection<LinkedRequirementVersionException> addLinkedReqVersionsToReqVersion(
 		Long mainReqVersionId, List<Long> otherReqVersionsIds) {
@@ -113,9 +121,11 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return rejections;
 	}
 
+	/*TODO: Change Javascript to get reqVerionId and note Node. */
 	@Override
+	@PreAuthorize("hasPermission(#argo0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
+		OR_HAS_ROLE_ADMIN)
 	public Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(Long reqVersionNodeId, Long relatedReqVersionNodeId) {
-		/* Trouver l'Id de la Version */
 		List<Long> reqVerNodeIds = new ArrayList<>(1);
 		reqVerNodeIds.add(reqVersionNodeId);
 
@@ -123,24 +133,24 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		relatedReqVerNodeIds.add(relatedReqVersionNodeId);
 
  		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
-		/* Appeler la méthode du dessus... */
 		return addLinkedReqVersionsToReqVersion(requirementVersions.get(0).getId(), relatedReqVerNodeIds);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
+		OR_HAS_ROLE_ADMIN)
 	public void updateLinkTypeAndDirection(
-		long reqVersionId, long relatedReqNodeId,
+		long requirementVersionId, long relatedReqNodeId,
 		long linkTypeId, boolean linkDirection) {
 
-		/* Récupérer l'id de la ReqVersion */
 		List<Long> reqVerNodeIds = new ArrayList<Long>();
 		reqVerNodeIds.add(relatedReqNodeId);
 		List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
 		RequirementVersion relatedReqVersion = list.get(0);
 		long relatedReqVersionId = relatedReqVersion.getId();
 
-		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(reqVersionId, relatedReqVersionId);
-		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedReqVersionId, reqVersionId);
+		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedReqVersionId);
+		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedReqVersionId, requirementVersionId);
 
 		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.findOne(linkTypeId);
 

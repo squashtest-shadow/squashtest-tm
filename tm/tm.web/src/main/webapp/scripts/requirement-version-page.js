@@ -362,7 +362,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
           					var message = summaryMessages[rejectionType];
 
           					if (message) {
-          						summaryRoot.append('<li>' + message + '</li>');
+          						summaryRoot.append('<span>' + message + '</span>');
           					}
           				}
 

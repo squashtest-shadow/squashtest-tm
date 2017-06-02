@@ -99,10 +99,10 @@
       <table id="involved-req-versions">
       	<tr>
       		<td>
-				<span>${requirementVersion.name}</span>
+				<span style="font-weight: bold">${requirementVersion.name}</span>
       		</td>
       		<td>
-      			<span id="relatedRequirementName">${{relatedRequirement.name}}</span>
+      			<span id="relatedRequirementName" style="font-weight: bold">${{relatedRequirement.name}}</span>
       		</td>
       	</tr>
       	<tr>
@@ -114,12 +114,14 @@
       		</td>
       	</tr>
       </table>
-      <label>Link types: </label>
+      <div style="text-align: center">
+      <label><f:message key="requirement-version.link.type.dialog.title"/></label>
       <select id="link-types-options">
       	<option value="1_0">Related - Related</option>
       	<option value="2_0">Parent - Child</option>
       	<option value="2_1">Child - Parent</option>
       </select>
+      </div>
     </div>
 	<div data-def="state=wait">
 	</div>
