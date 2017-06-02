@@ -41,11 +41,11 @@ define(["workspace.event-bus"], function(eventBus){
 					}
 				},
 				"dnd" : {
-        					drop_finish : function(data) {
-										var selection = data.o.not(':library, :folder');
+        					drop_finish : function(dropData) {
+										var selection = dropData.o.not(':library, :folder');
 										var calledids = [];
 										if(selection.length > 0) {
-        							var node = data.o.treeNode();
+        							var node = dropData.o.treeNode();
         							calledids = [node.getResId()];
 										}
         						var callerid = this.get_selected().treeNode().getResId();

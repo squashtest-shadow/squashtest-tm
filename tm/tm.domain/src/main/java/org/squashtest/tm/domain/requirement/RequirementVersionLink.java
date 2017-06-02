@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import com.sun.javafx.beans.IDProperty;
 import org.squashtest.tm.domain.Identified;
 
 import javax.persistence.*;
