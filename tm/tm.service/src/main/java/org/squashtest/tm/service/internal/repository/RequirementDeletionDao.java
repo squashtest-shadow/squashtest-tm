@@ -32,7 +32,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 
 	/**
 	 * Given a list of RequirementLibraryNode ids, will tell which ones are folder ids and which ones are requirements.
-	 * 
+	 *
 	 * @param originalIds the requirement library node ids we want to sort out.
 	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the requirement ids.
 	 */
@@ -43,6 +43,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	List<Long> findRequirementFolderAttachmentListIds(List<Long> folderIds);
 
 	void removeFromVerifiedVersionsLists(List<Long> versionIds);
+	void removeFromLinkedVersionsLists(List<Long> versionIds);
 	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
 
 	void deleteRequirementAuditEvents(List<Long> requirementIds);
@@ -65,7 +66,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 
 	/**
 	 * Will set the attribute "currentVersion" of each requirement to "null"
-	 * 
+	 *
 	 * @param requirementIds
 	 */
 	void unsetRequirementCurrentVersion(List<Long> requirementIds);
@@ -88,7 +89,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	/**
 	 * <p>Given a list of requirement ids, returns the version ids that should
 	 * be deleted according to the milestone rule.</p>
-	 * 
+	 *
 	 *   <p>A version is milestone-deletable if :
 	 *   	<ul>
 	 *   		<li>it belong to the said milestone AND,</li>
@@ -96,7 +97,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	 *   		<li>it doesn't belong to more any other milestone</li>
 	 *   	</ul>
 	 *   </p>
-	 * 
+	 *
 	 * @param requirementIds
 	 * @param milestoneId
 	 * @return
@@ -109,16 +110,16 @@ public interface RequirementDeletionDao extends DeletionDao {
 	 * 	Given a list of requirement ids, returns the version ids that should
 	 * 	be unbound from that milestone.
 	 * </p>
-	 * 
+	 *
 	 * <p> A version is milestone-unbindable if :
 	 * 	<ul>
 	 * 		<li>it belong to the said milestone AND</li>
 	 * 		<li>it has no milestone that locks it AND</li>
 	 * 		<li>it belong to more than one milestone</li>
 	 * 	</ul>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param requirementIds
 	 * @param milestoneId
 	 * @return
@@ -136,7 +137,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	/**
 	 * Given their ids, returns the ids of <strong>requirements</strong> that have at least
 	 * one version that cannot be removed due to restriction on the milestone status.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
@@ -145,7 +146,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	/**
 	 * Given their ids, return the ids of <strong>requirement version</strong> one cannot remove
 	 * due to restrictions on the status of their milestones
-	 * 
+	 *
 	 * @param originalId
 	 * @return
 	 */
@@ -153,7 +154,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 
 	/**
 	 * Given their id, return which of them have many milestones
-	 * 
+	 *
 	 * @param nodeIds
 	 * @return
 	 */

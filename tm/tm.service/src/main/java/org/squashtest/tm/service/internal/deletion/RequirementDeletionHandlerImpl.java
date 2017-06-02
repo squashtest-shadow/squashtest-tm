@@ -549,6 +549,7 @@ RequirementNodeDeletionHandler {
 			// remove binds to other entities
 			deletionDao.removeTestStepsCoverageByRequirementVersionIds(versionIds);
 			deletionDao.removeFromVerifiedVersionsLists(versionIds);
+			deletionDao.removeFromLinkedVersionsLists(versionIds);
 
 			// remove the elements now
 			deletionDao.deleteVersions(versionIds);

@@ -187,6 +187,14 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 	@Override
+	public void removeFromLinkedVersionsLists(List<Long> versionIds) {
+		if (!versionIds.isEmpty()) {
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVEFROMLINKEDVERSIONSLISTS, VERSION_IDS,
+				versionIds);
+		}
+	}
+
+	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
 			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVEFROMVERIFIEDREQUIREMENTLISTS, REQUIREMENT_IDS,

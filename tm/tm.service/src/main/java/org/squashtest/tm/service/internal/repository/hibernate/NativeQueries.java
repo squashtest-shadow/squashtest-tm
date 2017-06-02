@@ -181,6 +181,9 @@ public final class NativeQueries {
 	public static final String REQUIREMENT_SQL_REMOVEFROMVERIFIEDVERSIONSLISTS = " delete from REQUIREMENT_VERSION_COVERAGE "
 			+ " where verified_req_version_id in (:versionIds)";
 
+	public static final String REQUIREMENT_SQL_REMOVEFROMLINKEDVERSIONSLISTS = "delete from REQUIREMENT_VERSION_LINK" +
+		" where requirement_version_id in (:versionIds) or related_requirement_version_id in (:versionIds)";
+
 	public static final String REQUIREMENT_SQL_REMOVEFROMVERIFIEDREQUIREMENTLISTS = " delete from REQUIREMENT_VERSION_COVERAGE "
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
