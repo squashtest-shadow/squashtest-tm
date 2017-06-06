@@ -362,12 +362,16 @@ publish('reload.requirement.toolbar');
     </jsp:attribute>
 
     <jsp:attribute name="body">
-      <div class="jstree-drop">
+      <c:if test="${ linkable }">
+        <div class="jstree-drop">
+      </c:if>
         <reqs:linked-requirements-table batchRemoveButtonId="unbind-requirements-button"
             requirementVersion="${requirementVersion}"
             editable="${ linkable }" model="${linkedRequirementVersions}"
             milestoneConf="${milestoneConf}" />
-       </div>
+       <c:if test="${ linkable }">
+          </div>
+       </c:if>
     </jsp:attribute>
 
   </comp:toggle-panel>
@@ -437,7 +441,8 @@ publish('reload.requirement.attachments');
       <c:if test="${milestone_mode}">
           <p><f:message key="requirement.new-version.confirm-dialog.milestonemode"/></p>
       </c:if>
-
+    <input type="checkbox" id="req-version-inheritance" />
+    <label for="req-version-inheritance">Reprendre les liens entre versions d'exigences non-obsolètes.</label>
 		<input type="button" value="${confirmLabel}" />
 		<input type="button" value="${cancelLabel}" />
 	</div>

@@ -32,10 +32,7 @@ import javax.inject.Provider;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -121,19 +118,19 @@ public class RequirementVersionManagerController {
 
 
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = {"inheritReqLinks"})
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId) {
+	public void createNewVersion(@PathVariable long requirementId, @RequestParam("inheritReqLinks") boolean inheritReqLinks) {
 
             Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-            if (activeMilestone.isPresent()) {	
+            if (activeMilestone.isPresent()) {
                 // milestone mode creation
                 ArrayList<Long> milestoneIds = new ArrayList<>();
                 milestoneIds.add(activeMilestone.get().getId());
-                versionService.createNewVersion(requirementId, milestoneIds);
+                versionService.createNewVersion(requirementId, milestoneIds, inheritReqLinks);
             }else{
                 // normal mode creation
-                versionService.createNewVersion(requirementId);
+                versionService.createNewVersion(requirementId, inheritReqLinks);
             }
 	}
 

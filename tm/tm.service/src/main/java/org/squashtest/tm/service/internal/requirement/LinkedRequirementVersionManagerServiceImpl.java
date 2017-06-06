@@ -80,7 +80,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		for(RequirementVersionLink reqVerLink : requirementVersionLinksList) {
 				linkedReqVersionsList.add(
-					reqVerLink.getRelatedLinkedRequirementVerison());
+					reqVerLink.getRelatedLinkedRequirementVersion());
 		}
 
 		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, requirementVersionLinksList.size(), linkedReqVersionsList);
@@ -125,7 +125,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return rejections;
 	}
 
-	/*TODO: Change Javascript to get reqVerionId and note Node. */
+	/*TODO: Change Javascript to get reqVerionId and not Node. */
 	@Override
 	@PreAuthorize("hasPermission(#argo0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
 		OR_HAS_ROLE_ADMIN)
@@ -163,6 +163,36 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
+	}
+
+	@Override
+	public void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion) {
+		for(RequirementVersionLink reqVerLink : previousVersion.getRequirementVersionLinks()) {
+			try {
+				addDetailedReqVersionLink(
+					newVersion.getId(),
+					reqVerLink.getRelatedLinkedRequirementVersion().getId(),
+					reqVerLink.getLinkType().getId(),
+					reqVerLink.getLinkDirection());
+			} catch(LinkedRequirementVersionException exception) {
+				exception.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public RequirementVersionLink addDetailedReqVersionLink(long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection) {
+		RequirementVersion reqVersion = reqVersionDao.findOne(reqVersionId);
+		RequirementVersion relatedReqVersion = reqVersionDao.findOne(relatedReqVersionId);
+
+		checkIfLinkAlreadyExists(reqVersion, relatedReqVersion);
+		checkIfSameRequirement(reqVersion, relatedReqVersion);
+		checkIfVersionsAreLinkable(reqVersion, relatedReqVersion);
+
+		RequirementVersionLinkType linkType = reqVersionLinkTypeDao.findOne(linkTypeId);
+		RequirementVersionLink newLink = new RequirementVersionLink(reqVersion, relatedReqVersion, linkType, linkDirection);
+		reqVersionLinkDao.addLink(newLink);
+		return newLink;
 	}
 
 	@Override

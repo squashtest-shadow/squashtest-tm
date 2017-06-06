@@ -102,7 +102,7 @@ public class RequirementVersionLink implements Identified {
 		return new LinkedRequirementVersion(this.requirementVersion, getRequirementVersionRole());
 	}
 
-	public LinkedRequirementVersion getRelatedLinkedRequirementVerison() {
+	public LinkedRequirementVersion getRelatedLinkedRequirementVersion() {
 		return new LinkedRequirementVersion(this.relatedRequirementVersion, getRelatedRequirementVersionRole());
 	}
 	public RequirementVersionLinkType getLinkType() {

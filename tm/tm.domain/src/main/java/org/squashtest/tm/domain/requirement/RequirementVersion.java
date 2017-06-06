@@ -498,6 +498,10 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return Collections.unmodifiableSet(requirementVersionCoverages);
 	}
 
+	public Set<RequirementVersionLink> getRequirementVersionLinks() {
+		return Collections.unmodifiableSet(requirementVersionLinks);
+	}
+
 	@Override
 	public Set<Milestone> getMilestones() {
 		return milestones;

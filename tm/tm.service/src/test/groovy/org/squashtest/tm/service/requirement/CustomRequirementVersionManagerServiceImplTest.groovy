@@ -31,6 +31,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.requirement.CustomRequirementVersionManagerServiceImpl
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
 
 import spock.lang.Specification
 
@@ -41,6 +42,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
 	IndexationService indexationService = Mock()
+	LinkedRequirementVersionManagerService requirementLinkService = Mock()
 
 	def setup() {
 		service.requirementVersionDao = requirementVersionDao
@@ -49,6 +51,8 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 
 		em.unwrap(_) >> currentSession
 		service.customFieldValueService = customFieldService
+		service.requirementLinkService = requirementLinkService
+
 	}
 
 	def "should increase the version of the requirement and persist it"() {
@@ -61,7 +65,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 		req.currentVersion >> newVersion
 
 		when:
-		service.createNewVersion(10L)
+		service.createNewVersion(10L, false)
 
 		then:
 		1 * em.persist(newVersion)

@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 
@@ -56,4 +58,9 @@ public interface LinkedRequirementVersionManagerService {
 	void updateLinkTypeAndDirection(
 		long requirementVersionId, long relatedRequirementNodeId,
 		long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection);
+
+	void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion);
+
+	RequirementVersionLink addDetailedReqVersionLink(
+		long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection);
 }

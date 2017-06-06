@@ -324,7 +324,7 @@ class RequirementFacility extends EntityFacilitySupport {
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		requirementVersion.setVersionNumber(instruction.getTarget().getVersion());
 		//creating new version with service
-		requirementVersionManagerService.createNewVersion(reqId);
+		requirementVersionManagerService.createNewVersion(reqId, false);
 		//and updating persisted reqVersion
 		RequirementVersion requirementVersionPersisted = requirement.getCurrentVersion();
 		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);

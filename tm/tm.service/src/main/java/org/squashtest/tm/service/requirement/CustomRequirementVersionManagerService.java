@@ -46,20 +46,23 @@ public interface CustomRequirementVersionManagerService {
 
 	/**
 	 * Increase the current version of the given requirement. Note that the argument is a requirement Id, not the id of a given version
-	 * 
+	 * If links inheritance was chosen, all requirement version links will be copied from the previous version.
+	 *
 	 * @param requirementId
 	 */
-	void createNewVersion(long requirementId);
-	
+	void createNewVersion(long requirementId, boolean inheritReqLinks);
+
 	/**
 	 * Increase the current version of the given requirement and associates the requirement to the given milestones. If other versions of the same requirements
 	 * were bound to those milestones, they won't be anymore.
-	 * 
+	 *
 	 * Note that the argument is a requirement Id, not the id of a given version
-	 * 
+	 *
+	 * If links inheritance was chosen, all requirement version links will be copied from the previous version.
+	 *
 	 * @param requirementId
 	 */
-	void createNewVersion(long requirementId, Collection<Long> milestoneIds);
+	void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks);
 
 
 	void rename(long requirementVersionId, String newName);
@@ -93,15 +96,15 @@ public interface CustomRequirementVersionManagerService {
 	 */
 	@Transactional(readOnly=true)
 	List<RequirementVersion> findAllByRequirement(long requirementId);
-	
+
 	@Transactional(readOnly=true)
 	Long findReqVersionIdByRequirementAndVersionNumber(long requirementId, Integer versionNumber);
 
 	/*
-	 * 
-	 * 
+	 *
+	 *
 	 * Milestones
-	 * 
+	 *
 	 */
 	void bindMilestones(long versionId, Collection<Long> milestoneIds);
 
@@ -118,7 +121,7 @@ public interface CustomRequirementVersionManagerService {
 	Collection<Long> findBindedMilestonesIdForMassModif(List<Long> reqVersionIds);
 
 	boolean haveSamePerimeter(List<Long> reqVersionIds);
-	
+
 	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 
 

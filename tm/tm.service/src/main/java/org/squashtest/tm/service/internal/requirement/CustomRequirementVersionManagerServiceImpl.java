@@ -61,6 +61,7 @@ import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 /**
@@ -92,6 +93,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 
+	@Inject
+	private LinkedRequirementVersionManagerService requirementLinkService;
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -110,7 +114,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void createNewVersion(long requirementId) {
+	public void createNewVersion(long requirementId, boolean inheritReqLinks) {
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 		RequirementVersion previousVersion = req.getCurrentVersion();
 
@@ -119,14 +123,15 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementVersion newVersion = req.getCurrentVersion();
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
+		requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void createNewVersion(long requirementId, Collection<Long> milestoneIds) {
+	public void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks) {
 
-		createNewVersion(requirementId);
+		createNewVersion(requirementId, inheritReqLinks);
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 
 		for (RequirementVersion version : req.getRequirementVersions()) {
