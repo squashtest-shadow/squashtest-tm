@@ -40,9 +40,6 @@ import java.util.List;
  */
 public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<RequirementVersionLink> implements CustomRequirementVersionLinkDao {
 
-	@PersistenceContext
-	EntityManager entityManager;
-
 	@Override
 	public List<RequirementVersionLink> findAllByReqVersionId(long requirementVersionId, PagingAndSorting pagingAndSorting) {
 

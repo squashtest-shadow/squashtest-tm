@@ -23,6 +23,8 @@ package org.squashtest.tm.exception.requirement.link;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 
+import javax.persistence.Transient;
+
 /**
  * General Exception for Requirement Versions that can't be linked.
  * @author jlor
@@ -31,20 +33,8 @@ public class UnlinkableLinkedRequirementVersionException extends LinkedRequireme
 
 	private static final long serialVersionUID = -1907643035129595448L;
 
-	private final RequirementVersion requirementVersion1;
-	private final RequirementVersion requirementVersion2;
-
-	public UnlinkableLinkedRequirementVersionException(RequirementVersion requirementVersion1, RequirementVersion requirementVersion2) {
-		this.requirementVersion1 = requirementVersion1;
-		this.requirementVersion2 = requirementVersion2;
-	}
-
-	public RequirementVersion getRequirementVersion1() {
-		return requirementVersion1;
-	}
-
-	public RequirementVersion getRequirementVersion2() {
-		return requirementVersion2;
+	public UnlinkableLinkedRequirementVersionException() {
+		super();
 	}
 
 	@Override

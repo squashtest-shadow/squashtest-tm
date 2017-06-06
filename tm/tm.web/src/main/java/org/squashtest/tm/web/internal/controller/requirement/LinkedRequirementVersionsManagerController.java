@@ -213,10 +213,12 @@ public class LinkedRequirementVersionsManagerController {
 	@RequestMapping(value = "/{relatedId}", method = RequestMethod.POST, params = {"isRelatedIdANodeId", "reqVersionLinkTypeId", "reqVersionLinkTypeDirection"})
 	public void updateLinkTypeAndDirection (
 		@PathVariable("requirementVersionId") long requirementVersionId,
-		@PathVariable("relatedId") long relatedId,
+		@PathVariable("relatedId") long paramRelatedId,
 		@RequestParam("isRelatedIdANodeId") boolean isRelatedIdANodeId,
 		@RequestParam("reqVersionLinkTypeId") long reqVersionLinkTypeId,
 		@RequestParam("reqVersionLinkTypeDirection") boolean reqVersionLinkTypeDirection) {
+
+		long relatedId = paramRelatedId;
 
 		if(!isRelatedIdANodeId) {
 			RequirementVersion relatedVersion = requirementVersionFinder.findById(relatedId);

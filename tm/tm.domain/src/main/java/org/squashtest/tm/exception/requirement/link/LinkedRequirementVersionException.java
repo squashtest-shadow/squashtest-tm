@@ -28,9 +28,6 @@ package org.squashtest.tm.exception.requirement.link;
  */
 public abstract class LinkedRequirementVersionException extends RuntimeException {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -1907643035129595448L;
 
 	public abstract String getShortName();

@@ -62,6 +62,7 @@ public class RequirementVersionLink implements Identified {
 	}
 
 	public RequirementVersionLink() {
+		super();
 	}
 
 	public RequirementVersionLink(RequirementVersion requirementVersion, RequirementVersion relatedRequirementVersion) {

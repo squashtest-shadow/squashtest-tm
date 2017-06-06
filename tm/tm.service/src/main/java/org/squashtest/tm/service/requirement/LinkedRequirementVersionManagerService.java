@@ -51,9 +51,6 @@ public interface LinkedRequirementVersionManagerService {
 	Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(
 		Long reqVersionNodeId, Long relatedReqVersionNodeId);
 
-	/*Collection<LinkedRequirementVersionException> addDetailedReqVersionLink(
-		long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection);*/
-
 	List<RequirementVersionLinkType> getAllReqVersionLinkTypes();
 
 	void updateLinkTypeAndDirection(

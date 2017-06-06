@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import com.google.common.base.Optional;
-import org.mockito.internal.matchers.Same;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -35,12 +34,18 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -71,7 +76,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			reqVersionLinkDao.findAllByReqVersionId(requirementVersionId, pagingAndSorting);
 
 		List<LinkedRequirementVersion> linkedReqVersionsList =
-			new ArrayList<LinkedRequirementVersion>();
+			new ArrayList<>();
 
 		for(RequirementVersionLink reqVerLink : requirementVersionLinksList) {
 				linkedReqVersionsList.add(
@@ -90,7 +95,6 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
 
-	@Deprecated
 	@Override
 	public Collection<LinkedRequirementVersionException> addLinkedReqVersionsToReqVersion(
 		Long mainReqVersionId, List<Long> otherReqVersionsIds) {
@@ -143,7 +147,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		long requirementVersionId, long relatedReqNodeId,
 		long linkTypeId, boolean linkDirection) {
 
-		List<Long> reqVerNodeIds = new ArrayList<Long>();
+		List<Long> reqVerNodeIds = new ArrayList<>();
 		reqVerNodeIds.add(relatedReqNodeId);
 		List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
 		RequirementVersion relatedReqVersion = list.get(0);
@@ -166,24 +170,21 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return reqVersionLinkTypeDao.getAllRequirementVersionLinkTypes();
 	}
 
-	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
-		throws AlreadyLinkedRequirementVersionException {
+	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {
-			throw new AlreadyLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+			throw new AlreadyLinkedRequirementVersionException();
 		}
 	};
 
-	private void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
-		throws SameRequirementLinkedRequirementVersionException {
+	private void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 			if (reqVersion.getRequirement().getId() == relatedReqVersion.getRequirement().getId()) {
-				throw new SameRequirementLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+				throw new SameRequirementLinkedRequirementVersionException();
 			}
 		};
 
-	private void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion)
-		throws UnlinkableLinkedRequirementVersionException {
+	private void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (!reqVersion.isLinkable() || !relatedReqVersion.isLinkable()) {
-			throw new UnlinkableLinkedRequirementVersionException(reqVersion, relatedReqVersion);
+			throw new UnlinkableLinkedRequirementVersionException();
 		}
 	};
 

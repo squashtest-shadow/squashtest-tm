@@ -45,17 +45,6 @@ import java.util.List;
 public interface RequirementVersionLinkDao extends CrudRepository<RequirementVersionLink, Long>, CustomRequirementVersionLinkDao {
 
 	/**
-	 * Find all the {@link RequirementVersionLink}s in which the single {@link RequirementVersion} given is involved with
-	 * the several other RequirementVersions given in the List.
-	 * It returns the entries for both directions.
-	 * @param requirementVersionId The ID of the single {@link RequirementVersion}.
-	 * @param otherRequirementVersionsIds The IDs of the several other {@link RequirementVersion}s.
-	 * @return The List of {@link RequirementVersionLink}s linking the single RequirementVersion given as first parameter
-	 * and the other RequirementVersions given in the second parameter.
-	 */
-	//List<RequirementVersionLink> findByOneReqVersionAndSeveralOthers(@Param("requirementVersionId")long requirementVersionId, @Param("otherRequirementVersionsIds") List<Long> otherRequirementVersionsIds);
-
-	/**
 	 *  Find the unique {@link RequirementVersionLink} between the two RequirementVersions which Ids are given as parameters.
 	 *  It gets the link with the natural direction given by the two parameters.
 	 * @param reqVersionId

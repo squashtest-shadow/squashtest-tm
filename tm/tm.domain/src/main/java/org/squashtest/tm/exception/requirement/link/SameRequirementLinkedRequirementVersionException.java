@@ -30,20 +30,8 @@ public class SameRequirementLinkedRequirementVersionException extends LinkedRequ
 
 	private static final long serialVersionUID = -1907643035129595448L;
 
-	private final RequirementVersion requirementVersion1;
-	private final RequirementVersion requirementVersion2;
-
-	public SameRequirementLinkedRequirementVersionException(RequirementVersion requirementVersion1, RequirementVersion requirementVersion2) {
-		this.requirementVersion1 = requirementVersion1;
-		this.requirementVersion2 = requirementVersion2;
-	}
-
-	public RequirementVersion getRequirementVersion1() {
-		return requirementVersion1;
-	}
-
-	public RequirementVersion getRequirementVersion2() {
-		return requirementVersion2;
+	public SameRequirementLinkedRequirementVersionException() {
+		super();
 	}
 
 	@Override
