@@ -43,21 +43,35 @@ public class RequirementVersionLinkType implements Identified {
 	@NotBlank
 	private String role1 = "";
 
+	@Column(name="ROLE_1_CODE")
+	@Size(max=30)
+	@NotBlank
+	private String role1Code = "";
+
 	@Column(name = "ROLE_2")
 	@Size(max = 50)
 	@NotBlank
 	private String role2 = "";
 
+	@Column(name="ROLE_2_CODE")
+	@Size(max=30)
+	@NotBlank
+	private String role2Code = "";
+
 	@Column(name="IS_DEFAULT")
 	private boolean isDefault;
 
 	public RequirementVersionLinkType() {
-		this.id = 1l;
+		super();
 	}
 
 	@Override
 	public Long getId() {
 		return id;
+	}
+
+	public boolean isDefault() {
+		return isDefault;
 	}
 
 	public String getRole1() {
@@ -74,5 +88,21 @@ public class RequirementVersionLinkType implements Identified {
 
 	public void setRole2(String role2) {
 		this.role2 = role2;
+	}
+
+	public String getRole1Code() {
+		return role1Code;
+	}
+
+	public String getRole2Code() {
+		return role2Code;
+	}
+
+	public void setRole1Code(String role1Code) {
+		this.role1Code = role1Code;
+	}
+
+	public void setRole2Code(String role2Code) {
+		this.role2Code = role2Code;
 	}
 }
