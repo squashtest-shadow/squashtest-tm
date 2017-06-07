@@ -267,7 +267,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						tooltip : translator.get('label.Unbind')
 					},
 					buttons: [{
-						tooltip : "Modify type",
+						tooltip : translator.get("requirement-version.link.type.modify.tooltip"),
 						tdSelector : "td.edit-link-type-button",
 						uiIcon : "edit-pencil",
 						onClick : function(table, cell){
@@ -331,7 +331,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						var relatedReqNodeIds = data.relatedReqNodeIds;
 
 						if(relatedReqNodeIds.length !== 1) {
-							notification.showError('Veuillez sélectionner une et une seule exigence.');
+							notification.showError(translator.get("message.SelectOneRequirement"));
 							return;
 						} else {
 							var relatedReqNodeId = relatedReqNodeIds[0];
@@ -444,6 +444,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
           chooseLinkTypeDialog.on('formdialogcancel', function() {
           	$(this).formDialog('close');
+            table.refresh();
           });
 				}
 

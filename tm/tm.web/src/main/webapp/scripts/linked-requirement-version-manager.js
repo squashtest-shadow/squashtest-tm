@@ -34,7 +34,8 @@ require([ "common" ], function() {
 			"requirement-version.linked-requirement-versions.rejection.already-linked-rejection",
 			"requirement-version.linked-requirement-versions.rejection.not-linkable-rejection",
 			"requirement-version.linked-requirement-versions.rejection.same-requirement-rejection",
-			"label.Unbind"
+			"label.Unbind",
+			"message.SelectOneRequirement"
 		]);
 
   	function lock(){
@@ -66,7 +67,7 @@ require([ "common" ], function() {
 					var message = summaryMessages[rejectionType];
 
 					if (message) {
-						summaryRoot.append('<li>' + message + '</li>');
+						summaryRoot.append('<span>' + message + '</span>');
 					}
 				}
 
@@ -83,14 +84,9 @@ require([ "common" ], function() {
 			return $("#linked-requirement-versions-table").squashTable();
 		};
 
-		// maybe here
 		$(document).on("click", "#remove-items-button", function(event){
 			squash.vent.trigger("linkedrequirementversions:unbind-selected", { source: event });
 		});
-
-		/*squash.vent.on("linkedreqversionspanel:unbound", function(event) {
-			sendUpdateTree(event.model);
-		});*/
 
 		/**
 		*	Get the id of the Requirement Version currently selected in the tree.
@@ -114,14 +110,6 @@ require([ "common" ], function() {
 
 		$(function() {
 
-			function openChooseTypeDialog(reqVersionId, relatedId, isRelatedIdANodeId) {
-      					var linkTypeDialog = $("#choose-link-type-dialog");
-      					linkTypeDialog.data('reqVersionId', reqVersionId);
-      					linkTypeDialog.data('relatedReqNodeId', relatedId);
-      					linkTypeDialog.data('isRelatedIdANodeId', isRelatedIdANodeId);
-      					linkTypeDialog.formDialog('open');
-      };
-
 			// init the table
 			$("#linked-requirement-versions-table").squashTable(
 			{
@@ -133,7 +121,7 @@ require([ "common" ], function() {
 	        tooltip : msg.get('label.Unbind')
 	      },
 				buttons: [{
-					tooltip : "Modify type",
+					tooltip : msg.get('requirement-version.link.type.modify.tooltip'),
 					tdSelector : "td.edit-link-type-button",
 					uiIcon : "edit-pencil",
 					onClick : function(table, cell){
@@ -143,6 +131,19 @@ require([ "common" ], function() {
 					}
 				}]
 			});
+
+			var openChooseTypeDialog = function (reqVersionId, relatedId, isRelatedIdANodeId) {
+      					var linkTypeDialog = $("#choose-link-type-dialog");
+      					linkTypeDialog.data('reqVersionId', reqVersionId);
+      					linkTypeDialog.data('relatedReqNodeId', relatedId);
+      					linkTypeDialog.data('isRelatedIdANodeId', isRelatedIdANodeId);
+      					linkTypeDialog.formDialog('open');
+      };
+
+			var deselectTree = function() {
+      	var tree = $('#linkable-requirements-tree');
+      	tree.jstree('deselect_all');
+      };
 
 			var apiUrl = window.squashtm.bindingsManager.bindingsUrl;
 
@@ -154,88 +155,83 @@ require([ "common" ], function() {
 			var addSummaryDialog = $("#add-summary-dialog").messageDialog();
 
 			var bind = LinkedReqVersionsPanel.bindingActionCallback(apiUrl, "POST");
+      var getAndDisplayRelatedReqVersionInfos = LinkedReqVersionsPanel.bindingActionCallback(apiUrl, "GET");
 
-			$("#add-items-button").on("click", function() {
+			var onAddItemBtnClick = function() {
 				lock();
-				var ids = getReqVersionsIdFromTree();
+        var ids = getReqVersionsIdFromTree();
 
-				if (ids.length !== 1) {
-					notification.showError('Veuillez sélectionner une et une seule exigence.');
-					unlock();
-					return;
-				} else if (ids.length === 1) {
-					// Ajout du lien par défaut
-					bind(ids).success(function(rejections) {
-						// Si le lien n'a pas été créée, on show summary.
-            if(Object.keys(rejections).length > 0) {
-            	showAddSummary(rejections);
-            	unlock();
-						// Sinon, on ouvre la popup.
-            } else {
+        if (ids.length !== 1) {
+        	notification.showError(msg.get('message.SelectOneRequirement'));
+        	unlock();
+        	return;
+        } else if (ids.length === 1) {
+        	// Adding default linkType
+        	bind(ids).success(function(rejections) {
+						// If rejections happened, showing
+						if(Object.keys(rejections).length > 0) {
+							showAddSummary(rejections);
+							unlock();
+						// Else, opening the popup
+						} else {
 							openChooseTypeDialog(window.squashtm.bindingsManager.requirementVersion.id, ids, true);
-							//table().refresh();
-							//unlock();
-            }
-					});
-				}
+						}
+        	});
+        }
+			};
+			$("#add-items-button").on("click", onAddItemBtnClick);
 
-			});
+			var onLinkTypeDialogOpen = function() {
 
-			chooseLinkTypeDialog.on('formdialogopen', function() {
+				var self = chooseLinkTypeDialog;
+        self.formDialog('setState', 'wait');
 
-				var self = $(this);
-				self.formDialog('setState', 'wait');
+        var relatedId = self.data('relatedReqNodeId');
+        var isRelatedIdANodeId = self.data('isRelatedIdANodeId');
 
-				var relatedId = self.data('relatedReqNodeId');
-				var isRelatedIdANodeId = self.data('isRelatedIdANodeId');
-
-				var getRelatedReqVersionInfos = LinkedReqVersionsPanel.bindingActionCallback(apiUrl, "GET");
-
-				/* Fetching related RequirementVersion attributes in order to display them in the popup. */
-				//var ids = getReqVersionsIdFromTree();
-				var reqVersionsInfos = getRelatedReqVersionInfos(relatedId, {"isRelatedIdANodeId": isRelatedIdANodeId}).success(
-					function(relatedReqVersionInfos) {
-						var relatedVersionName = relatedReqVersionInfos.versionName;
+        /* Fetching related RequirementVersion attributes in order to display them in the popup. */
+        getAndDisplayRelatedReqVersionInfos(relatedId, {"isRelatedIdANodeId": isRelatedIdANodeId}).success(
+        	function(relatedReqVersionInfos) {
+        		var relatedVersionName = relatedReqVersionInfos.versionName;
             var relatedVersionDescription = relatedReqVersionInfos.versionDescription;
 
-						self.find("#relatedRequirementName").html(relatedVersionName);
-						self.find("#relatedRequirementDescription").html(relatedVersionDescription);
+        		self.find("#relatedRequirementName").html(relatedVersionName);
+        		self.find("#relatedRequirementDescription").html(relatedVersionDescription);
 
-						/* Fetching whole list of RequirementVersionTypes to populate comboBox */
-						var comboBox = self.find("#link-types-options");
-						comboBox.empty();
+        		/* Fetching whole list of RequirementVersionTypes to populate comboBox */
+        		var comboBox = self.find("#link-types-options");
+        		comboBox.empty();
 
-						$.ajax({
-							url: apiUrl + "/requirement-versions-link-types",
-							method: 'GET',
-							datatype: 'json'
-						}).success(function(typesList) {
-							var length = typesList.length;
-							for(var i=0; i < length; i++) {
-								var type = typesList[i];
-								var id = type.id, role1 = msg.get(type.role1), role2 = msg.get(type.role2);
-								var optionKey_1 = id + "_" + 0;
-								var optionLabel_1 = role1 +  " - " + role2;
-								comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');
+        		$.ajax({
+        			url: apiUrl + "/requirement-versions-link-types",
+        			method: 'GET',
+        			datatype: 'json'
+        		}).success(function(typesList) {
+        			var length = typesList.length;
+        			for(var i=0; i < length; i++) {
+        				var type = typesList[i];
+        				var id = type.id, role1 = msg.get(type.role1), role2 = msg.get(type.role2);
+        				var optionKey_1 = id + "_" + 0;
+        				var optionLabel_1 = role1 +  " - " + role2;
+        				comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');
 
-								if(role1 !== role2) {
-									var optionKey_2 = id + "_" + 1;
-									var optionLabel_2 = role2 + " - " + role1;
-									comboBox.append('<option value = "' + optionKey_2 + '">' + optionLabel_2 + '</option>');
-								}
-							}
-							self.formDialog('setState', 'confirm');
-						});
-				});
-			});
+        				if(role1 !== role2) {
+        					var optionKey_2 = id + "_" + 1;
+        					var optionLabel_2 = role2 + " - " + role1;
+        					comboBox.append('<option value = "' + optionKey_2 + '">' + optionLabel_2 + '</option>');
+        				}
+        			}
+        			self.formDialog('setState', 'confirm');
+        		});
+        	});
+			};
+			chooseLinkTypeDialog.on('formdialogopen', onLinkTypeDialogOpen);
 
-			chooseLinkTypeDialog.on('formdialogconfirm', function() {
+			var onLinkTypeDialogConfirm = function() {
 
-				var self = $(this);
+				var self = chooseLinkTypeDialog;
 				var relatedReqVersionId = self.data("relatedReqNodeId");
-				/* This popup can be opened only if a unique requirement was selected in the tree. */
-				var tree = $('#linkable-requirements-tree');
-				tree.jstree('deselect_all');
+				deselectTree();
 
 				var selectedKey = $(this).find('option:selected').val();
 				var selectedTypeIdAndDirection = selectedKey.split("_");
@@ -249,17 +245,19 @@ require([ "common" ], function() {
 
         bind(relatedReqVersionId, params).success(function(data){
 					self.formDialog('close');
-        	//showAddSummary(data);
         	table().refresh();
         	unlock();
-        //					sendUpdateTree(data.linkedIds);
         });
-			});
+			};
+			chooseLinkTypeDialog.on('formdialogconfirm', onLinkTypeDialogConfirm);
 
-			chooseLinkTypeDialog.on('formdialogcancel', function() {
-      	chooseLinkTypeDialog.formDialog('close');
-				unlock();
-      });
+			var onLinkTypeDialogCancel = function() {
+				chooseLinkTypeDialog.formDialog('close');
+        deselectTree();
+        table().refresh();
+        unlock();
+			};
+			chooseLinkTypeDialog.on('formdialogcancel', onLinkTypeDialogCancel);
 
 		});
 
