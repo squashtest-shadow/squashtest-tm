@@ -39,6 +39,25 @@ import org.springframework.core.io.DefaultResourceLoader;
  * This SpringApplicationRunListener lists all the jars found in the plugins folder (as defined by
  * ${squash.path.plugins-path}) and adds them to the ApplicationContext's classpath to that they are scanned / started.
  *
+ *
+ * [JTH 2017-06-07] Known issue on this class :
+ *
+ * You can't use generics inheritance reliably in plugins because :
+ *
+ *  - During spring boot load, very early in boot process, Spring boot create a new class loader witch will be his main class loader
+ *  - Spring AOP seems to keep a reference to this class loader via a Thread.currentThread().getContextClassLoader() during it's initialization
+ *  - This class override the Spring class loader in Spring context, by defining a new class loader, son of the previous one
+ *  - So the Class loader referenced in Spring AOP is the father of the actual class loader of Spring context and NOT the actual class loader of Spring context.
+ *  - This seems to lead to a crash because Spring AOP don't classify correctly generic types.
+ *
+ *  Maybe i missed something, but it seems that we cannot solve that issue without writing our own SpringBoot launcher or waiting for a correction from Spring team
+ *
+ *  - This launcher should add the plugin directory to the list of directory to scan for the class loader.
+ * 	- The classloader will be created with all the standard directories AND the plugin directory
+ * 	- Spring AOP will pick this classloader
+ * 	- We don't ever need a PluginsPathClasspathExtender class
+ *
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
@@ -113,6 +132,7 @@ public class PluginsPathClasspathExtender implements SpringApplicationRunListene
 				LOGGER.warn("Plugin file '{}' could not be converted into a URL", plugins[i], e);
 			}
 		}
+
 
 		ClassLoader extendedClassloader = new URLClassLoader(pluginsUrls, context.getClassLoader());
 		((DefaultResourceLoader) context).setClassLoader(extendedClassloader);
