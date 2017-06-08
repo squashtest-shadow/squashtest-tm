@@ -45,7 +45,8 @@ public enum TemplateWorksheet {
 	// the same sheet is shared for both dataset and values
 	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class),
 
-	COVERAGE_SHEET("LINK_REQ_TC", CoverageSheetColumn.class);
+	COVERAGE_SHEET("LINK_REQ_TC", CoverageSheetColumn.class),
+	REQUIREMENT_LINKS_SHEET("LINK_REQ_REQ", RequirementLinksSheetColumn.class);
 
 	// MultiValueMap<String, TemplateWorksheet>
 	private static final MultiValueMap ENUM_BY_SHEET_NAME = new MultiValueMap();

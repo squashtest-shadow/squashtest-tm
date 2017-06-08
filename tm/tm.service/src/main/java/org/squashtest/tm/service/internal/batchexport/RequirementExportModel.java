@@ -28,26 +28,32 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 
 public class RequirementExportModel {
+	
 	private List<RequirementModel> requirementsModels = new LinkedList<>();
 
 	private List<CoverageModel> coverages = new LinkedList<>();
-
-	public List<CoverageModel> getCoverages() {
-		return coverages;
-	}
-
-
-	public void setCoverages(List<CoverageModel> coverages) {
-		this.coverages = coverages;
-	}
+	
+	private List<RequirementLinkModel> reqLinks = new LinkedList<>();
 
 
 	public RequirementExportModel() {
 		super();
+	}
+	
+	
+	
+	
+	public List<CoverageModel> getCoverages() {
+		return coverages;
+	}
+
+	public void setCoverages(List<CoverageModel> coverages) {
+		this.coverages = coverages;
 	}
 
 	public List<RequirementModel> getRequirementsModels() {
@@ -57,6 +63,20 @@ public class RequirementExportModel {
 	public void setRequirementsModels(List<RequirementModel> requirementsModels) {
 		this.requirementsModels = requirementsModels;
 	}
+	
+	
+
+	public List<RequirementLinkModel> getReqLinks() {
+		return reqLinks;
+	}
+
+	public void setReqLinks(List<RequirementLinkModel> reqLinks) {
+		this.reqLinks = reqLinks;
+	}
+
+
+
+
 
 	public interface RequirementPathSortable {
 		String getProjectName();
@@ -338,5 +358,134 @@ public class RequirementExportModel {
 		}
 
 	}
+	
+	
+
+	public static final class RequirementLinkModel{
+
+		public static final Comparator<RequirementLinkModel> REQ_LINK_COMPARATOR = new Comparator<RequirementExportModel.RequirementLinkModel>() {
+			
+			// SONAR wont like the four-return clauses I guess
+			@Override
+			public int compare(RequirementLinkModel o1, RequirementLinkModel o2) {
+				
+				int comp = o1.getReqPath().compareTo(o2.getReqPath());
+				if (comp != 0){
+					return comp;
+				}
+				
+				comp = o1.getReqVersion() - o2.getReqVersion();
+				if (comp != 0){
+					return comp;
+				}
+				
+				comp = o1.getRelReqPath().compareTo(o2.getRelReqPath());
+				if (comp != 0){
+					return comp;
+				}
+				
+				comp = o1.getRelReqVersion() - o2.getRelReqVersion();
+				return comp;
+			}
+			
+		};
+		
+		// those attributes will be set by Hibernate (they are part of the constructor)
+		
+		/**
+		 * Id of the requirement for the requirement version under consideration. Not exported in the final 
+		 * excel file, but useful to resolve the requirement path later on.
+		 */
+		private Long reqId;		
+		/**
+		 * Id of the requirement for the related requirement version. Not exported in the final 
+		 * excel file, but useful to resolve the requirement path later on.
+		 */
+		private Long relReqId;	
+		/**
+		 * The version number of the requirement version under consideration
+		 */
+		private int reqVersion;
+		/**
+		 * The version number of the related requirement.
+		 */
+		private int relReqVersion;
+		
+		/**
+		 * The role of the related requirement version. Corresponds to {@link RequirementVersionLinkType#getRole2Code()}.
+		 */
+		private String relatedReqRole;	
+		
+		/**
+		 * The path of the requirement of the requirement version under consideration. Will not be extracted directly from 
+		 * the database, must be set manually.
+		 */
+		private String reqPath;
+		
+		/**
+		 * The path of the requirement of the related requirement version. Will not be extracted directly from 
+		 * the database, must be set manually.
+		 */
+		private String relReqPath;
+		
+		
+		public RequirementLinkModel(Long reqId, Long relReqId, int reqVersion, int relReqVersion, String relatedReqRole) {
+			super();
+			this.reqId = reqId;
+			this.relReqId = relReqId;
+			this.reqVersion = reqVersion;
+			this.relReqVersion = relReqVersion;
+			this.relatedReqRole = relatedReqRole;
+		}
+
+
+		public String getReqPath() {
+			return reqPath;
+		}
+
+
+		public void setReqPath(String reqPath) {
+			this.reqPath = reqPath;
+		}
+
+
+		public String getRelReqPath() {
+			return relReqPath;
+		}
+
+
+		public void setRelReqPath(String relReqPath) {
+			this.relReqPath = relReqPath;
+		}
+
+
+		public Long getReqId() {
+			return reqId;
+		}
+
+
+		public Long getRelReqId() {
+			return relReqId;
+		}
+
+
+		public int getReqVersion() {
+			return reqVersion;
+		}
+
+
+		public int getRelReqVersion() {
+			return relReqVersion;
+		}
+
+
+		public String getRelatedReqRole() {
+			return relatedReqRole;
+		}
+		
+		
+
+	}
+
 
 }

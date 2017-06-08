@@ -21,8 +21,12 @@
 package org.squashtest.tm.service.internal.batchexport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -39,6 +43,7 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementLinkModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.library.PathService;
@@ -60,15 +65,19 @@ public class ExportDao {
 
 
 	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
-		RequirementExportModel model = new RequirementExportModel();
+	
+		RequirementExportModel model = new RequirementExportModel();		
+		
 		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
-
-		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);
+		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);		
+		List<RequirementLinkModel> linkModels = findRequirementLinksModel(versionIds);
 
 		setPathForCoverage(coverageModels);
 
 		model.setCoverages(coverageModels);
 		model.setRequirementsModels(requirementsModel);
+		model.setReqLinks(linkModels);
+		
 		return model;
 	}
 
@@ -105,7 +114,7 @@ public class ExportDao {
 
 
 	private List<CoverageModel> findTestCaseCoverageModel(List<Long> tcIds) {
-		return findModels(getStatelessSession(), "testCase.excelExportCoverage", tcIds, CoverageModel.class);
+		return loadModels("testCase.excelExportCoverage", tcIds, "testCaseIds", CoverageModel.class);
 	}
 
 
@@ -117,14 +126,14 @@ public class ExportDao {
 
 
 		// get the models
-		buffer = findModels(session, "testCase.excelExportDataFromFolder", tclnIds, TestCaseModel.class);
+		buffer = loadModels("testCase.excelExportDataFromFolder", tclnIds, "testCaseIds", TestCaseModel.class);
 		models.addAll(buffer);
 
-		buffer = findModels(session, "testCase.excelExportDataFromLibrary", tclnIds, TestCaseModel.class);
+		buffer = loadModels("testCase.excelExportDataFromLibrary", tclnIds,"testCaseIds", TestCaseModel.class);
 		models.addAll(buffer);
 
 		//get the cufs
-		List<CustomField> cufModels = findModels(session, "testCase.excelExportCUF", tclnIds, CustomField.class);
+		List<CustomField> cufModels = loadModels("testCase.excelExportCUF", tclnIds, "testCaseIds",CustomField.class);
 
 		// add them to the test case models
 		for (TestCaseModel model : models){
@@ -153,14 +162,14 @@ public class ExportDao {
 		List<TestStepModel> buffer;
 
 
-		buffer = findModels(session, "testStep.excelExportActionSteps", tcIds, TestStepModel.class);
+		buffer = loadModels("testStep.excelExportActionSteps", tcIds, "testCaseIds", TestStepModel.class);
 		models.addAll(buffer);
 
-		buffer = findModels(session, "testStep.excelExportCallSteps", tcIds, TestStepModel.class);
+		buffer = loadModels("testStep.excelExportCallSteps", tcIds, "testCaseIds", TestStepModel.class);
 		models.addAll(buffer);
 
 		//get the cufs
-		List<CustomField> cufModels = findModels(session, "testStep.excelExportCUF", tcIds, CustomField.class);
+		List<CustomField> cufModels = loadModels("testStep.excelExportCUF", tcIds, "testCaseIds", CustomField.class);
 
 		// add them to the test case models
 		for (TestStepModel model : models){
@@ -182,23 +191,16 @@ public class ExportDao {
 	}
 
 	private List<ParameterModel> findParametersModel(List<Long> tcIds){
-		return findModels(getStatelessSession(), "parameter.excelExport", tcIds, ParameterModel.class);
+		return loadModels("parameter.excelExport", tcIds, "testCaseIds", ParameterModel.class);
 	}
 
 
 	private List<DatasetModel> findDatasetsModel(List<Long> tcIds){
 
-		return findModels(getStatelessSession(), "dataset.excelExport", tcIds, DatasetModel.class);
+		return loadModels("dataset.excelExport", tcIds, "testCaseIds", DatasetModel.class);
 	}
 
 
-	@SuppressWarnings("unchecked")
-	private <R> List<R> findModels(Session session, String query, List<Long> tcIds, Class<R> resclass){
-		Query q = session.getNamedQuery(query);
-		q.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
-		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
-		return q.list();
-	}
 
 	private Session getStatelessSession(){
 		Session s = em.unwrap(Session.class);
@@ -207,22 +209,29 @@ public class ExportDao {
 	}
 
 	private List<CoverageModel> findRequirementVersionCoverageModel(List<Long> versionIds) {
-		return findRequirementModels("requirementVersion.excelExportCoverage", versionIds, CoverageModel.class);
+		return loadModels("requirementVersion.excelExportCoverage", versionIds, "versionIds", CoverageModel.class);
 	}
-
-	@SuppressWarnings("unchecked")
-	private <R> List<R> findRequirementModels(String queryName, List<Long> versionIds,
-			Class<R> resclass) {
-		Session session = getStatelessSession();
-		Query q = session.getNamedQuery(queryName);
-		q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
-		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
-		return q.list();
+	
+	private List<RequirementLinkModel> findRequirementLinksModel(List<Long> versionIds){
+		// get the models
+		List<RequirementLinkModel> models = loadModels("requirementVersion.excelExportRequirementLinks", versionIds, "versionIds", RequirementLinkModel.class);
+		
+		/*
+		 * more complex part : computing the pathes. The steps are the following :
+		 * - gather all the requirement ids involved
+		 * - gather the paths for all these requirements and map them by id
+		 * - for each model, assign the paths. 
+		 */
+		List<Long> reqIds = gatherRequirementIdsFromLinkModels(models);
+		Map<Long, String> pathById = gatherRequirementPaths(reqIds);
+		assignPaths(models, pathById);
+		
+		return models;
 	}
 
 
 	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
-		List<RequirementModel> requirementModels = findRequirementModels("requirement.findVersionsModels", versionIds,
+		List<RequirementModel> requirementModels = loadModels("requirement.findVersionsModels", versionIds,"versionIds",
 				RequirementModel.class);
 		getOtherProperties(requirementModels);
 		return requirementModels;
@@ -291,6 +300,37 @@ public class ExportDao {
 
 
 	}
+	
+	private List<Long> gatherRequirementIdsFromLinkModels(List<RequirementLinkModel> models){
+		Set<Long> ids = new HashSet<>(models.size());
+		for (RequirementLinkModel model : models){
+			ids.add(model.getReqId());
+			ids.add(model.getRelReqId());
+		}
+		return new ArrayList<>(ids);
+	}
+	
+	private Map<Long, String> gatherRequirementPaths(List<Long> requirementIds){
+		
+		int nbReqs = requirementIds.size();
+		
+		List<String> pathes = pathService.buildRequirementsPaths(requirementIds);
+		Map<Long, String> pathById = new HashMap<>(nbReqs);
+		for (int i=0; i < nbReqs; i++){
+			pathById.put(requirementIds.get(i), pathes.get(i));
+		}
+		
+		return pathById;
+	}
+	
+	private void assignPaths(List<RequirementLinkModel> models, Map<Long, String> pathById){
+		for (RequirementLinkModel model : models){
+			String reqPath = pathById.get(model.getReqId());
+			String relPath = pathById.get(model.getRelReqId());
+			model.setReqPath(reqPath);
+			model.setRelReqPath(relPath);
+		}
+	}
 
 	private String getPathFromParentsRequirements(Long requirementId) {
 		return requirementVersionQuery("requirement.findReqParentPath", requirementId, "");
@@ -311,4 +351,16 @@ public class ExportDao {
 		return result != null ? result : defaultValue;
 	}
 
+
+	@SuppressWarnings("unchecked")
+	private <R> List<R> loadModels(String queryName, List<Long> ids, String paramName,
+			Class<R> resclass) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery(queryName);
+		q.setParameterList(paramName, ids, LongType.INSTANCE);
+		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
+		return q.list();
+	}
+
+	
 }
