@@ -40,15 +40,15 @@
 
 
 <layout:info-page-layout titleKey="label.administration">
-  <jsp:attribute name="head">  
-    <comp:sq-css name="squash.grey.css" />  
+  <jsp:attribute name="head">
+    <comp:sq-css name="squash.grey.css" />
     <comp:sq-css name="squash.core.override.css" />
   </jsp:attribute>
 
   <jsp:attribute name="titlePane">
     <h2 class="admin">
       <f:message key="label.administration" />
-    </h2>  
+    </h2>
   </jsp:attribute>
 
   <jsp:attribute name="informationContent">
@@ -60,12 +60,12 @@
           <span class="admin-section-label"><f:message key="label.userManagement" /></span>
         </a>
         </sec:authorize>
-        
+
         <a href="${ projectsUrl }" class="unstyledLink">
           <span id="project-admin" class="admin-section-icon admin-project-icon"></span>
           <span class="admin-section-label"><f:message key="label.projectManagement" /></span>
         </a>
-        
+
         <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
         <c:if test="${ isAdmin or milestoneFeatureEnabled }">
         <a href="${ milestoneUrl }" class="unstyledLink">
@@ -73,20 +73,20 @@
           <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
         </a>
         </c:if>
-        
+
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
         </a>
-     
-        
+
+
         <a href="<c:url value='/administration/info-lists' />" class="unstyledLink">
           <span id="admin-info-list" class="admin-section-icon admin-infolist-icon"></span>
           <span class="admin-section-label"><f:message key="label.infoListManagement" /></span>
         </a>
-        
-      
+
+
         <a href="${ bugtrackerUrl }" class="unstyledLink">
           <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
           <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
@@ -99,32 +99,17 @@
           <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
           <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
         </a>
-            <a id="fake-link" class="unstyledLink">
-       
+
+        <a href="#" class="unstyledLink">
+          <span id="admin-requirement-link-type" class="admin-section-icon admin-customfields-icon"></span>
+          <span class="admin-section-label">Liens entre exigences</span>
         </a>
+
+        <a id="fake-link" class="unstyledLink"></a>
+
         </sec:authorize>
       </div>
-      
-      <div id="admin-small-link-pane">  
-           <div id="admin-small-link-pane-table">  
-        <sec:authorize access=" hasRole('ROLE_ADMIN')">
-             <a href="${ loginUrl }" class="unstyledLink ">
-          <span id="login-message-admin" class="admin-section-icon admin-msglogin-icon-small"></span>
-          <span class="admin-section-label"><f:message key="label.consultModifyLoginMessage" /></span>
-        </a>
-        <a href="${ welcomeUrl }" class="unstyledLink ">
-          <span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon-small"></span>
-          <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span> 
-        </a>
-        
-           <a href="${ configUrl }" class="unstyledLink ">
-          <span id="config-admin" class="admin-section-icon admin-config-icon-small"></span>
-          <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span> 
-        </a>
-         </sec:authorize>
-         </div> 
-      </div>
-      
+
       <div id="admin-stats">
         <div class="admin-stats-table">
           <label><f:message key="label.version" /></label><span>${sqTMversion}</span>
@@ -177,6 +162,28 @@
           </div>
         </div>
       </div>
+
+      <div id="admin-small-link-pane">
+        <div id="admin-small-link-pane-table">
+          <sec:authorize access=" hasRole('ROLE_ADMIN')">
+            <a href="${ loginUrl }" class="unstyledLink ">
+                <span id="login-message-admin" class="admin-section-icon admin-msglogin-icon-small"></span>
+                <span class="admin-section-label"><f:message key="label.consultModifyLoginMessage" /></span>
+              </a>
+              <a href="${ welcomeUrl }" class="unstyledLink ">
+                <span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon-small"></span>
+                <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span>
+              </a>
+
+            <a href="${ configUrl }" class="unstyledLink ">
+              <span id="config-admin" class="admin-section-icon admin-config-icon-small"></span>
+              <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span>
+            </a>
+          </sec:authorize>
+        </div>
+      </div>
+
+
     </div>
   </jsp:attribute>
 </layout:info-page-layout>
