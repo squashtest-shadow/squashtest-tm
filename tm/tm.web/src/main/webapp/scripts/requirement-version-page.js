@@ -327,7 +327,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
           *										 		 (no library and no folders).
           * 	}
 					*/
-					eventBus.on("link-req-node-from-tree", function(evt, data) {
+					eventBus.onContextual("link-req-node-from-tree", function(evt, data) {
 						var relatedReqNodeIds = data.relatedReqNodeIds;
 
 						if(relatedReqNodeIds.length !== 1) {

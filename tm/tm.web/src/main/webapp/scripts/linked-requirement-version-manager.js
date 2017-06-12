@@ -164,6 +164,7 @@ require([ "common" ], function() {
         if (ids.length !== 1) {
         	notification.showError(msg.get('message.SelectOneRequirement'));
         	unlock();
+        	deselectTree();
         	return;
         } else if (ids.length === 1) {
         	// Adding default linkType
