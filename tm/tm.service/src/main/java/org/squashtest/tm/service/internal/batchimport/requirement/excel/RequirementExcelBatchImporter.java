@@ -35,7 +35,8 @@ public class RequirementExcelBatchImporter extends ExcelBatchImporter {
 
 	private static final List<EntityType> REQ_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays
 			.asList(EntityType.REQUIREMENT_VERSION,
-			EntityType.COVERAGE);
+			EntityType.COVERAGE, 
+			EntityType.REQUIREMENT_LINK);
 
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
@@ -48,6 +49,9 @@ public class RequirementExcelBatchImporter extends ExcelBatchImporter {
 			break;
 		case COVERAGE:
 			instructions.addAll(parser.getCoverageInstructions());
+			break;
+		case REQUIREMENT_LINK:
+			instructions.addAll(parser.getRequirementLinkgsInstruction());
 			break;
 		default:
 

@@ -27,6 +27,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_LINKS_SHEET;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ import org.squashtest.tm.service.internal.batchimport.LogTrain;
 import org.squashtest.tm.service.internal.batchimport.Messages;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementLinkInstruction;
+import org.squashtest.tm.service.internal.batchimport.RequirementLinkTarget;
 import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
 import org.squashtest.tm.service.internal.batchimport.RequirementVersionInstruction;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
@@ -65,6 +68,8 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementInstructionBuilder;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinkInstructionBuilder;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
@@ -147,6 +152,7 @@ public class ExcelWorkbookParser {
 		instructionsByWorksheet.put(DATASET_PARAM_VALUES_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(REQUIREMENT_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(COVERAGE_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(REQUIREMENT_LINKS_SHEET, new ArrayList<Instruction<?>>());
 
 		instructionBuilderFactoryByWorksheet.put(REQUIREMENT_SHEET, new Factory<RequirementSheetColumn>(){
 
@@ -200,6 +206,13 @@ public class ExcelWorkbookParser {
 			}
 
 		});
+		
+		instructionBuilderFactoryByWorksheet.put(REQUIREMENT_LINKS_SHEET, new Factory<RequirementLinksSheetColumn>(){
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<RequirementLinksSheetColumn> wd) {
+				return new RequirementLinkInstructionBuilder(wd);
+			}
+		});
 
 	}
 
@@ -251,6 +264,10 @@ public class ExcelWorkbookParser {
 
 		case COVERAGE_SHEET:
 			target = new CoverageTarget();
+			break;
+			
+		case REQUIREMENT_LINKS_SHEET :
+			target = new RequirementLinkTarget();
 			break;
 
 		default : throw new IllegalArgumentException("sheet '"+def.getSheetName()+"' is unknown and contains errors in its column headers");
@@ -354,6 +371,14 @@ public class ExcelWorkbookParser {
 		return (List) instructionsByWorksheet.get(COVERAGE_SHEET);// useless (List) cast required for compiler not to
 		// whine
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<RequirementLinkInstruction> getRequirementLinkgsInstruction() {
+		return (List) instructionsByWorksheet.get(REQUIREMENT_LINKS_SHEET);// useless (List) cast required for compiler not to
+		// whine
+	}
+	
+	
 	public boolean isEmpty(Row row) {
 		boolean isEmpty = true;
 

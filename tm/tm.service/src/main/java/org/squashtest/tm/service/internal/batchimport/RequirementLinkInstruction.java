@@ -18,17 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.importer;
+package org.squashtest.tm.service.internal.batchimport;
 
-public enum EntityType {
-	NONE,
-	TEST_CASE,
-	TEST_STEP,
-	DATASET,
-	PARAMETER,
-	DATASET_PARAM_VALUES,
-	REQUIREMENT,
-	REQUIREMENT_VERSION, 
-	COVERAGE,
-	REQUIREMENT_LINK;
+public class RequirementLinkInstruction extends Instruction<RequirementLinkTarget>{
+
+	private String relationRole;
+	
+
+
+	public String getRelationRole() {
+		return relationRole;
+	}
+
+
+	public void setRelationRole(String relationRole) {
+		this.relationRole = relationRole;
+	}
+
+
+	public RequirementLinkInstruction(RequirementLinkTarget target) {
+		super(target);
+	}
+
+
+	@Override
+	protected LogTrain executeUpdate(Facility facility) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected LogTrain executeDelete(Facility facility) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected LogTrain executeCreate(Facility facility) {
+		throw new UnsupportedOperationException();
+	}
+
 }

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**

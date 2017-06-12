@@ -18,12 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.requirement.excel;
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
+
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 
 public enum RequirementLinksSheetColumn implements TemplateColumn{
-	
+	ACTION,
 	REQ_PATH(MANDATORY),
 	REQ_VERSION_NUM(MANDATORY),
 	RELATED_REQ_PATH(MANDATORY),
@@ -33,6 +38,10 @@ public enum RequirementLinksSheetColumn implements TemplateColumn{
 	public final String header; // NOSONAR immutable public field
 	public final ColumnProcessingMode processingMode; // NOSONAR immutable public field
 
+	private RequirementLinksSheetColumn(){
+		this.header = name();
+		processingMode = OPTIONAL;
+	}
 
 	private RequirementLinksSheetColumn(ColumnProcessingMode processingMode) {
 		this.header = name();

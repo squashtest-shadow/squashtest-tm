@@ -18,17 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.importer;
+package org.squashtest.tm.service.internal.batchimport.requirement.excel;
 
-public enum EntityType {
-	NONE,
-	TEST_CASE,
-	TEST_STEP,
-	DATASET,
-	PARAMETER,
-	DATASET_PARAM_VALUES,
-	REQUIREMENT,
-	REQUIREMENT_VERSION, 
-	COVERAGE,
-	REQUIREMENT_LINK;
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.service.internal.batchimport.RequirementLinkInstruction;
+import org.squashtest.tm.service.internal.batchimport.RequirementLinkTarget;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.InstructionBuilder;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.WorksheetDef;
+
+public class RequirementLinkInstructionBuilder extends InstructionBuilder<RequirementLinksSheetColumn, RequirementLinkInstruction>{
+
+	public RequirementLinkInstructionBuilder(WorksheetDef<RequirementLinksSheetColumn> worksheetDef) {
+		super(worksheetDef);
+	}
+
+	@Override
+	protected RequirementLinkInstruction createInstruction(Row row) {
+		return new RequirementLinkInstruction(new RequirementLinkTarget());
+	}
+
+
+
 }

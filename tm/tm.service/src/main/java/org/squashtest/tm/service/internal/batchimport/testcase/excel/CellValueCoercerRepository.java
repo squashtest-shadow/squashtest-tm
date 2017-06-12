@@ -43,6 +43,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedInde
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalStringArrayCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
@@ -63,6 +64,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_LINKS_SHEET, createRequirementLinkSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.COVERAGE_SHEET, createCoverageSheetRepo());
 	}
 
@@ -97,6 +99,17 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, OptionalEnumCellCoercer.forEnum(RequirementStatus.class));
+		return repo;
+	}
+	
+	private static CellValueCoercerRepository<?> createRequirementLinkSheetRepo(){
+		CellValueCoercerRepository<RequirementLinksSheetColumn> repo = new CellValueCoercerRepository<>();		
+		
+		repo.coercerByColumn.put(RequirementLinksSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
+		
+		// for other properties, the default StringCellCoercer will kick in
 		return repo;
 	}
 

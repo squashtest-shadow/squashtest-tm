@@ -52,6 +52,7 @@ public class RequirementVersionTarget implements Target, WithPath {
 
 	public RequirementVersionTarget() {
 		super();
+		this.requirement = new RequirementTarget();
 	}
 
 
@@ -73,6 +74,10 @@ public class RequirementVersionTarget implements Target, WithPath {
 	@Override
 	public String getPath() {
 		return requirement.getPath();
+	}
+	
+	public void setPath(String path){
+		requirement.setPath(path);
 	}
 
 	public Integer getVersion() {

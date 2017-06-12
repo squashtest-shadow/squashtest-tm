@@ -24,6 +24,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.NullPropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSetter;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 import javax.validation.constraints.NotNull;
@@ -51,6 +52,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.COVERAGE_SHEET, createCoverageWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_LINKS_SHEET, createRequirementLinksWorksheetRepo());
 	}
 
 	/**
@@ -70,6 +72,20 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(CoverageSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forField("reqVersion"));
 		r.propSetterByColumn.put(CoverageSheetColumn.TC_PATH, ReflectionMutatorSetter.forProperty("tcPath", String.class));
 		return r;
+	}
+	
+	private static PropertySetterRepository<?> createRequirementLinksWorksheetRepo(){
+		PropertySetterRepository<RequirementLinksSheetColumn> r = new PropertySetterRepository<>();
+		
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty(PROPERTY_MODE));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_ROLE, ReflectionMutatorSetter.forProperty("relationRole", String.class));
+		
+		return r;
+		
 	}
 
 	private static PropertySetterRepository<?> createRequirementWorksheetRepo() {
