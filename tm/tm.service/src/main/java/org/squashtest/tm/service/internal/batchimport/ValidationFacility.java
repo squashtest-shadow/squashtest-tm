@@ -20,6 +20,19 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,8 +51,12 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.importer.*;
+import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.LogEntry.Builder;
+import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
@@ -53,17 +70,6 @@ import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
 
 /**
  * This implementation solely focuses on validating data. It doesn't perform any
@@ -180,6 +186,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private ProjectDao projectDao;
+	
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -1171,6 +1178,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return logs;
 	}
+	
+	
+
+	
+	
 
 	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
 		if (tcId != null && reqVersionId != null
@@ -1260,6 +1272,150 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 		return null;
 	}
+	
+	// ********************************** requirement links *************************
+
+	@Override
+	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
+		RequirementLinkTarget target = instr.getTarget();
+		
+		// check that the target is valid
+		LogTrain logs = existAndLinkable(target);
+
+		// now check the role
+		logs = checkRequirementLinkRole(instr, logs);
+		
+		return logs;
+		
+	}
+
+	@Override
+	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
+		// validation is same as for link creation
+		return createRequirementLink(instr);
+	}
+
+	@Override
+	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
+		
+		// check that the target is valid
+		return existAndLinkable(instr.getTarget());
+	}
+
+	
+	private LogTrain checkRequirementLinkRole(RequirementLinkInstruction instr, LogTrain logs){
+		RequirementLinkTarget target = instr.getTarget();
+		String role = instr.getRelationRole();
+		
+		// if no role set -> issue a warning that the system will use the default
+		if (StringUtils.isBlank(role)){
+			logs.addEntry(LogEntry
+							.warning()
+							.forTarget(target)
+							.withMessage(Messages.WARN_REQ_LINK_ROLE_NOT_SET)
+							.withImpact(Messages.IMPACT_REQ_LINK_ROLE_NOT_SET)
+							.build());
+		}
+		
+		// if role is set -> check it exists
+		else {
+			Set<String> allRoles = getModel().getRequirementLinkRoles();
+			
+			if (! allRoles.contains(role)){
+				logs.addEntry(LogEntry
+						.failure()
+						.forTarget(target)
+						.withMessage(Messages.ERROR_REQ_LINK_ROLE_NOT_EXIST)
+						.build());					
+			}
+		}
+		
+		return logs;
+	}
+
+	/*
+	 * both version must :
+	 * - exist, 
+	 * - be linkable
+	 */
+	private LogTrain existAndLinkable(RequirementLinkTarget linkTarget){
+		LogTrain logs = new LogTrain();
+
+		// check source requirement
+		RequirementVersionTarget source = linkTarget.getSourceVersion();		
+		existAndLinkable(linkTarget, source, logs, Messages.ERROR_SOURCE_REQUIREMENT_PATH_MALFORMED, Messages.ERROR_SOURCE_REQUIREMENT_NOT_EXIST);
+		
+		// check dest requirement
+		RequirementVersionTarget dest = linkTarget.getDestVersion();
+		existAndLinkable(linkTarget, dest, logs, Messages.ERROR_DEST_REQUIREMENT_PATH_MALFORMED, Messages.ERROR_DEST_REQUIREMENT_NOT_EXIST);
+		
+		
+		// cannot link a requirement to itself
+		if (! logs.hasCriticalErrors()){
+			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())){
+				logs.addEntry(LogEntry
+						.failure()
+						.forTarget(linkTarget)
+						.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+						.build());				
+			}
+		}
+		
+		
+		
+		return logs;
+	}
+	
+	
+	private void existAndLinkable(RequirementLinkTarget linkTarget, RequirementVersionTarget versionTarget, LogTrain logs, String malformedPathMessage, String nonexistentMessage){
+		// 1 - source path must be supplied and well formed
+		if (! versionTarget.isWellFormed()){
+			logs.addEntry(LogEntry
+								.failure()
+								.forTarget(linkTarget)
+								.withMessage(malformedPathMessage, versionTarget.getPath())
+								.build()
+			);
+			
+			return;
+		}
+		
+		// 2 - project must exist
+		TargetStatus projectStatus = getModel().getProjectStatus(versionTarget.getProject());
+		if (projectStatus.getStatus() != Existence.EXISTS){
+			logs.addEntry(LogEntry
+							.failure()
+							.forTarget(linkTarget)
+							.withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
+							.build());	
+			
+
+			return;
+		}
+		
+		// 3 - RequirementVersion must exist
+		TargetStatus versionStatus = getModel().getStatus(versionTarget);
+		if (versionStatus.getStatus() != Existence.EXISTS){
+			logs.addEntry(LogEntry
+							.failure()
+							.forTarget(linkTarget)
+							.withMessage(nonexistentMessage)
+							.build());
+			
+			return;
+		}
+		
+		// 4 - User must have high enough credentials
+		LogEntry entry = checkPermissionOnProject(PERM_IMPORT, versionTarget, linkTarget);
+		if (entry != null){
+			logs.addEntry(entry);
+		}
+		
+	}
+	
+	
+	
+	
 
 	private LogEntry createLogFailure(Target target, String msg, Object... msgArgs) {
 		return LogEntry.failure().forTarget(target).withMessage(msg, msgArgs).build();

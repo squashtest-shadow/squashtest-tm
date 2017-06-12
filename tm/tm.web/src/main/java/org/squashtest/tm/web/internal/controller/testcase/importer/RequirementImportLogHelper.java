@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,6 +41,7 @@ public class RequirementImportLogHelper extends ImportLogHelper {
 	static {
 		ENTITY_BY_TAB.put("REQUIREMENT", EntityType.REQUIREMENT_VERSION);
 		ENTITY_BY_TAB.put("LINK_REQ_TC", EntityType.COVERAGE);
+		ENTITY_BY_TAB.put("LINK_REQ_REQ", EntityType.REQUIREMENT_LINK);
 	}
 
 	@Override

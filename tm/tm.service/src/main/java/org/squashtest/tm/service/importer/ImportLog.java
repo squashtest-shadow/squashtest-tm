@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.importer.EntityType.COVERAGE;
 import static org.squashtest.tm.service.importer.EntityType.DATASET;
 import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
 import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_LINK;
 import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
 import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
 import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
@@ -74,6 +75,10 @@ public class ImportLog{
 	private int coverageSuccesses = 0;
 	private int coverageWarnings = 0;
 	private int coverageFailures = 0;
+	
+	private int reqlinksSuccesses = 0;
+	private int reqlinksWarnings = 0;
+	private int reqlinksFailures = 0;
 
 
 	private String reportUrl;
@@ -188,6 +193,7 @@ public class ImportLog{
 		recomputeFor(DATASET);
 		recomputeFor(REQUIREMENT_VERSION);
 		recomputeFor(COVERAGE);
+		recomputeFor(REQUIREMENT_LINK); 
 	}
 
 
@@ -272,11 +278,26 @@ public class ImportLog{
 		case COVERAGE:
 			countCoverage(errors, warnings);
 			break;
+			
+		case REQUIREMENT_LINK :
+			countLinks(errors, warnings);
+			break;
+			
 		case NONE :
 			break;
 
 		default:
 			throw new IllegalStateException(String.format("Entity type %s not yet implemented", type));
+		}
+	}
+	
+	private void countLinks(boolean errors, boolean warnings){
+		if (errors) {
+			reqlinksFailures++;
+		} else if (warnings) {
+			reqlinksWarnings++;
+		} else {
+			reqlinksSuccesses++;
 		}
 	}
 

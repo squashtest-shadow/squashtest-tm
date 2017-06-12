@@ -33,7 +33,7 @@ public enum RequirementLinksSheetColumn implements TemplateColumn{
 	REQ_VERSION_NUM(MANDATORY),
 	RELATED_REQ_PATH(MANDATORY),
 	RELATED_REQ_VERSION_NUM(MANDATORY),
-	RELATED_REQ_ROLE(MANDATORY);
+	RELATED_REQ_ROLE(OPTIONAL);
 
 	public final String header; // NOSONAR immutable public field
 	public final ColumnProcessingMode processingMode; // NOSONAR immutable public field

@@ -45,7 +45,9 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -199,6 +201,21 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	public List<RequirementVersionLinkType> getAllReqVersionLinkTypes() {
 		return reqVersionLinkTypeDao.getAllRequirementVersionLinkTypes();
 	}
+	
+	@Override
+	public Set<String> findAllRoleCodes() {
+		List<RequirementVersionLinkType> allTypes = getAllReqVersionLinkTypes();
+		
+		Set<String> codes = new HashSet<>();
+		
+		for (RequirementVersionLinkType type : allTypes){
+			codes.add(type.getRole1Code());
+			codes.add(type.getRole2Code());
+		}
+		
+		return codes;
+	}
+	
 
 	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {

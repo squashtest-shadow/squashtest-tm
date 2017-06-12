@@ -92,6 +92,30 @@ public interface Facility {
 	LogTrain deleteRequirementVersion(RequirementVersionInstruction instr);
 
 	LogTrain createCoverage(CoverageInstruction instr);
+	
+	/**
+	 * Will bind two requirement versions with a RequirementLink
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain createRequirementLink(RequirementLinkInstruction instr);
+	
+	/**
+	 * Will update the link between two requirements
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain updateRequirementLink(RequirementLinkInstruction instr);
+	
+	/**
+	 * Will remove a link between two requirements
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain deleteRequirementLink(RequirementLinkInstruction instr);
 
 }
 

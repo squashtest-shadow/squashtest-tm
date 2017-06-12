@@ -29,6 +29,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -424,6 +425,24 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		return requirementFacility.deleteRequirementVersion(instr);
 	}
 
+	@Override
+	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
+		throw new NotImplementedException("implement me");
+	}
+	
+	@Override
+	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
+		throw new NotImplementedException("implement me");
+	}
+	
+	@Override
+	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
+		throw new NotImplementedException("implement me");
+	}
+	
+	
+	
+	
 	/**
 	 * for all other stuffs that need to be done afterward
 	 */

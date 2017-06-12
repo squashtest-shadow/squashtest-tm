@@ -280,4 +280,19 @@ public class SimulationFacility implements Facility {
 		return validator.createCoverage(instr);
 	}
 
+	@Override
+	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
+		return validator.createRequirementLink(instr);
+	}
+
+	@Override
+	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
+		return validator.updateRequirementLink(instr);
+	}
+
+	@Override
+	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
+		return validator.deleteRequirementLink(instr);
+	}
+
 }

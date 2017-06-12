@@ -43,17 +43,17 @@ public class RequirementLinkInstruction extends Instruction<RequirementLinkTarge
 
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		throw new UnsupportedOperationException();
+		return facility.updateRequirementLink(this);
 	}
 
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
-		throw new UnsupportedOperationException();
+		return facility.deleteRequirementLink(this);
 	}
 
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		throw new UnsupportedOperationException();
+		return facility.createRequirementLink(this);
 	}
 
 }

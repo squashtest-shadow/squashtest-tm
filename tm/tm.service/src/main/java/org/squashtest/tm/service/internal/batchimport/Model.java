@@ -26,6 +26,7 @@ import static java.util.Collections.singletonList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -70,6 +71,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -110,6 +112,9 @@ public class Model {
 
 	@Inject
 	private RequirementVersionManagerService requirementVersionManagerService;
+
+	@Inject
+	private LinkedRequirementVersionManagerService reqlinkService;
 
 	/* **********************************************************************************************************************************
 	 *
@@ -185,6 +190,12 @@ public class Model {
 	 * CustomField
 	 */
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
+	
+	/**
+	 * caches the requirement link roles
+	 * 
+	 */
+	private Set<String> requirementLinkRoles;
 
 	/**
 	 * same as tcCufsPerProjectname, but regarding the test steps
@@ -863,6 +874,14 @@ public class Model {
 
 		return requirementTree.getStatus(target);
 	}
+	
+	
+	public Set<String> getRequirementLinkRoles(){
+		if (requirementLinkRoles == null){
+			requirementLinkRoles = Collections.unmodifiableSet(reqlinkService.findAllRoleCodes());
+		}
+		return requirementLinkRoles;
+	}
 
 	// ************************** loading code
 	// **************************************
@@ -1081,7 +1100,7 @@ public class Model {
 		reqCufsPerProjectname.putAll(projectName, reqcufs);
 
 	}
-
+	
 	public void mainInitRequirements(RequirementVersionTarget target) {
 		mainInitRequirements(Arrays.asList(target));
 	}
