@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -429,6 +430,15 @@ public class RequirementExportModel {
 		private String relReqPath;
 		
 		
+		/**
+		 * Constuctor used by Hibernate
+		 * 
+		 * @param reqId
+		 * @param relReqId
+		 * @param reqVersion
+		 * @param relReqVersion
+		 * @param relatedReqRole
+		 */
 		public RequirementLinkModel(Long reqId, Long relReqId, int reqVersion, int relReqVersion, String relatedReqRole) {
 			super();
 			this.reqId = reqId;
@@ -439,10 +449,25 @@ public class RequirementExportModel {
 		}
 
 
+		/**
+		 * factory method for test purposes
+		 * 
+		 * @return
+		 */
+		public static RequirementLinkModel create(int reqVersion, int relReqVersion, String relatedReqRole, String reqPath,
+				String relReqPath) {
+			
+			RequirementLinkModel model = new RequirementLinkModel(null, null, reqVersion, relReqVersion, relatedReqRole);
+			
+			model.setReqPath(reqPath);
+			model.setRelReqPath(relReqPath);
+			
+			return model;
+		}
+
 		public String getReqPath() {
 			return reqPath;
 		}
-
 
 		public void setReqPath(String reqPath) {
 			this.reqPath = reqPath;
@@ -483,6 +508,19 @@ public class RequirementExportModel {
 			return relatedReqRole;
 		}
 		
+		
+		@Override
+		public String toString(){
+			return new ToStringBuilder(this)
+					.append("req-id", relReqId)
+					.append("req-path", reqPath)
+					.append("req-version", reqVersion)
+					.append("rel-req-id", relReqId)
+					.append("rel-req-path", relReqPath)
+					.append("rel-req-version", relReqVersion)
+					.append("rel-req-role", relatedReqRole)
+					.toString();
+		}
 		
 
 	}

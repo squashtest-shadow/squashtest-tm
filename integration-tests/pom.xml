@@ -4,11 +4,10 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.16.0.IT1-SNAPSHOT</version>
+    <version>1.16.0.IT4-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
-  <packaging>pom</packaging>
   <name>squash-tm-integration-tests</name>
 
   <description>Library of Squash TM integration tests. This module is not supposed to be part of the main build i.e. you have to
