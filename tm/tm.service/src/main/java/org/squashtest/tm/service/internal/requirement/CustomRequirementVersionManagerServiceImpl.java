@@ -335,6 +335,13 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		return null;
 	}
 
+	
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
+	public RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber){
+		return requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId,versionNumber);
+	}
 
 
 }

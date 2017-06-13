@@ -427,17 +427,17 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	@Override
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
-		throw new NotImplementedException("implement me");
+		return requirementFacility.createRequirementLink(instr);
 	}
 	
 	@Override
 	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
-		throw new NotImplementedException("implement me");
+		return requirementFacility.updateRequirementLink(instr);
 	}
 	
 	@Override
 	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
-		throw new NotImplementedException("implement me");
+		return requirementFacility.deleteRequirementLink(instr);
 	}
 	
 	

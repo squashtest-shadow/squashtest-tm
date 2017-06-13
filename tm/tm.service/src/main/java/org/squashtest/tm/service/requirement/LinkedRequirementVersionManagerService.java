@@ -53,6 +53,8 @@ public interface LinkedRequirementVersionManagerService {
 
 	Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(
 		Long reqVersionNodeId, Long relatedReqVersionNodeId);
+	
+	void addOrUpdateRequirementLink(Long sourceVersionId, Long destVersionId, String destRole);
 
 	List<RequirementVersionLinkType> getAllReqVersionLinkTypes();
 

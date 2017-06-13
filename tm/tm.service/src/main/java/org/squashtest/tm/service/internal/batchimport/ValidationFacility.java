@@ -1280,7 +1280,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		RequirementLinkTarget target = instr.getTarget();
 		
 		// check that the target is valid
-		LogTrain logs = existAndLinkable(target);
+		LogTrain logs = requirementsExistAndLinkable(target);
 
 		// now check the role
 		logs = checkRequirementLinkRole(instr, logs);
@@ -1297,9 +1297,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
-		
 		// check that the target is valid
-		return existAndLinkable(instr.getTarget());
+		return requirementsExistAndLinkable(instr.getTarget());
 	}
 
 	
@@ -1338,7 +1337,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 * - exist, 
 	 * - be linkable
 	 */
-	private LogTrain existAndLinkable(RequirementLinkTarget linkTarget){
+	private LogTrain requirementsExistAndLinkable(RequirementLinkTarget linkTarget){
 		LogTrain logs = new LogTrain();
 
 		// check source requirement
@@ -1406,7 +1405,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 		
 		// 4 - User must have high enough credentials
-		LogEntry entry = checkPermissionOnProject(PERM_IMPORT, versionTarget, linkTarget);
+		LogEntry entry = checkPermissionOnProject("LINK", versionTarget, linkTarget);
 		if (entry != null){
 			logs.addEntry(entry);
 		}

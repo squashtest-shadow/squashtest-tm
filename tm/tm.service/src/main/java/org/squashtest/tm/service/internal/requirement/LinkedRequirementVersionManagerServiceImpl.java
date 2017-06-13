@@ -129,7 +129,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 	/*TODO: Change Javascript to get reqVerionId and not Node. */
 	@Override
-	@PreAuthorize("hasPermission(#argo0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
+	@PreAuthorize("hasPermission(#reqVersionNodeId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
 		OR_HAS_ROLE_ADMIN)
 	public Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(Long reqVersionNodeId, Long relatedReqVersionNodeId) {
 		List<Long> reqVerNodeIds = new ArrayList<>(1);
@@ -141,6 +141,50 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
  		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
 		return addLinkedReqVersionsToReqVersion(requirementVersions.get(0).getId(), relatedReqVerNodeIds);
 	}
+	
+
+	
+	@Override	
+	@PreAuthorize("hasPermission(#sourceVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
+			OR_HAS_ROLE_ADMIN)
+	public void addOrUpdateRequirementLink(Long sourceVersionId, Long destVersionId, String destRole) {
+		
+		// compute the type and direction
+		// the new direction for the outboundLink is deduced from the role of the destination version
+		// if the code designate the role 2, then the outboundLink direction should be false (meaning : outbound)
+		RequirementVersionLinkType type = reqVersionLinkTypeDao.findByRoleCode(destRole);		
+		boolean outboundDirection = type.getRole2Code().equals(destRole) ? false : true;
+		
+		// the requirement versions
+		RequirementVersion source = reqVersionDao.findOne(sourceVersionId);
+		RequirementVersion dest = reqVersionDao.findOne(destVersionId);
+
+		// checks
+		checkIfSameRequirement(source, dest);
+		checkIfVersionsAreLinkable(source, dest);		
+		
+		// see if one need to create or just update the links
+		RequirementVersionLink outboundLink = reqVersionLinkDao.findByReqVersionsIds(sourceVersionId, destVersionId);
+		
+		// if null, we need to create them
+		if (outboundLink == null){
+			outboundLink = new RequirementVersionLink(source, dest, type, outboundDirection);
+			reqVersionLinkDao.addLink(outboundLink);
+		}	
+		// else we just update them
+		else{
+			RequirementVersionLink inboundLink = reqVersionLinkDao.findByReqVersionsIds(destVersionId, sourceVersionId);
+			
+			outboundLink.setLinkType(type);
+			outboundLink.setLinkDirection(outboundDirection);
+			
+			inboundLink.setLinkType(type);
+			inboundLink.setLinkDirection(! outboundDirection);
+		}
+
+	}
+	
+
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +

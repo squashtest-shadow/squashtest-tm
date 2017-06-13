@@ -125,6 +125,7 @@ public final class Messages {
 	public static final String ERROR_DEST_REQUIREMENT_NOT_EXIST = "message.import.log.error.requirementlinks.dest-notexist";
 	public static final String WARN_REQ_LINK_ROLE_NOT_SET = "message.import.log.warning.requirementlinks.role-not-set";
 	public static final String IMPACT_REQ_LINK_ROLE_NOT_SET = "message.import.log.impact.requirementlinks.role-not-set";
+	public static final String ERROR_REQ_LINK_NOT_LINKABLE = "message.import.log.error.requirementlinks.not-linkable";
 
 
 	private Messages(){

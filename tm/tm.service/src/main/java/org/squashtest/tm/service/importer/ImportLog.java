@@ -458,4 +458,22 @@ public class ImportLog{
 		return coverageFailures;
 	}
 
+	public static Logger getLogger() {
+		return LOGGER;
+	}
+
+	public int getReqlinksSuccesses() {
+		return reqlinksSuccesses;
+	}
+
+	public int getReqlinksWarnings() {
+		return reqlinksWarnings;
+	}
+
+	public int getReqlinksFailures() {
+		return reqlinksFailures;
+	}
+
+	
+	
 }

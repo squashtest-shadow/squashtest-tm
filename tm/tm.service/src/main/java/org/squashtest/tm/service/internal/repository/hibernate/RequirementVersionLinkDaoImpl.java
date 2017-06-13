@@ -20,20 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.springframework.data.repository.query.Param;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Query;
+
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkDao;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.sound.midi.SysexMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jlor on 19/05/2017.

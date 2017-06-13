@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
 /**
@@ -43,5 +45,8 @@ public interface RequirementVersionLinkTypeDao extends CrudRepository<Requiremen
 	 * Find all the RequirementVersionLinkTypes that exist.
 	 */
 	List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes();
+	
+	@Query("from RequirementVersionLinkType where role1Code = :roleCode or role2Code = :roleCode")
+	RequirementVersionLinkType findByRoleCode(@Param("roleCode") String roleCode);
 
 }

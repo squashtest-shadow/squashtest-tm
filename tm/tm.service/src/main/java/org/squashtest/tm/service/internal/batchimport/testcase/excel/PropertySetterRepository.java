@@ -82,7 +82,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
 		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, ReflectionMutatorSetter.forProperty("version", Integer.class));
-		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_ROLE, ReflectionMutatorSetter.forProperty("relationRole", String.class));
+		r.propSetterByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_ROLE, ReflectionMutatorSetter.forOptionalProperty("relationRole"));
 		
 		return r;
 		

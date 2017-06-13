@@ -99,6 +99,8 @@ public interface CustomRequirementVersionManagerService {
 
 	@Transactional(readOnly=true)
 	Long findReqVersionIdByRequirementAndVersionNumber(long requirementId, Integer versionNumber);
+	
+	RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber);
 
 	/*
 	 *

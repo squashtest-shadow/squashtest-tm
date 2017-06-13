@@ -106,7 +106,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		CellValueCoercerRepository<RequirementLinksSheetColumn> repo = new CellValueCoercerRepository<>();		
 		
 		repo.coercerByColumn.put(RequirementLinksSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
-		repo.coercerByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(RequirementLinksSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
 		
 		// for other properties, the default StringCellCoercer will kick in

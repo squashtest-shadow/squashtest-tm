@@ -20,6 +20,16 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -32,21 +42,30 @@ import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
+import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
+import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
-
-import javax.inject.Inject;
-import java.util.*;
 
 /**
  * @author Gregory Fouquet
@@ -109,6 +128,10 @@ class RequirementFacility extends EntityFacilitySupport {
 	private RequirementVersionManagerService requirementVersionManagerService;
 	@Inject
 	private RequirementLibraryNavigationService reqLibNavigationService;
+	@Inject
+	private LinkedRequirementVersionManagerService reqlinkService;
+	@Inject
+	private RequirementVersionLinkTypeDao reqlinkTypeDao;
 
 	private final FacilityImplHelper helper = new FacilityImplHelper(this);
 
@@ -460,6 +483,67 @@ class RequirementFacility extends EntityFacilitySupport {
 			validator.getModel().setNotExists(target);
 			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
+	}
+	
+	
+	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
+		LogTrain train = validator.createRequirementLink(instr);
+		if (! train.hasCriticalErrors()){
+			createOrUpdateLink(instr, train);
+		}
+		return train;
+	}
+	
+	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
+		LogTrain train = validator.updateRequirementLink(instr);
+		if (! train.hasCriticalErrors()){
+			createOrUpdateLink(instr, train);
+		}
+		return train;
+	}
+
+	public LogTrain deleteRequirementLink(RequirementLinkInstruction instr) {
+		LogTrain train = validator.deleteRequirementLink(instr);
+		if (! train.hasCriticalErrors()){
+			long sourceId = findVersionIdByTarget(instr.getTarget().getSourceVersion());
+			long destId = findVersionIdByTarget(instr.getTarget().getDestVersion());
+			reqlinkService.removeLinkedRequirementVersionsFromRequirementVersion(sourceId, Arrays.asList(destId));
+		}
+		return train;
+	}
+	
+	private void createOrUpdateLink(RequirementLinkInstruction instr, LogTrain train){
+		
+		long sourceId = findVersionIdByTarget(instr.getTarget().getSourceVersion());
+		long destId = findVersionIdByTarget(instr.getTarget().getDestVersion());
+		
+		String destRole = instr.getRelationRole();
+		if (StringUtils.isBlank(destRole)){
+			destRole = reqlinkTypeDao.getDefaultRequirementVersionLinkType().getRole2Code();
+		}
+		
+		try{
+			reqlinkService.addOrUpdateRequirementLink(sourceId, destId, destRole);
+		}
+		catch(SameRequirementLinkedRequirementVersionException ex){
+			train.addEntry(LogEntry
+							.failure()
+							.forTarget(instr.getTarget())
+							.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
+							.build());	
+		}
+		catch(UnlinkableLinkedRequirementVersionException ex){
+			train.addEntry(LogEntry
+					.failure()
+					.forTarget(instr.getTarget())
+					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
+					.build());	
+		}
+	}
+	
+	private long findVersionIdByTarget(RequirementVersionTarget versTarget){
+		Long reqId = validator.getModel().getRequirementId(versTarget);
+		return requirementVersionManagerService.findReqVersionIdByRequirementAndVersionNumber(reqId, versTarget.getVersion());
 	}
 
 	private void renameRequirementVersion(RequirementVersionInstruction rvi) {
