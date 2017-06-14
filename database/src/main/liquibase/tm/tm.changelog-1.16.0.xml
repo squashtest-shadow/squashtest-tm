@@ -45,7 +45,7 @@
 
     <!-- REQUIREMENT_VERSION_LINK_TYPE TABLE -->
     <createTable tableName="REQUIREMENT_VERSION_LINK_TYPE">
-      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" type="BIGINT"
+      <column name="TYPE_ID" type="BIGINT"
               autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -67,7 +67,7 @@
 
     <!-- REQUIREMENT_VERSION_LINK TABLE -->
     <createTable tableName="REQUIREMENT_VERSION_LINK">
-      <column name="REQUIREMENT_VERSION_LINK_ID" type="BIGINT"
+      <column name="LINK_ID" type="BIGINT"
             autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -75,7 +75,7 @@
       <column name="LINK_TYPE_ID" type="BIGINT" remarks="foreign key to the requirement_version_link_type table">
         <constraints nullable="false"
                    foreignKeyName="fk_req_version_link_req_version_link_type_link_type_id"
-                   references="REQUIREMENT_VERSION_LINK_TYPE(REQUIREMENT_VERSION_LINK_TYPE_ID)" />
+                   references="REQUIREMENT_VERSION_LINK_TYPE(TYPE_ID)" />
       </column>
 
       <column name="LINK_DIRECTION" type="BOOLEAN" defaultValueBoolean="0">
@@ -97,23 +97,22 @@
 
     <!-- Inserting default Requirement Version Link Type -->
     <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
-      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="1" />
       <column name="ROLE_1" value="requirement-version.link.type.related" />
       <column name="ROLE_1_CODE" value="RELATED" />
       <column name="ROLE_2" value="requirement-version.link.type.related" />
       <column name="ROLE_2_CODE" value="RELATED" />
       <column name="IS_DEFAULT" valueBoolean="true" />
     </insert>
+
     <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
-      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="2" />
       <column name="ROLE_1" value="requirement-version.link.type.parent" />
       <column name="ROLE_1_CODE" value="PARENT" />
       <column name="ROLE_2" value="requirement-version.link.type.child" />
       <column name="ROLE_2_CODE" value="CHILD" />
       <column name="IS_DEFAULT" valueBoolean="false" />
     </insert>
+
     <insert tableName="REQUIREMENT_VERSION_LINK_TYPE">
-      <column name="REQUIREMENT_VERSION_LINK_TYPE_ID" value="3" />
       <column name="ROLE_1" value="requirement-version.link.type.duplicate" />
       <column name="ROLE_1_CODE" value="DUPLICATE" />
       <column name="ROLE_2" value="requirement-version.link.type.duplicate" />

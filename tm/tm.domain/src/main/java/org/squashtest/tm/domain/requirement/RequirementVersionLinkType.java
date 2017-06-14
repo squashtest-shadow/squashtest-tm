@@ -30,12 +30,13 @@ import javax.validation.constraints.Size;
  * Created by jlor on 09/05/2017.
  */
 @Entity
+@Table(name = "REQUIREMENT_VERSION_LINK_TYPE")
 public class RequirementVersionLinkType implements Identified {
 
 	@Id
-	@Column(name = "REQUIREMENT_VERSION_LINK_TYPE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_link_type_link_type_id_seq")
-	@SequenceGenerator(name = "requirement_version_link_type_link_type_id_seq", sequenceName = "requirement_version_link_type_link_type_id_seq", allocationSize = 1)
+	@Column(name = "TYPE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_link_type_type_id_seq")
+	@SequenceGenerator(name = "requirement_version_link_type_type_id_seq", sequenceName = "requirement_version_link_type_type_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Column(name = "ROLE_1")

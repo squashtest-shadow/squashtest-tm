@@ -29,10 +29,11 @@ import javax.persistence.*;
  */
 
 @Entity
+@Table(name = "REQUIREMENT_VERSION_LINK")
 public class RequirementVersionLink implements Identified {
 
 	@Id
-	@Column(name = "REQUIREMENT_VERSION_LINK_ID")
+	@Column(name = "LINK_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_link_link_id_seq")
 	@SequenceGenerator(name = "requirement_version_link_link_id_seq", sequenceName = "requirement_version_link_link_id_seq", allocationSize = 1)
 	private Long id;
@@ -46,7 +47,7 @@ public class RequirementVersionLink implements Identified {
 	private RequirementVersion relatedRequirementVersion;
 
 	@ManyToOne
-	@JoinColumn(name="LINK_TYPE_ID", referencedColumnName = "REQUIREMENT_VERSION_LINK_TYPE_ID")
+	@JoinColumn(name="LINK_TYPE_ID", referencedColumnName = "TYPE_ID")
 	private RequirementVersionLinkType linkType;
 
 	/**
