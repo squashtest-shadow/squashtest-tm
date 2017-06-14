@@ -82,18 +82,18 @@
   
   <!-- the requirement links -->
   
-  <requirement_version_link_type REQUIREMENT_VERSION_LINK_TYPE_ID="-1" ROLE_1="requirement-version.link.type.related" ROLE_1_CODE="RELATED" ROLE_2="requirement-version.link.type.related" ROLE_2_CODE="RELATED" IS_DEFAULT="true"/>
-  <requirement_version_link_type REQUIREMENT_VERSION_LINK_TYPE_ID="-2" ROLE_1="requirement-version.link.type.parent" ROLE_1_CODE="PARENT" ROLE_2="requirement-version.link.type.child" ROLE_2_CODE="CHILD" IS_DEFAULT="false"/>
-  <requirement_version_link_type REQUIREMENT_VERSION_LINK_TYPE_ID="-3" ROLE_1="requirement-version.link.type.duplicate" ROLE_1_CODE="DUPLICATE" ROLE_2="requirement-version.link.type.duplicate" ROLE_2_CODE="DUPLICATE" IS_DEFAULT="false"/>
+  <requirement_version_link_type TYPE_ID="-1" ROLE_1="requirement-version.link.type.related" ROLE_1_CODE="RELATED" ROLE_2="requirement-version.link.type.related" ROLE_2_CODE="RELATED" IS_DEFAULT="true"/>
+  <requirement_version_link_type TYPE_ID="-2" ROLE_1="requirement-version.link.type.parent" ROLE_1_CODE="PARENT" ROLE_2="requirement-version.link.type.child" ROLE_2_CODE="CHILD" IS_DEFAULT="false"/>
+  <requirement_version_link_type TYPE_ID="-3" ROLE_1="requirement-version.link.type.duplicate" ROLE_1_CODE="DUPLICATE" ROLE_2="requirement-version.link.type.duplicate" ROLE_2_CODE="DUPLICATE" IS_DEFAULT="false"/>
   
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-1" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-256" RELATED_REQUIREMENT_VERSION_ID="-255"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-2" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-256"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-3" LINK_TYPE_ID="-1" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-257"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-4" LINK_TYPE_ID="-1" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-257" RELATED_REQUIREMENT_VERSION_ID="-255"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-7" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-255"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-8" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-259"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-9" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-260"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-10" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-259"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-13" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-261" RELATED_REQUIREMENT_VERSION_ID="-260"/>
-  <requirement_version_link REQUIREMENT_VERSION_LINK_ID="-14" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-261"/>
+  <requirement_version_link LINK_ID="-1" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-256" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-2" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-256"/>
+  <requirement_version_link LINK_ID="-3" LINK_TYPE_ID="-1" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-257"/>
+  <requirement_version_link LINK_ID="-4" LINK_TYPE_ID="-1" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-257" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-7" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-255"/>
+  <requirement_version_link LINK_ID="-8" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-255" RELATED_REQUIREMENT_VERSION_ID="-259"/>
+  <requirement_version_link LINK_ID="-9" LINK_TYPE_ID="-2" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-259" RELATED_REQUIREMENT_VERSION_ID="-260"/>
+  <requirement_version_link LINK_ID="-10" LINK_TYPE_ID="-2" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-259"/>
+  <requirement_version_link LINK_ID="-13" LINK_TYPE_ID="-3" LINK_DIRECTION="false" REQUIREMENT_VERSION_ID="-261" RELATED_REQUIREMENT_VERSION_ID="-260"/>
+  <requirement_version_link LINK_ID="-14" LINK_TYPE_ID="-3" LINK_DIRECTION="true" REQUIREMENT_VERSION_ID="-260" RELATED_REQUIREMENT_VERSION_ID="-261"/>
 </dataset>

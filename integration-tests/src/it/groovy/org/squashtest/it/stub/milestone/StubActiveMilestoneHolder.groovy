@@ -21,15 +21,13 @@
 package org.squashtest.it.stub.milestone;
 
 
-import spock.lang.MockingApi;
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext;
 
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
 import com.google.common.base.Optional
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext;
 
 
 
