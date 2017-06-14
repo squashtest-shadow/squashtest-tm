@@ -36,7 +36,8 @@
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
 <c:url var="indexUrl"                 value="/administration/indexes" />
 <c:url var="milestoneUrl"             value="/administration/milestones" />
-<c:url var="configUrl"               value="/administration/config" />
+<c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
+<c:url var="configUrl"                value="/administration/config" />
 
 
 <layout:info-page-layout titleKey="label.administration">
@@ -100,9 +101,9 @@
           <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
         </a>
 
-        <a href="#" class="unstyledLink">
+        <a href="${ reqLinkTypeUrl }" class="unstyledLink">
           <span id="admin-requirement-link-type" class="admin-section-icon admin-customfields-icon"></span>
-          <span class="admin-section-label">Liens entre exigences</span>
+          <span class="admin-section-label"><f:message key="label.reqLinkTypeManagement" /></span>
         </a>
 
         <a id="fake-link" class="unstyledLink"></a>

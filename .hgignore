@@ -113,6 +113,7 @@ depTree.txt
 tm/tm.web/src/main/resources/config/application-jlo_mysql.properties
 tm/tm.web/src/main/resources/config/application-jpr_mysql.properties
 tm/tm.web/src/main/resources/config/application-jpr_postgresql.properties
+tm/tm.web/src/main/resources/config/application-jlo_postgresql.properties
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp

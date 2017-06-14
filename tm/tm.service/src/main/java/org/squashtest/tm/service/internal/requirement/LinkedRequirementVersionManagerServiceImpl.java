@@ -261,6 +261,12 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	}
 	
 
+	@Override
+	public PagedCollectionHolder<List<RequirementVersionLinkType>> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pagingAndSorting) {
+		List<RequirementVersionLinkType> reqLinkTypesList = reqVersionLinkTypeDao.getAllPagedAndSortedReqVersionLinkTypes(pagingAndSorting);
+		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, reqLinkTypesList.size(), reqLinkTypesList);
+	}
+
 	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {
 			throw new AlreadyLinkedRequirementVersionException();

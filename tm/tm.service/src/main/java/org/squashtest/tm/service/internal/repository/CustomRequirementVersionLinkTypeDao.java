@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
+
+import java.util.List;
 
 /**
  * Data access methods for {@link RequirementVersionLinkType}. Methods are all dynamically generated.
@@ -34,19 +32,12 @@ import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
  *
  * Note: This Dao uses NamedQueries written in hibernate/package-info.
  */
-public interface RequirementVersionLinkTypeDao extends CrudRepository<RequirementVersionLinkType, Long>, CustomRequirementVersionLinkTypeDao {
+public interface CustomRequirementVersionLinkTypeDao {
 
 	/**
-	 * Get the only {@link RequirementVersionLinkType} set as the Default one.
-	 * @return
+	 * Returns a paged and ordered list of all the {@link RequirementVersionLinkType}.
+	 * @param pas
+	 * @return Paged and sorted list of all existing RequirementVersionLinkTypes.
 	 */
-	RequirementVersionLinkType getDefaultRequirementVersionLinkType();
-	/**
-	 * Find all the RequirementVersionLinkTypes that exist.
-	 */
-	List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes();
-	
-	@Query("from RequirementVersionLinkType where role1Code = :roleCode or role2Code = :roleCode")
-	RequirementVersionLinkType findByRoleCode(@Param("roleCode") String roleCode);
-
+	List<RequirementVersionLinkType> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
 }

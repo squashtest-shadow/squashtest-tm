@@ -137,8 +137,6 @@ public class LinkedRequirementVersionsManagerController {
 		linkedReqVersionManager.removeLinkedRequirementVersionsFromRequirementVersion(requirementVersionId, requirementVersionIdsToUnbind);
 	}
 
-	;
-
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
 							  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {

@@ -343,24 +343,24 @@
 	@NamedQuery(name = "requirementVersion.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifedReqV.id in (:versionIds)"),
 
 	/*
-	 *  Links are dual : if rv 1 is related to rv2 then rv2 is related to rv1, and both records exist in the DB. We want to show only one to the user. 
-	 *  In that order, for a given requirement version a row will be fetched from the DB iif : 
+	 *  Links are dual : if rv 1 is related to rv2 then rv2 is related to rv1, and both records exist in the DB. We want to show only one to the user.
+	 *  In that order, for a given requirement version a row will be fetched from the DB iif :
 	 *  - both requirement versions are fetched, in which case we return only the one which has direction = false, OR
 	 *  - the related requirement version is not part of the export
-	 *  
-	 *  that condition can be then reduced to : 
-	 *  - not (related version fetched and direction = true)  
-	 *  
+	 *
+	 *  that condition can be then reduced to :
+	 *  - not (related version fetched and direction = true)
+	 *
 	 *  -----
-	 *  
-	 *  Also, about direction : if false we return the linkType.role2Code. Indeed that's how it is shown in the GUI. If the logic must change, just swap the branches of the 
+	 *
+	 *  Also, about direction : if false we return the linkType.role2Code. Indeed that's how it is shown in the GUI. If the logic must change, just swap the branches of the
 	 *  case statement.
 	 */
 	@NamedQuery(name = "requirementVersion.excelExportRequirementLinks", query = "select origReq.id, relReq.id, origVer.versionNumber, relVer.versionNumber, "
 			+ "case link.linkDirection when true then linkType.role1Code else linkType.role2Code end as relationRole "
 			+ "from RequirementVersionLink link join link.requirementVersion origVer join origVer.requirement origReq join link.relatedRequirementVersion relVer join relVer.requirement relReq join link.linkType linkType "
 			+ "where (origVer.id in (:versionIds) and not ( relVer.id in (:versionIds) and link.linkDirection is true ))"),
-	
+
 	//Campaign
 	@NamedQuery(name = "campaign.findAllCampaignIdsByLibraries", query = "select c.id from Campaign c join c.project p join p.campaignLibrary cl where cl.id in (:libraryIds)"),
 	@NamedQuery(name = "campaign.findAllCampaignIdsByNodeIds", query = "select c.id from Campaign c where c.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId in (:nodeIds))"),
@@ -951,6 +951,9 @@
 				query="from RequirementVersionLinkType rvlt where rvlt.isDefault = true"),
 	@NamedQuery(name="RequirementVersionLinkType.getAllRequirementVersionLinkTypes",
 				query="from RequirementVersionLinkType"),
+	@NamedQuery(name="RequirementVersionLinkType.getAllPagedAndSortedReqVersionLinkTypes",
+				query="select RequirementVersionLinkType " +
+					"from RequirementVersionLinkType RequirementVersionLinkType"),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

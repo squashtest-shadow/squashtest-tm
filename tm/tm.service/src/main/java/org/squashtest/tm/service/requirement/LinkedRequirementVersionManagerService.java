@@ -58,6 +58,8 @@ public interface LinkedRequirementVersionManagerService {
 
 	List<RequirementVersionLinkType> getAllReqVersionLinkTypes();
 
+	PagedCollectionHolder<List<RequirementVersionLinkType>> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
+
 	void updateLinkTypeAndDirection(
 		long requirementVersionId, long relatedRequirementNodeId,
 		long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection);
