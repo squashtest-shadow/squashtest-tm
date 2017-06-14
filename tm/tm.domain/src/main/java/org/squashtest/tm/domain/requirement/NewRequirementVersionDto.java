@@ -34,6 +34,48 @@ import org.squashtest.tm.domain.infolist.ListItemReference;
  * 
  */
 public class NewRequirementVersionDto {
+	
+	/*@NotBlank*/
+	private String name;
+
+	private String description;
+
+	/*@NotNull*/
+	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
+
+	/*@NotNull*/
+	private String category;
+
+	/*@Length(max=50)*/
+	private String reference;
+
+	/*@NotNull
+	@NotEmpty*/
+	//maps a CustomField id to the value of a corresponding CustomFieldValue
+	private Map<Long, RawValue> customFields = new HashMap<>();
+	
+	
+	
+	public NewRequirementVersionDto() {
+		super();
+	}
+	
+	/**
+	 * Constructor used by import requirement process. As the exel parser return a {@link RequirementVersion}
+	 * we need to convert it to DTO before persist the new requirement version
+	 * @param requirementVersion
+	 */
+	public NewRequirementVersionDto(RequirementVersion requirementVersion, Map<Long, RawValue> customFields){
+		this.name = requirementVersion.getName();
+		this.reference = requirementVersion.getReference();
+		this.description = requirementVersion.getDescription();
+		this.criticality = requirementVersion.getCriticality();
+		this.category = requirementVersion.getCategory().getCode();
+		this.customFields = customFields;
+	}
+	
+	
+	
 	public String getName() {
 		return name;
 	}
@@ -84,25 +126,6 @@ public class NewRequirementVersionDto {
 
 
 
-	/*@NotBlank*/
-	private String name;
-
-	private String description;
-
-	/*@NotNull*/
-	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-
-	/*@NotNull*/
-	private String category;
-
-	/*@Length(max=50)*/
-	private String reference;
-
-	/*@NotNull
-	@NotEmpty*/
-	//maps a CustomField id to the value of a corresponding CustomFieldValue
-	private Map<Long, RawValue> customFields = new HashMap<>();
-
 
 	public RequirementVersion toRequirementVersion() {
 		RequirementVersion version = new RequirementVersion();
@@ -117,23 +140,7 @@ public class NewRequirementVersionDto {
 
 		return version;
 	}
-	
-	public NewRequirementVersionDto() {
-	}
-	
-	/**
-	 * Constructor used by import requirement process. As the exel parser return a {@link RequirementVersion}
-	 * we need to convert it to DTO before persist the new requirement version
-	 * @param requirementVersion
-	 */
-	public NewRequirementVersionDto(RequirementVersion requirementVersion, Map<Long, RawValue> customFields){
-		this.name = requirementVersion.getName();
-		this.reference = requirementVersion.getReference();
-		this.description = requirementVersion.getDescription();
-		this.criticality = requirementVersion.getCriticality();
-		this.category = requirementVersion.getCategory().getCode();
-		this.customFields = customFields;
-	}
+
 
 
 }

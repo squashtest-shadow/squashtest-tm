@@ -46,6 +46,9 @@ import org.squashtest.tm.service.statistics.requirement.RequirementValidationSta
 
 @Service("RequirementStatisticsService")
 @Transactional(readOnly = true)
+
+// that SuppressWarning is intended for SONAR so it ignores the rule squid:S1192 (that is, define constants for long Strings)
+@SuppressWarnings("squid:S1192") 
 public class RequirementStatisticsServiceImpl implements RequirementStatisticsService {
 
 	private static final Logger LOGGER = LoggerFactory

@@ -103,29 +103,6 @@ public class ExcelWorkbookParser {
 
 
 
-	/**
-	 * Can create an {@link InstructionBuilder} for a given {@link WorksheetDef<C>}
-	 * @param <C> a TemplateColumn
-	 */
-	private static interface Factory<C extends Enum<C> & TemplateColumn> {
-		InstructionBuilder<?, ?> create(WorksheetDef<C> wd);
-	}
-
-	/**
-	 * Factory method which should be used to create a parser.
-	 *
-	 * @param xls
-	 * @return
-	 * @throws SheetCorruptedException
-	 *             when the excel file is unreadable
-	 * @throws TemplateMismatchException
-	 *             when the workbook does not match the template in an unrecoverable way.
-	 */
-	public static final ExcelWorkbookParser createParser(File xls) throws SheetCorruptedException,
-	TemplateMismatchException {
-		return new ExcelWorkbookParserBuilder(xls).build();
-	}
-
 	private Workbook workbook;
 	private final WorkbookMetaData wmd;
 
@@ -395,6 +372,32 @@ public class ExcelWorkbookParser {
 		}
 
 		return isEmpty;
+	}
+	
+	
+
+
+	/**
+	 * Can create an {@link InstructionBuilder} for a given {@link WorksheetDef<C>}
+	 * @param <C> a TemplateColumn
+	 */
+	private static interface Factory<C extends Enum<C> & TemplateColumn> {
+		InstructionBuilder<?, ?> create(WorksheetDef<C> wd);
+	}
+
+	/**
+	 * Factory method which should be used to create a parser.
+	 *
+	 * @param xls
+	 * @return
+	 * @throws SheetCorruptedException
+	 *             when the excel file is unreadable
+	 * @throws TemplateMismatchException
+	 *             when the workbook does not match the template in an unrecoverable way.
+	 */
+	public static final ExcelWorkbookParser createParser(File xls) throws SheetCorruptedException,
+	TemplateMismatchException {
+		return new ExcelWorkbookParserBuilder(xls).build();
 	}
 
 }

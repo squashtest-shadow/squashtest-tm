@@ -104,100 +104,97 @@ public class ConciseFormToCriteriaConverter {
 
 		Object expanded = null;
 
-		switch (type) {
+		switch (type) { // NOSONAR
 			case TEXT:
 			case PASSWORD:
-			case DATE: {
-				Map exp = new HashMap();
-				exp.put(EXP_TYPE, concise.get(CON_TYPE));
-				exp.put(EXP_VALUE, concise.get(CON_VAL));
-				expanded = exp;
-
+			case DATE: 
+				expanded = expendedSingleInput(concise);
 				break;
-			}
-			case CHECKBOX: {
+		
+			case CHECKBOX:
 				expanded = expandedCheckbox(concise);
 				break;
-			}
-			case RADIO_BUTTONS_GROUP: {
-
+			
+			
+			case RADIO_BUTTONS_GROUP:
 				expanded = expandedRadioButtonGroup(inputName, concise);
 				break;
-			}
 
-			case DROPDOWN_LIST: {
-
+			
+			case DROPDOWN_LIST:
 				expanded = expandedDropdownList(inputName, concise);
 				break;
-			}
-			case CHECKBOXES_GROUP: {
 
+			
+			case CHECKBOXES_GROUP:
 				expanded = expandedCheckboxesGroup(inputName, concise);
 				break;
-			}
 
-			case PROJECT_PICKER: {
 
+			case PROJECT_PICKER:
 				expanded = expandedProjectPicker(concise);
 				break;
-			}
-			case TREE_PICKER: {
-				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
 
+			
+			case TREE_PICKER:
+				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
 				if (selNodes.isEmpty()) {
 					return;
 				}
-
-				List exp = new ArrayList();
-
-				for (Map node : selNodes) {
-					Map expOpt = new HashMap();
-					expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
-					expOpt.put(EXP_VALUE, node.get("resid"));
-					expOpt.put("nodeType", node.get("restype"));
-
-					exp.add(expOpt);
-				}
-
-				expanded = exp;
+				expanded = expendedTreePicker(concise);
 				break;
-			}
 
-			case MILESTONE_PICKER: {
 
-				Collection milestoneIds = (Collection) concise.get(CON_VAL);
-
-				List<Object> milestones = new ArrayList<>(milestoneIds.size());
-
-				Map<String, Object> mMap = new HashMap<>();
-				mMap.put(EXP_TYPE, concise.get(CON_TYPE));
-				mMap.put(EXP_VALUE, milestoneIds);
-
-				milestones.add(mMap);
-
-				expanded = milestones;
+			case MILESTONE_PICKER:
+			case TAG_PICKER:
+				expanded = expandedPickerList(concise);
 				break;
-			}
-			case TAG_PICKER: {
-				Collection tagsVal = (Collection) concise.get(CON_VAL);
 
-				List<Object> tags = new ArrayList<>(tagsVal.size());
-
-				Map<String, Object> mMap = new HashMap<>();
-				mMap.put(EXP_TYPE, concise.get(CON_TYPE));
-				mMap.put(EXP_VALUE, tagsVal);
-
-				tags.add(mMap);
-
-				expanded = tags;
-				break;
-			}
+			
 			default:
 				// NOOP
 				break;
 		}
 
 		expandedForm.put(inputName, expanded);
+	}
+	
+	private List<Object> expandedPickerList(Map concise) {
+		Collection values = (Collection) concise.get(CON_VAL);
+
+		List<Object> expandedModel = new ArrayList<>();
+
+		Map<String, Object> mMap = new HashMap<>();
+		mMap.put(EXP_TYPE, concise.get(CON_TYPE));
+		mMap.put(EXP_VALUE, values);
+
+		expandedModel.add(mMap);
+		
+		return expandedModel;
+	}
+
+	private List expendedTreePicker(Map concise) {
+
+		Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
+		
+		List exp = new ArrayList();
+
+		for (Map node : selNodes) {
+			Map expOpt = new HashMap();
+			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
+			expOpt.put(EXP_VALUE, node.get("resid"));
+			expOpt.put("nodeType", node.get("restype"));
+
+			exp.add(expOpt);
+		}
+		return exp;
+	}
+
+	private Map expendedSingleInput(Map concise) {
+		Map exp = new HashMap();
+		exp.put(EXP_TYPE, concise.get(CON_TYPE));
+		exp.put(EXP_VALUE, concise.get(CON_VAL));
+		return exp;
 	}
 
 	@SuppressWarnings("unchecked")

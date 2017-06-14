@@ -27,10 +27,6 @@ package org.squashtest.tm.service.security;
  *
  */
 public final class Authorizations {
-	private Authorizations() {
-		super();
-	}
-
 	public static final String READ = "READ";
 
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -44,6 +40,10 @@ public final class Authorizations {
 	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')";
 
 	public static final String OR_HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = " or (hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER'))";
+
+	private Authorizations() {
+		super();
+	}
 
 
 }

@@ -21,6 +21,7 @@
 package org.squashtest.tm.internal.domain.report.common.dto;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,21 +47,9 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 	/** STATISTICS **/
 	/****************************/
 
-	private Map<ReqCoverageByTestStatType, Long> requirementNumbers = new HashMap<>();
+	private EnumMap<ReqCoverageByTestStatType, Long> requirementNumbers = new EnumMap<>(ReqCoverageByTestStatType.class);
 	private Map<String, Long> requirementStatusNumbers = new HashMap<>();
 
-	public ReqCoverageByTestProjectDto() {
-		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
-			requirementNumbers.put(reqStatType, 0L);
-		}
-
-		for (RequirementStatus status : RequirementStatus.values()) {
-			for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
-				String key = status.toString() + reqStatType.toString();
-				requirementStatusNumbers.put(key, 0L);
-			}
-		}
-	}
 
 	/* RATES */
 	private Byte globalRequirementCoverage;
@@ -122,6 +111,21 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 
 	private Byte obsoleteUndefinedRequirementCoverage;
 
+
+	public ReqCoverageByTestProjectDto() {
+		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
+			requirementNumbers.put(reqStatType, 0L);
+		}
+
+		for (RequirementStatus status : RequirementStatus.values()) {
+			for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
+				String key = status.toString() + reqStatType.toString();
+				requirementStatusNumbers.put(key, 0L);
+			}
+		}
+	}
+	
+	
 	/**
 	 * Increments the number identified by the ReqCoverageByTestStatType
 	 *
@@ -272,7 +276,7 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 		return requirementNumbers;
 	}
 
-	public void setRequirementNumbers(Map<ReqCoverageByTestStatType, Long> requirementNumbers) {
+	public void setRequirementNumbers(EnumMap<ReqCoverageByTestStatType, Long> requirementNumbers) {
 		this.requirementNumbers = requirementNumbers;
 	}
 

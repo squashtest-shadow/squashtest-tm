@@ -85,6 +85,32 @@ public class TestAutomationProject {
 	@Column(name = "EXECUTION_ENVIRONMENTS")
 	private String slaves = "";
 
+	
+
+	public TestAutomationProject() {
+		super();
+	}
+
+	public TestAutomationProject(String jobName) {
+		this(jobName, jobName);
+
+	}
+	public TestAutomationProject(String jobName, String label) {
+		super();
+		this.jobName = jobName;
+		this.label = label;
+
+	}
+	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
+		this(jobName, label);
+		this.server = server;
+	}
+
+	public TestAutomationProject(String jobName, TestAutomationServer server) {
+		this(jobName, jobName, server);
+	}
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -149,28 +175,6 @@ public class TestAutomationProject {
 		}
 	}
 
-	public TestAutomationProject() {
-		super();
-	}
-
-	public TestAutomationProject(String jobName) {
-		this(jobName, jobName);
-
-	}
-	public TestAutomationProject(String jobName, String label) {
-		super();
-		this.jobName = jobName;
-		this.label = label;
-
-	}
-	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
-		this(jobName, label);
-		this.server = server;
-	}
-
-	public TestAutomationProject(String jobName, TestAutomationServer server) {
-		this(jobName, jobName, server);
-	}
 
 	public TestAutomationProject createCopy(){
 		TestAutomationProject copy = new TestAutomationProject(this.jobName, this.label, this.server);

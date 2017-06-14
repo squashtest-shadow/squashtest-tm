@@ -103,6 +103,17 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	@PersistenceContext
 	private EntityManager em;
 
+
+	// ***************** treatment-scoped variables ****************
+
+	private List<NODE> outputList;
+	private Collection<NodePairing> nextLayer;
+	private Collection<NodePairing> sourceLayer;
+	private Set<Long> tcIdsToIndex = new HashSet<>();
+	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
+
+	// ******************* initialization *****************************
+
 	public <R extends EntityDao<CONTAINER>> void setContainerDao(R containerDao) {
 		this.containerDao = containerDao;
 	}
@@ -118,17 +129,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	public void setNextLayerFeederOperationFactory(Provider<NextLayerFeeder> nextLayerFeederOperationFactory) {
 		this.nextLayerFeederOperationFactory = nextLayerFeederOperationFactory;
 	}
-
-	// ***************** treatment-scoped variables ****************
-
-	private List<NODE> outputList;
-	private Collection<NodePairing> nextLayer;
-	private Collection<NodePairing> sourceLayer;
-	private Set<Long> tcIdsToIndex = new HashSet<>();
-	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
-
+	
+	
+	
 	// ******************* code *****************************
 
+	
 	@CacheScope
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
 		return internalPasteNodes(containerId, list, WHATEVER_POSITION);

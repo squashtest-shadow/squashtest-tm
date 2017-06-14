@@ -47,13 +47,6 @@ public class BugTracker {
 		NOT_DEFINED.iframeFriendly = true;
 	}
 
-	public BugTracker() {
-		super();
-	}
-
-	private void doSetName(String name) {
-		this.name = name.trim();
-	}
 
 	@Id
 	@GeneratedValue(generator = "bugtracker_bugtracker_id_seq")
@@ -76,6 +69,16 @@ public class BugTracker {
 
 	private boolean iframeFriendly;
 
+	
+
+	public BugTracker() {
+		super();
+	}
+
+	private void doSetName(String name) {
+		this.name = name.trim();
+	}
+	
 	public String getName() {
 		return name;
 	}

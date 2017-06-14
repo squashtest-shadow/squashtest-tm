@@ -70,9 +70,6 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 100;
-	public TestSuite() {
-		super();
-	}
 
 	@Id
 	@DocumentId
@@ -102,6 +99,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName = "ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName = "ID"))
 	private List<IterationTestPlanItem> testPlan = new LinkedList<>();
 
+	public TestSuite() {
+		super();
+	}
+
+	
 	@Override
 	public Long getId() {
 		return id;

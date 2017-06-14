@@ -28,15 +28,15 @@ package org.squashtest.tm.web.internal.http;
  */
 public final class ContentTypes {
 
-	private ContentTypes() {
-		super();
-	}
-
 	public static final String TEXT_HTML = "text/html";
 	public static final String TEXT_XML = "text/xml";
 	public static final String APPLICATION_JSON = "application/json";
 	public static final String APPLICATION_XML = "application/xml";
 	public static final String TEXT_JAVASCRIPT = "text/javascript";
 	public static final String APPLICATION_URLENCODE = "application/x-www-form-urlencoded";
+
+	private ContentTypes() {
+		super();
+	}
 
 }

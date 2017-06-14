@@ -85,13 +85,6 @@ import org.hibernate.type.Type;
  */
 public class HibernateDialectExtensions {
 
-        // SONAR is now happy
-        private HibernateDialectExtensions(){
-            super();
-        }
-    
-    
-    
 	public static final String FN_NAME_GROUP_CONCAT = "group_concat";
 	public static final String FN_NAME_WEEK = "week";
 
@@ -102,6 +95,13 @@ public class HibernateDialectExtensions {
 	public static final String FN_NAME_MAX = "s_max";
 	public static final String FN_NAME_AVG = "s_avg";
 
+
+    private HibernateDialectExtensions(){
+        super();
+    }
+
+	
+	
 	public static enum FnSupport {
 		GROUP_CONCAT,
 		STR_AGG,

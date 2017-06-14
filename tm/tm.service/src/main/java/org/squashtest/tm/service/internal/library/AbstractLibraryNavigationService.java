@@ -102,17 +102,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	@Inject
 	protected PermissionEvaluationService permissionService;
 
-	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
-
-	protected abstract LibraryDao<LIBRARY, NODE> getLibraryDao();
-
-	protected abstract LibraryNodeDao<NODE> getLibraryNodeDao();
-
-	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
-
-	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
-
-	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
@@ -127,6 +116,20 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		super();
 	}
 
+
+	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
+
+	protected abstract LibraryDao<LIBRARY, NODE> getLibraryDao();
+
+	protected abstract LibraryNodeDao<NODE> getLibraryNodeDao();
+
+	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
+
+	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
+
+	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
+	
+	
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public final List<NODE> findLibraryRootContent(long libraryId) {

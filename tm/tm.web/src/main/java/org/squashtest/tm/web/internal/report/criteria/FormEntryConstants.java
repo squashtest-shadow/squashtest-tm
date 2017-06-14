@@ -25,10 +25,7 @@ package org.squashtest.tm.web.internal.report.criteria;
  *
  */
 final class FormEntryConstants {
-	private FormEntryConstants() {
-		super();
-	}
-	
+
 	public static final String DATE_ENTRY_FORMAT = "yyyy-MM-dd"; // ATOM format
 	public static final String[] DATE_ENTRY_FORMATS = { DATE_ENTRY_FORMAT }; // 
 	public static final String EMPTY_DATE_ENTRY = "--";
@@ -36,5 +33,9 @@ final class FormEntryConstants {
 	public static final String INPUT_SELECTED = "selected";
 	public static final String INPUT_VALUE = "value";
 	public static final String INPUT_TYPE = "type";
+	
+	private FormEntryConstants() {
+		super();
+	}
 	
 }

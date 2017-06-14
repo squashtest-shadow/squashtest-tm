@@ -26,17 +26,14 @@ import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.querydsl.core.types.dsl.*;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnType;
@@ -44,8 +41,10 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
@@ -66,6 +65,12 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.DateOperation;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.SimpleExpression;
 
 class QuerydslToolbox {
 
@@ -75,7 +80,7 @@ class QuerydslToolbox {
 
 	private String subContext;
 
-	private Map<InternalEntityType, String> nondefaultPath = new HashMap<>();
+	private EnumMap<InternalEntityType, String> nondefaultPath = new EnumMap<>(InternalEntityType.class);
 
 	/**
 	 * Default constructor with default context
@@ -361,6 +366,7 @@ class QuerydslToolbox {
 		switch (subQueryStrategy(col)) {
 
 			// create a subselect statement
+			// NOSONAR because this is definitely not too long
 			case SUBQUERY:
 				EntityPathBase<?> colBean = getQBean(col);
 				SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
@@ -368,6 +374,7 @@ class QuerydslToolbox {
 				break;
 
 			// fetches the measure from the subquery
+			// NOSONAR because this is definitely not too long
 			case INLINED:
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(col);
 				MeasureColumn submeasure = col.getColumn().getSubQuery().getMeasures().get(0);    // take that Demeter !
@@ -376,6 +383,7 @@ class QuerydslToolbox {
 
 
 			case MAIN:
+			default :
 				throw new IllegalArgumentException(
 					"Attempted to create a subquery for column '" + col.getColumn().getLabel() +
 						"' from what appears to be a main query. " +
@@ -476,6 +484,7 @@ class QuerydslToolbox {
 				break;
 
 			case MAIN:
+			default :
 				throw new IllegalArgumentException(
 					"Attempted to create a subquery for column '" + filter.getColumn().getLabel() +
 						"' from what appears to be a main query. " +
@@ -775,7 +784,7 @@ class QuerydslToolbox {
 			 */
 			DataType actualType = operation == Operation.NOT_NULL ? BOOLEAN : type;
 
-			for (String val : values) {// NOSONAR that's a fucking switch it's not complex !
+			for (String val : values) {// NOSONAR that's a <no swearing please> it's not complex !
 
 				Object operand;
 

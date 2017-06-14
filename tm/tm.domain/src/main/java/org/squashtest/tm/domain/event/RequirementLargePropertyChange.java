@@ -39,27 +39,7 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
 ChangedProperty {
-	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
-		return new Builder();
-	}
-
-	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> {
-
-		@Override
-		public RequirementLargePropertyChange build() {
-			RequirementLargePropertyChange event = new RequirementLargePropertyChange(eventSource, author);
-			event.propertyName = modifiedProperty;
-			event.oldValue = valueToString(oldValue);
-			event.newValue = valueToString(newValue);
-
-			return event;
-		}
-
-		private String valueToString(Object oldValue) {
-			return Objects.toString(oldValue, "");
-		}
-
-	}
+	
 
 	@NotNull
 	@Size(min = 0, max = 100)
@@ -82,6 +62,12 @@ ChangedProperty {
 	public RequirementLargePropertyChange(RequirementVersion requirementVersion, String author) {
 		super(requirementVersion, author);
 	}
+	
+	
+	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
+		return new Builder();
+	}
+
 
 	@Override
 	public String getPropertyName() {
@@ -103,4 +89,25 @@ ChangedProperty {
 		visitor.visit(this);
 	}
 
+	
+
+	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> {
+
+		@Override
+		public RequirementLargePropertyChange build() {
+			RequirementLargePropertyChange event = new RequirementLargePropertyChange(eventSource, author);
+			event.propertyName = modifiedProperty;
+			event.oldValue = valueToString(oldValue);
+			event.newValue = valueToString(newValue);
+
+			return event;
+		}
+
+		private String valueToString(Object oldValue) {
+			return Objects.toString(oldValue, "");
+		}
+
+	}
+
+	
 }

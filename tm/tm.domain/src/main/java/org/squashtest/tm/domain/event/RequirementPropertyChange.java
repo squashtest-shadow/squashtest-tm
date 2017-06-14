@@ -39,31 +39,7 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
 	ChangedProperty {
-	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
-		return new Builder();
-	}
 
-	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementPropertyChange> {
-
-		@Override
-		public RequirementPropertyChange build() {
-			RequirementPropertyChange event = new RequirementPropertyChange(eventSource, author);
-
-			event.propertyName = modifiedProperty;
-			event.oldValue = valueToString(oldValue);
-			event.newValue = valueToString(newValue);
-
-			return event;
-		}
-
-		private String valueToString(Object value) {
-			if (value != null && value instanceof InfoListItem) {
-				return ((InfoListItem) value).getLabel();
-			} else {
-				return Objects.toString(value, "");
-			}
-		}
-	}
 
 	@NotNull
 	@Size(max = 100)
@@ -102,6 +78,32 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 	@Override
 	public void accept(RequirementAuditEventVisitor visitor) {
 		visitor.visit(this);
+	}
+	
+	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
+		return new Builder();
+	}
+
+	private static class Builder extends AbstractRequirementPropertyChangeEventBuilder<RequirementPropertyChange> {
+
+		@Override
+		public RequirementPropertyChange build() {
+			RequirementPropertyChange event = new RequirementPropertyChange(eventSource, author);
+
+			event.propertyName = modifiedProperty;
+			event.oldValue = valueToString(oldValue);
+			event.newValue = valueToString(newValue);
+
+			return event;
+		}
+
+		private String valueToString(Object value) {
+			if (value != null && value instanceof InfoListItem) {
+				return ((InfoListItem) value).getLabel();
+			} else {
+				return Objects.toString(value, "");
+			}
+		}
 	}
 
 }

@@ -26,9 +26,6 @@ package org.squashtest.tm.web.internal.controller;
  */
 public final class RequestParams {
 
-	private RequestParams() {
-		super();
-	}
 	/**
 	 * request DataTable datas
 	 */
@@ -67,4 +64,10 @@ public final class RequestParams {
 	public static final String CAMPAIGN_ID = "campaignId";
 	public static final String EXECUTION_ID = "executionId";
 
+	
+
+	private RequestParams() {
+		super();
+	}
+	
 }
