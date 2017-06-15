@@ -28,10 +28,10 @@
 <div id="team-table-pane" class="table-tab" >
   <div class="toolbar">
     <button id="new-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary squash-button-initialized" title="<f:message key='label.addTeam' />">
-       <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.Add" /> </span> 
+       <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.Add" /> </span>
      </button>
      <button id="delete-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary squash-button-initialized" title="<f:message key='label.deleteTeam' />">
-       <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.Delete" /> </span> 
+       <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.Delete" /> </span>
      </button>
   </div>
   <div class="table-tab-wrap">
@@ -47,7 +47,7 @@
           <th class="datatable-filterable"><f:message key="label.createdBy" /></th>
           <th><f:message key="label.modifiedOn"/></th>
           <th class="datatable-filterable"><f:message key="label.modifiedBy"/></th>
-          <th>&nbsp;</th>  
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -60,7 +60,7 @@
           <td>${ fn:length(team.members) }</td>
           <td><comp:date value="${ team.createdOn }" /></td>
           <td>${ team.createdBy }</td>
-          <td><comp:date value="${ team.lastModifiedOn }" noValueKey="label.lower.Never" /></td> 
+          <td><comp:date value="${ team.lastModifiedOn }" noValueKey="label.lower.Never" /></td>
           <td>${ team.lastModifiedBy }</td>
           <td>&nbsp;</td>
         </tr>
@@ -97,7 +97,7 @@
     <input class="confirm" type="button" value="<f:message key='label.fem.addAnother' />" data-def="mainbtn, evt=addanother"/>
     <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="mainbtn, evt=confirm"/>
     <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="mainbtn, evt=cancel"/>
-  </div>  
+  </div>
 </div>
 
           <div id="remove-team-dialog" class="popup-dialog not-displayed"
@@ -108,10 +108,10 @@
                  <comp:notification-pane type="error">
                   <jsp:attribute name="htmlcontent">
                     <div class="display-table-cell">
-                <p th:text="#{dialog.remove-team  }">Confirmez vous la suppression de ces �quipes ?</p>
-                      <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-�tre annul�e.</p>
-                      <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
-              </div>        
+                      <p><f:message key="dialog.remove-team">Confirmez-vous la suppression de ces &eacute;quipes ?</f:message></p>
+                      <p><f:message key="dialog.label.delete-node.label.cantbeundone">Cette action ne peut &ecirc;tre annul&eacute;e.</f:message></p>
+                      <p><f:message key="dialog.label.delete-node.label.confirm">Confirmez-vous la suppression ?</f:message></p>
+              </div>
                   </jsp:attribute>
                 </comp:notification-pane>
 
