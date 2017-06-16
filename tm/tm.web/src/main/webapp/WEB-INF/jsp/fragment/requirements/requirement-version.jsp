@@ -442,7 +442,7 @@ publish('reload.requirement.attachments');
           <p><f:message key="requirement.new-version.confirm-dialog.milestonemode"/></p>
       </c:if>
     <input type="checkbox" id="req-version-inheritance" />
-    <label for="req-version-inheritance">Reprendre les liens entre versions d'exigences non-obsolètes.</label>
+    <label for="req-version-inheritance"><f:message key="requirement.new-version.inheritance.link.label"/></label>
 		<input type="button" value="${confirmLabel}" />
 		<input type="button" value="${cancelLabel}" />
 	</div>
