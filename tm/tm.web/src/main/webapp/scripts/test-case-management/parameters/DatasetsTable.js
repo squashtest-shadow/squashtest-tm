@@ -70,7 +70,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 								tooltip : self.settings.language.remove,
 								tdSelector : "td.delete-button",
 								uiIcon : "ui-icon-trash",
-								jquery : true,								
+								jquery : true,
 								onClick : this.removeRowDataset
 							} ]
 						};
@@ -89,9 +89,27 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 					if (this.settings.permissions.isWritable) {
 						this.addSimpleJEditableToName(row, data);
 						this.addSimpleJEditableToParamValues(row, data);
+					} else {
+						this.initRow(row);
 					}
 
 					return row;
+				},
+
+				// Issue 6800 - For Test Runner & Guest, the row data was "id=?, value=?", but we only want the value
+				// TODO: code refactoring ==> Duplicated code from 'addSimpleJEditableToParamValues'
+				initRow : function(row) {
+					var self = this;
+					var components = $('td.parameter', row);
+					$.each(components, function(index, value) {
+						var $value = $(value);
+						var cellText = $value.text();
+						var textAttrs = StringUtil.parseSequence(cellText);
+						var valuePrefix = "value=";
+						var indexWhereValueStarts = cellText.indexOf(valuePrefix) + valuePrefix.length;
+						var valueText = cellText.slice(indexWhereValueStarts, cellText.length);
+						$value.text(valueText);
+					});
 				},
 
 				addSimpleJEditableToName : function(row, data) {
@@ -115,11 +133,11 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						var cellText = $value.text();
 						var textAttrs = StringUtil.parseSequence(cellText);
 						// then we fix the cell's text to show only it's value
-//						var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
-//						code comented above doesn't work because of [Issue 3820]
+						// var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
+						// code comented above doesn't work because of [Issue 3820]
 						var valuePrefix = "value=";
 						var indexWhereValueStarts = cellText.indexOf(valuePrefix) + valuePrefix.length;
-						
+
 						var valueText = cellText.slice(indexWhereValueStarts, cellText.length);
 						$value.text(valueText);
 						// and we build the url used for the SimpleJEditable
@@ -221,14 +239,14 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						thAfter = th;
 					}
 				},
-				
+
 				refreshDataSetParameterName : function(parameterId, parameterName){
 					var th = this.$("[data-id=" + parameterId + "]");
 					th.attr('aria-label', parameterName);
 					th = this.$("[data-id=" + parameterId + "] div");
 					th.text(parameterName);
 				},
-				
+
 				refreshDataSetParameterDescription : function(parameterId, parameterDescription){
 					var th = this.$("[data-id=" + parameterId + "]");
 					th.attr('title', parameterDescription);
