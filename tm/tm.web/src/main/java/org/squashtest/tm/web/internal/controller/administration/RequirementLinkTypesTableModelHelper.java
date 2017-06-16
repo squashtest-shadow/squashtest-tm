@@ -44,7 +44,7 @@ class RequirementLinkTypesTableModelHelper extends DataTableModelBuilder<Require
 	@Override
 	protected Object buildItemData(RequirementVersionLinkType type) {
 
-		Map<String, String> row = new HashMap<>(9);
+		Map<String, String> row = new HashMap<>(8);
 
 		row.put("type-id", type.getId().toString());
 		row.put("type-index", Long.toString(getCurrentIndex()));
@@ -53,7 +53,6 @@ class RequirementLinkTypesTableModelHelper extends DataTableModelBuilder<Require
 		row.put("type-role2", formatRole(type.getRole2()));
 		row.put("type-role2-code", type.getRole2Code());
 		row.put("type-is-default", Boolean.toString(type.isDefault()));
-		row.put("empty-edit-holder", null);
 		row.put("empty-delete-holder", null);
 
 		return row;

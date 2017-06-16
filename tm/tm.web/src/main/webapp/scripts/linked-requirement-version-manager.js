@@ -173,6 +173,7 @@ require([ "common" ], function() {
 						if(Object.keys(rejections).length > 0) {
 							showAddSummary(rejections);
 							unlock();
+							deselectTree();
 						// Else, opening the popup
 						} else {
 							openChooseTypeDialog(window.squashtm.bindingsManager.requirementVersion.id, ids, true);
@@ -211,7 +212,7 @@ require([ "common" ], function() {
         			var length = typesList.length;
         			for(var i=0; i < length; i++) {
         				var type = typesList[i];
-        				var id = type.id, role1 = msg.get(type.role1), role2 = msg.get(type.role2);
+        				var id = type.id, role1 = type.role1, role2 = type.role2;
         				var optionKey_1 = id + "_" + 0;
         				var optionLabel_1 = role1 +  " - " + role2;
         				comboBox.append('<option value = "' + optionKey_1 + '">' + optionLabel_1 + '</option>');

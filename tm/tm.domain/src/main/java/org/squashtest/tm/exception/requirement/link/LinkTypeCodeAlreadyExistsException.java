@@ -18,26 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
-
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
-
-import java.util.List;
+package org.squashtest.tm.exception.requirement.link;
 
 /**
- * Custom data access methods for {@link RequirementVersionLinkType}.
+ * Exception thrown while submitting a LinkType with a Code already in use.
  *
- * @author jlor
- *
+ * Created by jlor on 15/06/2017.
  */
-public interface CustomRequirementVersionLinkTypeDao {
+public class LinkTypeCodeAlreadyExistsException extends RequirementLinkTypeException {
 
-	/**
-	 * Returns a paged and ordered list of all the {@link RequirementVersionLinkType}.
-	 * @param pas
-	 * @return Paged and sorted list of all existing RequirementVersionLinkTypes.
-	 */
-	List<RequirementVersionLinkType> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
-	boolean doesCodeAlreadyExist(String code);
+	private static final long serialVersionUID = -1907643035129595449L;
+
+	public String getShortName() {
+		return "type-code-already-in-use";
+	};
 }

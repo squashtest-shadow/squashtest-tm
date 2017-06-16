@@ -18,26 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.requirement;
 
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
-import java.util.List;
-
 /**
- * Custom data access methods for {@link RequirementVersionLinkType}.
- *
- * @author jlor
- *
+ * Created by jlor on 14/06/2017.
  */
-public interface CustomRequirementVersionLinkTypeDao {
+public interface RequirementVersionLinkTypeManagerService {
 
-	/**
-	 * Returns a paged and ordered list of all the {@link RequirementVersionLinkType}.
-	 * @param pas
-	 * @return Paged and sorted list of all existing RequirementVersionLinkTypes.
-	 */
-	List<RequirementVersionLinkType> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
-	boolean doesCodeAlreadyExist(String code);
+	void addLinkType(RequirementVersionLinkType linkType);
+	boolean doesLinkTypeCodeAlreadyExist(String code);
 }

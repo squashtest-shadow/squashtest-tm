@@ -60,7 +60,7 @@ public class RequirementVersionLinkType implements Identified {
 	private String role2Code = "";
 
 	@Column(name="IS_DEFAULT")
-	private boolean isDefault;
+	private boolean isDefault = false;
 
 	public RequirementVersionLinkType() {
 		super();
@@ -78,6 +78,8 @@ public class RequirementVersionLinkType implements Identified {
 	public String getRole1() {
 		return role1;
 	}
+
+	public void setId(Long id) { this.id = id; }
 
 	public String getRole2() {
 		return role2;
@@ -105,5 +107,16 @@ public class RequirementVersionLinkType implements Identified {
 
 	public void setRole2Code(String role2Code) {
 		this.role2Code = role2Code;
+	}
+
+	public RequirementVersionLinkType createCopy() {
+
+		RequirementVersionLinkType copy = new RequirementVersionLinkType();
+		copy.setId(this.getId());
+		copy.setRole1(this.getRole1());
+		copy.setRole1Code(this.getRole1Code());
+		copy.setRole2(this.getRole2());
+		copy.setRole2Code(this.getRole2Code());
+		return copy;
 	}
 }

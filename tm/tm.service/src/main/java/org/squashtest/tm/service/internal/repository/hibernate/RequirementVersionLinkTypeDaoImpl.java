@@ -27,6 +27,7 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkTypeDao;
 
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +43,15 @@ public class RequirementVersionLinkTypeDaoImpl extends HibernateEntityDao<Requir
 		queryString = SortingUtils.addOrder(queryString, pagingAndSorting);
 
 		org.hibernate.Query finalQuery = currentSession().createQuery(queryString);
-
 		PagingUtils.addPaging(finalQuery, pagingAndSorting);
 
 		return finalQuery.list();
+	}
+
+	@Override
+	public boolean doesCodeAlreadyExist(String code) {
+		Query existQuery = entityManager.createNamedQuery("RequirementVersionLinkType.codeAlreadyExists");
+		existQuery.setParameter("code", code);
+		return (Long)existQuery.getSingleResult() > 0;
 	}
 }

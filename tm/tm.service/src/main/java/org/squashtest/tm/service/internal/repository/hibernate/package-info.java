@@ -954,6 +954,10 @@
 	@NamedQuery(name="RequirementVersionLinkType.getAllPagedAndSortedReqVersionLinkTypes",
 				query="select RequirementVersionLinkType " +
 					"from RequirementVersionLinkType RequirementVersionLinkType"),
+	@NamedQuery(name="RequirementVersionLinkType.codeAlreadyExists",
+				query="select count(*) " +
+					"from RequirementVersionLinkType rvlt " +
+					"where rvlt.role1Code = :code or rvlt.role2Code = :code "),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

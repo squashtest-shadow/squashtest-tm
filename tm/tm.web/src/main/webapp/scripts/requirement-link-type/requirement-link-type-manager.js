@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable", "app/ws/squashtm.workspace"],
-		function(module, TableView  , $, backbone, _, basic, SimpleJEditable, routing, translator) {
+		"workspace.routing", "squash.translator", "app/lnf/Forms", "app/util/StringUtil","jquery.squash.togglepanel", "squashtable", "app/ws/squashtm.workspace"],
+		function(module, TableView  , $, backbone, _, basic, SimpleJEditable, routing, translator, Forms, StringUtils) {
 	"use strict";
 
 	var config = module.config();
@@ -32,9 +32,9 @@ define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", 
 		initialize : function() {
 			this.basicInit();
 			this.config = config;
-			//this.configureRenameInfoListPopup();
+			this.configureNewLinkTypePopup();
 			//this.configureDeleteInfoListPopup();
-			var tableView =	new TableView(config);
+			this.initTable();
 
 		},
 		basicInit : function() {
@@ -42,98 +42,134 @@ define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", 
 
 		},
 
+		initTable : function() {
+			var squashSettings = {
+    		searching : true,
+    		buttons : [{
+    			tooltip : translator.get("label.Delete"),
+    			tdSelector : "td.delete-button",
+    			uiIcon : "ui-icon-trash",
+    			jquery : true
+    		}],
+    	};
+			this.table = $("#requirement-link-types-table").squashTable(
+				{
+        	//"bServerSide" : false,
+        	aaData : config.tableData.aaData
+        },
+        squashSettings
+			);
+		},
+
 		events : {
-			/*"click #rename-info-list-button" : "renameInfoListPopup",
-			"click #delete-info-list-button" : "deleteInfoListPopup"*/
+			"click #add-link-type-btn" : "openAddLinkTypePopup"
+			/*"click #delete-info-list-button" : "deleteInfoListPopup"*/
 			},
 
-		renameInfoListPopup : function(){
+		openAddLinkTypePopup : function(){
 			var self = this;
-			self.RenameInfoListPopup.formDialog("open");
-
-			var listName = $("#info-list-name-header").text();
-			$("#rename-popup-info-list-label").val(listName);
+			self.clearAddLinkErrorMessages();
+			self.AddLinkTypePopup.formDialog("open");
 		},
+		clearAddLinkErrorMessages() {
+			Forms.input($("#add-link-type-popup-role1")).clearState();
+      Forms.input($("#add-link-type-popup-role1-code")).clearState();
+      Forms.input($("#add-link-type-popup-role2")).clearState();
+      Forms.input($("#add-link-type-popup-role2-code")).clearState();
+		},
+		configureNewLinkTypePopup : function(){
+    	var self = this;
 
-		deleteInfoListPopup : function(){
+    	var dialog = $("#add-link-type-popup");
+    	this.AddLinkTypePopup = dialog;
+
+    	dialog.formDialog();
+
+    	dialog.on('formdialogconfirm', function(){
+    		self.addLinkType.call(self);
+    	});
+
+    	dialog.on('formdialogcancel', this.closePopup);
+
+    },
+
+		addLinkType : function(){
+    	var self = this;
+
+    	// Clearing error messages
+			self.clearAddLinkErrorMessages();
+
+    	var newRole1 = self.AddLinkTypePopup.find("#add-link-type-popup-role1").val();
+    	var newRole1Code = self.AddLinkTypePopup.find("#add-link-type-popup-role1-code").val();
+    	var newRole2 = self.AddLinkTypePopup.find("#add-link-type-popup-role2").val();
+    	var newRole2Code = self.AddLinkTypePopup.find("#add-link-type-popup-role2-code").val();
+
+    	var params = {
+    					"role1" : newRole1,
+    					"role1Code" : newRole1Code,
+    					"role2" : newRole2,
+    					"role2Code" : newRole2Code
+    			};
+    	// Vérification BLANK
+    	var oneInputIsBlank = false;
+
+    	if(StringUtils.isBlank(newRole1))	 {
+    		oneInputIsBlank = true;
+    		Forms.input($("#add-link-type-popup-role1")).setState("error", translator.get("message.notBlank"));
+    	}
+    	if(StringUtils.isBlank(newRole1Code))	 {
+      	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("message.notBlank"));
+      	oneInputIsBlank = true;
+      }
+      if(StringUtils.isBlank(newRole2))	 {
+      	Forms.input($("#add-link-type-popup-role2")).setState("error", translator.get("message.notBlank"));
+      	oneInputIsBlank = true;
+      }
+      if(StringUtils.isBlank(newRole2Code))	 {
+      	Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("message.notBlank"));
+      	oneInputIsBlank = true;
+      }
+			// Verify if the codes already exist
+			if(!oneInputIsBlank) {
+				// Verify if Codes Exist
+				$.ajax({
+        	url : routing.buildURL("requirementLinkType.checkCodes"),
+          type : 'GET',
+          dataType: 'json',
+          data : params,
+        }).done(function(data) {
+        	var oneCodeAlreadyExists = false;
+        	if(data.code1Exists) {
+          	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
+          	oneCodeAlreadyExists = true;
+          }
+          if(data.code2Exists) {
+            Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
+            oneCodeAlreadyExists = true;
+          }
+          if (!oneCodeAlreadyExists) {
+						self.doAddNewLinkType(params);
+          }
+        });
+			}
+
+    },
+		doAddNewLinkType(paramLinkType) {
 			var self = this;
-			var message = $("#delete-info-list-warning");
-
 			$.ajax({
-				type : 'GET',
-				url : routing.buildURL("info-list.isUsed", self.config.data.infoList.id),
-			}).done(function(data) {
-				if (data === true){
-					message.text(translator.get("dialog.delete.info-list.used.message"));
-					reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
-				}
-				else {
-					message.text(translator.get("dialog.delete.info-list.unused.message"));
-					reindexWarn.text("");
-				}
-
-			});
-			self.DeleteInfoListPopup.formDialog("open");
+      	url : routing.buildURL("requirementLinkType"),
+      	type : 'POST',
+      	dataType: 'json',
+      	data : paramLinkType,
+      }).done(function() {
+      		self.table.refresh();
+      		self.AddLinkTypePopup.formDialog('close');
+      });
 		},
-		configureRenameInfoListPopup : function(){
-			var self = this;
 
-			var dialog = $("#rename-info-list-popup");
-			this.RenameInfoListPopup = dialog;
-
-			dialog.formDialog();
-
-			dialog.on('formdialogconfirm', function(){
-				self.renameInfoList.call(self);
-			});
-
-			dialog.on('formdialogcancel', this.closePopup);
-
-		},
-		configureDeleteInfoListPopup : function(){
-			var self = this;
-
-			var dialog = $("#delete-info-list-popup");
-			this.DeleteInfoListPopup = dialog;
-
-			dialog.formDialog();
-
-			dialog.on('formdialogconfirm', function(){
-				self.deleteInfoList.call(self);
-			});
-
-			dialog.on('formdialogcancel', this.closePopup);
-		},
-		renameInfoList : function(){
-			var self = this;
-			var newName = self.RenameInfoListPopup.find("#rename-popup-info-list-label").val();
-
-			$.ajax({
-				type : 'POST',
-				data : {
-					id:'info-list-label',
-					'value' : newName
-				},
-				url : routing.buildURL("info-list.info", self.config.data.infoList.id),
-			}).done(function(data) {
-				self.$("#info-list-name-header").text(data);
-				self.$("#info-list-label").text(data);
-				self.RenameInfoListPopup.formDialog('close');
-			});
-
-
-		},
-		deleteInfoList : function(){
-			$.ajax({
-				type : 'DELETE',
-				url : routing.buildURL("info-list.info", config.data.infoList.id),
-			}).done(function(data) {
-				document.location.href = squashtm.app.contextRoot + "/administration/info-lists/";
-			});
-
-		},
 		closePopup : function() {
 			$(this).formDialog('close');
+
 		},
 
 

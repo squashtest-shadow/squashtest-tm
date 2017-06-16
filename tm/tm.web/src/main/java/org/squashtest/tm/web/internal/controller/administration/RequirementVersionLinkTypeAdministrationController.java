@@ -29,12 +29,15 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
-import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.util.IconLibrary;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -56,6 +59,13 @@ public class RequirementVersionLinkTypeAdministrationController {
 	@Inject
 	private LinkedRequirementVersionManagerService reqLinksFinder;
 
+	private final DatatableMapper<String> linkTypesMapper = new NameBasedMapper(4)
+		.mapAttribute("type-role1", "role1", RequirementVersionLinkType.class)
+		.mapAttribute("type-role1-code", "role1Code", RequirementVersionLinkType.class)
+		.mapAttribute("type-role2", "role2", RequirementVersionLinkType.class)
+		.mapAttribute("type-role2-code", "role1Code", RequirementVersionLinkType.class)
+		.mapAttribute("type-is-default", "isDefault", RequirementVersionLinkType.class);
+
 	@ModelAttribute("tablePageSize")
 	public long populateTablePageSize() {
 		return Pagings.DEFAULT_PAGING.getPageSize();
@@ -69,15 +79,16 @@ public class RequirementVersionLinkTypeAdministrationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-		DataTableModel reqLinkTypesModel = getReqLinkTypesModel();
+		DataTableModel reqLinkTypesModel = getReqLinkTypesInitialModel();
 		model.addAttribute("linkTypesModel", reqLinkTypesModel);
 		return "requirement-link-type-manager.html";
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.GET)
+	@RequestMapping(value = "/table", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel<?> getReqLinkTypesTable() {
-		return getReqLinkTypesModel();
+	public DataTableModel getReqLinkTypesTableModel(DataTableDrawParameters params) {
+		PagingAndSorting pagingAndSorting = new DataTableSorting(params, linkTypesMapper);
+		return buildReqLinkTypesModel(pagingAndSorting, params.getsEcho());
 	}
 
 	protected DataTableModel buildReqLinkTypesModel(PagingAndSorting pas, String sEcho) {
@@ -87,7 +98,7 @@ public class RequirementVersionLinkTypeAdministrationController {
 		return new RequirementLinkTypesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
 
-	private DataTableModel getReqLinkTypesModel() {
+	private DataTableModel getReqLinkTypesInitialModel() {
 		PagedCollectionHolder<List<RequirementVersionLinkType>> holder =
 			reqLinksFinder.getAllPagedAndSortedReqVersionLinkTypes(
 				new DefaultPagingAndSorting());

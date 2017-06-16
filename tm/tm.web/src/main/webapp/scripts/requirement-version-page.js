@@ -403,8 +403,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 										for(var i=0; i < length; i++) {
 											var type = typesList[i];
 											var id = type.id
-											var role1 = translator.get(type.role1)
-											var role2 = translator.get(type.role2);
+											var role1 = type.role1;
+											var role2 = type.role2;
 
 											/* Creating one option for a non-directional link type, and two for the bi-directional ones. */
 											var optionKey_1 = id + "_" + 0;

@@ -40,6 +40,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -59,10 +60,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.
@@ -104,7 +102,7 @@ public class LinkedRequirementVersionsManagerController {
 	/*
 	 * See VerifyingTestCaseManagerController.verifyingTCMapper
 	 */
-	private final DatatableMapper<String> linkedReqVersionMapper = new NameBasedMapper(5)
+	private final DatatableMapper<String> linkedReqVersionMapper = new NameBasedMapper(6)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 		.mapAttribute("rv-reference", "reference", RequirementVersion.class)
 		.mapAttribute("rv-name", "name", RequirementVersion.class)
@@ -112,7 +110,7 @@ public class LinkedRequirementVersionsManagerController {
 		.map("rv-role", "role")
 		.map("milestone-dates", "endDate");
 
-	@RequestMapping("/table")
+	@RequestMapping(value = "/table", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getLinkedRequirementVersionsTableModel(@PathVariable long requirementVersionId, DataTableDrawParameters params) {
 
@@ -249,11 +247,24 @@ public class LinkedRequirementVersionsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/requirement-versions-link-types", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes() {
-		return linkedReqVersionManager.getAllReqVersionLinkTypes();
+	public List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes(Locale locale) {
+		return internationalizeLinkTypesRoles(linkedReqVersionManager.getAllReqVersionLinkTypes(), locale);
 	}
 
 	private Map<String, Object> buildSummary(Collection<LinkedRequirementVersionException> rejections) {
 		return LinkedRequirementVersionActionSummaryBuilder.buildAddActionSummary(rejections);
+	}
+
+	private List<RequirementVersionLinkType> internationalizeLinkTypesRoles(List<RequirementVersionLinkType> listToInternationalize, Locale locale) {
+		List<RequirementVersionLinkType> internationalizedList = new ArrayList<>();
+		for(RequirementVersionLinkType typeToCopy : listToInternationalize) {
+			RequirementVersionLinkType internationalizedCopy = typeToCopy.createCopy();
+			internationalizedCopy.setRole1(i18nHelper.getMessage(
+				internationalizedCopy.getRole1(), null, internationalizedCopy.getRole1(), locale));
+			internationalizedCopy.setRole2(i18nHelper.getMessage(
+				internationalizedCopy.getRole2(), null, internationalizedCopy.getRole2(), locale));
+			internationalizedList.add(internationalizedCopy);
+		}
+		return internationalizedList;
 	}
 }

@@ -46,7 +46,7 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 	@Override
 	protected Object buildItemData(LinkedRequirementVersion rv) {
 
-		Map<String, String> row = new HashMap<>(10);
+		Map<String, String> row = new HashMap<>(11);
 
 		row.put("rv-id", rv.getId().toString());
 		row.put("rv-index", Long.toString(getCurrentIndex()));
