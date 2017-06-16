@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
+define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
 		"workspace.routing", "squash.translator", "app/lnf/Forms", "app/util/StringUtil","jquery.squash.togglepanel", "squashtable", "app/ws/squashtm.workspace"],
-		function(module, TableView  , $, backbone, _, basic, SimpleJEditable, routing, translator, Forms, StringUtils) {
+		function(module, $, backbone, _, basic, SimpleJEditable, routing, translator, Forms, StringUtils) {
 	"use strict";
 
 	var config = module.config();
@@ -62,36 +62,39 @@ define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", 
 		},
 
 		events : {
-			"click #add-link-type-btn" : "openAddLinkTypePopup"
-			/*"click #delete-info-list-button" : "deleteInfoListPopup"*/
+			"click #add-link-type-btn" : "openAddLinkTypePopup",
+			"click .isDefault>input:radio" : "changeDefaultType"
 			},
+
+		/* AddNewLinkType Popup unctions */
+		configureNewLinkTypePopup : function(){
+      var self = this;
+
+      var dialog = $("#add-link-type-popup");
+      this.AddLinkTypePopup = dialog;
+
+      dialog.formDialog();
+
+      dialog.on('formdialogconfirm', function(){
+      	self.addLinkType.call(self);
+      });
+
+    	dialog.on('formdialogcancel', this.closePopup);
+
+    },
 
 		openAddLinkTypePopup : function(){
 			var self = this;
 			self.clearAddLinkErrorMessages();
 			self.AddLinkTypePopup.formDialog("open");
 		},
+
 		clearAddLinkErrorMessages() {
 			Forms.input($("#add-link-type-popup-role1")).clearState();
       Forms.input($("#add-link-type-popup-role1-code")).clearState();
       Forms.input($("#add-link-type-popup-role2")).clearState();
       Forms.input($("#add-link-type-popup-role2-code")).clearState();
 		},
-		configureNewLinkTypePopup : function(){
-    	var self = this;
-
-    	var dialog = $("#add-link-type-popup");
-    	this.AddLinkTypePopup = dialog;
-
-    	dialog.formDialog();
-
-    	dialog.on('formdialogconfirm', function(){
-    		self.addLinkType.call(self);
-    	});
-
-    	dialog.on('formdialogcancel', this.closePopup);
-
-    },
 
 		addLinkType : function(){
     	var self = this;
@@ -154,6 +157,7 @@ define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", 
 			}
 
     },
+
 		doAddNewLinkType(paramLinkType) {
 			var self = this;
 			$.ajax({
@@ -172,6 +176,33 @@ define([ 'module', "./requirement-link-type-table-view",  "jquery", "backbone", 
 
 		},
 
+		/* Change Default Type functions */
+		changeDefaultType : function(event) {
+			var self = this;
+			var radio = event.currentTarget;
+
+			if(!radio.checked) {
+				radio.checked = true;
+			}
+
+			var cell = radio.parentElement;
+			var row = cell.parentElement;
+			var data = self.table.fnGetData(row);
+
+			// POST Modification
+			$.ajax({
+				url : routing.buildURL("requirement.link.type.changeDefault", data["type-id"]),
+				type : 'POST',
+				data : {
+					id : 'requirement-link-type-default'
+					}
+				}).done(function() {
+					self.table.find(".isDefault>input:radio").prop("checked", false);
+      		radio.checked = true;
+				}).fail(function() {
+      		radio.checked = !radio.checked;
+				});
+		}
 
 	});
 	return reqLinkTypeManagerView;

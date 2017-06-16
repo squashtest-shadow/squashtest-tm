@@ -109,6 +109,8 @@ public class RequirementVersionLinkType implements Identified {
 		this.role2Code = role2Code;
 	}
 
+	public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
+
 	public RequirementVersionLinkType createCopy() {
 
 		RequirementVersionLinkType copy = new RequirementVersionLinkType();

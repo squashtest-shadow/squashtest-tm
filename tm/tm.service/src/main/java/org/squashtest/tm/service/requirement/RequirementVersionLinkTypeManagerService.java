@@ -30,4 +30,5 @@ public interface RequirementVersionLinkTypeManagerService {
 
 	void addLinkType(RequirementVersionLinkType linkType);
 	boolean doesLinkTypeCodeAlreadyExist(String code);
+	void changeDefault(Long linkTypeId);
 }

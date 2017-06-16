@@ -57,4 +57,10 @@ public class RequirementVersionLinkTypeController {
 		resultMap.put("code2Exists", linkTypeManagerService.doesLinkTypeCodeAlreadyExist(linkType.getRole2Code()));
 		return resultMap;
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-default" })
+	public void changeDefault(@PathVariable Long linkTypeId) {
+		linkTypeManagerService.changeDefault(linkTypeId);
+	}
 }

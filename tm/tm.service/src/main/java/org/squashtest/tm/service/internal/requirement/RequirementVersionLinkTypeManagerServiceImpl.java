@@ -56,4 +56,15 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public boolean doesLinkTypeCodeAlreadyExist(String code) {
 		return linkTypeDao.doesCodeAlreadyExist(code);
 	}
+
+	@Override
+	public void changeDefault(Long linkTypeId) {
+		RequirementVersionLinkType newDefaultReqLinkType = linkTypeDao.findOne(linkTypeId);
+		List<RequirementVersionLinkType> allReqLinkTypes = linkTypeDao.getAllRequirementVersionLinkTypes();
+		for(RequirementVersionLinkType linkType : allReqLinkTypes) {
+			linkType.setDefault(false);
+		}
+		newDefaultReqLinkType.setDefault(true);
+
+	}
 }
