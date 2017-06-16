@@ -933,7 +933,8 @@
 	//Requirement Version Links
 	@NamedQuery(name="RequirementVersionLink.findAllByReqVersionId",
 				query="select distinct rvl, case when rvl.linkDirection = false then rvl.linkType.role2 else rvl.linkType.role1 end as role, " +
-					"(select min(m.endDate) from rvl.relatedRequirementVersion rv inner join rv.milestones m) as endDate, Project " +
+					"(select min(m.endDate) from rvl.relatedRequirementVersion rv inner join rv.milestones m) as endDate, RequirementVersion.reference, " +
+					"RequirementVersion.name, RequirementVersion.versionNumber, Project.name " +
 					"from RequirementVersionLink rvl " +
 					"inner join rvl.relatedRequirementVersion RequirementVersion " +
 					"inner join RequirementVersion.requirement.project Project " +
