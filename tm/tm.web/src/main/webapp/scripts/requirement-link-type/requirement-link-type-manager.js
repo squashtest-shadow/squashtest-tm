@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "squash.translator", "app/lnf/Forms", "app/util/StringUtil","jquery.squash.togglepanel", "squashtable", "app/ws/squashtm.workspace"],
+		"workspace.routing", "squash.translator", "app/lnf/Forms", "app/util/StringUtil","jquery.squash.togglepanel", "jquery.squash.formdialog", "squashtable", "app/ws/squashtm.workspace"],
 		function(module, $, backbone, _, basic, SimpleJEditable, routing, translator, Forms, StringUtils) {
 	"use strict";
 
@@ -33,7 +33,10 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			this.basicInit();
 			this.config = config;
 			this.configureNewLinkTypePopup();
-			//this.configureDeleteInfoListPopup();
+
+			this.configureChangeRolePopup();
+//			this.configureChangeCodePopup();
+
 			this.initTable();
 
 		},
@@ -63,8 +66,10 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 
 		events : {
 			"click #add-link-type-btn" : "openAddLinkTypePopup",
-			"click .isDefault>input:radio" : "changeDefaultType"
-			},
+			"click .isDefault>input:radio" : "changeDefaultType",
+			"click td.opt-role1" : "openChangeRole1Popup",
+			"click td.opt-role2" : "openChangeRole2Popup"
+		},
 
 		/* AddNewLinkType Popup unctions */
 		configureNewLinkTypePopup : function(){
@@ -89,7 +94,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			self.AddLinkTypePopup.formDialog("open");
 		},
 
-		clearAddLinkErrorMessages() {
+		clearAddLinkErrorMessages : function() {
 			Forms.input($("#add-link-type-popup-role1")).clearState();
       Forms.input($("#add-link-type-popup-role1-code")).clearState();
       Forms.input($("#add-link-type-popup-role2")).clearState();
@@ -112,8 +117,8 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     					"role1Code" : newRole1Code,
     					"role2" : newRole2,
     					"role2Code" : newRole2Code
-    			};
-    	// Vérification BLANK
+    	};
+    	// Verification BLANK
     	var oneInputIsBlank = false;
 
     	if(StringUtils.isBlank(newRole1))	 {
@@ -132,9 +137,8 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
       	Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("message.notBlank"));
       	oneInputIsBlank = true;
       }
-			// Verify if the codes already exist
 			if(!oneInputIsBlank) {
-				// Verify if Codes Exist
+				// Verify if Codes already Exist
 				$.ajax({
         	url : routing.buildURL("requirementLinkType.checkCodes"),
           type : 'GET',
@@ -158,7 +162,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 
     },
 
-		doAddNewLinkType(paramLinkType) {
+		doAddNewLinkType : function(paramLinkType) {
 			var self = this;
 			$.ajax({
       	url : routing.buildURL("requirementLinkType"),
@@ -191,17 +195,99 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 
 			// POST Modification
 			$.ajax({
-				url : routing.buildURL("requirement.link.type.changeDefault", data["type-id"]),
+				url : routing.buildURL("requirement.link.type", data["type-id"]),
 				type : 'POST',
 				data : {
 					id : 'requirement-link-type-default'
-					}
+				}
 				}).done(function() {
 					self.table.find(".isDefault>input:radio").prop("checked", false);
       		radio.checked = true;
 				}).fail(function() {
       		radio.checked = !radio.checked;
 				});
+		},
+
+		/* Change  Role function */
+
+		configureChangeRolePopup : function() {
+			var self = this;
+
+      var dialog = $("#change-type-role-popup");
+      this.ChangeRolePopup = dialog;
+
+      dialog.formDialog();
+
+      dialog.on('formdialogconfirm', function(){
+      	self.changeRole.call(self);
+      });
+
+      dialog.on('formdialogcancel', this.closePopup);
+		},
+
+		clearChangeRoleErrorMessage : function() {
+
+    	Forms.input($("#change-type-role-popup-role")).clearState();
+    },
+
+		openChangeRolePopup : function(event, roleNumber) {
+			var self = this;
+			// clear error messages
+			self.clearChangeRoleErrorMessage();
+			// fill label input
+			var roleCell = event.currentTarget;
+
+			var row = roleCell.parentElement;
+			var data = this.table.fnGetData(row);
+			var typeId = data['type-id'];
+			var currentRole = $(roleCell).text();
+
+			self.ChangeRolePopup.data('typeId', typeId);
+			self.ChangeRolePopup.data('roleNumber', roleNumber);
+			self.ChangeRolePopup.formDialog('open');
+			self.ChangeRolePopup.find("#change-type-role-popup-role").val(currentRole);
+    },
+
+		openChangeRole1Popup : function(event) {
+
+			this.openChangeRolePopup(event, 1);
+		},
+
+		openChangeRole2Popup : function(event) {
+
+    	this.openChangeRolePopup(event, 2);
+    },
+
+		changeRole : function() {
+			var self = this;
+			var typeId = self.ChangeRolePopup.data('typeId');
+			var roleNumber = self.ChangeRolePopup.data('roleNumber');
+			var newRole = self.ChangeRolePopup.find("#change-type-role-popup-role").val();
+
+			// Verifications
+			if(StringUtils.isBlank(newRole))	 {
+      	Forms.input($("#change-type-role-popup-role")).setState("error", translator.get("message.notBlank"));
+      } else {
+				self.doChangeRole(typeId, roleNumber, newRole);
+      }
+		},
+
+		doChangeRole : function(typeId, roleNumber, newRole) {
+			var self = this;
+			var requestId = 'requirement-link-type-role' + roleNumber;
+
+			$.ajax({
+				url : routing.buildURL("requirement.link.type", typeId),
+				type : 'POST',
+				data : {
+					id : requestId,
+					value : newRole
+				}
+			}).done(function() {
+				self.table.refresh();
+        self.ChangeRolePopup.formDialog('close');
+			});
+
 		}
 
 	});

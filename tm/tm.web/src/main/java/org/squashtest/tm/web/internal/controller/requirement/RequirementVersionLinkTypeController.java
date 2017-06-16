@@ -63,4 +63,16 @@ public class RequirementVersionLinkTypeController {
 	public void changeDefault(@PathVariable Long linkTypeId) {
 		linkTypeManagerService.changeDefault(linkTypeId);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-role1", "value" })
+	public void changeRole1(@PathVariable Long linkTypeId, @RequestParam("value") String newRole1) {
+		linkTypeManagerService.changeRole1(linkTypeId, newRole1);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-role2", "value" })
+	public void changeRole2(@PathVariable Long linkTypeId, @RequestParam("value") String newRole2) {
+		linkTypeManagerService.changeRole2(linkTypeId, newRole2);
+	}
 }

@@ -67,4 +67,16 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 		newDefaultReqLinkType.setDefault(true);
 
 	}
+
+	@Override
+	public void changeRole1(Long linkTypeId, String newRole1) {
+		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		linkType.setRole1(newRole1);
+	}
+
+	@Override
+	public void changeRole2(Long linkTypeId, String newRole2) {
+		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		linkType.setRole2(newRole2);
+	}
 }

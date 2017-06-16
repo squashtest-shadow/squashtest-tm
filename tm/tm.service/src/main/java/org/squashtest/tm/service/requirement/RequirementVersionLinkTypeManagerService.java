@@ -31,4 +31,7 @@ public interface RequirementVersionLinkTypeManagerService {
 	void addLinkType(RequirementVersionLinkType linkType);
 	boolean doesLinkTypeCodeAlreadyExist(String code);
 	void changeDefault(Long linkTypeId);
+
+	void changeRole1(Long linkTypeId, String newRole1);
+	void changeRole2(Long linkTypeId, String newRole2);
 }

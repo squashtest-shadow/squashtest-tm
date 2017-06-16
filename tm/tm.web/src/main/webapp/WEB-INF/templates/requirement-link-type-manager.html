@@ -91,10 +91,10 @@
                 <thead>
                   <tr>
                     <th data-def="map=type-index, select">#</th>
-                    <th th:text="#{requirement-version.link.type.table.col-header.role1}" data-def="map=type-role1, sortable, sClass=opt-label">Role 1</th>
-                    <th th:text="#{requirement-version.link.type.table.col-header.role1-code}" data-def="map=type-role1-code, sortable, sClass=opt-code">Role 1 code</th>
-                    <th th:text="#{requirement-version.link.type.table.col-header.role2}" data-def="map=type-role2, sortable, sClass=opt-label">Role 2</th>
-                    <th th:text="#{requirement-version.link.type.table.col-header.role2-code}" data-def="map=type-role2-code, sortable, sClass=opt-code">Code Role 2 code</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role1}" data-def="map=type-role1, sortable, sClass=opt-role1">Role 1</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role1-code}" data-def="map=type-role1-code, sortable, sClass=opt-code1">Role 1 code</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role2}" data-def="map=type-role2, sortable, sClass=opt-role2">Role 2</th>
+                    <th th:text="#{requirement-version.link.type.table.col-header.role2-code}" data-def="map=type-role2-code, sortable, sClass=opt-code2">Code Role 2 code</th>
                     <th th:text="#{label.default}" data-def="map=type-is-default, radio, sClass=isDefault">Default</th>
                     <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
                   </tr>
@@ -117,8 +117,7 @@
   <!--    ====================================POPUPS================================================  -->
 
   <!-- ADD LINK TYPE POPUP -->
-  <div id="add-link-type-popup"
-       class="not-displayed popup-dialog" th:title="#{label.reqLinkType.add}">
+  <div id="add-link-type-popup" class="not-displayed popup-dialog" th:title="#{label.reqLinkType.add}">
     <table class="form-horizontal">
       <tr class="control-group">
         <td>
@@ -160,6 +159,29 @@
       <span id="add-link-warn" class="red-warning-message"/>
     </table>
     <span class="error-message label-error red-warning-message">&nbsp;</span>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+  <!--   CHANGE ROLE POPUP -->
+  <div id="change-type-role-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.change-role}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+
+        <td>
+          <label for="change-type-role-popup-role" class="control-label" th:text="#{label.Label}">Label</label>
+        </td>
+        <td class="controls">
+          <input id="change-type-role-popup-role" name="info-list-item-label" type="text" maxlength="50" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+
+    <br/>
+
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
       <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />

@@ -136,7 +136,7 @@ define([], function(){
 		'requirements.linkedRequirementVersions.manager' : root + '/requirement-versions/{\\d+}/linked-requirement-versions/manager',
 		'requirementLinkType' : root + '/requirement-link-type',
 		'requirementLinkType.checkCodes' : root + '/requirement-link-type/check-codes',
-		'requirement.link.type.changeDefault' : root + '/requirement-link-type/{\\d+}',
+		'requirement.link.type' : root + '/requirement-link-type/{\\d+}',
 		'requirements.statuses'			:	root + '/requirements/{\\d+}/next-status',
 		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
 		'requirements.testcases' :			root + '/requirement-versions/{\\d+}/verifying-test-cases',
