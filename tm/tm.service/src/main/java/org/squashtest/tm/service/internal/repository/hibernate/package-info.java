@@ -386,6 +386,20 @@
 	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
 	@NamedQuery(name = "campaign.filterByMilestone", query = "select c.id from Campaign c join c.milestones stones where c.id in (:campaignIds) and stones.id = :milestoneId"),
 
+	@NamedQuery(name = "CampaignPathEdge.findPathById", query = "select concat('"
+		+ HibernatePathService.PATH_SEPARATOR + "', p.name, '" + HibernatePathService.PATH_SEPARATOR
+		+ "', group_concat(n.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR
+		+ "')) from CampaignPathEdge edge, CampaignLibraryNode n join n.project p "
+		+ "where n.id = edge.ancestorId " + "and edge.descendantId = :nodeId "
+		+ "group by edge.descendantId, p.id"),
+
+	@NamedQuery(name = "CampaignPathEdge.findPathsByIds", query = "select edge.descendantId, concat('"
+		+ HibernatePathService.PATH_SEPARATOR + "', p.name, '" + HibernatePathService.PATH_SEPARATOR
+		+ "', group_concat(n.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR
+		+ "')) from CampaignPathEdge edge, CampaignLibraryNode n join n.project p "
+		+ "where n.id = edge.ancestorId " + "and edge.descendantId in (:nodeIds) "
+		+ "group by edge.descendantId, p.id"),
+
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),

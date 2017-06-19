@@ -94,7 +94,15 @@ public class HibernatePathService implements PathService {
 		return buildAllPaths("RequirementPathEdge.findPathsByIds", ids);
 	}
 
+	@Override
+	public String buildCampaignPath(long id) {
+		return buildPath("CampaignPathEdge.findPathById", id);
+	}
 
+	@Override
+	public List<String> buildCampaignPaths(List<Long> ids) {
+		return buildAllPaths("CampaignPathEdge.findPathsByIds", ids);
+	}
 
 
 	/**

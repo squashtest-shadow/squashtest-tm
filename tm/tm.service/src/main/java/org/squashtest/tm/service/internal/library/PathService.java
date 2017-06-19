@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * This is usually not meant to be exposed through osgi
- * 
+ *
  * @author Gregory Fouquet
  *
  */
@@ -35,7 +35,7 @@ public interface PathService {
 	 * Given an id of library NODE, return the path of this node. The path starts with /&lt;projectname&gt;.
 	 * The path is slash-separated '/'. If one of the elements in the path uses a '/', it will be escaped as '\/'.
 	 * </p>
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -46,31 +46,47 @@ public interface PathService {
 	 * Given a list of ids of library NODE, return the path of those nodes. The path starts with /&lt;projectname&gt;.
 	 * The path is slash-separated '/'. If one of the elements in the path uses a '/', it will be escaped as '\/'.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The order of the result is consistent with the order of the input. If an element could not be found (an invalid
 	 * id for instance), the corresponding path in the result is NULL.
 	 * </p>
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
 	List<String> buildTestCasesPaths(List<Long> ids);
-	
+
 	/**
 	 * same thing than {@link #buildTestCasePath(long)}, but for requirement library nodes
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	String buildRequirementPath(long id);
-	
+
 	/**
 	 * same thing than {@link #buildTestCasesPaths(List)}, but for requirement library nodes
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	List<String> buildRequirementsPaths(List<Long> ids);
+
+	/**
+	 * same thing than {@link #buildTestCasePath(long)}, but for campaign library nodes
+	 *
+	 * @param id
+	 * @return
+	 */
+	String buildCampaignPath(long id);
+
+	/**
+	 * same thing than {@link #buildTestCasesPaths(List)}, but for requirement library nodes
+	 *
+	 * @param id
+	 * @return
+	 */
+	List<String> buildCampaignPaths(List<Long> ids);
 
 }
