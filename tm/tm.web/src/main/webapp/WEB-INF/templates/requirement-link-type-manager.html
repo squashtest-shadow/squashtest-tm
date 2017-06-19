@@ -211,6 +211,29 @@
     </div>
   </div>
 
+  <!--   DELETE LINK TYPE POPUP -->
+  <div id="delete-link-type-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.delete-type}">
+
+    <span id="delete-link-type-warning" />
+    <br/>
+    <span id="delete-link-type-popup-link-type-id" />
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+
+  <!--   GENERIC ERROR POPUP  -->
+  <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
+    <div>
+      <div class="display-table-row">
+        <div class="generic-error-main display-table-cell" style="padding-top:20px"></div>
+      </div>
+    </div>
+    <input type="button" th:value="#{label.Ok}"/>
+  </div>
+
 
   <script type="text/javascript" th:inline="javascript">
 

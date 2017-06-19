@@ -32,13 +32,15 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		initialize : function() {
 			this.basicInit();
 			this.config = config;
-			this.configureNewLinkTypePopup();
 
 			this.initTable();
 
+			this.configureNewLinkTypePopup();
 			this.configureChangeRolePopup();
 			this.configureChangeCodePopup();
 
+			this.initErrorPopup();
+			this.configureDeleteTypePopup();
 
 		},
 		basicInit : function() {
@@ -71,10 +73,11 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			"click td.opt-role1" : "openChangeRole1Popup",
 			"click td.opt-role2" : "openChangeRole2Popup",
 			"click td.opt-code1" : "openChangeCode1Popup",
-			"click td.opt-code2" : "openChangeCode2Popup"
+			"click td.opt-code2" : "openChangeCode2Popup",
+			"click td.delete-button" : "openDeleteTypePopup"
 		},
 
-		/* AddNewLinkType Popup unctions */
+		/* AddNewLinkType Popup functions */
 		configureNewLinkTypePopup : function(){
       var self = this;
 
@@ -387,9 +390,86 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
         self.ChangeCodePopup.formDialog('close');
     	});
 
-    }
+    },
+
+		/* Delete Type functions */
+		initErrorPopup : function() {
+
+				this.ErrorPopup = $("#generic-error-dialog").messageDialog();
+		},
+
+		configureDeleteTypePopup : function() {
+
+			var self = this;
+
+      var dialog = $("#delete-link-type-popup");
+      this.DeleteTypePopup = dialog;
+
+      dialog.formDialog();
+
+      dialog.on('formdialogconfirm', function(){
+      	self.deleteType.call(self);
+      });
+
+      dialog.on('formdialogcancel', this.closePopup);
+		},
+
+		openDeleteTypePopup(event) {
+			var self = this;
+      var cell = event.currentTarget;
+
+      var row = cell.parentElement;
+      var data = self.table.fnGetData(row);
+      var typeId = data['type-id'];
+
+      $.ajax({
+      	type: 'GET',
+      	url: routing.buildURL('requirement.link.type', typeId),
+      	data: {
+      		id : 'isDefault'
+      	}
+      }).done(function(data) {
+      	if(data.isTypeDefault) {
+					self.ErrorPopup.find('.generic-error-main').html(translator.get("requirement-version.link.type.error.message.typeIsDefault"));
+          self.ErrorPopup.messageDialog('open');
+      	} else {
+      		var deletePopupMessage = $("#delete-link-type-warning");
+      		$.ajax({
+      			type: 'GET',
+      			url: routing.buildURL('requirement.link.type', typeId),
+      			data: {
+      				id: 'isUsed'
+      			}
+      		}).done(function(data) {
+						if(data.isLinkTypeUsed) {
+								deletePopupMessage.text(translator.get("requirement-version.link.type.delete.warning.linkTypeIsUsed"));
+						} else {
+								deletePopupMessage.text(translator.get("requirement-version.link.type.delete.warning.linkTypeIsUnused"));
+						}
+						self.DeleteTypePopup.data('typeId', typeId);
+						self.DeleteTypePopup.formDialog('open');
+      		});
+      	}
+      });
+		},
+
+		deleteType : function() {
+			var self = this;
+			var typeId = self.DeleteTypePopup.data('typeId');
+
+			$.ajax({
+				url: routing.buildURL('requirement.link.type', typeId),
+				method: 'DELETE'
+			}).done(function() {
+				self.DeleteTypePopup.formDialog('close');
+				self.table.refresh();
+			});
+		}
+
+
 
 	});
+
 	return reqLinkTypeManagerView;
 
 });

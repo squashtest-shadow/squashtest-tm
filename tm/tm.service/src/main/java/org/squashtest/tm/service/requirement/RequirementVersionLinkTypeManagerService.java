@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
 /**
@@ -40,4 +39,9 @@ public interface RequirementVersionLinkTypeManagerService {
 
 	void changeCode1(Long linkTypeId, String newCode1);
 	void changeCode2(Long linkTypeId, String newCode2);
+
+	boolean isLinkTypeDefault(Long linkTypeId);
+	boolean isLinkTypeUsed(Long linkTypeId);
+
+	void deleteLinkType(Long linkTypeId);
 }

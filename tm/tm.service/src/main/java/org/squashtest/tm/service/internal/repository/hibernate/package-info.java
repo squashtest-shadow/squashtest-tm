@@ -961,6 +961,10 @@
 					  "or rvl.requirementVersion.id in (:requirementVersionIdsToUnlink) and rvl.relatedRequirementVersion.id = :singleRequirementVersionId"),
 	@NamedQuery(name="RequirementVersionLink.findByReqVersionsIds",
 				query="from RequirementVersionLink rvl where rvl.requirementVersion.id = :reqVersionId and rvl.relatedRequirementVersion.id = :relatedReqVersionId"),
+	@NamedQuery(name="RequirementVersionLink.setLinksTypeToDefault",
+				query="update RequirementVersionLink rvl " +
+					"set rvl.linkType = :defaultLinkType " +
+					"where rvl.linkType = :formerLinkType"),
 	//Requirement Version Link Types
 	@NamedQuery(name="RequirementVersionLinkType.getDefaultRequirementVersionLinkType",
 				query="from RequirementVersionLinkType rvlt where rvlt.isDefault = true"),
@@ -978,6 +982,14 @@
 					"from RequirementVersionLinkType rvlt " +
 					"where (rvlt.role1Code = :code or rvlt.role2Code = :code) " +
 					"and rvlt.id != :linkTypeId"),
+	@NamedQuery(name="RequirementVersionLinkType.isLinkTypeDefault",
+				query="select rvlt.isDefault " +
+					"from RequirementVersionLinkType rvlt " +
+					"where rvlt.id = :linkTypeId"),
+	@NamedQuery(name="RequirementVersionLinkType.isLinkTypeUsed",
+				query="select count(*) > 0 " +
+					"from RequirementVersionLink rvl " +
+					"where rvl.linkType.id = :linkTypeId")
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

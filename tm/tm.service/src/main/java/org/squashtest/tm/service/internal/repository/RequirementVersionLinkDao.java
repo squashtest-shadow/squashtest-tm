@@ -22,18 +22,8 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Data access methods for {@link RequirementVersionLink}. Methods are all dynamically generated.

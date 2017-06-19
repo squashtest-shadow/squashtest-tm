@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.exception.execution.RunExecutionException;
 import org.squashtest.tm.exception.requirement.link.LinkTypeCodeAlreadyExistsException;
+import org.squashtest.tm.exception.requirement.link.LinkTypeIsDefaultTypeException;
+import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.requirement.RequirementVersionLinkTypeManagerService;
 
@@ -40,6 +43,9 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 
 	@Inject
 	private RequirementVersionLinkTypeDao linkTypeDao;
+
+	@Inject
+	private RequirementVersionLinkDao reqLinkDao;
 
 	@Override
 	public void addLinkType(RequirementVersionLinkType newLinkType) {
@@ -102,6 +108,28 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 			linkType.setRole2Code(newCode2);
 		} else {
 			throw new LinkTypeCodeAlreadyExistsException();
+		}
+	}
+
+	@Override
+	public boolean isLinkTypeDefault(Long linkTypeId) {
+		return linkTypeDao.isLinkTypeDefault(linkTypeId);
+	}
+
+	@Override
+	public boolean isLinkTypeUsed(Long linkTypeId) {
+		return linkTypeDao.isLinkTypeUsed(linkTypeId);
+	}
+
+	@Override
+	public void deleteLinkType(Long linkTypeId) {
+		RequirementVersionLinkType linkTypeToDelete = linkTypeDao.findOne(linkTypeId);
+		if(linkTypeDao.isLinkTypeDefault(linkTypeId)) {
+			throw new LinkTypeIsDefaultTypeException();
+		} else {
+			RequirementVersionLinkType defaultLinkType = linkTypeDao.getDefaultRequirementVersionLinkType();
+			reqLinkDao.setLinksTypeToDefault(linkTypeToDelete, defaultLinkType);
+			linkTypeDao.delete(linkTypeToDelete);
 		}
 	}
 }

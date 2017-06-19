@@ -21,15 +21,15 @@
 package org.squashtest.tm.exception.requirement.link;
 
 /**
- * Exception thrown while submitting a LinkType with a Code already in use.
+ * Exception thrown while deleting a LinkType which is set as Default Type.
  *
- * Created by jlor on 15/06/2017.
+ * Created by jlor on 19/06/2017.
  */
-public class LinkTypeCodeAlreadyExistsException extends RequirementLinkTypeException {
+public class LinkTypeIsDefaultTypeException extends RequirementLinkTypeException {
 
-	private static final long serialVersionUID = -1907643035129595449L;
+	private static final long serialVersionUID = -1907643035129593749L;
 
 	public String getShortName() {
-		return "type-code-already-in-use";
+		return "type-is-default-type";
 	}
 }

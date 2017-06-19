@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
 import java.util.List;
 
@@ -57,4 +59,10 @@ public interface CustomRequirementVersionLinkDao {
 	 * @return The persisted RequirementVersionLink given as parameter.
 	 */
 	RequirementVersionLink addLink(RequirementVersionLink requirementVersionLink);
+	/** For all the links of given type, replace the given type by the default one.
+	 * @param linkTypeToReplace
+	 * @param defaultLinkType
+	 * */
+	@Modifying
+	void setLinksTypeToDefault(RequirementVersionLinkType linkTypeToReplace, RequirementVersionLinkType defaultLinkType);
 }

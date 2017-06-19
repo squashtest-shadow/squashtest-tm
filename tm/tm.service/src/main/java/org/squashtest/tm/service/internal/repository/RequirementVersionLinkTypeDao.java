@@ -45,8 +45,11 @@ public interface RequirementVersionLinkTypeDao extends CrudRepository<Requiremen
 	 * Find all the RequirementVersionLinkTypes that exist.
 	 */
 	List<RequirementVersionLinkType> getAllRequirementVersionLinkTypes();
-	
+
 	@Query("from RequirementVersionLinkType where role1Code = :roleCode or role2Code = :roleCode")
 	RequirementVersionLinkType findByRoleCode(@Param("roleCode") String roleCode);
 
+	boolean isLinkTypeDefault(@Param("linkTypeId") Long linkTypeId);
+
+	boolean isLinkTypeUsed(@Param("linkTypeId") Long linkTypeId);
 }

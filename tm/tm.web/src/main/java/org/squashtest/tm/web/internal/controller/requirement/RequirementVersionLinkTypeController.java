@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by jlor on 14/06/2017.
@@ -94,6 +96,28 @@ public class RequirementVersionLinkTypeController {
 		Map<String, Object> resultMap = new HashMap<>(1);
 		resultMap.put("codeExists", linkTypeManagerService.doesLinkTypeCodeAlreadyExist(code, linkTypeId));
 		return resultMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {"id=isDefault"})
+	public Map<String, Object> isLinkTypeDefault(@PathVariable Long linkTypeId) {
+		Map<String, Object> resultMap = new HashedMap(1);
+		resultMap.put("isTypeDefault", linkTypeManagerService.isLinkTypeDefault(linkTypeId));
+		return resultMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {"id=isUsed"})
+	public Map<String, Object> isLinkTypeUsed(@PathVariable Long linkTypeId) {
+		Map<String, Object> resultMap = new HashedMap(1);
+		resultMap.put("isLinkTypeUsed", linkTypeManagerService.isLinkTypeUsed(linkTypeId));
+		return resultMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.DELETE, produces = ContentTypes.APPLICATION_JSON)
+	public void deleteLinkType(@PathVariable Long linkTypeId) {
+		linkTypeManagerService.deleteLinkType(linkTypeId);
 	}
 
 }

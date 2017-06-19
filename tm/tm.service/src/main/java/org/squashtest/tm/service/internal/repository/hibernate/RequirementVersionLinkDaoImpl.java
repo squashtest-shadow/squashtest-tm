@@ -25,8 +25,10 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkDao;
@@ -76,5 +78,14 @@ public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<Requiremen
 		entityManager.persist(symmetricalRequirementVersionLink);
 
 		return requirementVersionLink;
+	}
+
+	@Override
+	public void setLinksTypeToDefault(RequirementVersionLinkType linkTypeToReplace,
+									  RequirementVersionLinkType defaultLinkType) {
+		Query updateQuery = entityManager.createNamedQuery("RequirementVersionLink.setLinksTypeToDefault");
+		updateQuery.setParameter("formerLinkType", linkTypeToReplace);
+		updateQuery.setParameter("defaultLinkType", defaultLinkType);
+		updateQuery.executeUpdate();
 	}
 }
