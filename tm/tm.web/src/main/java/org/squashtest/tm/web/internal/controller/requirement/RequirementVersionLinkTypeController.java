@@ -31,6 +31,7 @@ import org.squashtest.tm.web.internal.http.ContentTypes;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -120,4 +121,17 @@ public class RequirementVersionLinkTypeController {
 		linkTypeManagerService.deleteLinkType(linkTypeId);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypeIdsToDelete}", method = RequestMethod.DELETE)
+	public void deleteLinkTypes (@PathVariable List<Long> linkTypeIdsToDelete) {
+		linkTypeManagerService.deleteLinkTypes(linkTypeIdsToDelete);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{linkTypesIdsToCheck}", method = RequestMethod.GET, params = {"id=doesContainDefault"})
+	public Map<String, Object> doesLinkTypesContainDefault (@PathVariable List<Long> linkTypesIdsToCheck) {
+		Map<String, Object> resultMap = new HashedMap(1);
+		resultMap.put("containsDefault", linkTypeManagerService.doesContainDefault(linkTypesIdsToCheck));
+		return resultMap;
+	}
 }

@@ -41,6 +41,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 
 			this.initErrorPopup();
 			this.configureDeleteTypePopup();
+			this.configureDeleteMultipleTypesPopup();
 
 		},
 		basicInit : function() {
@@ -74,7 +75,8 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			"click td.opt-role2" : "openChangeRole2Popup",
 			"click td.opt-code1" : "openChangeCode1Popup",
 			"click td.opt-code2" : "openChangeCode2Popup",
-			"click td.delete-button" : "openDeleteTypePopup"
+			"click td.delete-button" : "openDeleteTypePopup",
+			"click #remove-selected-link-types" : "openDeleteMultipleTypesPopup"
 		},
 
 		/* AddNewLinkType Popup functions */
@@ -464,8 +466,69 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 				self.DeleteTypePopup.formDialog('close');
 				self.table.refresh();
 			});
-		}
+		},
 
+		/* Multiple Delete functions */
+		configureDeleteMultipleTypesPopup : function() {
+
+			var self = this;
+
+      var dialog = $("#multiple-delete-link-type-popup");
+      this.DeleteMultipleTypesPopup = dialog;
+
+      dialog.formDialog();
+
+      dialog.on('formdialogconfirm', function(){
+      	self.deleteMultipleTypes.call(self);
+      });
+
+      dialog.on('formdialogcancel', this.closePopup);
+		},
+
+		openDeleteMultipleTypesPopup : function() {
+			var self = this;
+			var ids = self.table.getSelectedIds();
+			if(ids.length === 0) {
+				self.ErrorPopup.find('.generic-error-main').html(translator.get("message.EmptyTableSelection"));
+        self.ErrorPopup.messageDialog('open');
+			} else {
+				var builtUrl = routing.buildURL('requirementLinkType') + '/' + ids.join(',');
+				$.ajax({
+					url: builtUrl,
+					method: 'GET',
+					data: {
+						id: 'doesContainDefault'
+					}
+				}).done(function(data) {
+					var deleteMessage = $("#multiple-delete-link-type-warning");
+					if(data.containsDefault) {
+						self.ErrorPopup.find('.generic-error-main').html(translator.get("requirement-version.link.type.error.message.containsDefaultType"));
+            self.ErrorPopup.messageDialog('open');
+					} else {
+						self.DeleteMultipleTypesPopup.data('typesIds', ids);
+						if(ids.length === 1) {
+							deleteMessage.text(translator.get("requirement-version.link.type.delete.warning.linkTypesAreUsed"));
+						} else {
+							deleteMessage.text(translator.get("requirement-version.link.type.delete.warning.linkTypesAreUnused"));
+						}
+            self.DeleteMultipleTypesPopup.formDialog('open');
+					}
+				});
+			}
+		},
+
+		deleteMultipleTypes : function() {
+			var self = this;
+			var ids = self.DeleteMultipleTypesPopup.data('typesIds');
+			var builtUrl = routing.buildURL('requirementLinkType') + '/' + ids.join(',');
+			$.ajax({
+      	url: builtUrl,
+      	method: 'DELETE'
+      }).done(function(data) {
+				self.table.refresh();
+				self.DeleteMultipleTypesPopup.formDialog('close');
+      });
+		},
 
 
 	});

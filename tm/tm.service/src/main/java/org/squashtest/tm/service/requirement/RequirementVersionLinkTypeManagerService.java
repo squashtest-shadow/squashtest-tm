@@ -22,6 +22,8 @@ package org.squashtest.tm.service.requirement;
 
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
+import java.util.List;
+
 /**
  * Created by jlor on 14/06/2017.
  */
@@ -44,4 +46,8 @@ public interface RequirementVersionLinkTypeManagerService {
 	boolean isLinkTypeUsed(Long linkTypeId);
 
 	void deleteLinkType(Long linkTypeId);
+
+	boolean doesContainDefault(List<Long> linkTypesIdsToCheck);
+
+	void deleteLinkTypes(List<Long> linkTypeIdsToDelete);
 }

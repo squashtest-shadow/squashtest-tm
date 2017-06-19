@@ -132,4 +132,22 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 			linkTypeDao.delete(linkTypeToDelete);
 		}
 	}
+
+	@Override
+	public boolean doesContainDefault(List<Long> linkTypesIdsToCheck) {
+		Iterable<RequirementVersionLinkType> linkTypesToCheck = linkTypeDao.findAll(linkTypesIdsToCheck);
+		for(RequirementVersionLinkType linkType : linkTypesToCheck) {
+			if(linkType.isDefault()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void deleteLinkTypes(List<Long> linkTypeIdsToDelete) {
+		for(Long id : linkTypeIdsToDelete) {
+			deleteLinkType(id);
+		}
+	}
 }
