@@ -58,6 +58,11 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	}
 
 	@Override
+	public boolean doesLinkTypeCodeAlreadyExist(String code, Long linkTypeId) {
+		return linkTypeDao.doesCodeAlreadyExist(code, linkTypeId);
+	}
+
+	@Override
 	public void changeDefault(Long linkTypeId) {
 		RequirementVersionLinkType newDefaultReqLinkType = linkTypeDao.findOne(linkTypeId);
 		List<RequirementVersionLinkType> allReqLinkTypes = linkTypeDao.getAllRequirementVersionLinkTypes();
@@ -78,5 +83,25 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	public void changeRole2(Long linkTypeId, String newRole2) {
 		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
 		linkType.setRole2(newRole2);
+	}
+
+	@Override
+	public void changeCode1(Long linkTypeId, String newCode1) {
+		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		if(!linkTypeDao.doesCodeAlreadyExist(newCode1, linkTypeId)) {
+			linkType.setRole1Code(newCode1);
+		} else {
+			throw new LinkTypeCodeAlreadyExistsException();
+		}
+	}
+
+	@Override
+	public void changeCode2(Long linkTypeId, String newCode2) {
+		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
+		if(!linkTypeDao.doesCodeAlreadyExist(newCode2, linkTypeId)) {
+			linkType.setRole2Code(newCode2);
+		} else {
+			throw new LinkTypeCodeAlreadyExistsException();
+		}
 	}
 }

@@ -54,4 +54,12 @@ public class RequirementVersionLinkTypeDaoImpl extends HibernateEntityDao<Requir
 		existQuery.setParameter("code", code);
 		return (Long)existQuery.getSingleResult() > 0;
 	}
+
+	@Override
+	public boolean doesCodeAlreadyExist(String code, Long linkTypeId) {
+		Query existQuery = entityManager.createNamedQuery("RequirementVersionLinkType.codeAlreadyExistsByAnotherType");
+		existQuery.setParameter("code", code);
+		existQuery.setParameter("linkTypeId", linkTypeId);
+		return (Long)existQuery.getSingleResult() > 0;
+	}
 }

@@ -958,7 +958,12 @@
 	@NamedQuery(name="RequirementVersionLinkType.codeAlreadyExists",
 				query="select count(*) " +
 					"from RequirementVersionLinkType rvlt " +
-					"where rvlt.role1Code = :code or rvlt.role2Code = :code "),
+					"where rvlt.role1Code = :code or rvlt.role2Code = :code"),
+	@NamedQuery(name="RequirementVersionLinkType.codeAlreadyExistsByAnotherType",
+				query="select count(*) " +
+					"from RequirementVersionLinkType rvlt " +
+					"where (rvlt.role1Code = :code or rvlt.role2Code = :code) " +
+					"and rvlt.id != :linkTypeId"),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

@@ -188,6 +188,30 @@
     </div>
   </div>
 
+  <!--   CHANGE CODE POPUP -->
+  <div id="change-type-code-popup" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title.change-code}">
+    <table class="form-horizontal">
+      <tr class="control-group">
+
+        <td>
+          <label for="change-type-code-popup-code" class="control-label" th:text="#{label.Label}">Label</label>
+        </td>
+        <td class="controls">
+          <input id="change-type-code-popup-code" name="info-list-item-label" type="text" maxlength="50" size="50" />
+          <span class="help-inline red-warning-message">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+
+    <br/>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
+
   <script type="text/javascript" th:inline="javascript">
 
 /*<![CDATA[*/

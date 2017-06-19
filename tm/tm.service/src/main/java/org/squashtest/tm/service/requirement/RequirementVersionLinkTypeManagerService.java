@@ -29,9 +29,15 @@ import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 public interface RequirementVersionLinkTypeManagerService {
 
 	void addLinkType(RequirementVersionLinkType linkType);
+
 	boolean doesLinkTypeCodeAlreadyExist(String code);
+	boolean doesLinkTypeCodeAlreadyExist(String code, Long linkTypeId);
+
 	void changeDefault(Long linkTypeId);
 
 	void changeRole1(Long linkTypeId, String newRole1);
 	void changeRole2(Long linkTypeId, String newRole2);
+
+	void changeCode1(Long linkTypeId, String newCode1);
+	void changeCode2(Long linkTypeId, String newCode2);
 }

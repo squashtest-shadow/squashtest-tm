@@ -34,10 +34,11 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			this.config = config;
 			this.configureNewLinkTypePopup();
 
-			this.configureChangeRolePopup();
-//			this.configureChangeCodePopup();
-
 			this.initTable();
+
+			this.configureChangeRolePopup();
+			this.configureChangeCodePopup();
+
 
 		},
 		basicInit : function() {
@@ -68,7 +69,9 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			"click #add-link-type-btn" : "openAddLinkTypePopup",
 			"click .isDefault>input:radio" : "changeDefaultType",
 			"click td.opt-role1" : "openChangeRole1Popup",
-			"click td.opt-role2" : "openChangeRole2Popup"
+			"click td.opt-role2" : "openChangeRole2Popup",
+			"click td.opt-code1" : "openChangeCode1Popup",
+			"click td.opt-code2" : "openChangeCode2Popup"
 		},
 
 		/* AddNewLinkType Popup unctions */
@@ -208,7 +211,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 				});
 		},
 
-		/* Change  Role function */
+		/* Change  Role functions */
 
 		configureChangeRolePopup : function() {
 			var self = this;
@@ -288,7 +291,103 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
         self.ChangeRolePopup.formDialog('close');
 			});
 
-		}
+		},
+
+		/* Change Code functions */
+
+		configureChangeCodePopup : function() {
+    	var self = this;
+
+      var dialog = $("#change-type-code-popup");
+      this.ChangeCodePopup = dialog;
+
+      dialog.formDialog();
+
+      dialog.on('formdialogconfirm', function(){
+      	self.changeCode.call(self);
+   		});
+
+      dialog.on('formdialogcancel', this.closePopup);
+    },
+
+    clearChangeCodeErrorMessage : function() {
+
+    	Forms.input($("#change-type-code-popup-code")).clearState();
+    },
+
+		openChangeCode1Popup : function(event) {
+
+    	this.openChangeCodePopup(event, 1);
+    },
+
+    openChangeCode2Popup : function(event) {
+
+    	this.openChangeCodePopup(event, 2);
+    },
+
+		openChangeCodePopup : function(event, codeNumber) {
+    	var self = this;
+    	// clear error messages
+    	self.clearChangeCodeErrorMessage();
+    	// fill label input
+    	var codeCell = event.currentTarget;
+
+    	var row = codeCell.parentElement;
+    	var data = this.table.fnGetData(row);
+    	var typeId = data['type-id'];
+    	var currentCode = $(codeCell).text();
+
+    	self.ChangeCodePopup.data('typeId', typeId);
+    	self.ChangeCodePopup.data('codeNumber', codeNumber);
+    	self.ChangeCodePopup.formDialog('open');
+    	self.ChangeCodePopup.find("#change-type-code-popup-code").val(currentCode);
+    },
+
+		changeCode : function() {
+    	var self = this;
+    	var typeId = self.ChangeCodePopup.data('typeId');
+    	var codeNumber = self.ChangeCodePopup.data('codeNumber');
+    	var newCode = self.ChangeCodePopup.find("#change-type-code-popup-code").val();
+
+    	// Verifications
+    	if(StringUtils.isBlank(newCode))	 {
+         Forms.input($("#change-type-code-popup-code")).setState("error", translator.get("message.notBlank"));
+      } else {
+      	// Check code existence
+				$.ajax({
+					url : routing.buildURL("requirement.link.type", typeId),
+					type : 'GET',
+					data : {
+						id : 'check-code',
+						value: newCode
+						}
+					}).done(function(data) {
+						if(data.codeExists) {
+							Forms.input($("#change-type-code-popup-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
+						} else {
+    					self.doChangeCode(typeId, codeNumber, newCode);
+						}
+					});
+			}
+    },
+
+    doChangeCode : function(typeId, codeNumber, newCode) {
+    	var self = this;
+    	var requestId = 'requirement-link-type-code' + codeNumber;
+
+    	$.ajax({
+    		url : routing.buildURL("requirement.link.type", typeId),
+    		type : 'POST',
+    		data : {
+    			id : requestId,
+    			value : newCode
+    		}
+    	}).done(function() {
+    		self.table.refresh();
+        self.ChangeCodePopup.formDialog('close');
+    	});
+
+    }
 
 	});
 	return reqLinkTypeManagerView;

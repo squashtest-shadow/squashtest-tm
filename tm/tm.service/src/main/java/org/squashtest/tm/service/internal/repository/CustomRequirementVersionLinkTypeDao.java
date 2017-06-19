@@ -40,4 +40,8 @@ public interface CustomRequirementVersionLinkTypeDao {
 	 */
 	List<RequirementVersionLinkType> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
 	boolean doesCodeAlreadyExist(String code);
+	/**
+	 * Check if the code is already used by another Type than the given one.
+	 * */
+	boolean doesCodeAlreadyExist(String newCode, Long linkTypeId);
 }
