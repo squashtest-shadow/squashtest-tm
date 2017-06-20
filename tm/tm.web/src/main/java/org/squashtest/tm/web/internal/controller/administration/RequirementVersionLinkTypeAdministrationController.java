@@ -101,7 +101,7 @@ public class RequirementVersionLinkTypeAdministrationController {
 	private DataTableModel getReqLinkTypesInitialModel() {
 		PagedCollectionHolder<List<RequirementVersionLinkType>> holder =
 			reqLinksFinder.getAllPagedAndSortedReqVersionLinkTypes(
-				new DefaultPagingAndSorting());
+				new DefaultPagingAndSorting("RequirementVersionLinkType.role1"));
 
 		return new RequirementLinkTypesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
