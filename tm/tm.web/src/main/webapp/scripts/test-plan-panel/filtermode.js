@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil", "underscore" ],
-		function($, rangedatepicker, translator, storage, strUtils, _){
+define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil", "underscore", "squash.attributeparser" ],
+		function($, rangedatepicker, translator, storage, strUtils, _, attrparser){
 
 	"use strict";
 
@@ -49,6 +49,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		var table = $(tableSelector),
 			entityId = table.data('entity-id'),
 			entityType = table.data('entity-type'),
+			columnDefs = extractColumnDefs(table);
 			self = this;
 
 		if (!entityId) {
@@ -64,6 +65,28 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		table.find('>thead>tr').addClass('tp-filtermode-disabled');
 
 
+		
+		/*
+		 * Issue 6576
+		 * 
+		 * The datatable normally identify columns by index/position. This is bad for us because the same test plan can be displayed either in the normal page or the manager
+		 * page, which have different sets of columns and thus different indexing. So, to make sure that restoring a filter in a normal page that was saved in the manager page
+		 * (or vice-versa) will not fail miserably we must enforce column identification by name. 
+		 * 
+		 * The problem is, the configuration that holds the column names - specifically the property mDataProp - is not set yet because this code is part of the initialization.
+		 * In our case, that configuration is held by the DOM itself (see the attribute 'data-def' on each of the column headers). 
+		 * We must re-parse here the columns and build a model of what will be table.fnSettings().aoColumns (or aoColumnDefs if you wish).
+		 */
+		
+		function extractColumnDefs(table){
+			return table.find('thead>tr>th').map(function(idx){
+				var conf = attrparser.parse($(this).data('def'));
+				return {
+					mDataProp : conf.map
+				};
+			});
+		}
+		
 
 		// ******* filter management***********
 
@@ -74,21 +97,38 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		}
 
 
+		/*
+		 * Issue 6576
+		 * 
+		 * Save the names of the column with each filter entry.
+		 * 
+		 */
 		this._save = function(_search){
-			var searchObject =  _search || table.squashTable().fnSettings().aoPreSearchCols;
+			var sTable = table.squashTable(),
+				columnDefs = sTable.fnSettings().aoColumns,
+				searchObject =  _search || sTable.fnSettings().aoPreSearchCols;
 
 			if (this.active === false && isDefaultFiltering(searchObject)){
 				// a bit of cleanup doesn't harm
 				storage.remove(this.key);
 			}
 			else{
+				// add the column name to each entry in the searchObject
+				_.each(searchObject, function(entry,idx){
+					entry.mDataProp = columnDefs[idx].mDataProp;
+				});
+				
 				storage.set(this.key,{
 					active : this.active,
 					filter : searchObject
 				});
 			}
 		};
-
+		
+		function findColFilterByName(filter, mDataProp){
+			return _.find(filter, function(f){return f.mDataProp === mDataProp});
+		}
+		
 
 		function hideInputs() {
 			table.find('>thead>tr').addClass('tp-filtermode-disabled');
@@ -99,6 +139,12 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		};
 
 
+		/*
+		 * Issue 6576
+		 * 
+		 * Will restore the filters according to the column name.
+		 * 
+		 */
 		function restoreTableFilter(filter){
 
 			if (filter === undefined){
@@ -107,12 +153,14 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			else{
 				var settings = table.squashTable().fnSettings();
 
-				$.each(settings.aoColumns, function(idx){
-					var column = settings.aoColumns[idx];
-					var $th = $(column.nTh);
-					if (column.bVisible && $th.is('.tp-th-filter')){
-						column.sSearch = filter[idx].sSearch;
-						settings.aoPreSearchCols[idx] = filter[idx];
+				$.each(settings.aoColumns, function(idx, column){
+					var colFilter = findColFilterByName(filter, column.mDataProp),
+						$th = $(column.nTh);
+					
+					// set the filter if the column is filterable, is visible and has a filter defined
+					if (column.bVisible && $th.is('.tp-th-filter') && !!colFilter){						
+						column.sSearch = colFilter.sSearch;
+						settings.aoPreSearchCols[idx] = colFilter;
 					}
 				});
 			}
@@ -129,6 +177,12 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		}
 
+		/*
+		 * Issue 6576
+		 * 
+		 * Will restore the inputs according to the column name.
+		 * 
+		 */
 		function restoreInputs(filter){
 
 			if (state === null){
@@ -136,10 +190,14 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			}
 
 			var headers = table.find('thead>tr>th');
+			
 			headers.each(function(idx){
-				var $th = $(this);
-				if ($th.is('.tp-th-filter') && filter[idx] != null){
-					$th.find('.filter_input').val(filter[idx].sSearch);
+				var $th = $(this),
+					col = columnDefs[idx],
+					colFilter = findColFilterByName(filter, col.mDataProp);
+				
+				if ($th.is('.tp-th-filter') && !!colFilter){
+					$th.find('.filter_input').val(colFilter.sSearch);
 				}
 			});
 		};
@@ -300,10 +358,18 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			}
 			else{
 				// return an object compliant with the datatable initialization option
-				return $.map(state.filter, function(o){
+				/*
+				 * Issue 6576
+				 * 
+				 * Because the search model that was saved may not match the column defs of the table
+				 * being loaded here, we must adapt the returned object to the new table definition.
+				 */
+				return _.map(columnDefs, function(col, idx){
+					var f = findColFilterByName(state.filter, col.mDataProp);
+					var search = (!!f) ? f.sSearch : '';
 					return {
-						'search' : o.sSearch
-					}
+						'search' : search
+					};
 				});
 			}
 		};

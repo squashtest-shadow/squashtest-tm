@@ -153,14 +153,16 @@ $(function(){
 
 		//now we can make reappear
 		$("#manage-test-suites-popup .main-div-suites").removeClass("not-displayed");
+		
+		/* Enhancement #6754 - press 'enter' to add a test suite when the focus is on the inputText */
+		$("#ts-popup-text").keyup(function(event) {
+			if (event.keyCode == 13) {
+				$("#ts-popup-addButton").click();
+			}
+		});
 	});
 });
 });
 
-/* Enhancement #6754 - press 'enter' to add a test suite when the focus is on the inputText */
-$("#ts-popup-text").keyup(function(event) {
-	if (event.keyCode == 13) {
-		$("#ts-popup-addButton").click();
-	}
-});
+
 </script>
