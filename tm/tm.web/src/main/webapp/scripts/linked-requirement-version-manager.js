@@ -176,6 +176,7 @@ require([ "common" ], function() {
 							deselectTree();
 						// Else, opening the popup
 						} else {
+							table().refresh();
 							openChooseTypeDialog(window.squashtm.bindingsManager.requirementVersion.id, ids, true);
 						}
         	});

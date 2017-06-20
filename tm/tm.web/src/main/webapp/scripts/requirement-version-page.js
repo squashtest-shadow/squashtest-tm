@@ -341,7 +341,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 		            	showAddSummary(rejections);
 								} else {
 									// Else, open the popup to choose type
-									openChooseTypeDialog(currentVersionId, relatedReqNodeId, true)
+									table.refresh();
+									openChooseTypeDialog(currentVersionId, relatedReqNodeId, true);
 								}
 							});
 						}
