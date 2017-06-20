@@ -195,10 +195,13 @@ require([ "common" ], function() {
         getAndDisplayRelatedReqVersionInfos(relatedId, {"isRelatedIdANodeId": isRelatedIdANodeId}).success(
         	function(relatedReqVersionInfos) {
         		var relatedVersionName = relatedReqVersionInfos.versionName;
+        		/* We don't want to display the descriptions anymore. */
             var relatedVersionDescription = relatedReqVersionInfos.versionDescription;
 
         		self.find("#relatedRequirementName").html(relatedVersionName);
+        		/*
         		self.find("#relatedRequirementDescription").html(relatedVersionDescription);
+        		*/
 
         		/* Fetching whole list of RequirementVersionTypes to populate comboBox */
         		var comboBox = self.find("#link-types-options");
