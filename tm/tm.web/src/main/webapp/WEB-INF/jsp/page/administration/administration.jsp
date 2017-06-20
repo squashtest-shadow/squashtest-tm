@@ -55,6 +55,7 @@
   <jsp:attribute name="informationContent">
     <div id="admin-pane">
       <div id="admin-link-pane">
+
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
         <a href="${ usersUrl }" class="unstyledLink">
           <span id="user-admin" class="admin-section-icon admin-user-icon"></span>
@@ -75,30 +76,17 @@
         </a>
         </c:if>
 
+
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
+        
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
         </a>
 
-
         <a href="<c:url value='/administration/info-lists' />" class="unstyledLink">
           <span id="admin-info-list" class="admin-section-icon admin-infolist-icon"></span>
           <span class="admin-section-label"><f:message key="label.infoListManagement" /></span>
-        </a>
-
-
-        <a href="${ bugtrackerUrl }" class="unstyledLink">
-          <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
-          <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
-        </a>
-        <a href="${testAutomationServerUrl}" class="unstyledLink">
-          <span id="test-automation-servers-admin" class="admin-section-icon admin-test-automation-servers-icon"></span>
-          <span class="admin-section-label"><f:message key="label.testAutomationServersManagement"/></span>
-         </a>
-        <a href="${ indexUrl }" class="unstyledLink">
-          <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
-          <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
         </a>
 
         <a href="${ reqLinkTypeUrl }" class="unstyledLink">
@@ -106,9 +94,26 @@
           <span class="admin-section-label"><f:message key="label.reqLinkTypeManagement" /></span>
         </a>
 
+
+        <a href="${ bugtrackerUrl }" class="unstyledLink">
+          <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
+          <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
+        </a>
+
+        <a href="${testAutomationServerUrl}" class="unstyledLink">
+          <span id="test-automation-servers-admin" class="admin-section-icon admin-test-automation-servers-icon"></span>
+          <span class="admin-section-label"><f:message key="label.testAutomationServersManagement"/></span>
+         </a>
+
+        <a href="${ indexUrl }" class="unstyledLink">
+          <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
+          <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
+        </a>
+
         <a id="fake-link" class="unstyledLink"></a>
 
         </sec:authorize>
+
       </div>
 
       <div id="admin-stats">
