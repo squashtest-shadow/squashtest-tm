@@ -21,15 +21,18 @@
 package org.squashtest.tm.internal.domain.report.common.dto;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class ExProgressTestPlanDto {
+
 	private String testCaseName;
 	private ExecutionStatus executionStatus;
 	private ExProgressIterationDto iteration;
+	private String testSuitesNames;
 
 	public ExProgressTestPlanDto() {
-
+		super();
 	}
 
 	public ExProgressIterationDto getIteration() {
@@ -62,6 +65,14 @@ public class ExProgressTestPlanDto {
 		this.executionStatus = executionStatus;
 	}
 
+	public String getTestSuitesNames() {
+		return testSuitesNames;
+	}
+
+	public void setTestSuitesNames(String testSuitesNames) {
+		this.testSuitesNames = testSuitesNames;
+	}
+
 	public ExProgressTestPlanDto fillBasicInfo(IterationTestPlanItem testPlan) {
 
 		if(testPlan.isTestCaseDeleted()){
@@ -74,8 +85,21 @@ public class ExProgressTestPlanDto {
 				this.testCaseName = testPlan.isTestCaseDeleted() ? null : reference + " - " + testPlan.getReferencedTestCase().getName();
 			}
 		}
+		this.testSuitesNames = buildTestSuitesNames(testPlan);
 		this.executionStatus = testPlan.getExecutionStatus();
 		return this;
+	}
+
+	/* Feat #6745 */
+	private String buildTestSuitesNames(IterationTestPlanItem testPlanItem) {
+		String prefix = "";
+		StringBuilder result = new StringBuilder();
+		for(TestSuite testSuite : testPlanItem.getTestSuites()) {
+			result.append(prefix);
+			prefix = ", ";
+			result.append(testSuite.getName());
+		}
+		return result.toString();
 	}
 
 }

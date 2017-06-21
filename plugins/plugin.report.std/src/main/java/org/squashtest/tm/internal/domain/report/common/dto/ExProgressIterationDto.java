@@ -103,19 +103,4 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		return this.getCampaign().getProject().isAllowsUntestable();
 	}
 
-	/*
-	* Feat #6745
-	* This toString() is used to display the Test Suites in the jasper report.
-	* */
-	@Override
-	public String toString() {
-		String prefix = "";
-		StringBuilder result = new StringBuilder();
-		for(ExProgressTestSuiteDto testSuite : this.getTestSuites()) {
-			result.append(prefix);
-			prefix = ", ";
-			result.append(testSuite.getName());
-		}
-		return result.toString();
-	}
 }

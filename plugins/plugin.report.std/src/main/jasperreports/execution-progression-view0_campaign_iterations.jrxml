@@ -80,11 +80,8 @@
 		<field name="testCaseName" class="java.lang.String">
 			<fieldDescription><![CDATA[testCaseName]]></fieldDescription>
 		</field>
-		<field name="iteration" class="java.lang.Object">
-			<fieldDescription><![CDATA[iteration]]></fieldDescription>
-		</field>
-		<field name="testSuites" class="java.util.List">
-			<fieldDescription><![CDATA[iteration.testSuites]]></fieldDescription>
+		<field name="testSuitesNames" class="java.lang.String">
+			<fieldDescription><![CDATA[testSuitesNames]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="project_name_l2" class="java.lang.String" isForPrompting="false"/>
@@ -298,7 +295,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[( $F{testSuites}.isEmpty() ) ?  $R{report.executionprogression.main.testsuite.nodata} : $F{iteration}.toString()]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[( $F{testSuitesNames}.isEmpty() ) ?  $R{report.executionprogression.main.testsuite.nodata} : $F{testSuitesNames}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
