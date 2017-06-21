@@ -53,7 +53,7 @@ public interface LinkedRequirementVersionManagerService {
 
 	Collection<LinkedRequirementVersionException> addDefaultLinkWithNodeIds(
 		Long reqVersionNodeId, Long relatedReqVersionNodeId);
-	
+
 	void addOrUpdateRequirementLink(Long sourceVersionId, Long destVersionId, String destRole);
 
 	List<RequirementVersionLinkType> getAllReqVersionLinkTypes();
@@ -61,13 +61,13 @@ public interface LinkedRequirementVersionManagerService {
 	PagedCollectionHolder<List<RequirementVersionLinkType>> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pas);
 
 	void updateLinkTypeAndDirection(
-		long requirementVersionId, long relatedRequirementNodeId,
+		long requirementVersionId, long relatedRequirementNodeId, boolean isRelatedIdANodeId,
 		long reqVersionLinkTypeId, boolean reqVersionLinkTypeDirection);
 
 	void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion);
 
 	RequirementVersionLink addDetailedReqVersionLink(
 		long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection);
-	
+
 	Set<String> findAllRoleCodes();
 }

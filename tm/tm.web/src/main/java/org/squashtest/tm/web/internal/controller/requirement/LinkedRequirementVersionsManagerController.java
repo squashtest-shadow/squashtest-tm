@@ -216,12 +216,8 @@ public class LinkedRequirementVersionsManagerController {
 
 		long relatedId = paramRelatedId;
 
-		if(!isRelatedIdANodeId) {
-			RequirementVersion relatedVersion = requirementVersionFinder.findById(relatedId);
-			relatedId = relatedVersion.getRequirement().getId();
-		}
 		linkedReqVersionManager.updateLinkTypeAndDirection(
-			requirementVersionId, relatedId,
+			requirementVersionId, relatedId, isRelatedIdANodeId,
 			reqVersionLinkTypeId, reqVersionLinkTypeDirection);
 	}
 

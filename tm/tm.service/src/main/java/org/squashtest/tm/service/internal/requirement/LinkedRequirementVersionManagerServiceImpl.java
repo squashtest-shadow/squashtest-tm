@@ -141,66 +141,70 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
  		List<RequirementVersion> requirementVersions = findRequirementVersions(reqVerNodeIds);
 		return addLinkedReqVersionsToReqVersion(requirementVersions.get(0).getId(), relatedReqVerNodeIds);
 	}
-	
 
-	
-	@Override	
+
+
+	@Override
 	@PreAuthorize("hasPermission(#sourceVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
 			OR_HAS_ROLE_ADMIN)
 	public void addOrUpdateRequirementLink(Long sourceVersionId, Long destVersionId, String destRole) {
-		
+
 		// compute the type and direction
 		// the new direction for the outboundLink is deduced from the role of the destination version
 		// if the code designate the role 2, then the outboundLink direction should be false (meaning : outbound)
-		RequirementVersionLinkType type = reqVersionLinkTypeDao.findByRoleCode(destRole);		
+		RequirementVersionLinkType type = reqVersionLinkTypeDao.findByRoleCode(destRole);
 		boolean outboundDirection = type.getRole2Code().equals(destRole) ? false : true;
-		
+
 		// the requirement versions
 		RequirementVersion source = reqVersionDao.findOne(sourceVersionId);
 		RequirementVersion dest = reqVersionDao.findOne(destVersionId);
 
 		// checks
 		checkIfSameRequirement(source, dest);
-		checkIfVersionsAreLinkable(source, dest);		
-		
+		checkIfVersionsAreLinkable(source, dest);
+
 		// see if one need to create or just update the links
 		RequirementVersionLink outboundLink = reqVersionLinkDao.findByReqVersionsIds(sourceVersionId, destVersionId);
-		
+
 		// if null, we need to create them
 		if (outboundLink == null){
 			outboundLink = new RequirementVersionLink(source, dest, type, outboundDirection);
 			reqVersionLinkDao.addLink(outboundLink);
-		}	
+		}
 		// else we just update them
 		else{
 			RequirementVersionLink inboundLink = reqVersionLinkDao.findByReqVersionsIds(destVersionId, sourceVersionId);
-			
+
 			outboundLink.setLinkType(type);
 			outboundLink.setLinkDirection(outboundDirection);
-			
+
 			inboundLink.setLinkType(type);
 			inboundLink.setLinkDirection(! outboundDirection);
 		}
 
 	}
-	
+
 
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK')" +
 		OR_HAS_ROLE_ADMIN)
 	public void updateLinkTypeAndDirection(
-		long requirementVersionId, long relatedReqNodeId,
+		long requirementVersionId, long relatedReqNodeId, boolean isRelatedIdANodeId,
 		long linkTypeId, boolean linkDirection) {
 
-		List<Long> reqVerNodeIds = new ArrayList<>();
-		reqVerNodeIds.add(relatedReqNodeId);
-		List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
-		RequirementVersion relatedReqVersion = list.get(0);
-		long relatedReqVersionId = relatedReqVersion.getId();
+		long relatedVersionId = relatedReqNodeId;
 
-		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedReqVersionId);
-		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedReqVersionId, requirementVersionId);
+		if(isRelatedIdANodeId) {
+			List<Long> reqVerNodeIds = new ArrayList<>();
+			reqVerNodeIds.add(relatedReqNodeId);
+			List<RequirementVersion> list = findRequirementVersions(reqVerNodeIds);
+			RequirementVersion relatedReqVersion = list.get(0);
+			relatedVersionId = relatedReqVersion.getId();
+		}
+
+		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedVersionId);
+		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedVersionId, requirementVersionId);
 
 		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.findOne(linkTypeId);
 
@@ -210,6 +214,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
 	}
+
+
 
 	@Override
 	public void copyRequirementVersionLinks(RequirementVersion previousVersion, RequirementVersion newVersion) {
@@ -245,21 +251,21 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	public List<RequirementVersionLinkType> getAllReqVersionLinkTypes() {
 		return reqVersionLinkTypeDao.getAllRequirementVersionLinkTypes();
 	}
-	
+
 	@Override
 	public Set<String> findAllRoleCodes() {
 		List<RequirementVersionLinkType> allTypes = getAllReqVersionLinkTypes();
-		
+
 		Set<String> codes = new HashSet<>();
-		
+
 		for (RequirementVersionLinkType type : allTypes){
 			codes.add(type.getRole1Code());
 			codes.add(type.getRole2Code());
 		}
-		
+
 		return codes;
 	}
-	
+
 
 	@Override
 	public PagedCollectionHolder<List<RequirementVersionLinkType>> getAllPagedAndSortedReqVersionLinkTypes(PagingAndSorting pagingAndSorting) {
