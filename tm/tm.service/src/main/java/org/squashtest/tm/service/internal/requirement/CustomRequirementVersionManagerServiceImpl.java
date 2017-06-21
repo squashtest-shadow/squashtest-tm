@@ -123,7 +123,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementVersion newVersion = req.getCurrentVersion();
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
-		requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
+		if(inheritReqLinks) {
+			requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
+		}
 	}
 
 	@Override
@@ -335,7 +337,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		return null;
 	}
 
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
