@@ -63,7 +63,7 @@ public class RequirementVersionLinkTypeAdministrationController {
 		.mapAttribute("type-role1", "role1", RequirementVersionLinkType.class)
 		.mapAttribute("type-role1-code", "role1Code", RequirementVersionLinkType.class)
 		.mapAttribute("type-role2", "role2", RequirementVersionLinkType.class)
-		.mapAttribute("type-role2-code", "role1Code", RequirementVersionLinkType.class)
+		.mapAttribute("type-role2-code", "role2Code", RequirementVersionLinkType.class)
 		.mapAttribute("type-is-default", "isDefault", RequirementVersionLinkType.class);
 
 	@ModelAttribute("tablePageSize")
