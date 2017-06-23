@@ -22,12 +22,12 @@ package org.squashtest.tm.service.internal.batchimport;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class DatasetValue {
 	private String parameterOwnerPath;
 	private String parameterName;
-	private String value;
+	private String value = "";
 
 	/**
 	 * @return the parameterOwnerPath
