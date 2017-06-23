@@ -40,12 +40,14 @@ import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -96,6 +98,9 @@ public class RequirementVersionManagerController {
 
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
+
+	@Inject
+	private LinkedRequirementVersionManagerService linkedRequirementsManager;
 
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
@@ -156,6 +161,7 @@ public class RequirementVersionManagerController {
 		model.addAttribute("criticalityList", buildMarshalledCriticalities(locale));
 		model.addAttribute("categoryList", infoListBuilder.toJson(req.getProject().getRequirementCategories()));
 		model.addAttribute("verifyingTestCasesModel", getVerifyingTCModel(req.getCurrentVersion()));
+		model.addAttribute("linkedRequirementVersionsModel", getLinkedReqVersionsModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
 		model.addAttribute("milestoneConf", milestoneConf);
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
@@ -189,6 +195,13 @@ public class RequirementVersionManagerController {
 				version.getId(), new DefaultPagingAndSorting("Project.name"));
 
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
+	}
+
+	private DataTableModel getLinkedReqVersionsModel(RequirementVersion version){
+		PagedCollectionHolder<List<LinkedRequirementVersion>> holder = linkedRequirementsManager.findAllByRequirementVersion(
+			version.getId(), new DefaultPagingAndSorting("Project.name"));
+
+		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
 	private DataTableModel getEventsTableModel(Requirement requirement){

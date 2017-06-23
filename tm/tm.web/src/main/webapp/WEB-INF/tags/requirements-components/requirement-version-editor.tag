@@ -47,30 +47,30 @@
 <f:message var="okLabel" key="label.Ok"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<%-- that page won't be editable if 
+<%-- that page won't be editable if
    * the user don't have the correct permission,
-   * the requirement status doesn't allow it. 
+   * the requirement status doesn't allow it.
    * one of the milestones this version belongs to doesn't allow modification
-   
+
 --%>
 
 
- <c:set var="attachable"        value="${false}"/> 
- <c:set var="moreThanReadOnly"  value="${false}"/> 
- <c:set var="writable"          value="${false}"/> 
- <c:set var="deletable"         value="${false}"/> 
- <c:set var="creatable"         value="${false}"/> 
- <c:set var="linkable"          value="${false}"/> 
+ <c:set var="attachable"        value="${false}"/>
+ <c:set var="moreThanReadOnly"  value="${false}"/>
+ <c:set var="writable"          value="${false}"/>
+ <c:set var="deletable"         value="${false}"/>
+ <c:set var="creatable"         value="${false}"/>
+ <c:set var="linkable"          value="${false}"/>
  <c:set var="status_editable"   value="${false}"/>
- 
- 
- 
+
+
+
  <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
- 
+
  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
   <c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
- 
+
  <%-- other permissions. ACL should be evaluated only if the milestone statuses allows it.  --%>
  <c:if test="${not milestoneConf.locked}">
 
@@ -98,6 +98,7 @@
           criticalities : ${json:serialize(criticalityList)},
           categories : ${json:serialize(categoryList)},
           verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
+          linkedRequirementVersions : ${json:serialize(linkedRequirementVersionsModel.aaData)},
           attachments : ${json:serialize(attachmentsModel.aaData)},
           audittrail : ${json:serialize(auditTrailModel.aaData)},
           hasCufs : ${hasCUF},
@@ -120,7 +121,7 @@
       }
     }
   });
-  
+
   require(['common'], function(){
     require(['requirement-version-page'], function(){});
   });
@@ -165,9 +166,9 @@
     </c:if>
     <input type="button" value="<f:message key='label.print'/>" title='<f:message key="requirement.button.new-version.label" />' id="print-requirement-version-button" class="sq-btn" />
   </div>
-  
+
   <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType="requirement"/>
-  
+
   <div class="unsnap"></div>
 </div>
 <script type="text/javascript">
@@ -187,7 +188,7 @@ publish('reload.requirement.toolbar');
         <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${requirementUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-        </li>        
+        </li>
         </c:if>
       <li>
         <a href="#tabs-2">
@@ -214,8 +215,8 @@ publish('reload.requirement.toolbar');
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
 					<div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;</div>
 				</div>
-			
-				
+
+
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
 					<div id="requirement-reference">${ requirementVersion.reference }</div>
@@ -227,17 +228,17 @@ publish('reload.requirement.toolbar');
 						<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
 					</div>
 
-				</div>				
+				</div>
 			</div>
 		</jsp:attribute>
       </comp:toggle-panel>
-      
+
       	<%--------------------------- Attributs section ------------------------------------%>
-	
+
     	<comp:toggle-panel id="requirement"
     				titleKey="label.Attributes"
     				   open="true">
-				   
+
         	<jsp:attribute name="body">
         	       <div id="requirement-attribut-table"  class="display-table">
         				<div class="display-table-row">
@@ -249,29 +250,29 @@ publish('reload.requirement.toolbar');
         				<div class="display-table-row">
         					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
         					<div class="display-table-cell">
-        						<span id="requirement-icon" style="vertical-align : middle;" class="sq-icon sq-icon-${(requirementVersion.category.iconName == 'noicon') ? 'def_cat_noicon' : requirementVersion.category.iconName}"></span>	
+        						<span id="requirement-icon" style="vertical-align : middle;" class="sq-icon sq-icon-${(requirementVersion.category.iconName == 'noicon') ? 'def_cat_noicon' : requirementVersion.category.iconName}"></span>
         						<span id="requirement-category">
                                     <s:message code="${requirementVersion.category.label}" text="${requirementVersion.category.label}" htmlEscape="true" />
                                 </span>
-        					</div>				
+        					</div>
         				</div>
-        
-        			</div>	
+
+        			</div>
         		</jsp:attribute>
 	     </comp:toggle-panel>
-      
-      
+
+
   <script type="text/javascript">
     publish('reload.requirement.generalinfo');
   </script>
-       
+
 
       <comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true">
-        <jsp:attribute name="body">	
+        <jsp:attribute name="body">
 					<div id="requirement-description" ${descrRicheditAttributes}>${ requirementVersion.description }</div>
 		</jsp:attribute>
       </comp:toggle-panel>
-      
+
       	<%--------------------------- coverage stat section ------------------------------------%>
 		<comp:toggle-panel id="coverage-stat-requirement-panel" titleKey="requirement.rate.panel.title" open="true">
 			<jsp:attribute name="panelButtons">
@@ -281,9 +282,10 @@ publish('reload.requirement.toolbar');
 				<reqs:requirement-version-coverage-stats />
 			</jsp:attribute>
 		</comp:toggle-panel>
-      
-      
-      <%--------------- verifying TestCase section ------------------------------------%>
+
+
+      <%------------------------- Verifying TestCase Section -------------------------%>
+
       <comp:toggle-panel id="verifying-test-case-panel" titleKey="requirement.verifying_test-case.panel.title"
         open="true">
         <jsp:attribute name="panelButtons">
@@ -300,11 +302,11 @@ publish('reload.requirement.toolbar');
 		</jsp:attribute>
 
         <jsp:attribute name="body">
-			<reqs:verifying-test-cases-table 
+			<reqs:verifying-test-cases-table
                 batchRemoveButtonId="remove-verifying-test-case-button"
-                editable="${ linkable }" 
-                model="${verifyingTestCaseModel}" 
-                requirementVersion="${requirementVersion}" 
+                editable="${ linkable }"
+                model="${verifyingTestCaseModel}"
+                requirementVersion="${requirementVersion}"
                 milestoneConf="${milestoneConf}"
                 />
 		</jsp:attribute>
@@ -313,11 +315,52 @@ publish('reload.requirement.toolbar');
   <script type="text/javascript">
   publish('reload.requirement.verifyingtestcases');
   </script>
+
+  <%------------------------- /Verifying TestCase Section -------------------------%>
+
+  <%------------------------- Linked Requirements Section -------------------------%>
+
+  <comp:toggle-panel id="linked-requirement-version-panel" titleKey="requirement-version.linked-requirement-version.panel.title" open="true">
+
+      <jsp:attribute name="panelButtons">
+      	<c:if test="${ linkable }">
+      		<f:message var="associateLabel" key="requirement-version.linked-requirement-version.panel.button.add.label"/>
+      		<f:message var="removeLabel" key="requirement-version.linked-requirement-version.panel.button.remove.label"/>
+      		<button id="bind-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${associateLabel}">
+      		  <span class="ui-icon ui-icon-plus squared-icons">+</span>
+      		</button>
+      		<button id="unbind-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${removeLabel}">
+      		  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+      		  </button>
+      	</c:if>
+      </jsp:attribute>
+
+      <jsp:attribute name="body">
+        <c:if test="${ linkable }">
+          <div class="jstree-drop">
+        </c:if>
+          <reqs:linked-requirements-table batchRemoveButtonId="unbind-requirements-button"
+              requirementVersion="${requirementVersion}"
+              editable="${ linkable }" model="${linkedRequirementVersions}"
+              milestoneConf="${milestoneConf}" />
+         <c:if test="${ linkable }">
+            </div>
+         </c:if>
+      </jsp:attribute>
+
+    </comp:toggle-panel>
+
+    <script type="text/javascript">
+      publish('reload.requirement.linkedrequirementversions');
+    </script>
+
+  <%------------------------- /Linked Requirements Section -------------------------%>
+
       <%--------------- Audit Trail ------------------------------------%>
         <reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
 <script type="text/javascript">
 publish('reload.requirement.audittrail');
-</script>      
+</script>
     </div>
     <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
     <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
@@ -335,48 +378,48 @@ publish('reload.requirement.attachments');
 <%------------------- confirm new status if set to obsolete ---------------------%>
 <div class="not-displayed">
 <c:if test="${ writable }">
-		
+
     <f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
     <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
           title="${renameDialogTitle}">
-    
+
        <c:if test="${milestoneConf.showMultipleBindingMessage}">
-            <div data-milestones="${milestoneConf.totalMilestones}" 
+            <div data-milestones="${milestoneConf.totalMilestones}"
                 class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
                 <f:message key="message.RenameRequirementBoundToMultipleMilestones"/>
             </div>
-        </c:if> 
-    
+        </c:if>
+
         <label><f:message key="dialog.rename.label" /></label>
         <input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
         <comp:error-message forField="name"/>
-    
-    
+
+
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
-          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>        
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
         </div>
-    
+
     </div>
 
 </c:if>
 
 <%------------------------------- confirm new status if set to obsolete popup---------------------%>
 <c:if test="${status_editable}">
-  
+
       <f:message var="statusChangeDialogTitle" key="dialog.requirement.status.confirm.title"/>
       <div id="requirement-status-confirm-dialog" class="not-displayed"
             title="${statusChangeDialogTitle}">
-            
+
             <span><f:message key="dialog.requirement.status.confirm.text"/></span>
-            
+
             <div class="popup-dialog-buttonpane">
               <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
               <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
             </div>
       </div>
 </c:if>
-  
+
 </div>
 <script type="text/javascript">
 publish('reload.requirement.popups');
