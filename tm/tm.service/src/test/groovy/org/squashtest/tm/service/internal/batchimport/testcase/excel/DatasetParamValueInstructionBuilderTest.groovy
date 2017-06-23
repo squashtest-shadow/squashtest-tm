@@ -130,7 +130,7 @@ class DatasetParamValueInstructionBuilderTest extends Specification {
 		TC_DATASET_PARAM_NAME	| Cell.CELL_TYPE_BLANK		| null									| "parameterName"		| null
 
 		TC_DATASET_PARAM_VALUE	| Cell.CELL_TYPE_STRING		| "i live on the 2nd floor"				| "value"				| "i live on the 2nd floor"
-		TC_DATASET_PARAM_VALUE	| Cell.CELL_TYPE_BLANK		| null									| "value"				| null
+		TC_DATASET_PARAM_VALUE	| Cell.CELL_TYPE_BLANK		| null									| "value"				| ""
 
 		TC_PARAM_OWNER_PATH		| Cell.CELL_TYPE_STRING		| "we/re/here"							| "parameterOwnerPath"	| "we/re/here"
 		TC_PARAM_OWNER_PATH		| Cell.CELL_TYPE_BLANK		| null									| "parameterOwnerPath"	| null
