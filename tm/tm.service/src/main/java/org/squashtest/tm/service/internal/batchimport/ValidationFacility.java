@@ -186,7 +186,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private ProjectDao projectDao;
-	
+
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -1178,11 +1178,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return logs;
 	}
-	
-	
 
-	
-	
+
+
+
+
 
 	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
 		if (tcId != null && reqVersionId != null
@@ -1272,21 +1272,21 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 		return null;
 	}
-	
+
 	// ********************************** requirement links *************************
 
 	@Override
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
 		RequirementLinkTarget target = instr.getTarget();
-		
+
 		// check that the target is valid
 		LogTrain logs = requirementsExistAndLinkable(target);
 
 		// now check the role
 		logs = checkRequirementLinkRole(instr, logs);
-		
+
 		return logs;
-		
+
 	}
 
 	@Override
@@ -1301,11 +1301,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		return requirementsExistAndLinkable(instr.getTarget());
 	}
 
-	
+
 	private LogTrain checkRequirementLinkRole(RequirementLinkInstruction instr, LogTrain logs){
 		RequirementLinkTarget target = instr.getTarget();
 		String role = instr.getRelationRole();
-		
+
 		// if no role set -> issue a warning that the system will use the default
 		if (StringUtils.isBlank(role)){
 			logs.addEntry(LogEntry
@@ -1315,40 +1315,40 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 							.withImpact(Messages.IMPACT_REQ_LINK_ROLE_NOT_SET)
 							.build());
 		}
-		
+
 		// if role is set -> check it exists
 		else {
 			Set<String> allRoles = getModel().getRequirementLinkRoles();
-			
+
 			if (! allRoles.contains(role)){
 				logs.addEntry(LogEntry
 						.failure()
 						.forTarget(target)
 						.withMessage(Messages.ERROR_REQ_LINK_ROLE_NOT_EXIST)
-						.build());					
+						.build());
 			}
 		}
-		
+
 		return logs;
 	}
 
 	/*
 	 * both version must :
-	 * - exist, 
+	 * - exist,
 	 * - be linkable
 	 */
 	private LogTrain requirementsExistAndLinkable(RequirementLinkTarget linkTarget){
 		LogTrain logs = new LogTrain();
 
 		// check source requirement
-		RequirementVersionTarget source = linkTarget.getSourceVersion();		
+		RequirementVersionTarget source = linkTarget.getSourceVersion();
 		existAndLinkable(linkTarget, source, logs, Messages.ERROR_SOURCE_REQUIREMENT_PATH_MALFORMED, Messages.ERROR_SOURCE_REQUIREMENT_NOT_EXIST);
-		
+
 		// check dest requirement
 		RequirementVersionTarget dest = linkTarget.getDestVersion();
 		existAndLinkable(linkTarget, dest, logs, Messages.ERROR_DEST_REQUIREMENT_PATH_MALFORMED, Messages.ERROR_DEST_REQUIREMENT_NOT_EXIST);
-		
-		
+
+
 		// cannot link a requirement to itself
 		if (! logs.hasCriticalErrors()){
 			if (linkTarget.getSourceVersion().equals(linkTarget.getDestVersion())){
@@ -1356,16 +1356,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 						.failure()
 						.forTarget(linkTarget)
 						.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-						.build());				
+						.build());
 			}
 		}
-		
-		
-		
 		return logs;
 	}
-	
-	
+
+
 	private void existAndLinkable(RequirementLinkTarget linkTarget, RequirementVersionTarget versionTarget, LogTrain logs, String malformedPathMessage, String nonexistentMessage){
 		// 1 - source path must be supplied and well formed
 		if (! versionTarget.isWellFormed()){
@@ -1375,10 +1372,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 								.withMessage(malformedPathMessage, versionTarget.getPath())
 								.build()
 			);
-			
 			return;
 		}
-		
+
 		// 2 - project must exist
 		TargetStatus projectStatus = getModel().getProjectStatus(versionTarget.getProject());
 		if (projectStatus.getStatus() != Existence.EXISTS){
@@ -1386,12 +1382,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 							.failure()
 							.forTarget(linkTarget)
 							.withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
-							.build());	
-			
-
+							.build());
 			return;
 		}
-		
+
 		// 3 - RequirementVersion must exist
 		TargetStatus versionStatus = getModel().getStatus(versionTarget);
 		if (versionStatus.getStatus() != Existence.EXISTS){
@@ -1400,21 +1394,33 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 							.forTarget(linkTarget)
 							.withMessage(nonexistentMessage)
 							.build());
-			
 			return;
 		}
-		
-		// 4 - User must have high enough credentials
+
+		// 4 - RequirementVersion must be linkable (i.e. not Obsolete)
+		Long reqId = reqFinderService.findNodeIdByPath(versionTarget.getPath());
+		Requirement req = reqLibNavigationService.findRequirement(reqId);
+		RequirementVersion reqVersion = req.findRequirementVersion(versionTarget.getVersion());
+		if (!reqVersion.getStatus().isRequirementLinkable()) {
+			logs.addEntry(LogEntry
+							.failure()
+							.forTarget(linkTarget)
+							.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
+							.build());
+			return;
+		}
+
+		// 5 - User must have high enough credentials
 		LogEntry entry = checkPermissionOnProject("LINK", versionTarget, linkTarget);
 		if (entry != null){
 			logs.addEntry(entry);
 		}
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 
 	private LogEntry createLogFailure(Target target, String msg, Object... msgArgs) {
 		return LogEntry.failure().forTarget(target).withMessage(msg, msgArgs).build();
