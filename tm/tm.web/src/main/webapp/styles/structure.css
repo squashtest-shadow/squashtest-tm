@@ -1111,6 +1111,8 @@ div#execute-header-center-div {
 
 span#execute-header-numbers-label {
 	font-size: 2.0em;
+	position: relative;
+	top: 3px;
 }
 
 div#execute-header-right-div {
