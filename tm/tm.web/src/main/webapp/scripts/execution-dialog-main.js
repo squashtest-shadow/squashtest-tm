@@ -64,6 +64,11 @@ define(['module',
 			ComponentUtil.updateStatusCboxIcon(cbox);
 		}
 
+		// 6796 : cbox too small with Firefox
+		if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
+			cbox.css("height", "20px");
+		}
+
 
 		var lang = translator.get({
 			infoTitle : 'popup.title.info',
