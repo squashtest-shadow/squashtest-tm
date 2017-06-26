@@ -81,6 +81,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 
 		/* AddNewLinkType Popup functions */
 		configureNewLinkTypePopup : function(){
+
       var self = this;
 
       var dialog = $("#add-link-type-popup");
@@ -89,103 +90,181 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
       dialog.formDialog();
 
       dialog.on('formdialogconfirm', function(){
-      	self.addLinkType.call(self);
+				self.addNewLinkType(function() {
+					self.table.refresh();
+					self.AddLinkTypePopup.formDialog('close');
+        });
       });
 
-    	dialog.on('formdialogcancel', this.closePopup);
+      dialog.on('formdialogaddanother', function() {
+				self.addNewLinkType(function() {
+        	self.table.refresh();
+        	self.AddLinkTypePopup.formDialog('cleanup');
+        });
+      });
 
+    	dialog.on('formdialogcancel', self.closePopup);
     },
 
 		openAddLinkTypePopup : function(){
 			var self = this;
-			self.clearAddLinkErrorMessages();
+			self.clearErrorMessages();
 			self.AddLinkTypePopup.formDialog("open");
 		},
 
-		clearAddLinkErrorMessages : function() {
+		closePopup : function() {
+
+    	$(this).formDialog('close');
+    },
+
+		clearErrorMessages : function() {
 			Forms.input($("#add-link-type-popup-role1")).clearState();
       Forms.input($("#add-link-type-popup-role1-code")).clearState();
       Forms.input($("#add-link-type-popup-role2")).clearState();
       Forms.input($("#add-link-type-popup-role2-code")).clearState();
 		},
 
-		addLinkType : function(){
-    	var self = this;
+		/**
+    * Try to add the LinkType submitted by user.
+    * Manage potential errors, post adding request and execute callback.
+    */
+    addNewLinkType(callback) {
 
-    	// Clearing error messages
-			self.clearAddLinkErrorMessages();
+			var self = this;
 
-    	var newRole1 = self.AddLinkTypePopup.find("#add-link-type-popup-role1").val();
-    	var newRole1Code = self.AddLinkTypePopup.find("#add-link-type-popup-role1-code").val();
-    	var newRole2 = self.AddLinkTypePopup.find("#add-link-type-popup-role2").val();
-    	var newRole2Code = self.AddLinkTypePopup.find("#add-link-type-popup-role2-code").val();
+			var params = self.retrievePopupParams();
 
-    	var params = {
-    					"role1" : newRole1,
-    					"role1Code" : newRole1Code,
-    					"role2" : newRole2,
-    					"role2Code" : newRole2Code
-    	};
-    	// Verification BLANK
-    	var oneInputIsBlank = false;
+			self.clearErrorMessages();
 
-    	if(StringUtils.isBlank(newRole1))	 {
-    		oneInputIsBlank = true;
-    		Forms.input($("#add-link-type-popup-role1")).setState("error", translator.get("message.notBlank"));
-    	}
-    	if(StringUtils.isBlank(newRole1Code))	 {
-      	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("message.notBlank"));
-      	oneInputIsBlank = true;
-      }
-      if(StringUtils.isBlank(newRole2))	 {
-      	Forms.input($("#add-link-type-popup-role2")).setState("error", translator.get("message.notBlank"));
-      	oneInputIsBlank = true;
-      }
-      if(StringUtils.isBlank(newRole2Code))	 {
-      	Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("message.notBlank"));
-      	oneInputIsBlank = true;
-      }
-			if(!oneInputIsBlank) {
-				// Verify if Codes already Exist
-				$.ajax({
-        	url : routing.buildURL("requirementLinkType.checkCodes"),
-          type : 'GET',
-          dataType: 'json',
-          data : params,
-        }).done(function(data) {
-        	var oneCodeAlreadyExists = false;
-        	if(data.code1Exists) {
-          	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
-          	oneCodeAlreadyExists = true;
-          }
-          if(data.code2Exists) {
-            Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
-            oneCodeAlreadyExists = true;
-          }
-          if (!oneCodeAlreadyExists) {
-						self.doAddNewLinkType(params);
-          }
-        });
+			if(!self.checkBlankInputsAndDisplayErrors(params)) {
+
+				self.checkCodesExistence(params).done(function(codesInfos) {
+
+					if (!self.checkCodesExistenceAndDisplayErrors(codesInfos)) {
+
+						self.doAddNewLinkType(params).then(callback);
+					}
+				});
 			}
-
     },
 
-		doAddNewLinkType : function(paramLinkType) {
+		/**
+		*	Check the four inputs, displays errors for the ones which are left blank.
+		* @param params: {
+    *						"role1",
+    *						"role1Code",
+    *						"role2",
+    *						"role2Code"
+    *					}
+		* @return true if at least one is left blank, else returns false.
+		*/
+		checkBlankInputsAndDisplayErrors(params) {
+
+			var newRole1 = params.role1;
+      var newRole1Code = params.role1Code;
+      var newRole2 = params.role2;
+      var newRole2Code = params.role2Code;
+
+			var oneInputIsBlank = false;
+
+			if(StringUtils.isBlank(newRole1))	 {
+        oneInputIsBlank = true;
+      	Forms.input($("#add-link-type-popup-role1")).setState("error", translator.get("message.notBlank"));
+      }
+      if(StringUtils.isBlank(newRole1Code))	 {
+            	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("message.notBlank"));
+            	oneInputIsBlank = true;
+            }
+      if(StringUtils.isBlank(newRole2))	 {
+            	Forms.input($("#add-link-type-popup-role2")).setState("error", translator.get("message.notBlank"));
+            	oneInputIsBlank = true;
+            }
+      if(StringUtils.isBlank(newRole2Code))	 {
+      	Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("message.notBlank"));
+        oneInputIsBlank = true;
+      }
+
+      return oneInputIsBlank;
+		},
+
+		/**
+		* Check if the codes submitted already exist in database.
+		* @param params: {
+		*						"role1",
+		*						"newRole1Code",
+		*						"newRole2",
+		*						"newRole2Code"
+		*					}
+		* @return Promise of codes-checking request.
+		*/
+		checkCodesExistence(params) {
+      return $.ajax({
+      	url : routing.buildURL("requirementLinkType.checkCodes"),
+      	type : 'GET',
+      	dataType: 'json',
+      	data : params
+      });
+		},
+
+		/**
+		* Given codes information about their existence in database,
+		*	displays errors for each code input.
+		* @params codesInfos.
+		* @return true if at least one code exists in database, else returns false.
+		*/
+		checkCodesExistenceAndDisplayErrors(codesInfos) {
+			var oneCodeAlreadyExists = false;
+			if(codesInfos.code1Exists) {
+      	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
+        oneCodeAlreadyExists = true;
+      }
+      if(codesInfos.code2Exists) {
+      	Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
+      	oneCodeAlreadyExists = true;
+      }
+      return oneCodeAlreadyExists;
+		},
+
+		/**
+		* Get the input values of the AddLinkTypePopup and returns it as a structured object.
+		*/
+		retrievePopupParams() {
+
 			var self = this;
-			$.ajax({
+
+			var newRole1 = self.AddLinkTypePopup.find("#add-link-type-popup-role1").val();
+      var newRole1Code = self.AddLinkTypePopup.find("#add-link-type-popup-role1-code").val();
+      var newRole2 = self.AddLinkTypePopup.find("#add-link-type-popup-role2").val();
+      var newRole2Code = self.AddLinkTypePopup.find("#add-link-type-popup-role2-code").val();
+
+      var params = {
+      	"role1" : newRole1,
+        "role1Code" : newRole1Code,
+        "role2" : newRole2,
+        "role2Code" : newRole2Code
+      };
+
+      return params;
+		},
+
+		/**
+		* Send Ajax Post Request to create the new RequirementVersionType.
+		*	@param paramLinkType.
+		*	@return Promise of Post Request.
+		*/
+		doAddNewLinkType : function(paramLinkType) {
+			return $.ajax({
       	url : routing.buildURL("requirementLinkType"),
       	type : 'POST',
       	dataType: 'json',
       	data : paramLinkType,
-      }).done(function() {
+      });
+			/*
+      .done(function() {
       		self.table.refresh();
       		self.AddLinkTypePopup.formDialog('close');
       });
-		},
-
-		closePopup : function() {
-			$(this).formDialog('close');
-
+      */
 		},
 
 		/* Change Default Type functions */
