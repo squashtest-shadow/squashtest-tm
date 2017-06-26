@@ -39,11 +39,11 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
- 
+
 
 <c:set var="editable" value="${false}" />
 
-<c:if test="${not milestoneConf.locked}"> 
+<c:if test="${not milestoneConf.locked}">
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
 	domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" />
@@ -62,16 +62,16 @@
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             <c:set var="stIndex" value="${executionStep.executionStepOrder}" />
-			<title> #${stIndex + 1 } - ${execution.name} 
+			<title> #${stIndex + 1 } - ${execution.name}
 				<c:if test="${execution.datasetLabel != null && execution.datasetLabel != ''}">- ${execution.datasetLabel}</c:if>
 					(${stIndex + 1 }/${totalSteps})
 			</title>
-			
+
 			<layout:common-head />
 			<layout:_common-script-import highlightedWorkspace=""/>
-			
+
 			<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-			<s:url var="executeNext" value="${ currentStepsUrl }/index/${stIndex+1}?optimized=${param.optimized}"/>		
+			<s:url var="executeNext" value="${ currentStepsUrl }/index/${stIndex+1}?optimized=${param.optimized}"/>
             <c:choose>
             <c:when test="${executionStep.first}">
               <s:url var="executePrevious" value="${ currentStepsUrl }/prologue?optimized=${param.optimized}" />
@@ -80,7 +80,7 @@
               <s:url var="executePrevious" value="${ currentStepsUrl }/index/${stIndex-1}?optimized=${param.optimized}"/>
             </c:otherwise>
             </c:choose>
-   
+
 			<s:url var="executeThis" value="${ currentStepsUrl }/index/${stIndex}?optimized=${param.optimized}"/>
 			<s:url var="executeComment" value="${ currentStepsUrl }/${executionStep.id}"/>
 			<s:url var="executeStatus" value="${ currentStepsUrl }/${executionStep.id}"/>
@@ -89,11 +89,11 @@
 			<comp:sq-css name="squash.purple.css" />
 		</head>
 
-		
-    
+
+
 		<body class="execute-html-body">
 
-  
+
             <script type="text/javascript">
             	requirejs.config({
             		config : {
@@ -109,7 +109,7 @@
             					id : ${executionStep.id},
             					index : ${stIndex},
             					status : "${executionStep.executionStatus}",
-            					isFirst : ${executionStep.first}, 
+            					isFirst : ${executionStep.first},
                 				mode : ${not empty hasNextTestCase ? '"suite-mode"' : '"single-mode"' },
                 				hasNextTestCase : ${ (not empty hasNextTestCase) and hasNextTestCase },
                 				hasNextStep : ${ (not empty hasNextStep) and hasNextStep },
@@ -133,18 +133,18 @@
             					editable : ${editable}
             				}
             			}
-            			
+
             		}
             	});
-            	
+
             	require(["common"], function(){
             		require(["execution-dialog-main"], function(){});
             	});
-            	
-            
+
+
             </script>
 
-<%-- Wizard initialization --%> 
+<%-- Wizard initialization --%>
 <comp:init-wizards workspace="campaign"/>
 
 
@@ -157,7 +157,7 @@
   <f:message var="nextTitle"            key="execute.header.button.next.title" />
   <f:message var="modifyTcLabel"        key="execution.execute.modify.testcase" />
   <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-  
+
   <div id="execute-header">
   	<table width="100%" >
   		<tr style="vertical-align:top;">
@@ -166,14 +166,14 @@
                             <span class="ui-icon ui-icon-power"></span>
   				</button>
   			</td>
-  			<td class="centered">
+  			<td style="position: relative; top: -2px;" class="centered">
   				<button id="execute-previous-button" class="sq-btn std-btn ui-button control-button" title="${previousTitle}">
                             <span class="ui-icon ui-icon-triangle-1-w"></span>
-  				</button> 
+  				</button>
   				<span id="execute-header-numbers-label">
   					${executionStep.executionStepOrder+1} / ${totalSteps}
   				</span>
-  				<button id="execute-next-button" class="sq-btn std-btn ui-button control-button" 
+  				<button id="execute-next-button" class="sq-btn std-btn ui-button control-button"
                             ${not hasNextStep ? 'disabled="disabled"' : ''}title="${nextTitle}">
                             <span class="ui-icon ui-icon-triangle-1-e"></span>
   				</button>
@@ -182,11 +182,11 @@
   		<td class="centered " id="execute-next-test-case-panel">
                       <c:url var="nextTCUrl" value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />
   			<form action="${nextTCUrl}" method="post">
-                        <c:set var="nextTCdisabled" value="${(empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep}"/> 
-  				<button id="execute-next-test-case" name="classic" class="sq-btn std-btn control-button" 
-                            ${ nextTCdisabled ? 'disabled="disabled"' : ''} 
+                        <c:set var="nextTCdisabled" value="${(empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep}"/>
+  				<button id="execute-next-test-case" name="classic" class="sq-btn std-btn control-button"
+                            ${ nextTCdisabled ? 'disabled="disabled"' : ''}
                             title="${ nextTestCaseTitle }">
-                            <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>		
+                            <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>
   				</button>
   			</form>
   		</td>
@@ -194,39 +194,39 @@
   			<td class="centered">
   				<label id="evaluation-label-status">
   					<f:message key="execute.header.status.label" />
-  				</label> 
+  				</label>
   				<c:choose>
   				<c:when test="${editable }">
-                            <comp:execution-status-combo name="executionStatus" id="execution-status-combo" 
+                            <comp:execution-status-combo name="executionStatus" id="execution-status-combo"
                               allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}" selected="${executionStep.executionStatus}"/>
   						<c:if test="${allowsUntestable}">
-  						<button id="execute-untestable-button" class="sq-btn std-btn ui-button control-button status-button" 
+  						<button id="execute-untestable-button" class="sq-btn std-btn ui-button control-button status-button"
                                 data-status="UNTESTABLE" title="${untestableLabel}">
                                 <span class="ui-icon exec-status-untestable"></span>
   						</button>
   						</c:if>
-  						<button id="execute-blocked-button" class="sq-btn std-btn ui-button control-button status-button" 
+  						<button id="execute-blocked-button" class="sq-btn std-btn ui-button control-button status-button"
                                  data-status="BLOCKED" title="${blockedTitle}">
                                 <span class="ui-icon exec-status-blocked"></span>
-  						</button>							
-  						<button id="execute-fail-button" class="sq-btn std-btn ui-button control-button status-button" 
+  						</button>
+  						<button id="execute-fail-button" class="sq-btn std-btn ui-button control-button status-button"
                                 data-status="FAILURE" title="${failureTitle}">
                                 <span class="ui-icon exec-status-failure"></span>
   						</button>
-  						<button id="execute-success-button" class="sq-btn std-btn ui-button control-button status-button" 
+  						<button id="execute-success-button" class="sq-btn std-btn ui-button control-button status-button"
                                 data-status="SUCCESS" title="${passedTitle}">
                                 <span class="ui-icon exec-status-success"></span>
   						</button>
     							<c:if test="${execution.project.allowTcModifDuringExec()}">
     							 <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
-                                 </button> 
+                                 </button>
                                  </c:if>
   				</c:when>
   				<c:otherwise>
-                            <%-- 
+                            <%--
                                 I strongly doubt one can ever access this jsp if not granted the edit status
-                                so this 'otherwise' block might never be called                                
+                                so this 'otherwise' block might never be called
                              --%>
                             <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}" />
                             <span style="white-space:nowrap; display:inline-block;" class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}" >
@@ -235,11 +235,11 @@
   				</c:otherwise>
   				</c:choose>
   			</td>
-  
+
   		</tr>
   	</table>
   </div>
-      
+
 <script type="text/javascript">
 publish("reload.executedialog.toolbar");
 </script>
@@ -247,18 +247,18 @@ publish("reload.executedialog.toolbar");
 			<div id="execute-body" class="execute-fragment-body">
         <c:if test="${ hasCustomFields or hasDenormFields }">
           <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
-            <jsp:attribute name="body"> 
+            <jsp:attribute name="body">
               <div id="dfv-information-table" class="display-table"></div>
               <div id="cuf-information-table" class="display-table"></div>
             </jsp:attribute>
           </comp:toggle-panel>
-          
+
 <script type="text/javascript">
 publish("reload.executedialog.cufs");
 </script>
         </c:if>
 				<comp:toggle-panel id="execution-action-panel"
-					titleKey="execute.panel.action.title" 
+					titleKey="execute.panel.action.title"
 					open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${executionStep.action}</div>
@@ -277,10 +277,10 @@ publish("reload.executedialog.cufs");
 
 					<div id="execute-evaluation-leftside">
 						<c:if test="${editable}">
-							<c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executeComment}'"/>	
+							<c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executeComment}'"/>
 						</c:if>
 						<comp:toggle-panel id="execution-comment-panel"
-							titleKey="execute.panel.comment.title" 
+							titleKey="execute.panel.comment.title"
 							open="true">
 							<jsp:attribute name="body">
 								<div id="execution-comment" ${descrRicheditAttributes}>${executionStep.comment}</div>
@@ -294,23 +294,23 @@ publish("reload.executedialog.cufs");
 					<div style="clear: both; visibility: hidden"></div>
 				</div>
 
-				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" 
+				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }"
                 attachmentSet="${attachments}" autoJsInit="${false}"/>
-                             
+
 <script type="text/javascript">
 publish('reload.executedialog.attachments');
 </script>
-                
-    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%>
 <c:if test="${executionStep.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
-        
+
         <script type="text/javascript">
-        publish('reload.executedialog.issues'); 
-        </script>          
+        publish('reload.executedialog.issues');
+        </script>
 </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
 
 
 <script type="text/javascript">
@@ -320,7 +320,7 @@ publish("reload.executedialog.complete");
 
 
 			</div>
-      
+
 
 		</body>
 	</c:otherwise>
