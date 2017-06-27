@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
@@ -112,12 +113,61 @@ public class ExecutionStepModificationHelper {
 
 		for (ExecutionStep eStep : execSteps) {
 			ActionTestStep aStep = (ActionTestStep) eStep.getReferencedTestStep();
-			if (!isStepEqual(eStep, aStep)) {
-				toBeUpdated.add(eStep);
+			if (isExecutionWithParameters(aStep) && isExecutionWithDataset(execution)) {
+				Dataset dataset = execution.getTestPlan().getReferencedDataset();
+				changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
+			} else {
+				if (!isStepEqual(eStep, aStep)) {
+					toBeUpdated.add(eStep);
+				}
 			}
 		}
 
 		return toBeUpdated;
+	}
+
+	private boolean isExecutionWithParameters(ActionTestStep aStep) {
+		return aStep.findUsedParametersNames() != null;
+	}
+
+	private boolean isExecutionWithDataset(Execution execution) {
+		if (execution.getTestPlan() != null) {
+			if (execution.getTestPlan().getReferencedDataset() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void changeStepParamsByValue(ExecutionStep eStep, ActionTestStep aStep, Dataset dataset, List<ExecutionStep> toBeUpdated) {
+		String action = aStep.getAction();
+		String expectedResult = aStep.getExpectedResult();
+		Set<String> params = aStep.findUsedParametersNames();
+		for (String param : params) {
+			for (DatasetParamValue dpv : dataset.getParameterValues()) {
+				changeStepParamByValue(aStep, param, dpv);
+			}
+		}
+		if (!isStepEqual(eStep, aStep)) {
+			toBeUpdated.add(eStep);
+		}
+		reinitiateActionTestStep(aStep, action, expectedResult);
+	}
+
+	private void changeStepParamByValue(ActionTestStep aStep, String param, DatasetParamValue dpv) {
+		String paramValue = "";
+		if (dpv.getParameter().getName().equals(param)) {
+			paramValue = dpv.getParamValue();
+			if (aStep.getExpectedResult().contains(param)) {
+				aStep.setExpectedResult(aStep.getExpectedResult().replace("${" + param + "}", paramValue));
+			}
+			aStep.setAction(aStep.getAction().replace("${" + param + "}", paramValue));
+		}
+	}
+
+	private void reinitiateActionTestStep(ActionTestStep aStep, String action, String expectedResult) {
+		aStep.setAction(action);
+		aStep.setExpectedResult(expectedResult);
 	}
 
 	private boolean isStepEqual(ExecutionStep eStep, ActionTestStep aStep) {
