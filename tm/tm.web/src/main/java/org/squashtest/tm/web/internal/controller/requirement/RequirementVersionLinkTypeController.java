@@ -58,6 +58,7 @@ public class RequirementVersionLinkTypeController {
 		Map<String, Object> resultMap = new HashMap<>(2);
 		resultMap.put("code1Exists", linkTypeManagerService.doesLinkTypeCodeAlreadyExist(linkType.getRole1Code()));
 		resultMap.put("code2Exists", linkTypeManagerService.doesLinkTypeCodeAlreadyExist(linkType.getRole2Code()));
+		resultMap.put("areCodesAndRolesConsistent", linkTypeManagerService.areCodesAndRolesConsistent(linkType));
 		return resultMap;
 	}
 
@@ -69,31 +70,31 @@ public class RequirementVersionLinkTypeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-role1", "value" })
-	public void changeRole1(@PathVariable Long linkTypeId, @RequestParam("value") String newRole1) {
-		linkTypeManagerService.changeRole1(linkTypeId, newRole1);
+	public Map<String, Boolean> changeRole1(@PathVariable Long linkTypeId, @RequestParam("value") String newRole1) {
+		return linkTypeManagerService.changeRole1(linkTypeId, newRole1);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-role2", "value" })
-	public void changeRole2(@PathVariable Long linkTypeId, @RequestParam("value") String newRole2) {
-		linkTypeManagerService.changeRole2(linkTypeId, newRole2);
+	public Map<String, Boolean> changeRole2(@PathVariable Long linkTypeId, @RequestParam("value") String newRole2) {
+		return linkTypeManagerService.changeRole2(linkTypeId, newRole2);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-code1", "value" })
-	public void changeCode1(@PathVariable Long linkTypeId, @RequestParam("value") String newCode1) {
-		linkTypeManagerService.changeCode1(linkTypeId, newCode1);
+	public Map<String, Boolean> changeCode1(@PathVariable Long linkTypeId, @RequestParam("value") String newCode1) {
+		return linkTypeManagerService.changeCode1(linkTypeId, newCode1);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.POST, params = { "id=requirement-link-type-code2", "value" })
-	public void changeCode2(@PathVariable Long linkTypeId, @RequestParam("value") String codeRole2) {
-		linkTypeManagerService.changeCode2(linkTypeId, codeRole2);
+	public Map<String, Boolean> changeCode2(@PathVariable Long linkTypeId, @RequestParam("value") String codeRole2) {
+		return linkTypeManagerService.changeCode2(linkTypeId, codeRole2);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{linkTypeId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {"id=check-code", "value"})
-	public Map<String, Object> doesLinkTypeCodesExist(@PathVariable Long linkTypeId, @RequestParam("value") String code) {
+	public Map<String, Object> doesLinkTypeCodeAlreadyExist(@PathVariable Long linkTypeId, @RequestParam("value") String code) {
 		Map<String, Object> resultMap = new HashMap<>(1);
 		resultMap.put("codeExists", linkTypeManagerService.doesLinkTypeCodeAlreadyExist(code, linkTypeId));
 		return resultMap;

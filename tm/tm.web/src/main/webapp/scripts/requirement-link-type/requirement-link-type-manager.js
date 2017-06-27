@@ -79,7 +79,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			"click #remove-selected-link-types" : "openDeleteMultipleTypesPopup"
 		},
 
-		/* AddNewLinkType Popup functions */
+		/* ====== AddNewLinkType Popup functions ====== */
 		configureNewLinkTypePopup : function(){
 
       var self = this;
@@ -213,6 +213,11 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 		* @return true if at least one code exists in database, else returns false.
 		*/
 		checkCodesExistenceAndDisplayErrors(codesInfos) {
+			if(!codesInfos.areCodesAndRolesConsistent) {
+				Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
+				Forms.input($("#add-link-type-popup-role2-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
+				return true;
+			}
 			var oneCodeAlreadyExists = false;
 			if(codesInfos.code1Exists) {
       	Forms.input($("#add-link-type-popup-role1-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
@@ -259,15 +264,10 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
       	dataType: 'json',
       	data : paramLinkType,
       });
-			/*
-      .done(function() {
-      		self.table.refresh();
-      		self.AddLinkTypePopup.formDialog('close');
-      });
-      */
 		},
 
-		/* Change Default Type functions */
+		/* ====== Change Default Type functions ====== */
+
 		changeDefaultType : function(event) {
 			var self = this;
 			var radio = event.currentTarget;
@@ -295,7 +295,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 				});
 		},
 
-		/* Change  Role functions */
+		/* ====== Change  Role functions ====== */
 
 		configureChangeRolePopup : function() {
 			var self = this;
@@ -317,15 +317,32 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     	Forms.input($("#change-type-role-popup-role")).clearState();
     },
 
+		isRoleEditable(data) {
+			if(data['type-role1'] === data['type-role2']
+				&& data['type-role1-code'] === data['type-role2-code']) {
+					return false;
+			}
+			return true;
+
+		},
+
 		openChangeRolePopup : function(event, roleNumber) {
 			var self = this;
 			// clear error messages
 			self.clearChangeRoleErrorMessage();
+
 			// fill label input
 			var roleCell = event.currentTarget;
 
 			var row = roleCell.parentElement;
 			var data = this.table.fnGetData(row);
+
+			if(!self.isRoleEditable(data)) {
+				self.ErrorPopup.find('.generic-error-main').html(translator.get("requirement-version.link.type.rejection.roleLocked"));
+				self.ErrorPopup.messageDialog('open');
+				return;
+			}
+
 			var typeId = data['type-id'];
 			var currentRole = $(roleCell).text();
 
@@ -370,14 +387,18 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 					id : requestId,
 					value : newRole
 				}
-			}).done(function() {
-				self.table.refresh();
-        self.ChangeRolePopup.formDialog('close');
+			}).done(function(data) {
+				if(!data.areCodesAndRolesConsistent) {
+					Forms.input($("#change-type-code-popup-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
+				} else {
+					self.table.refresh();
+					self.ChangeRolePopup.formDialog('close');
+				}
 			});
 
 		},
 
-		/* Change Code functions */
+		/* ====== Change Code functions ====== */
 
 		configureChangeCodePopup : function() {
     	var self = this;
@@ -445,6 +466,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 						id : 'check-code',
 						value: newCode
 						}
+
 					}).done(function(data) {
 						if(data.codeExists) {
 							Forms.input($("#change-type-code-popup-code")).setState("error", translator.get("requirement-version.link.type.rejection.codeAlreadyExists"));
@@ -466,14 +488,18 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     			id : requestId,
     			value : newCode
     		}
-    	}).done(function() {
-    		self.table.refresh();
-        self.ChangeCodePopup.formDialog('close');
+    	}).done(function(data) {
+    		if(!data.areCodesAndRolesConsistent) {
+    			Forms.input($("#change-type-code-popup-code")).setState("error", translator.get("requirement-version.link.type.rejection.codesAndRolesNotConsistent"));
+    		} else {
+					self.table.refresh();
+					self.ChangeCodePopup.formDialog('close');
+    		}
     	});
 
     },
 
-		/* Delete Type functions */
+		/* ====== Delete Type functions ====== */
 		initErrorPopup : function() {
 
 				this.ErrorPopup = $("#generic-error-dialog").messageDialog();
@@ -547,7 +573,8 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 			});
 		},
 
-		/* Multiple Delete functions */
+		/* ====== Multiple Delete functions ====== */
+
 		configureDeleteMultipleTypesPopup : function() {
 
 			var self = this;

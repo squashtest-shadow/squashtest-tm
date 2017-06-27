@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
-import org.squashtest.tm.exception.execution.RunExecutionException;
 import org.squashtest.tm.exception.requirement.link.LinkTypeCodeAlreadyExistsException;
 import org.squashtest.tm.exception.requirement.link.LinkTypeIsDefaultTypeException;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
@@ -32,7 +30,9 @@ import org.squashtest.tm.service.requirement.RequirementVersionLinkTypeManagerSe
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jlor on 14/06/2017.
@@ -80,35 +80,77 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 	}
 
 	@Override
-	public void changeRole1(Long linkTypeId, String newRole1) {
+	public Map<String, Boolean> changeRole1(Long linkTypeId, String newRole1) {
+		Map<String, Boolean> result = new HashMap<>();
+
 		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
-		linkType.setRole1(newRole1);
+		RequirementVersionLinkType copy = linkType.createCopy();
+		copy.setRole1(newRole1);
+
+		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
+
+		if(areCodesAndRolesConsistent) {
+			linkType.setRole1(newRole1);
+		}
+
+		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+		return result;
 	}
 
 	@Override
-	public void changeRole2(Long linkTypeId, String newRole2) {
+	public Map<String, Boolean> changeRole2(Long linkTypeId, String newRole2) {
+		Map<String, Boolean> result = new HashMap<>();
+
 		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
-		linkType.setRole2(newRole2);
+		RequirementVersionLinkType copy = linkType.createCopy();
+		copy.setRole2(newRole2);
+
+		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
+		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+
+		if(areCodesAndRolesConsistent) {
+			linkType.setRole2(newRole2);
+		}
+
+		return result;
 	}
 
 	@Override
-	public void changeCode1(Long linkTypeId, String newCode1) {
+	public Map<String, Boolean> changeCode1(Long linkTypeId, String newCode1) {
+		Map<String, Boolean> result = new HashMap<>();
+
 		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
-		if(!linkTypeDao.doesCodeAlreadyExist(newCode1, linkTypeId)) {
+		RequirementVersionLinkType copy = linkType.createCopy();
+		copy.setRole1Code(newCode1);
+
+		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
+		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+
+		if(!linkTypeDao.doesCodeAlreadyExist(newCode1, linkTypeId)
+			&& areCodesAndRolesConsistent) {
 			linkType.setRole1Code(newCode1);
-		} else {
-			throw new LinkTypeCodeAlreadyExistsException();
 		}
+
+		return result;
 	}
 
 	@Override
-	public void changeCode2(Long linkTypeId, String newCode2) {
+	public Map<String, Boolean> changeCode2(Long linkTypeId, String newCode2) {
+		Map<String, Boolean> result = new HashMap<>();
+
 		RequirementVersionLinkType linkType = linkTypeDao.findOne(linkTypeId);
-		if(!linkTypeDao.doesCodeAlreadyExist(newCode2, linkTypeId)) {
+		RequirementVersionLinkType copy = linkType.createCopy();
+		copy.setRole2Code(newCode2);
+
+		Boolean areCodesAndRolesConsistent = areCodesAndRolesConsistent(copy);
+		result.put("areCodesAndRolesConsistent", areCodesAndRolesConsistent);
+
+		if(!linkTypeDao.doesCodeAlreadyExist(newCode2, linkTypeId)
+			&& areCodesAndRolesConsistent) {
 			linkType.setRole2Code(newCode2);
-		} else {
-			throw new LinkTypeCodeAlreadyExistsException();
 		}
+
+		return result;
 	}
 
 	@Override
@@ -150,4 +192,14 @@ public class RequirementVersionLinkTypeManagerServiceImpl implements Requirement
 			deleteLinkType(id);
 		}
 	}
+
+	@Override
+	public boolean areCodesAndRolesConsistent(RequirementVersionLinkType linkType) {
+		if(linkType.getRole1Code().equals(linkType.getRole2Code())
+			&& !linkType.getRole1().equals(linkType.getRole2())) {
+			return false;
+		}
+		return true;
+	}
+
 }

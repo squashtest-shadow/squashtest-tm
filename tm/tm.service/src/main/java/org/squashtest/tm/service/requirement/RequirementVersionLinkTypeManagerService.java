@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jlor on 14/06/2017.
@@ -36,11 +37,11 @@ public interface RequirementVersionLinkTypeManagerService {
 
 	void changeDefault(Long linkTypeId);
 
-	void changeRole1(Long linkTypeId, String newRole1);
-	void changeRole2(Long linkTypeId, String newRole2);
+	Map<String, Boolean> changeRole1(Long linkTypeId, String newRole1);
+	Map<String, Boolean> changeRole2(Long linkTypeId, String newRole2);
 
-	void changeCode1(Long linkTypeId, String newCode1);
-	void changeCode2(Long linkTypeId, String newCode2);
+	Map<String, Boolean> changeCode1(Long linkTypeId, String newCode1);
+	Map<String, Boolean> changeCode2(Long linkTypeId, String newCode2);
 
 	boolean isLinkTypeDefault(Long linkTypeId);
 	boolean isLinkTypeUsed(Long linkTypeId);
@@ -50,4 +51,7 @@ public interface RequirementVersionLinkTypeManagerService {
 	boolean doesContainDefault(List<Long> linkTypesIdsToCheck);
 
 	void deleteLinkTypes(List<Long> linkTypeIdsToDelete);
+
+	boolean areCodesAndRolesConsistent(RequirementVersionLinkType linkType);
+
 }
