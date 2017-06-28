@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.customfield;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.exception.customfield.MandatoryCufException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -53,16 +54,24 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 
 	@Override
 	public void setValues(List<String> values) {
-		selectedOptions.clear();
-		for (String option : values) {
-			selectedOptions.add(new CustomFieldValueOption(option));
-		}
+		CustomField cuf = doGetCustomField();
+		if(cuf != null) {
+			/* Issue #6834 */
+			if(!cuf.isOptional() && values.isEmpty()) {
+				throw new MandatoryCufException(this);
+			}
 
-		// now update the available options at the custom field level
-		getCustomField().accept(this);
-		// ^^^ si tout ce qu'on veut faire c'est un downcast, autant downcaster dans la mesure où le type de custom field
-		// est obligatoirement MuliValueWhatever. On peut même encapsuler le downcast dans un `@Override MultiWhatever getCustomField()`
-		// (types de retour covariants autorisés depuis java 5)
+			selectedOptions.clear();
+			for (String option : values) {
+				selectedOptions.add(new CustomFieldValueOption(option));
+			}
+
+			// now update the available options at the custom field level
+			getCustomField().accept(this);
+			// ^^^ si tout ce qu'on veut faire c'est un downcast, autant downcaster dans la mesure où le type de custom field
+			// est obligatoirement MuliValueWhatever. On peut même encapsuler le downcast dans un `@Override MultiWhatever getCustomField()`
+			// (types de retour covariants autorisés depuis java 5)
+		}
 	}
 
 	@Override
