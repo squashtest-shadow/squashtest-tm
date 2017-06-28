@@ -113,6 +113,8 @@ public class ExecutionStepModificationHelper {
 
 		for (ExecutionStep eStep : execSteps) {
 			ActionTestStep aStep = (ActionTestStep) eStep.getReferencedTestStep();
+			// 6797 : Status of executionStep was lost if step was containing parameters.
+			// eStep ==> paramteres' value but aStep ==> ${param}, then eStep was adding to the 'toBeUpdated' list.
 			if (isExecutionWithParameters(aStep) && isExecutionWithDataset(execution)) {
 				Dataset dataset = execution.getTestPlan().getReferencedDataset();
 				changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
