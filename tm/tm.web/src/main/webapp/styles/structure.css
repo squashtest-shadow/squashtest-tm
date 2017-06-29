@@ -1158,7 +1158,7 @@ div#execute-evaluation-rightside>label {
 .execution-status-combo-class {
 	width: 128px;
 	height: 18px;
-	text-align: right;
+	text-align: left;
 }
 
 /* ------------------------------------------ */
