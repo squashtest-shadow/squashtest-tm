@@ -166,7 +166,7 @@
                             <span class="ui-icon ui-icon-power"></span>
   				</button>
   			</td>
-  			<td style="position: relative; top: -2px;" class="centered">
+  			<td id="execution-previous-next" style="position: relative; top: -2px;" class="centered">
   				<button id="execute-previous-button" class="sq-btn std-btn ui-button control-button" title="${previousTitle}">
                             <span class="ui-icon ui-icon-triangle-1-w"></span>
   				</button>

@@ -64,11 +64,26 @@ define(['module',
 			ComponentUtil.updateStatusCboxIcon(cbox);
 		}
 
-		// 6796 : cbox too small with Firefox
-		if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
+		// 6796 : cbox too small with Firefox and IE11
+		var ua = navigator.userAgent.toLowerCase();
+    var ie = ua.indexOf('trident');
+    var firefox = ua.indexOf('firefox');
+    var chrome = ua.indexOf('chrome');
+    var opera = ua.indexOf('opr');
+		if (firefox > -1 || ie > -1) {
 			cbox.css("height", "20px");
 		}
-
+		// to center the cbox for Firefox
+		if (firefox > -1) {
+			cbox.css("position", "relative").css("top", "3px");
+		}
+		// differences of 1px between navigators for "previous" and "next" buttons div...
+		if (firefox > -1 || chrome > -1) {
+			$("#execution-previous-next").css("top", "-3px");
+		}
+		if (opera > -1) {
+			$("#execution-previous-next").css("top", "-1px");
+		}
 
 		var lang = translator.get({
 			infoTitle : 'popup.title.info',
