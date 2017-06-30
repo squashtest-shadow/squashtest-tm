@@ -32,56 +32,56 @@
 
 <c:url var="testCaseUrl" value="/requirements/${ testStep.testCase.id }" />
 
-<layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title" 
+<layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title"
 						   highlightedWorkspace="test-case"
 						   linkable="requirement" isSubPaged="true">
-						   
+
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
-		
+
 		<c:url var="addVerifiedRequirementsUrl" value="/test-steps/${ testStep.id }/verified-requirements" />
 		<script type="text/javascript">
 	require([ "common" ], function() {
 		require([ "jquery", "squash.translator", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.messagedialog", "datatables", "app/ws/squashtm.workspace" ], function($, msg, notification) {
-			
+
       	  function lock(){
     		  $('#add-items-button').button('disable');
     		  $('#remove-items-button').button('disable');
     	  }
-    	  
+
     	  function unlock(){
     		  $('#add-items-button').button('enable');
     		  $('#remove-items-button').button('enable');
     	  }
-    	  
+
 			$(function() {
 				$( "#add-summary-dialog" ).messageDialog();
-				
+
 				var summaryMessages = {
 					alreadyVerifiedRejections: "<f:message key='test-case.verified-requirement-version.already-verified-rejection' />",
 					notLinkableRejections: "<f:message key='test-case.verified-requirement-version.not-linkable-rejection' />",
-					noVerifiableVersionRejections: "<f:message key='test-case.verified-requirement-version.no-verifiable-version-rejection' />" 
+					noVerifiableVersionRejections: "<f:message key='test-case.verified-requirement-version.no-verifiable-version-rejection' />"
 				};
-					
+
 				var showAddSummary = function(summary) {
 					if (summary) {
 						var summaryRoot = $( "#add-summary-dialog > ul" );
 						summaryRoot.empty();
-						
+
 						for(rejectionType in summary) {
 							var message = summaryMessages[rejectionType];
-							
+
 							if (message) {
 								summaryRoot.append('<li>' + message + '</li>');
 							}
 						}
-						
+
 						if (summaryRoot.children().length > 0) {
 							$( "#add-summary-dialog" ).messageDialog("open");
 						}
-					}					
+					}
 				};
-				
+
 				var addHandler = function(data) {
 					unlock();
 					showAddSummary(data);
@@ -95,7 +95,7 @@
 
 				$("#remove-verified-requirements-from-step-button").click(
 						function(){squashtm.verifiedRequirementsTable.removeSelectedRequirements();});
-				
+
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
 					lock();
@@ -105,7 +105,7 @@
 					if( $( '#linkable-requirements-tree' ).jstree('get_selected').length > 0 ) {
 						 nodes = $( '#linkable-requirements-tree' ).jstree('get_selected').not(':library').treeNode();
 						 ids = nodes.all('getResId');
-					}	
+					}
 
 					if (ids.length === 0) {
 						notification.showError(msg.get('message.emptySelectionRequirement'));
@@ -113,43 +113,43 @@
 					}
 
 					tree.jstree('deselect_all');
-					
+
 					if (ids.length > 0) {
 						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}
 					else{
 						unlock();
 					}
-				});				
-			});				
+				});
+			});
 		});
 	});
 		</script>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="tree">
 		<tree:linkables-tree workspaceType="requirement" elementType="teststep" elementId="${ testStep.id }" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }"/>
 	</jsp:attribute>
-	
-	<jsp:attribute name="tableTitlePane">		
-		<div class="snap-left" style="height:100%;">			
+
+	<jsp:attribute name="tableTitlePane">
+		<div class="snap-left" style="height:100%;">
 			<h2>
 				<f:message var="title" key="title.verifiedRequirements.test-steps"/>
 				<span>${title}</span>
 			</h2>
-		</div>						
+		</div>
 		<div class="unsnap"></div>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="label.stepNumber" />${testStep.index +1}&nbsp;:&nbsp;<f:message key="title.verifiedrequirementsManager.test-steps" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
-		<f:message var="closeButtonLabel" key="label.Close" />
-		<input type="button" id="close" class="button" value="${ closeButtonLabel }" onClick="window.close()"/>	
-	</jsp:attribute>		
-	
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" class="button" value="${ backButtonLabel }" onClick="history.back();"/>
+	</jsp:attribute>
+
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }"/>
 		<tc:steps-verified-requirements-table  testStep="${ testStep }" containerId="contextual-content"/>
