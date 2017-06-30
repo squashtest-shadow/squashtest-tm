@@ -127,7 +127,12 @@ public class WebSecurityConfig {
 											"1/ basic authentication or " +
 											"2/ fetching a cookie JSESSIONID from /login");
 								}
-							});
+							})
+					.and()
+						.logout()
+						.permitAll()
+						.invalidateHttpSession(true)
+						.logoutSuccessUrl("/");
 			// @formatter:on
 		}
 	}
