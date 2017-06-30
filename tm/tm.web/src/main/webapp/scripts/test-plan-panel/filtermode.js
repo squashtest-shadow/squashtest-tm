@@ -49,7 +49,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		var table = $(tableSelector),
 			entityId = table.data('entity-id'),
 			entityType = table.data('entity-type'),
-			columnDefs = extractColumnDefs(table);
+			columnDefs = extractColumnDefs(table),
 			self = this;
 
 		if (!entityId) {
@@ -65,19 +65,19 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		table.find('>thead>tr').addClass('tp-filtermode-disabled');
 
 
-		
+
 		/*
 		 * Issue 6576
-		 * 
+		 *
 		 * The datatable normally identify columns by index/position. This is bad for us because the same test plan can be displayed either in the normal page or the manager
 		 * page, which have different sets of columns and thus different indexing. So, to make sure that restoring a filter in a normal page that was saved in the manager page
-		 * (or vice-versa) will not fail miserably we must enforce column identification by name. 
-		 * 
+		 * (or vice-versa) will not fail miserably we must enforce column identification by name.
+		 *
 		 * The problem is, the configuration that holds the column names - specifically the property mDataProp - is not set yet because this code is part of the initialization.
-		 * In our case, that configuration is held by the DOM itself (see the attribute 'data-def' on each of the column headers). 
+		 * In our case, that configuration is held by the DOM itself (see the attribute 'data-def' on each of the column headers).
 		 * We must re-parse here the columns and build a model of what will be table.fnSettings().aoColumns (or aoColumnDefs if you wish).
 		 */
-		
+
 		function extractColumnDefs(table){
 			return table.find('thead>tr>th').map(function(idx){
 				var conf = attrparser.parse($(this).data('def'));
@@ -86,7 +86,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				};
 			});
 		}
-		
+
 
 		// ******* filter management***********
 
@@ -99,9 +99,9 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		/*
 		 * Issue 6576
-		 * 
+		 *
 		 * Save the names of the column with each filter entry.
-		 * 
+		 *
 		 */
 		this._save = function(_search){
 			var sTable = table.squashTable(),
@@ -117,18 +117,18 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				_.each(searchObject, function(entry,idx){
 					entry.mDataProp = columnDefs[idx].mDataProp;
 				});
-				
+
 				storage.set(this.key,{
 					active : this.active,
 					filter : searchObject
 				});
 			}
 		};
-		
+
 		function findColFilterByName(filter, mDataProp){
 			return _.find(filter, function(f){return f.mDataProp === mDataProp});
 		}
-		
+
 
 		function hideInputs() {
 			table.find('>thead>tr').addClass('tp-filtermode-disabled');
@@ -141,9 +141,9 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		/*
 		 * Issue 6576
-		 * 
+		 *
 		 * Will restore the filters according to the column name.
-		 * 
+		 *
 		 */
 		function restoreTableFilter(filter){
 
@@ -156,9 +156,9 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				$.each(settings.aoColumns, function(idx, column){
 					var colFilter = findColFilterByName(filter, column.mDataProp),
 						$th = $(column.nTh);
-					
+
 					// set the filter if the column is filterable, is visible and has a filter defined
-					if (column.bVisible && $th.is('.tp-th-filter') && !!colFilter){						
+					if (column.bVisible && $th.is('.tp-th-filter') && !!colFilter){
 						column.sSearch = colFilter.sSearch;
 						settings.aoPreSearchCols[idx] = colFilter;
 					}
@@ -179,9 +179,9 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 		/*
 		 * Issue 6576
-		 * 
+		 *
 		 * Will restore the inputs according to the column name.
-		 * 
+		 *
 		 */
 		function restoreInputs(filter){
 
@@ -190,12 +190,12 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			}
 
 			var headers = table.find('thead>tr>th');
-			
+
 			headers.each(function(idx){
 				var $th = $(this),
 					col = columnDefs[idx],
 					colFilter = findColFilterByName(filter, col.mDataProp);
-				
+
 				if ($th.is('.tp-th-filter') && !!colFilter){
 					$th.find('.filter_input').val(colFilter.sSearch);
 				}
@@ -360,7 +360,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				// return an object compliant with the datatable initialization option
 				/*
 				 * Issue 6576
-				 * 
+				 *
 				 * Because the search model that was saved may not match the column defs of the table
 				 * being loaded here, we must adapt the returned object to the new table definition.
 				 */
