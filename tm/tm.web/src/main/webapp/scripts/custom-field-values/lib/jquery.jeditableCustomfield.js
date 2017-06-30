@@ -19,53 +19,53 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "./cuf-values-utils", "squash.configmanager", "underscore", "workspace.event-bus", "jqueryui",
-				"jquery.squash.jeditable", "jeditable.datepicker",
+		[ "jquery", "./cuf-values-utils", "squash.configmanager", "underscore", "workspace.event-bus",
+				"squash.translator", "app/ws/squashtm.notification", "app/util/StringUtil", "jqueryui", "jquery.squash.jeditable", "jeditable.datepicker",
 				"datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
-		function($, utils, confman, _, eventBus) {
+		function($, utils, confman, _, eventBus, translator, notification, StringUtils) {
 
 			/* ***************************************************************************************************
-			 * 
-			 * The following is a builder of postfunction for a jeditable. Its purpose is to  
-			 * 
+			 *
+			 * The following is a builder of postfunction for a jeditable. Its purpose is to
+			 *
 			 * It accepts three parameters :
-			 * - idOrURLOrPostFunction : can be either 
-			 *		- the id of a custom field, 
+			 * - idOrURLOrPostFunction : can be either
+			 *		- the id of a custom field,
 			 *		- an url that will be used as is,
 			 *		- a function, that will be used as is,
 			 *		- nothing, in which case the value of an attribute data-value-id on the element will be used
-			 * 
+			 *
 			 * - postProcess : if defined, postProcess will be invoked upon xhr completion
 			 * - isDernomalized : if defined and true, the custom field will be treated as a denormalized cuf.
-			 * 
+			 *
 			 * ***************************************************************************************************/
-			
+
 			function buildPostFunction(idOrURLOrPostfunction, postProcess, isDenormalized) {
 
 				var postProcessFn = postProcess || function(value) {
 					return value;
 				};
-				
+
 				var baseURL  = squashtm.app.contextRoot;
 					baseURL += (isDenormalized) ? "/denormalized-fields/values/" : "/custom-fields/values/";
-					
+
 				var ajaxconf = {
 					data : {},
 					type : 'POST',
 					contentType : "application/json;charset=UTF-8"
-						
+
 				};
 
 				var postFunction;
-				
-				
+
+
 				switch(typeof idOrURLOrPostfunction){
-				
+
 				// case : the argument is already a post function in its own rights
-				case "function" : 
+				case "function" :
 					postFunction = idOrURLOrPostfunction;
 					break;
-					
+
 				// case : the argument is a url. It will be used as is, along with the usual parameters
 				case "string" :
 					postFunction = function(value) {
@@ -74,8 +74,8 @@ define(
 						return $.ajax(ajaxconf);
 					};
 					break;
-					
-				// case empty : the element must define an attribute 'data-value-id' and that ID will be used 
+
+				// case empty : the element must define an attribute 'data-value-id' and that ID will be used
 				// just like in the default clause.
 				case undefined :
 					postFunction = function(value) {
@@ -83,19 +83,19 @@ define(
 						ajaxconf.url = baseURL + id;
 						ajaxconf.data = JSON.stringify(value);
 						return $.ajax(ajaxconf);
-					};		
+					};
 					break;
-					
-				// case : the argument is assumed to be a number, specifically the ID. We can then 
+
+				// case : the argument is assumed to be a number, specifically the ID. We can then
 				// define at which url we need to post.
 				default :
 					postFunction = function(value) {
 						ajaxconf.url = baseURL + idOrURLOrPostfunction;
 						ajaxconf.data = JSON.stringify(value);
 						return $.ajax(ajaxconf);
-					};			
+					};
 					break;
-				
+
 				}
 
 				return function(value, settings) {
@@ -105,21 +105,20 @@ define(
 				};
 
 			}
-			
+
 			/* *********************************************************************
-			 * 
+			 *
 			 *		Define the custom fields now
-			 * 
+			 *
 			 * *********************************************************************/
 
 			function getBasicConf() {
+
 				return confman.getStdJeditable();
 			}
 
-			
-			
-			function initAsDatePicker(elts, cufDefinition,
-					idOrURLOrPostfunction) {
+
+			function initAsDatePicker(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				var conf = getBasicConf();
 
@@ -128,7 +127,9 @@ define(
 
 				conf.type = 'datepicker';
 				conf.datepicker = confman.getStdDatepicker();
-				
+
+				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'datePicker', false);
+
 				elts.each(function(idx, el){
 					var $el = $(el);
 					var raw = $el.text();
@@ -147,15 +148,14 @@ define(
 
 			}
 
-			
-			
+
 			function initAsList(elts, cufDefinitions, idOrURLOrPostfunction) {
 				if (elts.length === 0){
 					return;
 				}
-				
 
-		
+
+
 				utils.addEmptyValueToDropdownlistIfOptional(cufDefinitions);
 
 				var prepareSelectData = function(options, selected) {
@@ -191,12 +191,13 @@ define(
 				});
 			}
 
-			
-			
+
 			function initAsPlainText(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				var conf = getBasicConf();
 				conf.type = 'text';
+
+				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'plainText', true);
 
 				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 
@@ -204,14 +205,13 @@ define(
 
 			}
 
-			
-			
+
 			function initAsCheckbox(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				if (elts.length === 0){
 					return;
 				}
-				
+
 				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 
 				var clickFn = function() {
@@ -243,45 +243,49 @@ define(
 				});
 
 			}
-			
-			
+
+
 			function initAsRichtext(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				if (elts.length === 0){
 					return;
 				}
-				
+
 				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
-				
+
 				var conf = confman.getJeditableCkeditor();
-				
-				elts.editable(postFunction, conf);			
-				
+
+				_bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, 'richText', true);
+
+				elts.editable(postFunction, conf);
+
 			}
 
 			// a jeditable Tags isn't really jeditable : it's always in an editable state.
-			// as such, to some extent it looks a lot like the initialization of 
+			// as such, to some extent it looks a lot like the initialization of
 			// 'editableCustomfield'.
 			function initAsTag(elts, cufDefinition, idOrURLOrPostfunction){
-				
+
 				var addEvtname = "cuf.tag-added";
-				
+
 				if (elts.length === 0){
 					return;
 				}
-				
+
 				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
-				
+
 				var conf = confman.getStdTagit();
-				
+
 				$.extend(true, conf, {
 					availableTags : _.map(cufDefinition.options, function(elt){
 						return elt.label;
 					})
 				});
-				
-				elts.squashTagit(conf);	
-				
+
+				elts.squashTagit(conf);
+
+				_bindEmptyMandatoryTagCufErrorHandler(cufDefinition, elts);
+
 				elts.on('squashtagitaftertagadded squashtagitaftertagremoved', function(evt, ui){
 					var elt = $(evt.currentTarget);
 					var tags = elt.squashTagit('assignedTags');
@@ -289,20 +293,20 @@ define(
 						postFunction.call(elt, tags);
 					}
 				});
-				
+
 				/* **************************************
 				 *  Autocompletion list management
 				 * **************************************/
-				
+
 				/*
-				 * when a new tag is aded, notify other instances of this cuf 
+				 * when a new tag is aded, notify other instances of this cuf
 				 * that the tag list has changed
 				 */
 				elts.on('squashtagitaftertagadded', function(evt, ui){
 					var elt = $(evt.currentTarget);
 					var availableTags = elts.squashTagit('option').availableTags;
-					
-					if (elt.squashTagit("validate", evt, ui) && 
+
+					if (elt.squashTagit("validate", evt, ui) &&
 						(! _.contains(availableTags, ui.tagLabel))){
 
 						eventBus.trigger(addEvtname, {
@@ -311,33 +315,87 @@ define(
 						});
 
 					}
-				});				
-				
+				});
+
 				/*
-				 * listen to new tag events and add the new tag to its 
-				 * autocompletion list, if it comes from another instance 
+				 * listen to new tag events and add the new tag to its
+				 * autocompletion list, if it comes from another instance
 				 * of this custom field
 				 */
 				eventBus.onContextual(addEvtname, function(evt, data){
 					if (data.code !== cufDefinition.code){
 						return;
 					}
-					
-					// all 'elts' elements share the same source so we 
+
+					// all 'elts' elements share the same source so we
 					// dont need to iterate over all 'elts'.
-					elts.squashTagit('option').availableTags.push(data.tagLabel);		
-					
+					elts.squashTagit('option').availableTags.push(data.tagLabel);
+
 				});
-							
+
 			}
-			
-			
+
+
+			function _displayEmptyMandatoryCufErrorPopup() {
+
+				notification.showError(translator.get('message.emptyMandatoryCuf'));
+			}
+
+			function _emptyCondition(type, input) {
+				switch(type) {
+					case 'plainText':
+					case 'datePicker':
+						var test1 = StringUtils.isBlank(input.value);
+						return StringUtils.isBlank(input.value);
+					case 'richText':
+						var test2 = StringUtils.isBlank(CKEDITOR.instances[input.id].document.getBody().getChild(0).getText());
+						return StringUtils.isBlank(CKEDITOR.instances[input.id].document.getBody().getChild(0).getText());
+					case 'tag':
+						return input.length < 2;
+				}
+			}
+
+			function _resetEditable(span) {
+
+				$(span)[0].reset();
+			}
+
+
+			function _bindEmptyMandatoryCufErrorHandler(cufDefinition, conf, editableType, resetIsNeeded) {
+				if(!cufDefinition.optional) {
+					conf.onsubmit = function(settings, span) {
+						var input = this[0][0];
+						if(_emptyCondition(editableType, input)) {
+							_displayEmptyMandatoryCufErrorPopup();
+							if(resetIsNeeded) { _resetEditable(span); }
+							return false;
+						}
+						return true;
+					};
+        }
+			}
+
+			function _bindEmptyMandatoryTagCufErrorHandler(cufDefinition, elts) {
+
+				if(!cufDefinition.optional) {
+      		elts.on('squashtagitbeforetagremoved', function(evt, ui) {
+      			var elt = $(evt.currentTarget);
+      			var tags = elts.squashTagit('assignedTags');
+      			if(_emptyCondition('tag', tags)) {
+      				_displayEmptyMandatoryCufErrorPopup();
+      				return false;
+      			}
+      			return true;
+      		});
+      	}
+      }
+
 			/* ***************************************************************************
-			* 
-			*										MAIN 
-			* 
+			*
+			*										MAIN
+			*
 			* ***************************************************************************/
-			
+
 			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 
 				var type = cufDefinition.itype||cufDefinition.inputType.enumName;
@@ -351,7 +409,7 @@ define(
 				case "TAG" : initAsTag(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "NUMERIC" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
 				default : throw "don't know cuf type "+type;
-				
+
 				}
 
 			};
