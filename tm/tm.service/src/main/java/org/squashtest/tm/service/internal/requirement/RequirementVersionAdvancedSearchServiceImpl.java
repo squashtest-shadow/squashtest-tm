@@ -66,18 +66,19 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
-	
+
 	private static final SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[]{
 		new SortField("requirement.project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
 		new SortField("category", SortField.Type.STRING, false), new SortField("status", SortField.Type.STRING, false),
 		new SortField("labelUpperCased", SortField.Type.STRING, false)};
 
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "id",
 		"requirement.versions", "testcases", "attachments");
+	private static final List<String> INT_SORTABLE_FIELDS = Arrays.asList("versionNumber");
 
 	private static final String FAKE_REQUIREMENT_VERSION_ID = "-9000";
-	
+
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
@@ -135,6 +136,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
+			} else if (INT_SORTABLE_FIELDS.contains(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, SortField.Type.INT, isReverse);
 			} else if ("category".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source, locale),
 					isReverse);
@@ -189,7 +192,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		AdvancedSearchModel modelCopy = model.shallowCopy();
 		/* Removing these criteria from the main model */
 		removeMilestoneSearchFields(model);
-		
+
 		/* Building main Lucene Query with this main model */
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
@@ -198,34 +201,34 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		}
 		return luceneQuery;
 	}
-	
+
 public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
-		
+
 		addMilestoneFilter(modelCopy);
-		
+
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds = 
+		List<String> strMilestoneIds =
 				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
 		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
 		for (String str : strMilestoneIds) {
 			milestoneIds.add(Long.valueOf(str));
 		}
-		
+
 		/* Find the RequirementVersions ids. */
 		List<Long> lReqVerIds = requirementVersionDao.findAllForMilestones(milestoneIds);
 		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
 		for(Long l : lReqVerIds) {
 			itpiIds.add(l.toString());
 		}
-		
+
 		/* Fake Id to find no result via Lucene if no Requirement Version found */
 		if(itpiIds.isEmpty()) {
 			itpiIds.add(FAKE_REQUIREMENT_VERSION_ID);
 		}
-		
+
 		/* Add Criteria to restrict Requirement Versions ids */
 		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-		
+
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
 	}
 
