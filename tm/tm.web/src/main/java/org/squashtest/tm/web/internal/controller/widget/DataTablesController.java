@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 public class DataTablesController {
@@ -42,35 +42,51 @@ public class DataTablesController {
 
 	private Map<String, Object> legacyMessages;
 	private Map<String, Object> messages;
+	private Locale locale = Locale.getDefault();
+
+	private void setLocale(Locale paramLocale) {
+		if (paramLocale != null) {
+			locale = paramLocale;
+		} else {
+			locale = Locale.getDefault();
+		}
+	}
 
 	/**
 	 * Internationalized messages for Datatable < 1.10
-	 * 
-	 * @param locale
+	 *
+	 * @param paramLocale
 	 * @return
 	 */
 	@RequestMapping("/datatables/messages")
 	@ResponseBody
-	public Map<String, Object> getInternationalizedMessages(Locale locale) {
-		if (legacyMessages == null) {
+	public Map<String, Object> getInternationalizedMessages(Locale paramLocale) {
+
+		/* Issue #6782:
+		* The messages were loaded only once, even if the Locale was changed.
+		* We now compare if the Locale has changed since the previous loading
+		* and reload messages if it is the case. */
+
+		if (legacyMessages == null || !locale.equals(paramLocale)) {
+
+			setLocale(paramLocale);
+
 			legacyMessages = new HashMap<>();
 
-			legacyMessages.put("sLengthMenu", messageSource.getMessage("generics.datatable.lengthMenu", null, locale));
-			legacyMessages
-			.put("sZeroRecords", messageSource.getMessage("generics.datatable.zeroRecords", null, locale));
-			legacyMessages.put("sInfo", messageSource.getMessage("generics.datatable.info", null, locale));
-			legacyMessages.put("sInfoEmpty", messageSource.getMessage("generics.datatable.infoEmpty", null, locale));
-			legacyMessages.put("sInfoFiltered",
-					messageSource.getMessage("generics.datatable.infoFiltered", null, locale));
-			legacyMessages.put("sSearch", messageSource.getMessage("generics.datatable.search", null, locale));
+			legacyMessages.put("sLengthMenu", messageSource.getMessage("generics.datatable.lengthMenu",null, paramLocale));
+			legacyMessages.put("sZeroRecords", messageSource.getMessage("generics.datatable.zeroRecords",null, paramLocale));
+			legacyMessages.put("sInfo", messageSource.getMessage("generics.datatable.info",null, paramLocale));
+			legacyMessages.put("sInfoEmpty", messageSource.getMessage("generics.datatable.infoEmpty",null, paramLocale));
+			legacyMessages.put("sInfoFiltered", messageSource.getMessage("generics.datatable.infoFiltered",null, paramLocale));
+			legacyMessages.put("sSearch", messageSource.getMessage("generics.datatable.search",null, paramLocale));
 
 			Map<String, Object> pagination = new HashMap<>();
 			legacyMessages.put("oPaginate", pagination);
 
-			pagination.put("sFirst", messageSource.getMessage("generics.datatable.paginate.first", null, locale));
-			pagination.put("sPrevious", messageSource.getMessage("generics.datatable.paginate.previous", null, locale));
-			pagination.put("sNext", messageSource.getMessage("generics.datatable.paginate.next", null, locale));
-			pagination.put("sLast", messageSource.getMessage("generics.datatable.paginate.last", null, locale));
+			pagination.put("sFirst", messageSource.getMessage("generics.datatable.paginate.first", null, paramLocale));
+			pagination.put("sPrevious", messageSource.getMessage("generics.datatable.paginate.previous", null, paramLocale));
+			pagination.put("sNext", messageSource.getMessage("generics.datatable.paginate.next", null, paramLocale));
+			pagination.put("sLast", messageSource.getMessage("generics.datatable.paginate.last", null, paramLocale));
 		}
 
 		return legacyMessages;
@@ -78,7 +94,7 @@ public class DataTablesController {
 
 	/**
 	 * Internationalized messages for Datatable >= 1.10
-	 * 
+	 *
 	 * @param locale
 	 * @return
 	 */
