@@ -268,8 +268,8 @@
       </div>
 
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+        <input type="button" value="${confirmLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-batch-edit-status" class="not-displayed popup-dialog"
@@ -287,7 +287,7 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="state=edit, mainbtn=edit, evt=confirm" />
-        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}">
