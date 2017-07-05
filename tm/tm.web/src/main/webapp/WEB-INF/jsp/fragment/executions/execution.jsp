@@ -319,6 +319,7 @@
 
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
+	<!-- XXX the attributes here should be 'comment' and not 'description' -->
 	<c:if test="${ editable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executionUrl}'"/>
 	</c:if>

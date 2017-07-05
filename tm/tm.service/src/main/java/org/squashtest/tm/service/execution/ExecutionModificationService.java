@@ -35,6 +35,7 @@ public interface ExecutionModificationService extends ExecutionFinder {
 
 	Execution findAndInitExecution(Long executionId);
 
+	// XXX : should be 'setExecutionComment' because that is how it appear in the interface
 	void setExecutionDescription(Long executionId, String description);
 
 	void setExecutionStatus(Long executionId, ExecutionStatus status);

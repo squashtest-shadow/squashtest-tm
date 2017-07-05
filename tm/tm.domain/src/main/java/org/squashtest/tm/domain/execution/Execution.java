@@ -85,8 +85,6 @@ import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.CUFBridge;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -144,6 +142,8 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@Lob
 	@Type(type="org.hibernate.type.TextType")
+	// XXX if you rename it 'comment', let @Column(name="DESCRIPTION") anyway
+	// no need to mess with the DB
 	private String description;
 
 	@Lob
@@ -405,10 +405,15 @@ DenormalizedFieldHolder, BoundEntity {
 		this.name = name;
 	}
 
+
+	// XXX the interface knows this as the 'comment', it should appear as getComment
+	// However don't remove getDescription because plugins may break
 	public String getDescription() {
 		return this.description;
 	}
 
+	// XXX the interface knows this as the 'comment', it should appear as setComment
+	// However don't remove setDescription because plugins may break
 	public void setDescription(String description) {
 		this.description = description;
 	}

@@ -303,6 +303,7 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=execution-description", VALUE})
 	@ResponseBody
+	// XXX this should be updateComment
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
 		executionModService.setExecutionDescription(executionId, newDescription);
