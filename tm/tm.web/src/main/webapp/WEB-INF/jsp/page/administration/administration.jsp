@@ -78,7 +78,7 @@
 
 
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
-        
+
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
@@ -90,7 +90,7 @@
         </a>
 
         <a href="${ reqLinkTypeUrl }" class="unstyledLink">
-          <span id="admin-requirement-link-type" class="admin-section-icon admin-customfields-icon"></span>
+          <span id="admin-requirement-link-type" class="admin-section-icon admin-req-links-icon"></span>
           <span class="admin-section-label"><f:message key="label.reqLinkTypeManagement" /></span>
         </a>
 

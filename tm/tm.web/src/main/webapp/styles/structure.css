@@ -1384,8 +1384,6 @@ div.information-panel p {
     font-style: italic;
     float: left;
     width: 70%;
-    height: 100%;
-
 }
 
 #admin-link-pane a {
@@ -1417,7 +1415,11 @@ div.information-panel p {
 }
 
 .admin-customfields-icon{
-	background-image :url(../images/Button_CUF.png); /** sprite-ref: sprites-icons; */
+ 	background-image :url(../images/Button_CUF.png); /** sprite-ref: sprites-icons; */
+ }
+
+.admin-req-links-icon{
+	background-image :url(../images/Button_ReqLink.png); /** sprite-ref: sprites-icons; */
 }
 
 .admin-test-automation-servers-icon{
@@ -1468,7 +1470,7 @@ div#admin-small-link-pane{
     float: right;
     margin-right: 10%;
     width: 18%;
-	padding: 80px 0px 0px;
+	padding: 50px 0px 0px;
 	font-size: 1.2em;
 	display :table;
 }
@@ -1497,7 +1499,7 @@ div#admin-stats {
 	float:right;
 	margin-right: 10%;
 	width: 20%;
-	padding: 100px 0 30px;
+	padding: 80px 0 0;
 	font-size: 1.2em;
 }
 div.admin-stats-table {
