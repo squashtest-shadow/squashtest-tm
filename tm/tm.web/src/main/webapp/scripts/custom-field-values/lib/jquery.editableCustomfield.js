@@ -18,29 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* 
- * Turns each elements in the matched set to an editable custom field (always displayed in edit mode). 
- * 
+/*
+ * Turns each elements in the matched set to an editable custom field (always displayed in edit mode).
+ *
  *
  * .editableCustomfield({conf}) : the constructor, conf must be a CustomFieldModel.
- * 
- * .editableCustomfield("value") : gets the value 
- * 
- * .editableCustomfield("value", value) : sets the value 
- * 
+ *
+ * .editableCustomfield("value") : gets the value
+ *
+ * .editableCustomfield("value", value) : sets the value
+ *
  * .editableCustomfield("destroy") : destroys the custom field.
- * 
+ *
  */
 define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId", "jquery.squash.tagit" ],
 		function($, _, CKEDITOR, confman, utils) {
 			"use strict";
-	
+
 	if ($.fn.editableCustomfield !== undefined){
 		return;
 	}
-	
+
 	var widgets = {
-		
+
 		'PLAIN_TEXT' : {
 			_build : function(elt, def){
 				var content = elt.text();
@@ -59,7 +59,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.empty();
 				elt.text(content);
 			}
-				
+
 		},
 
 		'NUMERIC' : {
@@ -80,9 +80,9 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.empty();
 				elt.text(content);
 			}
-				
+
 		},
-		
+
 		'CHECKBOX' : {
 			_build : function(elt, def){
 				var checked = (elt.text().toLowerCase() === "true") ? true : false;
@@ -92,7 +92,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.append(chkbx);
 			},
 			_set : function(elt, def, value){
-				var chkbx = elt.find('input[type="checkbox"]'); 
+				var chkbx = elt.find('input[type="checkbox"]');
 				if (value === true || value === "true"){
 					chkbx.prop("checked", true);
 				} else {
@@ -101,7 +101,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			},
 			_get : function(elt, def){
 				var chkbx =  elt.find('input[type="checkbox"]');
-				return chkbx.prop('checked'); 
+				return chkbx.prop('checked');
 			},
 			_destroy : function(elt, def){
 				var chkbx =  elt.find('input[type="checkbox"]');
@@ -110,11 +110,11 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.text(checked);
 			}
 		},
-			
+
 		'DROPDOWN_LIST' : {
 			_build : function(elt, def){
 				var content = elt.text();
-				
+
 				var select = $("<select>");
 				var options = def.options;
 				utils.addEmptyValueToDropdownlistIfOptional(def);
@@ -129,8 +129,8 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 					var opt = $('<option/>',attrs);
 					select.append(opt);
 				}
-			
-				
+
+
 				elt.empty();
 				elt.append(select);
 			},
@@ -146,7 +146,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.text(selected);
 			}
 		},
-		
+
 		// datepickers are special : they are always jeditable, except that
 		// we don't want them to post to the server but rather keep the value
 		// locally (hence the dumb submit function)
@@ -154,14 +154,14 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			_build : function(elt, def){
 				var date = elt.text();
 				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, date);
-				
+
 				var input = $('<input type="text" value="'+formatted+'"/>');
-				
+
 				elt.empty();
 				elt.append(input);
-				
+
 				var conf = confman.getStdDatepicker();
-				
+
 				input.datepicker(conf);
 			},
 			_set : function(elt, def, value){
@@ -182,7 +182,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.text(date);
 			}
 		},
-		
+
 		'RICH_TEXT' : {
 			_build : function(elt, def){
 				var html = elt.html();
@@ -191,7 +191,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.empty();
 				elt.append(area);
 				area.html(html);
-				
+
 				var conf = confman.getStdCkeditor();
 						area.ckeditor(function() {
 						}, conf);
@@ -199,7 +199,9 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			_set : function(elt, def, value){
 				var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
 				if (!! cked){
-					cked.setData(value);
+					setTimeout(function() {
+						cked.setData(value);
+					}, 0);
 				}
 			},
 			_get : function(elt, def){
@@ -218,7 +220,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.html(content);
 			}
 		},
-		
+
 		'TAG' : {
 			_build : function(elt, def){
 				var conf = confman.getStdTagit();
@@ -230,7 +232,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				var ul = this._findUL(elt);
 				ul.squashTagit(conf);
 			},
-			
+
 			_set : function(elt, def, value){
 				var i;
 				var ul = this._findUL(elt);
@@ -247,69 +249,69 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 					}
 				}
 			},
-			
+
 			_get : function(elt, def){
 				return this._findUL(elt).squashTagit('assignedTags');
 			},
-			
+
 			_destroy : function(elt, def){
 				this._findUL(elt).squashTagit('destroy');
 			},
-			
+
 			_findUL : function(elt){
 				return (elt.is('ul')) ? elt : elt.find('ul');
 			}
 		}
-	
+
 	};
-	
+
 	$.fn.editableCustomfield = function(){
-		
+
 		if (arguments.lenghth === 0){
 			throw "cannot invoke staticCustomfield with no arguments";
 		}
-		
+
 		var def, widg;
-		
+
 		// case constructor
 		if (arguments.length === 1 && _.isObject(arguments[0])){
 			def= arguments[0];
 			this.each(function(idx, elt){
-				
+
 				var $this = $(elt);
-				
+
 				// save the configuration
 				$this.data("cufdef", def);
-				
+
 				widg = widgets[def.inputType.enumName];
 				widg._build($this, def);
-				
-			});			
+
+			});
 		}
-		
+
 		// case getter
 		else if (arguments.length === 1 && arguments[0] === "value") {
 			def = this.data('cufdef');
 			widg = widgets[def.inputType.enumName];
 			return widg._get(this, def);
 		}
-		
+
 		// case setter
 		else if (arguments.length === 2 && arguments[0] === "value"){
 			def = this.data("cufdef");
 			widg = widgets[def.inputType.enumName];
 			widg._set(this, def, arguments[1]);
 		}
-		
+
 		// case destroy
-		else if (arguments.length === 1 && arguments[0] === "destroy"){			
+		else if (arguments.length === 1 && arguments[0] === "destroy"){
 			this.each(function(idx, elt){
-				var $this = $(elt);				
+				var $this = $(elt);
 				def = $this.data('cufdef');
 				widg = widgets[def.inputType.enumName];
 				widg._destroy($this, def);
 			});
 		}
 	};
-	
+
 });
