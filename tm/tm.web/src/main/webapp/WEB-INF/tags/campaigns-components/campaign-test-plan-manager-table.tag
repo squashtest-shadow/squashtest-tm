@@ -20,12 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%-- 
-  As of Squash TM 1.11 the content of this tag was wiped then replaced by a fork of 
+<%--
+  As of Squash TM 1.11 the content of this tag was wiped then replaced by a fork of
   tags/iteration-components/iteration-test-plan-panel.tag
 
   Some features were then removed. See comments in the js initialization bloc at the end of this file.
-  
+
  --%>
 <%@ tag body-content="empty" description="the test plan panel of a campaign when displayed in the test plan manager" %>
 
@@ -60,7 +60,7 @@
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
     <f:message var="removeLabel" key="label.removeFromExecutionPlan" />
-    <f:message var="removeTooltip" key="label.removeFromExecutionPlan" /> 
+    <f:message var="removeTooltip" key="label.removeFromExecutionPlan" />
     <f:message var="manageTS" key='menu.test-suites.button.main' />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
@@ -97,18 +97,18 @@
         </span>
 
     </div>
- 
-    
+
+
   </div>
 
-  <%-- ===================== THE TABLE ===================== --%> 
+  <%-- ===================== THE TABLE ===================== --%>
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-    
-    As per stupid specification, instead of the normal conditions the milestone dates column 
-    must be displayed if the feature is globally-enabled but not user-enabled 
-    
+
+    As per stupid specification, instead of the normal conditions the milestone dates column
+    must be displayed if the feature is globally-enabled but not user-enabled
+
     for f*** sakes
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
@@ -121,29 +121,29 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" 
+          <th class="no-user-select tp-th-filter tp-th-project-name"
           data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
             <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th>
-          <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}" 
+          <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
           data-def="map=reference, sortable, link=${testcaseUrl}">
             <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
             <f:message key="label.TestCase.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-importance" 
-              title="${tooltipImportance}" 
+          <th class="no-user-select tp-th-filter tp-th-importance"
+              title="${tooltipImportance}"
               data-def="map=importance, sortable">
             <f:message key="label.Importance.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
-          </th>       
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">&nbsp;</th> 
+          </th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -159,7 +159,7 @@
     <span><f:message key="message.ReorderTestPlan" /></span>
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${confirmLabel}" />
-      <input type="button" value="${closeLabel}" />
+      <input type="button" value="${cancelLabel}" />
     </div>
   </div>
 
@@ -177,10 +177,10 @@
 
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${confirmLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-      <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
     </div>
   </div>
-  
+
   <script id="delete-dialog-tpl" type="text/x-handlebars-template">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
 	<comp:notification-pane type="warning">
@@ -210,29 +210,29 @@
     require(["domReady", "campaign-management", "squash.translator"], function(domReady, campInit, translator){
     <%--
       Note about module 'campaign-management' :
-      
-      This module is usually used for the test plan of an campaign in the context of 
+
+      This module is usually used for the test plan of an campaign in the context of
       the view on that campaign. There are much less features for this table in
-      the context of the test plan manager. The javascript is all 
+      the context of the test plan manager. The javascript is all
       there and are all executed.
-      
+
       The only thing preventing those features to appear is the lack of valid targets :
       some columns in the table are missing, or doesn't have the correct css classes.
-      Still, remember that the javascript here is not tailormade, nor configured with 
-      specific flags, it just happens to work as is.   
-      
+      Still, remember that the javascript here is not tailormade, nor configured with
+      specific flags, it just happens to work as is.
+
       So, your guess : Is it cool, or risky ?
     --%>
-    	
+
       domReady(function(){
         var conf = {
-        	// permissions are hard coded because a user accessing that page 
+        	// permissions are hard coded because a user accessing that page
         	// should have this following profile
-        	
-        	// (also remember that the campaigns have a conf object that differs 
-        	// slightly from the one for the iterations. That's why we have here 
+
+        	// (also remember that the campaigns have a conf object that differs
+        	// slightly from the one for the iterations. That's why we have here
         	// 'features' instead of 'permissions' and 'data' instead of 'basic')
-        	//  
+        	//
             features : {
               linkable : true,
               editable : true,
@@ -243,11 +243,11 @@
               campaignId : ${campaign.id}
             }
           };
-          
+
         campInit.initTestPlanPanel(conf);
         $("#campaign-test-plans-table").squashTable().squashSettings.unbindButtons.tooltip = translator.get('label.UnbindTestCase');
       });
-      
+
     });
   });
 

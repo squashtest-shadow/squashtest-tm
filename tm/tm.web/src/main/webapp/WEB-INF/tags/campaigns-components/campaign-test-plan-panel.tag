@@ -182,7 +182,7 @@
     <span><f:message key="message.ReorderTestPlan" /></span>
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${confirmLabel}" />
-      <input type="button" value="${closeLabel}" />
+      <input type="button" value="${cancelLabel}" />
     </div>
   </div>
 
@@ -199,8 +199,8 @@
     </div>
 
     <div class="popup-dialog-buttonpane">
-      <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-      <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+      <input type="button" value="${confirmLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
     </div>
   </div>
 
