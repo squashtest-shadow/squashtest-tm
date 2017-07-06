@@ -296,7 +296,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${closeLabel}" />
+        <input type="button" value="${cancelLabel}" />
       </div>
     </div>
 
