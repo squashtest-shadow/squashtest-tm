@@ -20,12 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%-- 
+<%--
   As of Squash TM 1.11 the content of this file has been wiped and replaced by tags/test-suites-components/test-suite-test-plan-panel.tag
   (Just like for iteration but with less features).
 
   Some features were then removed. See comments in the js initialization bloc at the end of this file.
-  
+
  --%>
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
@@ -73,7 +73,7 @@
     <f:message var="removeEverywhereLabel" key="label.RemoveTSAndIT" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
-    <f:message var="cancelLabel" key="label.Cancel" /> 
+    <f:message var="cancelLabel" key="label.Cancel" />
     <f:message var="closeLabel" key="label.Close" />
     <f:message var="assignLabel" key="label.Assign" />
     <f:message var="okLabel" key="label.Ok" />
@@ -81,7 +81,7 @@
     <f:message var="tooltipImportance" key="label.Importance"/>
 
 
-    
+
     <div class="left btn-toolbar">
       <span class="btn-group">
         <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
@@ -107,17 +107,17 @@
         </span>
 
     </div>
-    
+
   </div>
 
   <%-- ===================== THE TABLE ===================== --%>
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-    
-    As per stupid specification, instead of the normal conditions the milestone dates column 
-    must be displayed if the feature is globally-enabled but not user-enabled 
-    
+
+    As per stupid specification, instead of the normal conditions the milestone dates column
+    must be displayed if the feature is globally-enabled but not user-enabled
+
     for f*** sakes
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
@@ -135,7 +135,7 @@
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
-          </th>           
+          </th>
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"  data-def="map=reference, sortable, link=${testcaseUrl}">
             <f:message key="label.Reference.short" />
           </th>
@@ -165,22 +165,22 @@
 
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
-      
+
       <comp:notification-pane type="warning">
         <jsp:attribute name="htmlcontent">
           <span data-def="state=single-tp">
             <f:message key="dialog.remove-testcase-testsuite-association.message" />
             <br/>
-            <f:message key="message.permissions.confirm"/>          
+            <f:message key="message.permissions.confirm"/>
           </span>
           <span data-def="state=multiple-tp">
             <f:message key="dialog.remove-testcase-testsuite-associations.message" />
             <br/>
-            <f:message key="message.permissions.confirm"/>          
+            <f:message key="message.permissions.confirm"/>
           </span>
-        </jsp:attribute>      
+        </jsp:attribute>
       </comp:notification-pane>
-      
+
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"  data-def="mainbtn, evt=confirm" />
         <input type="button" value="${removeEverywhereLabel}" data-def="evt=confirmall" />
@@ -194,7 +194,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${closeLabel}" />
+        <input type="button" value="${cancelLabel}" />
       </div>
     </div>
 
@@ -205,24 +205,24 @@
 <script type="text/javascript">
   require(["common"], function(){
     require(["domReady", "test-suite-management"], function(domReady, tsInit){
-      
+
     <%--
       Note about module 'testsuite-management' :
-      
-      This module is usually used for the test plan of an iteration in the context of 
+
+      This module is usually used for the test plan of an iteration in the context of
       the view on that iteration. There are much less features for this table in
-      the context of the test plan manager. For instance one could potentially unroll the 
-      list of execution, or execute them, or assign users etc : the javascript is all 
+      the context of the test plan manager. For instance one could potentially unroll the
+      list of execution, or execute them, or assign users etc : the javascript is all
       there and are all executed.
-      
+
       The only thing preventing those features to appear is the lack of valid targets :
       some columns in the table are missing, or doesn't have the correct css classes.
-      Still, remember that the javascript here is not tailormade, nor configured with 
-      specific flags, it just happens to work as is.   
-      
+      Still, remember that the javascript here is not tailormade, nor configured with
+      specific flags, it just happens to work as is.
+
       So, your guess : Is it cool, or risky ?
     --%>
-    	
+
       domReady(function(){
         var conf = {
             permissions : {
@@ -239,10 +239,10 @@
     			statuses : ''
             }
           };
-          
+
         tsInit.initTestPlanPanel(conf);
       });
-      
+
     });
   });
 
