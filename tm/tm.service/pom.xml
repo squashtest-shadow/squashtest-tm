@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-tm</artifactId>
-    <version>1.16.1.RC1-SNAPSHOT</version>
+    <version>1.17.0.IT1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.service</artifactId>
@@ -123,7 +123,7 @@
     <!-- /no shits -->
 
     <!-- +++++++++++++++++++++++
-    /LOGGING 
+    /LOGGING
     ++++++++++++++++++++++++++++-->
 
     <dependency>
@@ -174,7 +174,7 @@
 -->
 
     <!-- +++++++++++++++++++++++
-    LOGGING 
+    LOGGING
     ++++++++++++++++++++++++++++-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
