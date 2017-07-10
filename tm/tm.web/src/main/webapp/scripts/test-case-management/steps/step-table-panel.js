@@ -248,7 +248,8 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		// create the settings
 		var datatableSettings = {
 			aaData: settings.basic.tableData,
-			bStateSave: true,
+			/* Issue #6568: Reset is needed. */
+			// bStateSave: true,
 			fnStateSave: function (oSettings, oData) {
 				save_dt_view(oSettings, oData);
 			},
@@ -493,7 +494,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 	function addTestStepSuccessAnother(response) {
 		CKEDITOR.instances["add-test-step-action"].setData("");
 		CKEDITOR.instances["add-test-step-result"].setData("");
-		
+
 		var dialog = $("#add-test-step-dialog");
 		dialog.data("cuf-values-support").reset();
 		eventBus.trigger("testStepsTable.stepAdded");
@@ -513,7 +514,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		//reading the global target index counter
 		params.index = targetTestStepIndex;
-		
+
 		$.extend(params, cufSupport.readValues());
 
 		return params;
@@ -856,7 +857,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		//init the link for calling a test case
 		initCallTestCaseLink(settings);
-		
+
 		// listen to call steps events
 		eventBus.onContextual('call-test-case', function(){
 			$("#test-steps-table-"+conf.testCaseId).squashTable().refresh();
