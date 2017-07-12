@@ -49,7 +49,7 @@ public class HibernateAdministrationDao implements AdministrationDao {
 
 	private static final String DATABASE_LABEL_MYSQL = "mysql";
 	private static final String DATABASE_LABEL_POSTGRESQL = "postgresql";
-	private static final String REQ_DATABASE_SIZE_MYSQL = "select sum((data_length + index_length - data_free) / 1024 / 1024) from information_schema.tables where table_schema = :databaseName";
+	private static final String REQ_DATABASE_SIZE_MYSQL = "select sum((data_length + index_length) / 1024 / 1024) from information_schema.tables where table_schema = :databaseName";
 	private static final String REQ_DATABASE_SIZE_POSTGRESQL = "select pg_database_size(:databaseName) / 1024 / 1024";
 	private static final String URL_SPLIT_SEPARATOR = "/";
 	private static final String DATABASE_NAME_EMPTY = "";
