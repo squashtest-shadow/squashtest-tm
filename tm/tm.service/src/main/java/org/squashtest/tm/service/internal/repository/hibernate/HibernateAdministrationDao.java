@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 
 /**
@@ -36,14 +40,62 @@ import javax.persistence.PersistenceContext;
  */
 @Repository
 public class HibernateAdministrationDao implements AdministrationDao {
+
 	@PersistenceContext
 	EntityManager entityManager;
+
+	@Inject
+	private DataSourceProperties dataSourceProperties;
+
+	private static final String DATABASE_LABEL_MYSQL = "mysql";
+	private static final String DATABASE_LABEL_POSTGRESQL = "postgresql";
+	private static final String REQ_DATABASE_SIZE_MYSQL = "select sum((data_length + index_length - data_free) / 1024 / 1024) from information_schema.tables where table_schema = :databaseName";
+	private static final String REQ_DATABASE_SIZE_POSTGRESQL = "select pg_database_size(:databaseName) / 1024 / 1024";
+	private static final String URL_SPLIT_SEPARATOR = "/";
+	private static final String DATABASE_NAME_EMPTY = "";
+
 
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {
 		Object[] result = (Object[]) entityManager.createNamedQuery("administration.findAdministrationStatistics").getSingleResult();
-		return new AdministrationStatistics(result);
+
+		// Feat 6855 - Adding the database size in the statistics panel. The req is different for MySQL and PostgreSQL
+		// At first, we retrieve the url which contains the database type and the database name.
+		// Then, we execute a request to retrieve the database size (in Mo), we return 0 for another database type than MySQL or PostgreSQL
+		BigInteger databaseSize = BigInteger.ZERO;
+		String url = dataSourceProperties.getUrl();
+		if (url.contains(DATABASE_LABEL_MYSQL) || url.contains(DATABASE_LABEL_POSTGRESQL)) {
+			String databaseName = getDatabaseName();
+			if (url.contains(DATABASE_LABEL_MYSQL) && isDatabaseNameValid(databaseName)) {
+				databaseSize = getDatabaseSizeForMysql(databaseName);
+			}
+			if (url.contains(DATABASE_LABEL_POSTGRESQL) && isDatabaseNameValid(databaseName)) {
+				databaseSize = getDatabaseSizeForPostgresql(databaseName);
+			}
+		}
+		return new AdministrationStatistics(result, databaseSize);
 	}
 
+	// dataSourceProperties gives us an url (ex : jdbc:mysql://127.0.0.1:3306/squash-tm), so we retrieve the database name from it
+	private String getDatabaseName() {
+		String url = dataSourceProperties.getUrl();
+		String[] urlSplit = url.split(URL_SPLIT_SEPARATOR);
+		return urlSplit[urlSplit.length - 1];
+	}
+
+	// We make sure that the database name is not null and not empty
+	private boolean isDatabaseNameValid(String databaseName) {
+		return databaseName != null && !DATABASE_NAME_EMPTY.equals(databaseName);
+	}
+
+	// SQL query retrieving database size for MySQL. The query's result is a BigDecimal, we convert it into a BigInteger.
+	private BigInteger getDatabaseSizeForMysql(String databaseName) {
+		return ((BigDecimal) entityManager.createNativeQuery(REQ_DATABASE_SIZE_MYSQL).setParameter("databaseName", databaseName).getSingleResult()).toBigInteger();
+	}
+
+	// SQL query retrieving database size for PostgreSQL
+	private BigInteger getDatabaseSizeForPostgresql(String databaseName) {
+		return (BigInteger) entityManager.createNativeQuery(REQ_DATABASE_SIZE_POSTGRESQL).setParameter("databaseName", databaseName).getSingleResult();
+	}
 
 }

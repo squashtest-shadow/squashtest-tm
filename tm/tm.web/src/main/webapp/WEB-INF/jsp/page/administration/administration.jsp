@@ -149,6 +149,13 @@
               <label><f:message key="label.executions" /></label><span>${ adminStats.executionsNumber }</span>
             </div>
           </div>
+          <c:if test="${ adminStats.databaseSize != 0 }">
+            <div>
+              <div>
+                <label><f:message key="label.database" /></label><span>${ adminStats.databaseSize } <f:message key="label.database.unit" /></span>
+              </div>
+            </div>
+          </c:if>
         </div>
         <div class="admin-stats-table">
           <label><f:message key="label.lastIndexing" /></label>

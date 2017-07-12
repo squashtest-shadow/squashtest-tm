@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -34,9 +35,9 @@ import java.util.Date;
  * <li>iterationsNumber</li>
  * <li>executionsNumber</li>
  * </ul>
- * 
+ *
  * @author mpagnon
- * 
+ *
  * **/
 public class AdministrationStatistics {
 	private long projectsNumber;
@@ -49,6 +50,7 @@ public class AdministrationStatistics {
 	private Date requirementIndexingDate;
 	private Date testcaseIndexingDate;
 	private Date campaignIndexingDate;
+	private BigInteger databaseSize;
 
 	/**
 	 * Will read the <code>Object[]</code> param and fill it's properties with the following "index/property" mapping :
@@ -61,10 +63,10 @@ public class AdministrationStatistics {
 	 * <li>5/iterationsNumber</li>
 	 * <li>6/executionsNumber</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param result
 	 */
-	public AdministrationStatistics(Object[] resultParam) {
+	public AdministrationStatistics(Object[] resultParam, BigInteger databaseSize) {
 		Object[] result = resultParam.clone();
 		this.projectsNumber = (Long) result[0];
 		this.usersNumber = (Long) result[1];
@@ -73,6 +75,7 @@ public class AdministrationStatistics {
 		this.campaignsNumber = (Long) result[4];
 		this.iterationsNumber = (Long) result[5];
 		this.executionsNumber = (Long) result[6];
+		this.databaseSize = databaseSize;
 	}
 
 	public long getProjectsNumber() {
@@ -153,5 +156,13 @@ public class AdministrationStatistics {
 
 	public void setCampaignIndexingDate(Date campaignIndexingDate) {
 		this.campaignIndexingDate = campaignIndexingDate;
+	}
+
+	public BigInteger getDatabaseSize() {
+		return databaseSize;
+	}
+
+	public void setDatabaseSize(BigInteger databaseSize) {
+		this.databaseSize = databaseSize;
 	}
 }
