@@ -116,7 +116,7 @@ public class CampaignTestPlanItem implements Identified{
 	}
 
 	public Project getProject() {
-		return getReferencedTestCase().getProject();
+		return campaign.getProject();
 	}
 
 	public Campaign getCampaign() {
