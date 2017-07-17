@@ -28,6 +28,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.squashtest.tm.core.foundation.lang.Couple;
@@ -134,6 +135,12 @@ public class StartTestExecution {
 				default:
 					throw new TestAutomationException(ex.getMessage(), ex);
 			}
+		}
+		catch(HttpServerErrorException ex){
+			LOGGER.error("build fail due to Jenkins error. Root error is :");
+			LOGGER.error(ex.getMessage());
+			LOGGER.error(ex.getResponseBodyAsString());
+			throw new TestAutomationException(ex.getMessage(), ex);
 		}
 	}
 
