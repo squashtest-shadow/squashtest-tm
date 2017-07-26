@@ -29,6 +29,7 @@ import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.internal.user.AdministrationServiceImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.squashtest.tm.service.user.UserAccountService
 import spock.lang.Specification
 
@@ -45,6 +46,7 @@ class AdministrationServiceImplTest extends Specification {
 	TeamDao teamDao = Mock()
 	AdministratorAuthenticationService adminAuthentService = Mock()
 	FeatureManager features = Mock()
+	ObjectAclService aclService = Mock()
 
 
 	def setup(){
@@ -57,6 +59,7 @@ class AdministrationServiceImplTest extends Specification {
 		service.teamDao = teamDao
 		service.adminAuthentService = adminAuthentService
 		service.features = features
+		service.aclService = aclService
 
 		features.isEnabled(_) >> false
 	}
@@ -68,6 +71,8 @@ class AdministrationServiceImplTest extends Specification {
 		def teams = [team]
 		userDao.findOne(1L)>>user
 		teamDao.findAll([2L])>> teams
+
+		//aclService.updateDerivedPermissions(1L) >> void
 
 		when :
 		service.associateToTeams(1L, [2L])

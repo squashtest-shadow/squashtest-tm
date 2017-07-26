@@ -383,6 +383,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void deassociateTeams(long userId, List<Long> teamIds) {
 		User user = userDao.findOne(userId);
 		user.removeTeams(teamIds);
+		aclService.updateDerivedPermissions(userId);
 	}
 
 	/**
@@ -398,6 +399,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			user.addTeam(team);
 		}
 
+		aclService.updateDerivedPermissions(userId);
 	}
 
 	/**
