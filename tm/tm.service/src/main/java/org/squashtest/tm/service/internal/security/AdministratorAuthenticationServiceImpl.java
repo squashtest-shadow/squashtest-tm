@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.security;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -45,6 +48,8 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	private PasswordEncoder encoder;
 
 	private Object salt = null;
+
+	private static final String projectManagerAuthority = "ROLE_TM_PROJECT_MANAGER";
 
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
 		this.userManager = userManager;
@@ -108,8 +113,9 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	public void deactivateAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
+			Set<GrantedAuthority> filteredAuthorities = filterAuthorities(oldUser.getAuthorities());
 			UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
-				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), filteredAuthorities);
 			LOGGER.debug("Deactivate account for user {}", login);
 			userManager.updateUser(newUser);
 
@@ -122,8 +128,9 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	public void activateAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
+			Set<GrantedAuthority> filteredAuthorities = filterAuthorities(oldUser.getAuthorities());
 			UserDetails newUser = new User(login, oldUser.getPassword(), true, oldUser.isAccountNonExpired(),
-				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), filteredAuthorities);
 			LOGGER.debug("Activating account for user {}", login);
 			userManager.updateUser(newUser);
 
@@ -143,6 +150,17 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	}
 
+	private Set<GrantedAuthority> filterAuthorities(Collection<? extends GrantedAuthority> authorities){
+		/*[Issue 6749] : We have to filter the user's authorities while activating/deactivating his account, otherwise
+		 undesired authorities are added to the "core_party_authority" table*/
+		Set<GrantedAuthority> filteredAuthorities = new HashSet<>();
+		for (GrantedAuthority authority: authorities) {
+			if(authority.toString().equals(projectManagerAuthority)){
+				filteredAuthorities.add(new SimpleGrantedAuthority(projectManagerAuthority));
+			}
+		}
+		return filteredAuthorities;
+	}
 
 	/**
 	 * @see org.squashtest.tm.service.security.AdministratorAuthenticationService#userExists(java.lang.String)
