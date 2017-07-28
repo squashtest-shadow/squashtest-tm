@@ -30,6 +30,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
@@ -40,6 +41,8 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -67,6 +70,10 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
+	@Inject
+	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" +
@@ -264,6 +271,18 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		}
 
 		return codes;
+	}
+
+	@Override
+	public void postponeTestCaseToNewRequirementVersion(RequirementVersion previousVersion, RequirementVersion newVersion) {
+		for(TestCase testCaseToPostpone :verifyingTestCaseManagerService.findAllByRequirementVersion(previousVersion.getId())) {
+			try {
+				verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(previousVersion.getId(),newVersion.getId(), testCaseToPostpone.getId());
+			} catch(LinkedRequirementVersionException exception) {
+				exception.printStackTrace();
+			}
+		}
+
 	}
 
 

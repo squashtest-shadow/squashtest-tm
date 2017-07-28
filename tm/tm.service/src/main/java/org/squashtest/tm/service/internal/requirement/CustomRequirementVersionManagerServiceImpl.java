@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -63,6 +64,7 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 /**
  * @author Gregory Fouquet
@@ -114,7 +116,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void createNewVersion(long requirementId, boolean inheritReqLinks) {
+	public void createNewVersion(long requirementId, boolean inheritReqLinks, boolean inheritTestcasesReqLinks) {
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 		RequirementVersion previousVersion = req.getCurrentVersion();
 
@@ -126,14 +128,17 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		if(inheritReqLinks) {
 			requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
 		}
+		if(inheritTestcasesReqLinks){
+			requirementLinkService.postponeTestCaseToNewRequirementVersion(previousVersion, newVersion);
+		}
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks) {
+	public void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks, boolean inheritTestcasesReqLinks) {
 
-		createNewVersion(requirementId, inheritReqLinks);
+		createNewVersion(requirementId, inheritReqLinks, inheritTestcasesReqLinks);
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 
 		for (RequirementVersion version : req.getRequirementVersions()) {

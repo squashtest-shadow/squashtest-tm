@@ -70,4 +70,6 @@ public interface LinkedRequirementVersionManagerService {
 		long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection);
 
 	Set<String> findAllRoleCodes();
+
+	void postponeTestCaseToNewRequirementVersion(RequirementVersion previousVersion, RequirementVersion newVersion);
 }

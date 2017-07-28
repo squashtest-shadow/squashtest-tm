@@ -441,8 +441,14 @@ publish('reload.requirement.attachments');
       <c:if test="${milestone_mode}">
           <p><f:message key="requirement.new-version.confirm-dialog.milestonemode"/></p>
       </c:if>
-    <input type="checkbox" id="req-version-inheritance" />
-    <label for="req-version-inheritance"><f:message key="requirement.new-version.inheritance.link.label"/></label>
+    <div>
+      <input type="checkbox" id="req-version-inheritance" />
+      <label for="req-version-inheritance"><f:message key="requirement.new-version.inheritance.link.label"/></label>
+    </div>
+    <div>
+      <input type="checkbox" id="req-version-inheritance-testcases" />
+      <label for="req-version-inheritance-testcases"><f:message key="requirement.new-version.inheritance.testcases.link.label"/></label>
+    </div>
 		<input type="button" value="${confirmLabel}" />
 		<input type="button" value="${cancelLabel}" />
 	</div>

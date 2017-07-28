@@ -50,7 +50,7 @@ public interface CustomRequirementVersionManagerService {
 	 *
 	 * @param requirementId
 	 */
-	void createNewVersion(long requirementId, boolean inheritReqLinks);
+	void createNewVersion(long requirementId, boolean inheritReqLinks, boolean inheritTestcasesReqLinks);
 
 	/**
 	 * Increase the current version of the given requirement and associates the requirement to the given milestones. If other versions of the same requirements
@@ -62,7 +62,7 @@ public interface CustomRequirementVersionManagerService {
 	 *
 	 * @param requirementId
 	 */
-	void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks);
+	void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks, boolean inheritTestcasesReqLinks);
 
 
 	void rename(long requirementVersionId, String newName);
@@ -99,7 +99,7 @@ public interface CustomRequirementVersionManagerService {
 
 	@Transactional(readOnly=true)
 	Long findReqVersionIdByRequirementAndVersionNumber(long requirementId, Integer versionNumber);
-	
+
 	RequirementVersion findByRequirementIdAndVersionNumber(long requirementId, int versionNumber);
 
 	/*

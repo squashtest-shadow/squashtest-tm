@@ -123,19 +123,19 @@ public class RequirementVersionManagerController {
 
 
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = {"inheritReqLinks"})
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = {"inheritReqLinks", "inheritTestcasesReqLinks"})
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId, @RequestParam("inheritReqLinks") boolean inheritReqLinks) {
+	public void createNewVersion(@PathVariable long requirementId, @RequestParam("inheritReqLinks") boolean inheritReqLinks,  @RequestParam("inheritTestcasesReqLinks") boolean inheritTestcasesReqLinks) {
 
             Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
             if (activeMilestone.isPresent()) {
                 // milestone mode creation
                 ArrayList<Long> milestoneIds = new ArrayList<>();
                 milestoneIds.add(activeMilestone.get().getId());
-                versionService.createNewVersion(requirementId, milestoneIds, inheritReqLinks);
+                versionService.createNewVersion(requirementId, milestoneIds, inheritReqLinks, inheritTestcasesReqLinks);
             }else{
                 // normal mode creation
-                versionService.createNewVersion(requirementId, inheritReqLinks);
+                versionService.createNewVersion(requirementId, inheritReqLinks, inheritTestcasesReqLinks);
             }
 	}
 

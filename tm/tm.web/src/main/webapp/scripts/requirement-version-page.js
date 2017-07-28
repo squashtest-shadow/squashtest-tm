@@ -571,8 +571,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				var confirmHandler = function() {
 					var url = routing.buildURL('requirements.versions.new', config.basic.requirementId);
 					var inheritReqLinks = $("#req-version-inheritance").is(':checked');
+					var inheritTestcasesReqLinks = $("#req-version-inheritance-testcases").is(':checked');
 					var params = {
-						inheritReqLinks: inheritReqLinks
+						inheritReqLinks: inheritReqLinks,
+						inheritTestcasesReqLinks: inheritTestcasesReqLinks
 					};
 					$.ajax({
 						type : 'POST',

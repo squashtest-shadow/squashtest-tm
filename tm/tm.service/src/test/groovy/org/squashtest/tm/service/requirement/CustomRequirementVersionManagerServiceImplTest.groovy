@@ -65,7 +65,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 		req.currentVersion >> newVersion
 
 		when:
-		service.createNewVersion(10L, false)
+		service.createNewVersion(10L, false,false)
 
 		then:
 		1 * em.persist(newVersion)

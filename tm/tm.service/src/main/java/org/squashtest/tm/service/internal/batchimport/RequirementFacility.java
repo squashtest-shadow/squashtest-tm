@@ -347,7 +347,7 @@ class RequirementFacility extends EntityFacilitySupport {
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		requirementVersion.setVersionNumber(instruction.getTarget().getVersion());
 		//creating new version with service
-		requirementVersionManagerService.createNewVersion(reqId, false);
+		requirementVersionManagerService.createNewVersion(reqId, false, false);
 		//and updating persisted reqVersion
 		RequirementVersion requirementVersionPersisted = requirement.getCurrentVersion();
 		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);
@@ -484,8 +484,8 @@ class RequirementFacility extends EntityFacilitySupport {
 			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
 	}
-	
-	
+
+
 	public LogTrain createRequirementLink(RequirementLinkInstruction instr) {
 		LogTrain train = validator.createRequirementLink(instr);
 		if (! train.hasCriticalErrors()){
@@ -493,7 +493,7 @@ class RequirementFacility extends EntityFacilitySupport {
 		}
 		return train;
 	}
-	
+
 	public LogTrain updateRequirementLink(RequirementLinkInstruction instr) {
 		LogTrain train = validator.updateRequirementLink(instr);
 		if (! train.hasCriticalErrors()){
@@ -511,17 +511,17 @@ class RequirementFacility extends EntityFacilitySupport {
 		}
 		return train;
 	}
-	
+
 	private void createOrUpdateLink(RequirementLinkInstruction instr, LogTrain train){
-		
+
 		long sourceId = findVersionIdByTarget(instr.getTarget().getSourceVersion());
 		long destId = findVersionIdByTarget(instr.getTarget().getDestVersion());
-		
+
 		String destRole = instr.getRelationRole();
 		if (StringUtils.isBlank(destRole)){
 			destRole = reqlinkTypeDao.getDefaultRequirementVersionLinkType().getRole2Code();
 		}
-		
+
 		try{
 			reqlinkService.addOrUpdateRequirementLink(sourceId, destId, destRole);
 		}
@@ -530,17 +530,17 @@ class RequirementFacility extends EntityFacilitySupport {
 							.failure()
 							.forTarget(instr.getTarget())
 							.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
-							.build());	
+							.build());
 		}
 		catch(UnlinkableLinkedRequirementVersionException ex){
 			train.addEntry(LogEntry
 					.failure()
 					.forTarget(instr.getTarget())
 					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
-					.build());	
+					.build());
 		}
 	}
-	
+
 	private long findVersionIdByTarget(RequirementVersionTarget versTarget){
 		Long reqId = validator.getModel().getRequirementId(versTarget);
 		return requirementVersionManagerService.findReqVersionIdByRequirementAndVersionNumber(reqId, versTarget.getVersion());
