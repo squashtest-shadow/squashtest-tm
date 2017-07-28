@@ -451,12 +451,12 @@
 
             <div class="std-margin-top">
               <div>
-                <div class="display-table-row">
+                <div id="project-destination-row" class="display-table-row" style="visibility: hidden">
                   <div class="display-table-cell">
                     <label th:text="#{dialog.import.project.message}">project</label>
                   </div>
                   <div class="display-table-cell">
-                    <select id="import-project-list" name="projectId" disabled="disabled">
+                    <select id="import-project-list" name="projectId">
                       <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
                         th:text="${lib.project.name}">project name</option>
                     </select>
@@ -511,6 +511,8 @@
       </div>
 
       <div class="import-summary" data-def="state=summary"></div>
+
+      <div class="import-summary" data-def="state=simulation-summary"></div>
 
       <script id="zip-import-recap-tpl" type="text/x-handlebars-template">
         <div><span><span th:remove="tag" th:text="#{dialog.import-excel.test-case.total}"></span>{{total}}</span></div>
@@ -641,10 +643,10 @@
         <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}" th:title="#{label.SimulateImport}"
           data-def="evt=simulate, state=parametrization" />
         <input type="button" th:value="#{label.Import}" value="importLabel" th:title="#{label.ImportSelectedFile}"
-          data-def="evt=import, state=parametrization, mainbtn=parametrization" />
+          data-def="evt=import, state=parametrization simulation-summary, mainbtn=parametrization simulation-summary" />
         <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
           data-def="evt=confirm, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Close}" value="okLabel" data-def="evt=ok, state=summary, mainbtn=summary" />
+        <input type="button" th:value="#{label.Close}" value="okLabel" data-def="evt=ok, state=summary simulation-summary, mainbtn=summary" />
         <input type="button" th:value="#{label.Close}" value="okLabel"
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
         <input type="button" th:value="#{label.Close}" value="okLabel"
