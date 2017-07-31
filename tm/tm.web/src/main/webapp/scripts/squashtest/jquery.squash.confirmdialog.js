@@ -100,12 +100,16 @@
 
 			var parent = this.element.eq(0).parent();
 
-			function cancelOnEsc(event) {
+			function cancelOnEscConfirmOnEnter(event) {
 				if (event.keyCode === $.ui.keyCode.ESCAPE) {
 					self.cancel(event);
 					event.preventDefault();
+				}else if (event.keyCode === $.ui.keyCode.ENTER){
+					self.confirm(event);
+					event.preventDefault();
 				}
 			}
+
 
 			// creates the widget
 			self._super();
@@ -115,7 +119,7 @@
 				"click .ui-dialog-buttonpane button:first" : self.confirm,
 				"click .ui-dialog-buttonpane button:last" : self.cancel,
 				"click .ui-dialog-titlebar-close" : self.cancel,
-				"keydown" : cancelOnEsc
+				"keydown" : cancelOnEscConfirmOnEnter
 			});
 
 			// autoremove when parent container is removed
@@ -161,5 +165,6 @@
 			this._off($(".ui-dialog-titlebar-close"), "click");
 			this._super();
 		}
+
 	});
 }(jQuery));

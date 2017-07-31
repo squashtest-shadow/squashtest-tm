@@ -206,7 +206,11 @@ define([ "jquery", "underscore",  "app/ws/squashtm.notification", "squash.transl
 
 								else {
 									self.createSummary(json);
-									self.setState("summary");
+									if(!!params.queryParams){
+										self.setState("simulation-summary");
+									}else {
+										self.setState("summary");
+									}
 								}
 							}
 						}

@@ -25,40 +25,51 @@ define([ "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing",
 			var url = router.buildURL('custom-report-base');
 			window.location.href = url;
 			});
-		
+
 		$("#back").on('click', function() {
 			$("#back-popup").confirmDialog('open');
-		});	
-		
+		});
+
+		$(document).keyup(function(event) {
+			if (event.keyCode == 13) {
+				if($("#step-icon-preview").hasClass("wizard-step-current")){
+					$("#save").click();
+				}else if($("#step-icon-type").hasClass("wizard-step-current")){
+					$("#generate").click();
+				}else{
+					$("#next").click();
+				}
+			}
+		});
+
 		workspace.init();
-		
+
 		$.ajax({
-			url: router.buildURL('chart.wizard.data')	
+			url: router.buildURL('chart.wizard.data')
 		}).done(function(data){
-			
+
 			data.parentId = squashtm.chart.parentId;
 			data.defaultProject = squashtm.chart.defaultProject;
 			data.chartDef = JSON.parse(squashtm.chart.chartDef);
 
 
-			
+
 			var model = new WizardModel(data);
-			
+
 			var wizardView = new WizardView ({
 				model: model
 			});
-			
+
 			new WizardRouter({
 				wizardView : wizardView
 			});
-			
+
 			Backbone.history.start();
 		});
 	}
-	
+
 	return {
 		init : init
 	};
 
 });
- 

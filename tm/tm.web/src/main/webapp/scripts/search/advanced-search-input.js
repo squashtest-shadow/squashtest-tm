@@ -526,7 +526,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
                     jsonVariable["project.id"] = {type : "LIST", values : []};
                 }
 
-				
+
 			}
 
 
@@ -659,5 +659,12 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 
 	});
+
+	$(document).keyup(function(event) {
+		if (event.keyCode == 13) {
+			$("#advanced-search-button").click();
+		}
+	});
+
 	return TestCaseSearchInputPanel;
 });

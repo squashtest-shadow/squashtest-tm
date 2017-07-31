@@ -25,7 +25,7 @@ var squashtm = squashtm || {};
  */
 define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutton", "jquery.squash.togglepanel" ],
 		function($, ToggleWorkspace) {
-			
+
 
 			function findId(name) {
 				var idIndex = name.lastIndexOf("-") + 1;
@@ -56,29 +56,35 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 				$("#contextual-content").load(reportUrl);
 			}
 
-			
+
 			/**
 			 * initializes the workspace.
-			 * 
+			 *
 			 * @returns
 			 */
 			function init(options) {
-				
+
 				$("#outer-category-frame  .report-item").click(function() {
 					loadContextualReport(this);
 				});
 
-				ToggleWorkspace.init(options); 
+				ToggleWorkspace.init(options);
 
 				/* decorate buttons */
 				$.squash.decorateButtons();
 			}
 
 			squashtm.reportWorkspace = {
-				
+
 				loadContextualReport : loadContextualReport,
 				init : init
 			};
+
+			$(document).keypress(function(event) {
+				if (event.keyCode == 13) {
+					$("#generate-view").click();
+				}
+			});
 
 			return squashtm.reportWorkspace;
 		});
