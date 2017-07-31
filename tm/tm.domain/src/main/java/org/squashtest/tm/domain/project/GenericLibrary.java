@@ -39,15 +39,15 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <NODE>
  *            The type of nodes this library contains.
  */
 @MappedSuperclass
 public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE> {
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
@@ -131,7 +131,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 
 	/**
 	 * checks that content name has not been already given. Throws exception otherwise.
-	 * 
+	 *
 	 * @param candidateContent
 	 */
 	private void checkContentNameAvailable(NODE candidateContent) throws DuplicateNameException {

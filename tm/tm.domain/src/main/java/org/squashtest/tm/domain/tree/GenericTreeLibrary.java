@@ -30,8 +30,8 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 
 @MappedSuperclass
 public abstract class GenericTreeLibrary implements TreeLibrary, TreeEntity {
-	
-	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
+
+	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="ATTACHMENT_LIST_ID")
 	private AttachmentList attachmentList = new AttachmentList();
 
@@ -43,5 +43,5 @@ public abstract class GenericTreeLibrary implements TreeLibrary, TreeEntity {
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
-	
+
 }

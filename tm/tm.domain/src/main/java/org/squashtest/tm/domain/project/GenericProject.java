@@ -131,7 +131,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private TestAutomationServer testAutomationServer;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
