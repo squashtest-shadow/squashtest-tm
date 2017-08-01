@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,6 +43,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
@@ -58,6 +60,9 @@ import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
  */
 @Configuration
 public class WebSecurityConfig {
+	
+	
+
 	/**
 	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
 	 */
@@ -81,6 +86,13 @@ public class WebSecurityConfig {
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+		
+		/**
+		 * part of the fix for [Issue #6900]
+		 */
+		@Value("${squash.security.basic.token-charset}")
+		private String basicAuthCharset = "ISO-8859-1";
+		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
@@ -91,7 +103,8 @@ public class WebSecurityConfig {
 					.authorizeRequests()
 						.anyRequest().access("hasRole('ROLE_TA_API_CLIENT')")
 				.and()
-				.httpBasic();
+				.httpBasic()
+					.withObjectPostProcessor(new BasicAuthCharsetConfigurer(basicAuthCharset));
 			// @formatter:on
 		}
 	}
@@ -99,6 +112,14 @@ public class WebSecurityConfig {
 	@Configuration
 	@Order(20)
 	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+		
+		/**
+		 * part of the fix for [Issue #6900]
+		 */
+		@Value("${squash.security.basic.token-charset}")
+		private String basicAuthCharset = "ISO-8859-1";
+		
+		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
@@ -110,6 +131,7 @@ public class WebSecurityConfig {
 					.authenticated()
 					.and()
 						.httpBasic()
+							.withObjectPostProcessor(new BasicAuthCharsetConfigurer(basicAuthCharset))
 							.realmName("squash-api")
 							.authenticationEntryPoint(new AuthenticationEntryPoint() {
 
@@ -214,6 +236,34 @@ public class WebSecurityConfig {
 				.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 			//@formatter:on
 		}
+	}
+	
+	
+	/**
+	 * [Issue #6900]
+	 * 
+	 * The base64-encoded token for basic auth has a charset too. Spring Sec expects it to be UTF-8 but many people around expects it 
+	 * to be Latin-1 (iso-8859-1). This configurer allows to configure the desired encoding. 
+	 * 
+	 * 
+	 * @author bsiri
+	 *
+	 */
+	private static final class BasicAuthCharsetConfigurer implements ObjectPostProcessor<BasicAuthenticationFilter>{
+		
+		private final String charset;
+
+		public BasicAuthCharsetConfigurer(String charset) {
+			super();
+			this.charset = charset;
+		}
+		
+		@Override
+		public <O extends BasicAuthenticationFilter> O postProcess(O object) {
+			object.setCredentialsCharset(charset);
+			return object;
+		}
+		
 	}
 }
 
