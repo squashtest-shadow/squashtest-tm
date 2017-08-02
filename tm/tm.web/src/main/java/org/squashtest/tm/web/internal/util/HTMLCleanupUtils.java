@@ -75,4 +75,12 @@ public final class HTMLCleanupUtils {
 		return output.toString();
 	}
 
+	public static String getBriefText(String text, int maxLength){
+		text = htmlToText(text);
+		if (text.length() > maxLength){
+			text = text.substring(0, maxLength-3) + "...";
+		}
+		return text;
+	}
+
 }

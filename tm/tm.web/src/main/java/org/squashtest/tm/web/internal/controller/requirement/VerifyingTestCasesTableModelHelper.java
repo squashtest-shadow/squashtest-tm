@@ -25,17 +25,20 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase> {
 
 	private InternationalizationHelper helper;
 	private Locale locale = LocaleContextHolder.getLocale();
+	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
 	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper){
 		this.helper = helper;
@@ -57,6 +60,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(tc.getMilestones(), helper, locale));
 		row.put("empty-delete-holder", null);
 		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(tc.getMilestones()));
+		row.put("tc-description", HTMLCleanupUtils.getBriefText(tc.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;
 	}
@@ -65,6 +69,5 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 	private String formatExecutionMode(TestCaseExecutionMode mode) {
 		return helper.internationalize(mode, locale);
 	}
-
 
 }

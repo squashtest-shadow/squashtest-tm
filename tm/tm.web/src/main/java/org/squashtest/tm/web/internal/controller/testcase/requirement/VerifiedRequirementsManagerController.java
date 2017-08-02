@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -83,6 +84,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import com.google.common.base.Optional;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller for verified requirements management page.
@@ -341,6 +343,7 @@ public class VerifiedRequirementsManagerController {
 	extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
+		private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
 		private VerifiedRequirementsDataTableModelHelper(Locale locale,
 				InternationalizationHelper internationalizationHelper) {
@@ -364,6 +367,7 @@ public class VerifiedRequirementsManagerController {
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
+			res.put("description", HTMLCleanupUtils.getBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 			return res;
 		}
 	}

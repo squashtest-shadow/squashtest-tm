@@ -67,7 +67,12 @@ define([ "jquery", "backbone", "underscore",
 				'aaData' : this.settings.callingTestCases
 			};
 			this.callingTestCasesTable = this.$el.find("#calling-test-case-table")
-											.squashTable(tablesettings, {});
+											.squashTable(tablesettings, {
+												tooltips : [{
+													tdSelector: "td.calling-tc-description",
+													value : function (row, data) {return data["tc-description"]}
+												}]
+											});
 
 			// CUFs
 			if (this.settings.hasCufs){

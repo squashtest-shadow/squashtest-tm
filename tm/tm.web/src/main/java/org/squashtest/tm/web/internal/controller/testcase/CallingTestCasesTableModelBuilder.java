@@ -30,11 +30,14 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestStep> {
 
 	private InternationalizationHelper i18nHelper;
 	private Locale locale = LocaleContextHolder.getLocale();
+	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
+
 
 	CallingTestCasesTableModelBuilder(InternationalizationHelper i18nHelper){
 		this.i18nHelper = i18nHelper;
@@ -58,6 +61,7 @@ class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestSt
 		row.put("tc-mode", executionMode);
 		row.put("ds-name", dsName);
 		row.put("step-no", step.getIndex()+1);
+		row.put("tc-description", HTMLCleanupUtils.getBriefText(caller.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;
 

@@ -29,6 +29,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -38,6 +39,7 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 
 	private InternationalizationHelper helper;
 	private Locale locale = LocaleContextHolder.getLocale();
+	private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
 	public LinkedRequirementVersionsTableModelHelper(InternationalizationHelper helper){
 		this.helper = helper;
@@ -59,6 +61,7 @@ class LinkedRequirementVersionsTableModelHelper extends DataTableModelBuilder<Li
 		row.put("empty-edit-holder", null);
 		row.put("empty-delete-holder", null);
 		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(rv.getMilestones()));
+		row.put("rv-description", HTMLCleanupUtils.getBriefText(rv.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
 
 		return row;
 	}

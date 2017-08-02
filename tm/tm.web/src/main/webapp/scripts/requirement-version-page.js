@@ -216,7 +216,11 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					unbindButtons : {
 						delegate : "#unbind-active-row-dialog",
 						tooltip : translator.get('dialog.unbind-ta-project.tooltip')
-					}
+					},
+					tooltips : [{
+						tdSelector : 'td.verif-tc-description',
+						value : function(row, data){return data["tc-description"]}
+					}]
 				});
 
 				if (config.permissions.linkable) {
@@ -275,6 +279,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 							var modifiedVersionId = table.getODataId(row);
 							openChooseTypeDialog(config.basic.currentVersionId, modifiedVersionId, false);
 						}
+					}],
+					tooltips : [{
+						tdSelector : 'td.linkedReqDescription',
+						value : function(row, data){return data["rv-description"]}
 					}]
 				});
 

@@ -84,4 +84,9 @@ public class LinkedRequirementVersion extends RequirementVersion {
 	public int getVersionNumber() {
 		return decoratedRequirementVersion.getVersionNumber();
 	}
+
+	@Override
+	public String getDescription() {
+		return decoratedRequirementVersion.getDescription();
+	}
 }

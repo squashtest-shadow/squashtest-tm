@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", 
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
          "./VerifiedRequirementsTable", "app/ws/squashtm.notification",
          "squash.translator", "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "squashtable", 
+		"jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
 		VerifiedRequirementsTable, notification, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
@@ -46,7 +46,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					uiIcon : "ui-icon-minus",
 					jquery : true,
 					onClick : self.removeRowRequirementVersion
-				} ]
+				} ],
+				tooltips : [{
+				tdSelector: "td.verif-req-description",
+				value : function (row, data) {return data["description"]}
+			}]
 			};
 		},
 
