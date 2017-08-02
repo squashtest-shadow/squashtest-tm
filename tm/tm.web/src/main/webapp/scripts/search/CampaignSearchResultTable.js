@@ -26,7 +26,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 	var CampaignSearchResultTable = Backbone.View.extend({
 		el : "#campaign-search-result-table",
 		initialize : function(model, isAssociation, associateType, associateId) {
-			this.model = model;		
+			this.model = model;
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 
@@ -54,7 +54,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			var squashConf = {
 				enableHover : true
 			};
-			
+
 			this.$el.squashTable(tableConf, squashConf);
 
 		},
@@ -68,14 +68,14 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			var $this = $(this);
 			var	tpid = $this.data('tpid');
 			var itId = $this.data('itid');
-				
-			var	ui = ($this.is('.run-popup')) ? "popup" : "oer";	
+
+			var	ui = ($this.is('.run-popup')) ? "popup" : "oer";
 			var newurl = squashtm.app.contextRoot + "/iterations/" + itId + "/test-plan/" + tpid + "/executions/new";
 
 			$.post(newurl, {
 				mode : 'manual'
 			}, 'json').done(function(execId) {
-				var execurl = squashtm.app.contextRoot + "/executions/" + execId + '/runner'; 
+				var execurl = squashtm.app.contextRoot + "/executions/" + execId + '/runner';
 				if (ui === "popup") {
 					execrunner.runInPopup(execurl);
 				} else {
@@ -86,51 +86,51 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 		},
 
 		automatedHandler : function() {
-		
+
 			var row =$("#campaign-search-result-table").squashTable().fnGetData($(this).parent().parent());
-			
-			
-	
+
+
+
 			var	tpid = row['tpid'];
 			var itId = row['iteration-id'];
 
 			var url = squashtm.app.contextRoot + "/automated-suites/new";
-		
-	
+
+
 
 			$.ajax({
 				url : url,
 				dataType:'json',
 				type : 'post',
-				data : {	testPlanItemsIds :[tpid], 
+				data : {	testPlanItemsIds :[tpid],
 					iterationId : itId}
 			}).done(function(suite) {
 
 				squashtm.context.autosuiteOverview.start(suite);
 			});
-	
- 
+
+
 		},
-		
+
 		_tableRowCallback : function(row, data, displayIndex) {
-			 
+
 			// add the execute shortcut menu
 
 			var automated = translator.get("test-case.execution-mode.AUTOMATED");
 			var isTcDel = data['is-tc-deleted'];
-			var isAutomated = data['itpi-isauto']; 
-			
+			var isAutomated = data['itpi-isauto'];
+
 
 			var tpId = data['itpi-id'];
 			var itId = data['iteration-id'];
-			var $td = $(row).find('.search-open-interface2-holder'); 
-			
+			var $td = $(row).find('.search-open-interface2-holder');
+
 			var strmenu = $("#shortcut-exec-menu-template").html().replace(/#placeholder-tpid#/g, tpId);
 			strmenu = strmenu.replace(/#placeholder-itid#/g, itId );
-			
-			$td.empty();  
+
+			$td.empty();
 			$td.append(strmenu);
-			
+
 			// if the test case is deleted : just disable the whole thing
 			// Plot twist  : Launch button has to be greyed
 			if (isTcDel) {
@@ -144,7 +144,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			else if (!isAutomated) {
 				$td.find('.buttonmenu').buttonmenu({
 					anchor : "right"
-				}); 
+				});
 				$td.on('click', '.run-menu-item', this.manualHandler);
 			}
 
@@ -152,10 +152,18 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			else {
 				$td.find('.execute-arrow').click(this.automatedHandler);
 			}
-						
-	
+
+
 				$(row).addClass("nonEditable");
 
+
+			//add the search open tree icon
+			var $cell = $(".search-open-tree-holder", row);
+			$cell.append('<span class="search-open-tree"></span>')
+				.click(function() {
+					$.cookie("jstree_select", "Iteration-"+itId, {path : "/squash/campaign-workspace/"});
+					window.location = squashtm.app.contextRoot + "campaign-workspace/";
+				});
 		},
 
 
