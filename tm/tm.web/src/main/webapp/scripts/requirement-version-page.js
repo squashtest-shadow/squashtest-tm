@@ -219,7 +219,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					},
 					tooltips : [{
 						tdSelector : 'td.verif-tc-description',
-						value : function(row, data){return data["tc-description"]}
+						value : function(row, data){return data["tc-description"];}
 					}]
 				});
 
@@ -282,7 +282,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}],
 					tooltips : [{
 						tdSelector : 'td.linkedReqDescription',
-						value : function(row, data){return data["rv-description"]}
+						value : function(row, data){return data["rv-description"];}
 					}]
 				});
 

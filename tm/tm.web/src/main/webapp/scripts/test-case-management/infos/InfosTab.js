@@ -70,7 +70,7 @@ define([ "jquery", "backbone", "underscore",
 											.squashTable(tablesettings, {
 												tooltips : [{
 													tdSelector: "td.calling-tc-description",
-													value : function (row, data) {return data["tc-description"]}
+													value : function (row, data) {return data["tc-description"];}
 												}]
 											});
 
