@@ -23,12 +23,15 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.optimized.OptimizedService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -55,6 +58,9 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
+
+	@Inject
+	private OptimizedService optimizedService;
 
 	@Override
 	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {
@@ -105,5 +111,27 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId) {
 		return "TestCase-" + elementId;
+	}
+
+	@RequestMapping(path = "/optimized",method = RequestMethod.GET)
+	public String getOptimizedWorkspace(Model model, Locale locale,
+										@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+										@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId){
+
+		//1 get the projects i can read
+			//1.1 get the projects ids without Spring security involved (500 request for that... i don't want that)
+		List<Long> readableProjectIds = optimizedService.findReadableProjectIds();
+		model.addAttribute("projectIds", readableProjectIds);
+
+		//1.2 get the js projects fully hydrated (Infolist, Milestones, Cuf bindings)
+
+
+		//2 get the libraries from projects
+
+
+		//3 get the permissions map for libraries
+
+
+		return "test-case-workspace.html";
 	}
 }
