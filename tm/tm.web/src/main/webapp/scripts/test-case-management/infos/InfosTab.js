@@ -64,7 +64,8 @@ define([ "jquery", "backbone", "underscore",
 
 			// calling test cases table
 			var tablesettings = {
-				'aaData' : this.settings.callingTestCases
+				'aaData' : this.settings.callingTestCases,
+				"aaSorting" : [ [ 3, 'asc' ] ]
 			};
 			this.callingTestCasesTable = this.$el.find("#calling-test-case-table")
 											.squashTable(tablesettings, {
