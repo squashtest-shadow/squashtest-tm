@@ -189,7 +189,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 			if (value.contains("*")) {
 				query = qb.bool().must(
-					qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value.toLowerCase()).createQuery())
+					qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value).createQuery())
 					.createQuery();
 			} else {
 
