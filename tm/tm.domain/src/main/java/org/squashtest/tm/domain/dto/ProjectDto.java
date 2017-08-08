@@ -18,19 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.optimized;
+package org.squashtest.tm.domain.dto;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.dto.JsonProject;
-import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
+public class ProjectDto {
 
-import java.sql.SQLException;
-import java.util.List;
+	private Long id;
+	private String name;
 
-@Transactional(readOnly = true)
-public interface OptimizedService {
-	List<Long> findReadableProjectIds();
-	List<JsonProject> findJsonProjects(List<Long> projectIds) throws SQLException;
+	public Long getId() {
+		return id;
+	}
 
-	List<JsTreeNode> findLibraries(List<Long> readableProjectIds);
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

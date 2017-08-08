@@ -35,6 +35,8 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.dto.*;
+import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
+import org.squashtest.tm.domain.dto.jstree.JsTreeNodeData;
 import org.squashtest.tm.security.UserContextHolder;
 
 import javax.inject.Inject;
@@ -101,47 +103,55 @@ public class OptimizedServiceImpl implements OptimizedService {
 		final Map<Long, CustomFieldModel<?>> cufModelMap = getCufModelMap(cufIds);
 
 		//2.3 get cuf bindings for each project and use cuf model map to populate the bindings.
+		hydrateProjectWithCufBindings(projectIds, projects, cufModelMap);
+
+		return new ArrayList<>(projects.values());
+	}
+
+
+
+	@Override
+	public List<JsTreeNode> findLibraries(List<Long> readableProjectIds) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("projectIds", projectIds);
+		parameters.addValue("projectIds", readableProjectIds);
 
 		NamedParameterJdbcTemplate template =
 			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
 
-		template.query(SqlRequest.FIND_CUF_BINDINGS_BY_PROJECT_IDS, parameters, new ResultSetExtractor<Map<Long,JsonProject>>() {
+		List<JsTreeNode> jsTreeNodes = template.query(SqlRequest.FIND_LIBRARIES_BY_PROJECT_IDS, parameters, new ResultSetExtractor<List<JsTreeNode>>() {
 
 			@Override
-			public Map<Long, JsonProject> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				while(rs.next()){
-					CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
-					Long projectId = rs.getLong("BOUND_PROJECT_ID");
+			public List<JsTreeNode> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<JsTreeNode> rootModel = new ArrayList<>();
+				while (rs.next()) {
+					JsTreeNode jsTreeNode = new JsTreeNode();
+					jsTreeNode.setTitle(rs.getString("NAME"));
+					jsTreeNode.addAttr("resType", "test-case-libraries");
+					jsTreeNode.addAttr("rel", "drive");
+					jsTreeNode.addAttr("name", "TestCaseLibrary");
+					long tclId = rs.getLong("TCL_ID");
+					jsTreeNode.addAttr("name", "TestCaseLibrary-" + tclId);
+					jsTreeNode.addAttr("resId", tclId);
+					jsTreeNode.addAttr("project", rs.getLong("PROJECT_ID"));
+					jsTreeNode.addAttr("wizard", "size = 0");
 
-					customFieldBindingModel.setId(rs.getLong("CFB_ID"));
-					customFieldBindingModel.setProjectId(projectId);
+					//FAKE for test
+					jsTreeNode.addAttr("editable", "true");
+					jsTreeNode.addAttr("deletable", "true");
+					jsTreeNode.addAttr("creatable", "true");
+					jsTreeNode.addAttr("importable", "true");
+					jsTreeNode.addAttr("executable", "true");
+					jsTreeNode.addAttr("manageable", "true");
+					jsTreeNode.addAttr("exportable", "true");
+					jsTreeNode.addAttr("milestone-creatable-deletable", "true");
+					jsTreeNode.addAttr("milestone-editable", "true");
 
-					BindableEntityModel bindableEntityModel = new BindableEntityModel();
-					bindableEntityModel.setEnumName(rs.getString("BOUND_ENTITY"));
-
-					customFieldBindingModel.setBoundEntity(bindableEntityModel);
-					customFieldBindingModel.setCustomField(cufModelMap.get(rs.getLong("CF_ID")));
-
-					String renderingLocation = rs.getString("RENDERING_LOCATION");
-					if(StringUtils.isNotBlank(renderingLocation)){
-						RenderingLocationModel[] renderingLocations = new RenderingLocationModel[1];
-						RenderingLocationModel renderingLocationModel = new RenderingLocationModel();
-						renderingLocationModel.setEnumName(renderingLocation);
-						renderingLocations[0] = renderingLocationModel;
-						customFieldBindingModel.setRenderingLocations(renderingLocations);
-					}
-
-					projects.get(projectId).addCustomFieldModel(customFieldBindingModel);
+					rootModel.add(jsTreeNode);
 				}
-
-				//nothing to return as we just hydrate the projects with their cuf binding models
-				return null;
+				return rootModel;
 			}
 		});
-
-		return new ArrayList<>(projects.values());
+		return jsTreeNodes;
 	}
 
 	private Map<Long, CustomFieldModel<?>> getCufModelMap(List<Long> cufIds) throws SQLException {
@@ -214,6 +224,48 @@ public class OptimizedServiceImpl implements OptimizedService {
 				}
 			}
 
+		});
+	}
+
+	private void hydrateProjectWithCufBindings(List<Long> projectIds, final Map<Long, JsonProject> projects, final Map<Long, CustomFieldModel<?>> cufModelMap) throws SQLException {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("projectIds", projectIds);
+
+		NamedParameterJdbcTemplate template =
+			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+		template.query(SqlRequest.FIND_CUF_BINDINGS_BY_PROJECT_IDS, parameters, new ResultSetExtractor<Map<Long,JsonProject>>() {
+
+			@Override
+			public Map<Long, JsonProject> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				while(rs.next()){
+					CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
+					Long projectId = rs.getLong("BOUND_PROJECT_ID");
+
+					customFieldBindingModel.setId(rs.getLong("CFB_ID"));
+					customFieldBindingModel.setProjectId(projectId);
+
+					BindableEntityModel bindableEntityModel = new BindableEntityModel();
+					bindableEntityModel.setEnumName(rs.getString("BOUND_ENTITY"));
+
+					customFieldBindingModel.setBoundEntity(bindableEntityModel);
+					customFieldBindingModel.setCustomField(cufModelMap.get(rs.getLong("CF_ID")));
+
+					String renderingLocation = rs.getString("RENDERING_LOCATION");
+					if(StringUtils.isNotBlank(renderingLocation)){
+						RenderingLocationModel[] renderingLocations = new RenderingLocationModel[1];
+						RenderingLocationModel renderingLocationModel = new RenderingLocationModel();
+						renderingLocationModel.setEnumName(renderingLocation);
+						renderingLocations[0] = renderingLocationModel;
+						customFieldBindingModel.setRenderingLocations(renderingLocations);
+					}
+
+					projects.get(projectId).addCustomFieldModel(customFieldBindingModel);
+				}
+
+				//nothing to return as we just hydrate the projects with their cuf binding models
+				return null;
+			}
 		});
 	}
 

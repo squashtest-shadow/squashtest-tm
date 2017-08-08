@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -28,6 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.dto.JsonProject;
+import org.squashtest.tm.domain.dto.ProjectDto;
+import org.squashtest.tm.domain.dto.TestCaseLibraryDto;
+import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
@@ -130,10 +133,26 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		model.addAttribute("projects", jsonProjects);
 
 		//2 get the root model nodes ie just test case libraries for the poc
+		List<JsTreeNode> jsTreeNodes = optimizedService.findLibraries(readableProjectIds);
+		model.addAttribute("rootModel", jsTreeNodes);
 
+		List<TestCaseLibraryDto> libraries = new ArrayList<>();
+		for (JsTreeNode jsTreeNode : jsTreeNodes) {
+			Object importable = jsTreeNode.getAttr().get("importable");
+			if (importable != null && importable.equals("true")) {
+				TestCaseLibraryDto libraryDto = new TestCaseLibraryDto();
+				Object resId = jsTreeNode.getAttr().get("resId");
+				libraryDto.setId(Long.parseLong(resId.toString()));
+				ProjectDto projectDto = new ProjectDto();
+				Object project = jsTreeNode.getAttr().get("project");
+				projectDto.setId(Long.parseLong(project.toString()));
+				projectDto.setName(jsTreeNode.getTitle());
+				libraryDto.setProject(projectDto);
+				libraries.add(libraryDto);
+			}
+		}
 
-		//3 get the permissions map for libraries
-
+		model.addAttribute("editableLibraries", libraries);
 
 		return "test-case-workspace.html";
 	}

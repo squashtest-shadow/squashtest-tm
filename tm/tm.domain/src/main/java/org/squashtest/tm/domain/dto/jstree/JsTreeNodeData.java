@@ -18,19 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.optimized;
+package org.squashtest.tm.domain.dto.jstree;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.dto.JsonProject;
-import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.sql.SQLException;
-import java.util.List;
+public class JsTreeNodeData {
 
-@Transactional(readOnly = true)
-public interface OptimizedService {
-	List<Long> findReadableProjectIds();
-	List<JsonProject> findJsonProjects(List<Long> projectIds) throws SQLException;
+		/**
+		 * Title of the node
+		 */
+		private String title = "";
 
-	List<JsTreeNode> findLibraries(List<Long> readableProjectIds);
-}
+		/**
+		 * Attributes of the <code>a</code> node
+		 */
+		private Map<String, String> attr = new HashMap<>();
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public Map<String, String> getAttr() {
+			return attr;
+		}
+
+		public void setAttr(Map<String, String> attr) {
+			this.attr = attr;
+		}
+
+		public void addAttr(String key, String value){
+			this.attr.put(key, value);
+		}
+
+	}

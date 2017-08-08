@@ -25,6 +25,7 @@ public class SqlRequest {
 	//Find all projects ids that a group of party can read. Typically used with a user id and it's teams ids
 	//Parameter : a list of party Id
 	public static final String FIND_READABLE_PROJECT_IDS = "SELECT DISTINCT object.IDENTITY FROM ACL_RESPONSIBILITY_SCOPE_ENTRY entry INNER JOIN ACL_OBJECT_IDENTITY object ON entry.OBJECT_IDENTITY_ID = object.ID AND object.CLASS_ID = 1 AND entry.PARTY_ID IN (?);";
+
 	//user admin should belong to admin group
 	//however it's seemed that we have a bug in core_party_auth as some user are declared admin but are not in admin group Oo
 	public static final String USER_IS_ADMIN_COUNT = "select count(PARTY_ID) from CORE_GROUP_MEMBER member inner join CORE_GROUP_AUTHORITY auth on auth.GROUP_ID = member.GROUP_ID and auth.AUTHORITY = 'ROLE_ADMIN' and PARTY_ID = ?;";
@@ -49,4 +50,8 @@ public class SqlRequest {
 		"ORDER BY CF_ID ASC, opt.POSITION;";
 
 	public static final String FIND_CUF_IDS_BY_PROJECT_IDS = "SELECT DISTINCT cfb.CF_ID FROM CUSTOM_FIELD_BINDING cfb WHERE BOUND_PROJECT_ID IN (:projectIds);";
+
+	public static final String FIND_LIBRARIES_BY_PROJECT_IDS = "SELECT p.PROJECT_ID, p.NAME, tcl.TCL_ID\n" +
+		"FROM TEST_CASE_LIBRARY tcl\n" +
+		"  INNER JOIN PROJECT p ON tcl.TCL_ID = p.TCL_ID AND p.PROJECT_ID IN (:projectIds);";
 }
