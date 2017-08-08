@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.dto.JsonProject;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
@@ -39,6 +40,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import java.sql.SQLException;
 import java.util.*;
 
 @Controller
@@ -116,17 +118,18 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@RequestMapping(path = "/optimized",method = RequestMethod.GET)
 	public String getOptimizedWorkspace(Model model, Locale locale,
 										@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-										@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId){
+										@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) throws SQLException {
 
 		//1 get the projects i can read
-			//1.1 get the projects ids without Spring security involved (500 request for that... i don't want that)
+		//1.1 get the projects ids without Spring security involved (500 request for that... i don't want that)
 		List<Long> readableProjectIds = optimizedService.findReadableProjectIds();
 		model.addAttribute("projectIds", readableProjectIds);
 
 		//1.2 get the js projects fully hydrated (Infolist, Milestones, Cuf bindings)
+		List<JsonProject> jsonProjects = optimizedService.findJsonProjects(readableProjectIds);
+		model.addAttribute("projects", jsonProjects);
 
-
-		//2 get the libraries from projects
+		//2 get the root model nodes ie just test case libraries for the poc
 
 
 		//3 get the permissions map for libraries

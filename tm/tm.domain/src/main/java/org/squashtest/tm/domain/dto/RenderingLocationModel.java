@@ -18,17 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.optimized;
+package org.squashtest.tm.domain.dto;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.dto.JsonProject;
+public class RenderingLocationModel {
 
-import java.sql.SQLException;
-import java.util.List;
+	private String enumName;
 
-@Transactional(readOnly = true)
-public interface OptimizedService {
-	List<Long> findReadableProjectIds();
-	List<JsonProject> findJsonProjects(List<Long> projectIds) throws SQLException;
+	private String friendlyName;
+
+	public String getEnumName() {
+		return enumName;
+	}
+
+	public void setEnumName(String enumName) {
+		this.enumName = enumName;
+	}
+
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+
+
 
 }
