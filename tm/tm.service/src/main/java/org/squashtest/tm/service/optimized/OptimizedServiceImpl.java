@@ -44,8 +44,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.squashtest.tm.service.optimized.SqlCustomFieldModelFactory.*;
-import static org.squashtest.tm.service.optimized.SqlRequest.FIND_CUF_BY_IDS;
-import static org.squashtest.tm.service.optimized.SqlRequest.FIND_PERMISSIONS_BY_CLASS_AND_PARTY;
+import static org.squashtest.tm.service.optimized.SqlRequest.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -210,11 +209,15 @@ public class OptimizedServiceImpl implements OptimizedService {
 	}
 
 	private Map<Long, JsTreeNode> getRootModel(List<Long> readableProjectIds) throws SQLException {
-		MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("projectIds", readableProjectIds);
 
-		NamedParameterJdbcTemplate template =
-			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+		//1 load project filter
+		List<Long> filteredProjectIds = getFilteredProjectIds(readableProjectIds);
+
+		//2 load libraries in dto
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("projectIds", filteredProjectIds);
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
 		return template.query(SqlRequest.FIND_LIBRARIES_BY_PROJECT_IDS, parameters, new ResultSetExtractor<Map<Long,JsTreeNode>>() {
 
                 @Override
@@ -248,6 +251,38 @@ public class OptimizedServiceImpl implements OptimizedService {
                     return rootModel;
                 }
             });
+	}
+
+	private List<Long> getFilteredProjectIds(List<Long> readableProjectIds) {
+		String username = UserContextHolder.getUsername();
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("userLogin", username);
+
+		NamedParameterJdbcTemplate template =
+			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+		final Boolean[] filterActivated = {false};
+
+		List<Long> filteredProjectIds = template.query(FIND_FILTERED_PROJECTS, parameters, new ResultSetExtractor<List<Long>>() {
+			@Override
+			public List<Long> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<Long> filteredProjectIds = new ArrayList<>();
+				if (rs.first()) {
+					filterActivated[0] = rs.getBoolean("ACTIVATED");
+					filteredProjectIds.add(rs.getLong("PROJECT_ID"));
+				}
+				while (rs.next()) {
+					filteredProjectIds.add(rs.getLong("PROJECT_ID"));
+				}
+				return filteredProjectIds;
+			}
+		});
+
+		if(filterActivated[0]){
+			readableProjectIds.retainAll(filteredProjectIds);
+		}
+
+		return readableProjectIds;
 	}
 
 	private Map<Long, CustomFieldModel<?>> getCufModelMap(List<Long> cufIds) throws SQLException {
