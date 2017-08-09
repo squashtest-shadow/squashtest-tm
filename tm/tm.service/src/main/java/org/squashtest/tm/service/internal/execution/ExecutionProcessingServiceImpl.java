@@ -185,7 +185,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	 * @param executionStep
 	 *            the step to update
 	 */
-	private void updateStepExecutionData(ExecutionStep executionStep) {
+	public void updateStepExecutionData(ExecutionStep executionStep) {
 		// check the execution step status
 		if (executionStep.getExecutionStatus().compareTo(ExecutionStatus.READY) == 0) {
 			// if the item test plan status is READY, we reset the data

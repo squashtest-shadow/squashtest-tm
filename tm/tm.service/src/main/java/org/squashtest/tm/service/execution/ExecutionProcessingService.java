@@ -38,16 +38,16 @@ public interface ExecutionProcessingService {
 	ExecutionStep findExecutionStep(Long executionStepId);
 
 	/**
-	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status 
-	 * READY. 
-	 * 
+	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status
+	 * READY.
+	 *
 	 * @param executionId
 	 * @return
 	 */
 	boolean wasNeverRun(Long executionId);
-	
+
 	/**
-	 * 
+	 *
 	 * @param executionId
 	 * @return the first occurence of a running or ready ExecutionStep
 	 */
@@ -59,7 +59,7 @@ public interface ExecutionProcessingService {
 	/**
 	 * Returns, for a given execution and for a given step index, the corresponding ExecutionStep Will create the next
 	 * step if the index corresponds to the one immediately following the last step, similarly to "nextExecutionStep"
-	 * 
+	 *
 	 * @param executionId
 	 * @param executionStepRank
 	 * @return
@@ -73,7 +73,7 @@ public interface ExecutionProcessingService {
 	 * * execution status update<br>
 	 * * item test plan status update<br>
 	 * * last execution date and user update for step, execution and item test plan<br>
-	 * 
+	 *
 	 * @param executionStepId
 	 *            the step id
 	 * @param status
@@ -92,22 +92,22 @@ public interface ExecutionProcessingService {
 	int findExecutionStepRank(Long executionStepId);
 
 	int findTotalNumberSteps(Long executionId);
-	
-	
+
+	void updateStepExecutionData(ExecutionStep executionStep);
 	/***
 	 * Asks an execution to update it's metadata (lastExecutionOn, lastExecutedBy)
-	 * according to regular execution business rules. 
-	 * 
+	 * according to regular execution business rules.
+	 *
 	 * @param execution
 	 *            the execution to update
 	 */
 	void updateExecutionMetadata(Execution execution);
-	
+
 	/***
 	 * Asks an execution to update it's metadata (lastExecutionOn, lastExecutedBy)
-	 * according to automated execution business rules. The said execution is the 
+	 * according to automated execution business rules. The said execution is the
 	 * one referenced by the given extender.
-	 * 
+	 *
 	 * @param execution
 	 *            the execution to update
 	 */

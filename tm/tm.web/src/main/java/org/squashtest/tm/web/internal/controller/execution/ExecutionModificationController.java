@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -64,6 +63,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
@@ -92,6 +92,9 @@ public class ExecutionModificationController {
 
 	@Inject
 	private ExecutionModificationService executionModService;
+
+	@Inject
+	private ExecutionProcessingService executionProcService;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -220,6 +223,19 @@ public class ExecutionModificationController {
 
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/steps/{stepIds}", method = RequestMethod.POST, params = {"status"})
+	public JsonExecutionInfo editStatusOfExecutionStep(@PathVariable long executionId, @PathVariable("stepIds") List<Long> stepIds,
+													   @RequestParam("status") String status) {
+		ExecutionStatus executionStatus = ExecutionStatus.valueOf(status);
+		for (Long stepId : stepIds) {
+			executionProcService.changeExecutionStepStatus(stepId, executionStatus);
+			executionProcService.updateStepExecutionData(executionProcService.findExecutionStep(stepId));
+		}
+
+		return createJsonExecutionStep(executionProcService.findExecutionStep(stepIds.get(0)));
+
+	}
 
 	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
@@ -240,9 +256,9 @@ public class ExecutionModificationController {
 			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));// 1
 			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));// 2
 			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));// 3
-			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));// 4
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));// 5
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));// 6
+			baseColumns.add(new AoColumnDef(true, false, "status-combo", null, "status"));// 4
+			baseColumns.add(new AoColumnDef(true, false, "exec-on", null, "last-exec-on"));// 5
+			baseColumns.add(new AoColumnDef(true, false, "assignee-combo", null, "last-exec-by"));// 6
 			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));// 7
 			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));// 8
 			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));// 9
@@ -344,8 +360,7 @@ public class ExecutionModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE)
-	public
-	Object removeExecution(@PathVariable("executionId") long executionId) {
+	public Object removeExecution(@PathVariable("executionId") long executionId) {
 		Execution execution = executionModService.findById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();
@@ -464,6 +479,10 @@ public class ExecutionModificationController {
 	 */
 	private String internationalize(Level level, Locale locale) {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
+	}
+
+	private JsonExecutionInfo createJsonExecutionStep(ExecutionStep item) {
+		return new JsonExecutionInfo(item.getLastExecutedOn(), item.getLastExecutedBy(), item.getExecutionStatus(), null, null);
 	}
 
 }
