@@ -51,6 +51,10 @@ public class SqlRequest {
 
 	public static final String FIND_CUF_IDS_BY_PROJECT_IDS = "SELECT DISTINCT cfb.CF_ID FROM CUSTOM_FIELD_BINDING cfb WHERE BOUND_PROJECT_ID IN (:projectIds);";
 
+	public static final String FIND_PROJECT_DTO_BY_PROJECT_IDS = "SELECT p.PROJECT_ID, p.NAME, p.LABEL\n" +
+		"FROM PROJECT p\n" +
+		"WHERE p.PROJECT_ID IN (:projectIds);";
+
 	public static final String FIND_FILTERED_PROJECTS = "SELECT filter.ACTIVATED, entry.PROJECT_ID FROM PROJECT_FILTER filter\n" +
 		"  LEFT JOIN PROJECT_FILTER_ENTRY entry ON filter.PROJECT_FILTER_ID = entry.FILTER_ID\n" +
 		"WHERE filter.USER_LOGIN = :userLogin;";

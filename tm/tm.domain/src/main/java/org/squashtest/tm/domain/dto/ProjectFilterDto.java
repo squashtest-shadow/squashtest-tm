@@ -18,27 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.optimized;
+package org.squashtest.tm.domain.dto;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.dto.JsonProject;
-import org.squashtest.tm.domain.dto.ProjectDto;
-import org.squashtest.tm.domain.dto.ProjectFilterDto;
-import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
-
-import java.sql.SQLException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
-@Transactional(readOnly = true)
-public interface OptimizedService {
-	List<Long> findReadableProjectIds();
-	List<JsonProject> findJsonProjects(List<Long> projectIds) throws SQLException;
+public class ProjectFilterDto {
+	private boolean activated;
+	private List<Long> projectIds = new ArrayList<>();
 
-	Collection<JsTreeNode> findLibraries(List<Long> readableProjectIds) throws SQLException;
+	public boolean isActivated() {
+		return activated;
+	}
 
-	ProjectFilterDto findProjectFilterDto();
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
 
-	List<ProjectDto> getAllProjects();
+	public void addProjectId(long projectId) {
+		projectIds.add(projectId);
 
+	}
+
+	public List<Long> getProjectIds() {
+		return projectIds;
+	}
+
+	public void setProjectIds(List<Long> projectIds) {
+		this.projectIds = projectIds;
+	}
 }

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.squashtest.tm.domain.dto.ProjectDto;
+import org.squashtest.tm.domain.dto.ProjectFilterDto;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
@@ -72,6 +74,27 @@ public final class FilterModel {
 		for (Project project : projects) {
 			addProject(project.getId(), project.getName(), project.getLabel());
 		}
+	}
+
+	public FilterModel(ProjectFilterDto filter, List<ProjectDto> projects) {
+		setEnabled(filter.isActivated());
+
+		Object[][] pData = new Object[projects.size()][4];
+		int i = 0;
+
+		for (ProjectDto project : projects){
+			pData[i] = new Object[]{
+				project.getId(),
+				project.getName(),
+				filter.getProjectIds().contains(project.getId()),
+				project.getLabel()
+			};
+
+			i++;
+
+		}
+		//remember that projectData.toArray() actually returns an Object[][]
+		setProjectData(pData);
 	}
 
 	public Object[] getProjectData() {

@@ -133,6 +133,38 @@ public class OptimizedServiceImpl implements OptimizedService {
 		return jsTreeNodes.values();
 	}
 
+	@Override
+	public ProjectFilterDto findProjectFilterDto() {
+		return getProjectFilterDto();
+	}
+
+	@Override
+	public List<ProjectDto> getAllProjects() {
+		List<Long> readableProjectIds = findReadableProjectIds();
+
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("projectIds", readableProjectIds);
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+
+		return template.query(SqlRequest.FIND_PROJECT_DTO_BY_PROJECT_IDS, parameters, new ResultSetExtractor<List<ProjectDto>>() {
+
+			@Override
+			public List<ProjectDto> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<ProjectDto> projectDtos = new ArrayList<>();
+				while(rs.next()){
+					ProjectDto projectDto = new ProjectDto();
+					projectDto.setName(rs.getString("NAME"));
+					projectDto.setLabel(rs.getString("LABEL"));
+					projectDto.setId(rs.getLong("PROJECT_ID"));
+					projectDtos.add(projectDto);
+				}
+				return projectDtos;
+			}
+		});
+
+	}
+
 	//well it's trash, it's a POC ^^
 	private void convertPermissions(Map<Long, JsTreeNode> jsTreeNodes, Map<Long, Set<Integer>> permissionsMap) {
 		for (Long libraryId : jsTreeNodes.keySet()) {
@@ -283,6 +315,32 @@ public class OptimizedServiceImpl implements OptimizedService {
 		}
 
 		return readableProjectIds;
+	}
+
+	private ProjectFilterDto getProjectFilterDto() {
+		String username = UserContextHolder.getUsername();
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("userLogin", username);
+
+		NamedParameterJdbcTemplate template =
+			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+		final Boolean[] filterActivated = {false};
+
+		return template.query(FIND_FILTERED_PROJECTS, parameters, new ResultSetExtractor<ProjectFilterDto>() {
+			@Override
+			public ProjectFilterDto extractData(ResultSet rs) throws SQLException, DataAccessException {
+				ProjectFilterDto projectFilterDto = new ProjectFilterDto();
+				if (rs.first()) {
+					projectFilterDto.setActivated(rs.getBoolean("ACTIVATED"));
+					projectFilterDto.addProjectId(rs.getLong("PROJECT_ID"));
+				}
+				while (rs.next()) {
+					projectFilterDto.addProjectId(rs.getLong("PROJECT_ID"));
+				}
+				return projectFilterDto;
+			}
+		});
 	}
 
 	private Map<Long, CustomFieldModel<?>> getCufModelMap(List<Long> cufIds) throws SQLException {
