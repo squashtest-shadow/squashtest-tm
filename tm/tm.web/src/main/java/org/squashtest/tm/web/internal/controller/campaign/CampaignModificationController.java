@@ -59,6 +59,7 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignStatus;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -71,6 +72,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignStatusJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -79,6 +81,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHe
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -121,6 +124,11 @@ public class CampaignModificationController {
 	@Inject
 	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
 
+	@Inject
+	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
+
+	@Inject
+	private Provider<CampaignStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 
 	@Inject
 	private CampaignTestPlanManagerService testPlanManager;
@@ -179,6 +187,8 @@ public class CampaignModificationController {
 		model.addAttribute("assignableUsers", getAssignableUsers(campaignId));
 		model.addAttribute("weights", getWeights());
 		model.addAttribute("modes", getModes());
+		model.addAttribute("campaignStatusComboJson", buildStatusComboData());
+		model.addAttribute("campaignStatusLabel", formatStatus(campaign.getStatus()));
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
@@ -230,6 +240,18 @@ public class CampaignModificationController {
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
+	private String formatStatus(CampaignStatus status) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
+	}
+
+	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	private String buildStatusComboData() {
+		Locale locale = LocaleContextHolder.getLocale();
+		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-description", VALUE})
 	public
@@ -249,6 +271,14 @@ public class CampaignModificationController {
 		campaignModService.changeReference(campaignId, newReference);
 		LOGGER.trace("Campaign " + campaignId + ": updated reference to " + newReference);
 		return HtmlUtils.htmlEscape(newReference);
+	}
+
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-status", VALUE })
+	public String changeStatus(@PathVariable long campaignId, @RequestParam(VALUE) CampaignStatus status) {
+		campaignModService.changeStatus(campaignId, status);
+		return formatStatus(status);
 	}
 
 

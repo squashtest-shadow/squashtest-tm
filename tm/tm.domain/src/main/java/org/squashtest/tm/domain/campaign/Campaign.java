@@ -28,20 +28,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -51,6 +47,7 @@ import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 
@@ -64,7 +61,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Embedded
 	@Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
-	
+
 	@Embedded
 	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
@@ -88,7 +85,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Size(min = 0, max = MAX_REF_SIZE)
 	private String reference = "";
 
-
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "CAMPAIGN_STATUS")
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
+	private CampaignStatus status = CampaignStatus.WORK_IN_PROGRESS;
 
 	public Campaign() {
 		super();
@@ -149,6 +151,10 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	public boolean isActualEndAuto() {
 		return actualPeriod.isActualEndAuto();
 	}
+
+	public CampaignStatus getStatus() { return status;	}
+
+	public void setStatus(@NotNull CampaignStatus status) { this.status = status; }
 
 	public void setActualStartAuto(boolean actualStartAuto) {
 		actualPeriod.setActualStartAuto(actualStartAuto);

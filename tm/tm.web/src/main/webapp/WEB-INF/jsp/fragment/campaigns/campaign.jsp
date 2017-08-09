@@ -223,6 +223,14 @@
                 <label for="campaign-description" class="display-table-cell"><f:message key="label.Description" /></label>
 		        <div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
               </div>
+
+            <div class="display-table-row">
+              <label for="campaign-status" class="display-table-cell"><f:message key="campaign.status.combo.label" /></label>
+              <div class="display-table-cell">
+                <span id="campaign-status-icon" style="vertical-align:middle" class="campaign-status-${campaign.status}"> &nbsp &nbsp</span>
+                <span id="campaign-status">${ campaignStatusLabel }</span>
+              </div>
+            </div>
 	    </jsp:attribute>
       </comp:toggle-panel>
 
@@ -382,7 +390,8 @@ squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
 					initialActualStartDate: "${campaign.actualStartDate.time}",
 					initialActualEndDate: "${campaign.actualEndDate.time}",
 					initialActualStartAuto: ${campaign.actualStartAuto},
-					initialActualEndAuto: ${campaign.actualEndAuto}
+					initialActualEndAuto: ${campaign.actualEndAuto},
+          campaignStatusComboJson : ${campaignStatusComboJson}
 				},
 				features : {
 					editable : ${writable},

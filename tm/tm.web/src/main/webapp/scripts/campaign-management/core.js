@@ -37,19 +37,20 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
         "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
-        "./test-plan-panel", "custom-field-values", "squash.configmanager","favorite-dashboard", "jqueryui", "jquery.squash.formdialog"],
+        "./test-plan-panel", "custom-field-values", "squash.configmanager","favorite-dashboard", "underscore",  "jqueryui", "jquery.squash.formdialog"
+				],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView){
+        dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView, _){
 
 
 	function init(conf){
 
 		initTranslator();
-		
+
 		basicwidg.init();
 
 		initTabs(conf);
-		
+
 		initDescription(conf);
 
 		initCufs(conf);
@@ -61,17 +62,19 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		initPlanning(conf);
 
 		initDatePickers(conf);
-		
+
 		initDatePickersAuto(conf);
-		
+
 		initDashboard(conf);
 
 		initTestplan(conf);
 
 		initBugtracker(conf);
 
+		initStatus(conf);
+
 	}
-	
+
 	// Load all the needed message properties to the cache
 	function initTranslator() {
 		var messages = {
@@ -98,11 +101,32 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 				maxLength : 50,
 				callback : function(value, settings){
 					var escaped = $("<span/>").html(value).text();
-					eventBus.trigger('node.update-reference', {identity : conf.data.identity, newRef : escaped});					
+					eventBus.trigger('node.update-reference', {identity : conf.data.identity, newRef : escaped});
 				}
 			});
-			
+
 			refEditable.editable(url, cfg);
+		}
+	}
+
+	function initStatus(conf) {
+		if (conf.features.writable) {
+			var statusEditable = $("#campaign-status").addClass('editable');
+			var url = conf.data.campaignUrl;
+			var cfg = confman.getJeditableSelect();
+			cfg = $.extend(cfg, {
+				data: conf.data.campaignStatusComboJson,
+				callback: function (value, settings) {
+					var keyOfValue = _.findKey(settings.data, function (dataValue) {
+						return value === dataValue;
+					});
+					var iconStatus = $("#campaign-status-icon");
+					iconStatus.attr("class", ""); //reset
+					iconStatus.addClass("sq-icon campaign-status-" + keyOfValue);
+				}
+
+			});
+			statusEditable.editable(url, cfg);
 		}
 	}
 
@@ -152,13 +176,13 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			planning.init(conf);
 		}
 	}
-	
+
 	function initDatePickers(conf) {
 		if(conf.features.writable) {
 			datePickers.init(conf);
 		}
 	}
-	
+
 	function initDatePickersAuto(conf) {
 		if(conf.features.writable) {
 			datePickersAuto.init(conf);
