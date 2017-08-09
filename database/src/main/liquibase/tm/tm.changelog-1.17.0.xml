@@ -26,6 +26,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 
+
 	<changeSet id="tm-1.17.0" author="jthebault">
 		<comment>Update TM database version number</comment>
 		<update tableName="CORE_CONFIG">
@@ -33,4 +34,13 @@
 			<where>STR_KEY = 'squashtest.tm.database.version'</where>
 		</update>
 	</changeSet>
+
+  <changeSet id="tm-1.17.0-feature-6921" author="zyang">
+    <comment>Adds a status field to campaign</comment>
+    <addColumn tableName="CAMPAIGN">
+      <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
+      <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
