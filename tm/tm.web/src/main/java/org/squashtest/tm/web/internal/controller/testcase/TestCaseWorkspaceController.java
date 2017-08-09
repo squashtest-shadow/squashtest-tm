@@ -161,6 +161,10 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 		model.addAttribute("editableLibraries", libraries);
 
+		//defaultInfolist
+		model.addAttribute("userPrefs", getWorkspaceUserPref());
+		model.addAttribute("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+
 		//enums, nothing to optimize
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
 		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
