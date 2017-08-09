@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
+import org.squashtest.tm.service.optimized.OptimizedService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
@@ -42,6 +43,7 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -56,12 +58,9 @@ public class WorkspaceHelper extends SimpleTagSupport {
 	public static Collection<BugTracker> getVisibleBugtrackers(ServletContext context) {
 
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
-
-		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
 		BugTrackerFinderService bugtrackerService = wac.getBean(BugTrackerFinderService.class);
-
-		List<Project> projects = projectFinder.findAllReadable();
-		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
+		OptimizedService optimizedService = wac.getBean(OptimizedService.class);
+		List<Long> projectsIds = optimizedService.findReadableProjectIds();
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 	}
 
@@ -103,8 +102,9 @@ public class WorkspaceHelper extends SimpleTagSupport {
 		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
 
 		ProjectFilter filter = service.findProjectFilterByUserLogin();
-		List<Project> allProjects = service.getAllProjects();
+		//List<Project> allProjects = service.getAllProjects();
 
+		List<Project> allProjects = new ArrayList<>();
 		return new FilterModel(filter, allProjects);
 	}
 

@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.optimized.OptimizedService;
 import org.squashtest.tm.service.project.ProjectFinder;
 
 import javax.inject.Inject;
@@ -75,7 +76,10 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	@Inject
 	private BugTrackerContextHolder contextHolder;
 
-@Inject
+	@Inject
+	private OptimizedService optimizedService;
+
+	@Inject
 	private TaskExecutor taskExecutor;
 
 	private void onLoginSuccess(String username, String password, HttpSession session) {
@@ -169,8 +173,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 
 		private List<BugTracker> findBugTrackers() {
-			List<Project> readableProjects = projectFinder.findAllReadable();
-			List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
+			List<Long> projectIds = optimizedService.findReadableProjectIds();
 			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		}
 

@@ -33,23 +33,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.dto.*;
 import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
-import org.squashtest.tm.domain.dto.jstree.JsTreeNodeData;
 import org.squashtest.tm.security.UserContextHolder;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.squashtest.tm.service.optimized.SqlCustomFieldModelFactory.*;
 import static org.squashtest.tm.service.optimized.SqlRequest.FIND_CUF_BY_IDS;
+import static org.squashtest.tm.service.optimized.SqlRequest.FIND_PERMISSIONS_BY_CLASS_AND_PARTY;
 
 @Service
 @Transactional(readOnly = true)
@@ -75,13 +71,19 @@ public class OptimizedServiceImpl implements OptimizedService {
 		if (isAdmin) {
 			return jdbcTemplate.queryForList("select PROJECT_ID from PROJECT where PROJECT_TYPE = 'P';", Long.class);
 		} else {
-			//find all the team of the user and it's party id it self.
-			List<Long> partyIds = jdbcTemplate.queryForList("select TEAM_ID from CORE_TEAM_MEMBER where USER_ID = ?;", Long.class, userId);
-			//add the user party id itself;
-			partyIds.add(userId);
+			List<Long> partyIds = getPartyIds(userId);
+
 			return jdbcTemplate.queryForList(SqlRequest.FIND_READABLE_PROJECT_IDS, Long.class, StringUtils.join(partyIds, ","));
 		}
 
+	}
+
+	private List<Long> getPartyIds(Long userId) {
+		//find all the team of the user and it's party id it self.
+		List<Long> partyIds = jdbcTemplate.queryForList("select TEAM_ID from CORE_TEAM_MEMBER where USER_ID = ?;", Long.class, userId);
+		//add the user party id itself;
+		partyIds.add(userId);
+		return partyIds;
 	}
 
 	@Override
@@ -111,47 +113,141 @@ public class OptimizedServiceImpl implements OptimizedService {
 
 
 	@Override
-	public List<JsTreeNode> findLibraries(List<Long> readableProjectIds) {
+	public Collection<JsTreeNode> findLibraries(List<Long> readableProjectIds) throws SQLException {
+		Map<Long, JsTreeNode> jsTreeNodes = getRootModel(readableProjectIds);
+		String username = UserContextHolder.getUsername();
+		Long userId = findUserId(username);
+		boolean isAdmin = userIsAdmin(userId);
+
+		if(isAdmin){
+			writeAdminPermissions(jsTreeNodes);
+		}
+		else {
+
+			List<Long> partyIds = getPartyIds(userId);
+			//1 Get all permissions in a convenient map
+			Map<Long, Set<Integer>> permissionsMap = getPermissionsMap(partyIds);
+			//2 now that we have all permissions in the map, we put it in the model, with the shape required by model
+			convertPermissions(jsTreeNodes, permissionsMap);
+		}
+
+		return jsTreeNodes.values();
+	}
+
+	//well it's trash, it's a POC ^^
+	private void convertPermissions(Map<Long, JsTreeNode> jsTreeNodes, Map<Long, Set<Integer>> permissionsMap) {
+		for (Long libraryId : jsTreeNodes.keySet()) {
+            JsTreeNode jsTreeNode = jsTreeNodes.get(libraryId);
+            Set<Integer> masks = permissionsMap.get(libraryId);
+            //See BasePermission and CustomPermission to have info about permissions mask
+            if(masks.contains(2)){
+                jsTreeNode.addAttr("editable", "true");
+                //no milestones for POC
+                jsTreeNode.addAttr("milestone-editable", "true");
+            }
+            if(masks.contains(4)){
+                jsTreeNode.addAttr("creatable", "true");
+            }
+            if(masks.contains(8)){
+                jsTreeNode.addAttr("deletable", "true");
+                //no milestones for POC
+                jsTreeNode.addAttr("milestone-creatable-deletable", "true");
+            }
+            if(masks.contains(32)){
+                jsTreeNode.addAttr("manageable", "true");
+            }
+            if(masks.contains(64)){
+                jsTreeNode.addAttr("exportable", "true");
+            }
+            if(masks.contains(128)){
+                jsTreeNode.addAttr("executable", "true");
+            }
+            if(masks.contains(512)){
+                jsTreeNode.addAttr("importable", "true");
+            }
+        }
+	}
+
+	private Map<Long, Set<Integer>> getPermissionsMap(List<Long> partyIds) throws SQLException {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("partyIds", partyIds);
+		parameters.addValue("className", "org.squashtest.tm.domain.testcase.TestCaseLibrary");
+
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+		return template.query(FIND_PERMISSIONS_BY_CLASS_AND_PARTY, parameters, new ResultSetExtractor<Map<Long, Set<Integer>>>() {
+            @Override
+            public Map<Long, Set<Integer>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                Map<Long, Set<Integer>> permissions = new HashMap<>();
+                while (rs.next()) {
+                    long identity = rs.getLong("IDENTITY");
+                    int permissionMask = rs.getInt("PERMISSION_MASK");
+                    if (permissions.containsKey(identity)) {
+                        permissions.get(identity).add(permissionMask);
+                    } else {
+                        HashSet<Integer> permissionsMaks = new HashSet<>();
+                        permissionsMaks.add(permissionMask);
+                        permissions.put(identity, permissionsMaks);
+                    }
+                }
+                return permissions;
+            }
+        });
+	}
+
+	private void writeAdminPermissions(Map<Long, JsTreeNode> jsTreeNodes) {
+		for (JsTreeNode jsTreeNode : jsTreeNodes.values()) {
+            jsTreeNode.addAttr("editable", "true");
+            jsTreeNode.addAttr("deletable", "true");
+            jsTreeNode.addAttr("creatable", "true");
+            jsTreeNode.addAttr("importable", "true");
+            jsTreeNode.addAttr("executable", "true");
+            jsTreeNode.addAttr("manageable", "true");
+            jsTreeNode.addAttr("exportable", "true");
+            jsTreeNode.addAttr("milestone-creatable-deletable", "true");
+            jsTreeNode.addAttr("milestone-editable", "true");
+        }
+	}
+
+	private Map<Long, JsTreeNode> getRootModel(List<Long> readableProjectIds) throws SQLException {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectIds", readableProjectIds);
 
 		NamedParameterJdbcTemplate template =
 			new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+		return template.query(SqlRequest.FIND_LIBRARIES_BY_PROJECT_IDS, parameters, new ResultSetExtractor<Map<Long,JsTreeNode>>() {
 
-		List<JsTreeNode> jsTreeNodes = template.query(SqlRequest.FIND_LIBRARIES_BY_PROJECT_IDS, parameters, new ResultSetExtractor<List<JsTreeNode>>() {
+                @Override
+                public Map<Long,JsTreeNode> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                    Map<Long,JsTreeNode> rootModel = new HashMap<>();
+                    while (rs.next()) {
+                        JsTreeNode jsTreeNode = new JsTreeNode();
+                        jsTreeNode.setTitle(rs.getString("NAME"));
+                        jsTreeNode.addAttr("resType", "test-case-libraries");
+                        jsTreeNode.addAttr("rel", "drive");
+                        jsTreeNode.addAttr("name", "TestCaseLibrary");
+                        long tclId = rs.getLong("TCL_ID");
+                        jsTreeNode.addAttr("name", "TestCaseLibrary-" + tclId);
+                        jsTreeNode.addAttr("resId", tclId);
+                        jsTreeNode.addAttr("project", rs.getLong("PROJECT_ID"));
+                        jsTreeNode.addAttr("wizard", "size = 0");
 
-			@Override
-			public List<JsTreeNode> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<JsTreeNode> rootModel = new ArrayList<>();
-				while (rs.next()) {
-					JsTreeNode jsTreeNode = new JsTreeNode();
-					jsTreeNode.setTitle(rs.getString("NAME"));
-					jsTreeNode.addAttr("resType", "test-case-libraries");
-					jsTreeNode.addAttr("rel", "drive");
-					jsTreeNode.addAttr("name", "TestCaseLibrary");
-					long tclId = rs.getLong("TCL_ID");
-					jsTreeNode.addAttr("name", "TestCaseLibrary-" + tclId);
-					jsTreeNode.addAttr("resId", tclId);
-					jsTreeNode.addAttr("project", rs.getLong("PROJECT_ID"));
-					jsTreeNode.addAttr("wizard", "size = 0");
 
-					//FAKE for test
-					jsTreeNode.addAttr("editable", "true");
-					jsTreeNode.addAttr("deletable", "true");
-					jsTreeNode.addAttr("creatable", "true");
-					jsTreeNode.addAttr("importable", "true");
-					jsTreeNode.addAttr("executable", "true");
-					jsTreeNode.addAttr("manageable", "true");
-					jsTreeNode.addAttr("exportable", "true");
-					jsTreeNode.addAttr("milestone-creatable-deletable", "true");
-					jsTreeNode.addAttr("milestone-editable", "true");
+                        jsTreeNode.addAttr("editable", "false");
+                        jsTreeNode.addAttr("deletable", "false");
+                        jsTreeNode.addAttr("creatable", "false");
+                        jsTreeNode.addAttr("importable", "false");
+                        jsTreeNode.addAttr("executable", "false");
+                        jsTreeNode.addAttr("manageable", "false");
+                        jsTreeNode.addAttr("exportable", "false");
+                        jsTreeNode.addAttr("milestone-creatable-deletable", "false");
+                        jsTreeNode.addAttr("milestone-editable", "false");
 
-					rootModel.add(jsTreeNode);
-				}
-				return rootModel;
-			}
-		});
-		return jsTreeNodes;
+                        rootModel.put(tclId,jsTreeNode);
+                    }
+                    return rootModel;
+                }
+            });
 	}
 
 	private Map<Long, CustomFieldModel<?>> getCufModelMap(List<Long> cufIds) throws SQLException {

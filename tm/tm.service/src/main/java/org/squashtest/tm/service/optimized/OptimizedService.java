@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.dto.JsonProject;
 import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -32,5 +33,5 @@ public interface OptimizedService {
 	List<Long> findReadableProjectIds();
 	List<JsonProject> findJsonProjects(List<Long> projectIds) throws SQLException;
 
-	List<JsTreeNode> findLibraries(List<Long> readableProjectIds);
+	Collection<JsTreeNode> findLibraries(List<Long> readableProjectIds) throws SQLException;
 }

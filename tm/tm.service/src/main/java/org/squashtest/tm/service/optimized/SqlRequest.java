@@ -54,4 +54,12 @@ public class SqlRequest {
 	public static final String FIND_LIBRARIES_BY_PROJECT_IDS = "SELECT p.PROJECT_ID, p.NAME, tcl.TCL_ID\n" +
 		"FROM TEST_CASE_LIBRARY tcl\n" +
 		"  INNER JOIN PROJECT p ON tcl.TCL_ID = p.TCL_ID AND p.PROJECT_ID IN (:projectIds);";
+
+	public static final String FIND_PERMISSIONS_BY_CLASS_AND_PARTY = "SELECT DISTINCT obj.IDENTITY, perm.PERMISSION_MASK\n" +
+		"FROM ACL_RESPONSIBILITY_SCOPE_ENTRY arse\n" +
+		"  INNER JOIN ACL_OBJECT_IDENTITY obj ON arse.OBJECT_IDENTITY_ID = obj.ID\n" +
+		"  INNER JOIN ACL_CLASS class ON obj.CLASS_ID = class.ID AND class.CLASSNAME = :className\n" +
+		"  INNER JOIN ACL_GROUP grp ON arse.ACL_GROUP_ID = grp.ID\n" +
+		"  INNER JOIN ACL_GROUP_PERMISSION perm ON grp.ID = perm.ACL_GROUP_ID\n" +
+		"WHERE PARTY_ID IN (:partyIds);";
 }

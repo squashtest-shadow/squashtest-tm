@@ -30,9 +30,14 @@ import org.squashtest.tm.domain.dto.JsonProject;
 import org.squashtest.tm.domain.dto.ProjectDto;
 import org.squashtest.tm.domain.dto.TestCaseLibraryDto;
 import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.optimized.OptimizedService;
@@ -133,9 +138,11 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		model.addAttribute("projects", jsonProjects);
 
 		//2 get the root model nodes ie just test case libraries for the poc
-		List<JsTreeNode> jsTreeNodes = optimizedService.findLibraries(readableProjectIds);
+		Collection<JsTreeNode> jsTreeNodes = optimizedService.findLibraries(readableProjectIds);
 		model.addAttribute("rootModel", jsTreeNodes);
 
+		//3 Degenerated model that need the same infos in a different shape
+		// Love it but no time to redo the html view and the js that need that so...
 		List<TestCaseLibraryDto> libraries = new ArrayList<>();
 		for (JsTreeNode jsTreeNode : jsTreeNodes) {
 			Object importable = jsTreeNode.getAttr().get("importable");
@@ -153,6 +160,13 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		}
 
 		model.addAttribute("editableLibraries", libraries);
+
+		//enums, nothing to optimize
+		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
+		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
+		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
+		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+		model.addAttribute("executionStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
 		return "test-case-workspace.html";
 	}
