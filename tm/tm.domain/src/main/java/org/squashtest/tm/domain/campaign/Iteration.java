@@ -23,22 +23,7 @@ package org.squashtest.tm.domain.campaign;
 
 import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -47,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
@@ -67,6 +53,7 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -97,6 +84,13 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@NotNull
 	@Size(max = MAX_REF_SIZE)
 	private String reference = "";
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ITERATION_STATUS")
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
+	private IterationStatus status = IterationStatus.WORK_IN_PROGRESS;
 
 	@Embedded @Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
@@ -183,6 +177,14 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		} else {
 			return getReference() + " - " + getName();
 		}
+	}
+
+	public IterationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(@NotNull IterationStatus status) {
+		this.status = status;
 	}
 
 	public Campaign getCampaign() {

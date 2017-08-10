@@ -22,18 +22,18 @@ package org.squashtest.tm.domain.campaign;
 
 import org.squashtest.tm.domain.Level;
 
-public enum CampaignStatus implements Level {
+public enum IterationStatus implements Level {
 	WORK_IN_PROGRESS(1),
 	UNDER_REVIEW(2),
 	APPROVED(3),
 	OBSOLETE(4),
 	TO_BE_UPDATED(5);
 
-	private static final String I18N_KEY_ROOT = "campaign.status.";
+	private static final String I18N_KEY_ROOT = "iteration.status.";
 
 	private final int level;
 
-	private CampaignStatus(int value) {
+	private IterationStatus(int value) {
 		this.level = value;
 	}
 
@@ -47,7 +47,7 @@ public enum CampaignStatus implements Level {
 		return level;
 	}
 
-	public static CampaignStatus defaultValue() {
+	public static IterationStatus defaultValue() {
 		return WORK_IN_PROGRESS;
 	}
 }

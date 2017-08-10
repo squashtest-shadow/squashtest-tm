@@ -124,6 +124,7 @@
 	config.bugtracker = {url: "${btEntityUrl}", style: "fragment-tab" };
 	config.customFields = { url: "${customFieldsValuesURL}" };
 	config.iterationURL = "${iterationUrl}";
+  config.iterationStatusComboJson = ${iterationStatusComboJson};
 </script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
@@ -239,6 +240,15 @@
                 <label for="iteration-description" class="display-table-cell"><f:message key="label.Description" /></label>
                 <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
               </div>
+
+            <div class="display-table-row">
+              <label for="iteration-status" class="display-table-cell"><f:message key="iteration.status.combo.label" /></label>
+              <div class="display-table-cell">
+                <span id="iteration-status-icon" style="vertical-align:middle" class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
+                <span id="iteration-status">${ iterationStatusLabel }</span>
+              </div>
+            </div>
+
 		</jsp:attribute>
       </comp:toggle-panel>
 
@@ -384,7 +394,7 @@
 							initialActualEndDate: "${iteration.actualEndDate.time}",
 							initialActualStartAuto: ${iteration.actualStartAuto},
 							initialActualEndAuto: ${iteration.actualEndAuto}
-						},
+        },
 						features : {
 							editable : ${writable}
 						}

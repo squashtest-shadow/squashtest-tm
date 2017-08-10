@@ -55,6 +55,7 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationStatus;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -75,6 +76,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -122,6 +124,12 @@ public class IterationModificationController {
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
 	@Inject
+	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
+
+	@Inject
+	private Provider<IterationStatusJeditableComboDataBuilder> statusComboBuilderProvider;
+
+	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
 	@Inject
@@ -164,6 +172,8 @@ public class IterationModificationController {
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
 		model.addAttribute("milestoneConf", milestoneConf);
+		model.addAttribute("iterationStatusComboJson", buildStatusComboData());
+		model.addAttribute("iterationStatusLabel", formatStatus(iteration.getStatus()));
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
@@ -198,6 +208,19 @@ public class IterationModificationController {
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
+
+	private String formatStatus(IterationStatus status) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
+	}
+
+	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	private String buildStatusComboData() {
+		Locale locale = LocaleContextHolder.getLocale();
+		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+
 
 	private Map<String, String> getWeights() {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -258,7 +281,6 @@ public class IterationModificationController {
 
 	}
 
-
 	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-reference", VALUE})
 	@ResponseBody
 	public String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long iterationId) {
@@ -267,6 +289,13 @@ public class IterationModificationController {
 		LOGGER.trace("Iteration " + iterationId + ": updated reference to " + newReference);
 		return HtmlUtils.htmlEscape(newReference);
 
+	}
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-status", VALUE })
+	public String changeStatus(@PathVariable long iterationId, @RequestParam(VALUE) IterationStatus status) {
+		iterationModService.changeStatus(iterationId, status);
+		return formatStatus(status);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})

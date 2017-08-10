@@ -18,36 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.campaign;
+package org.squashtest.tm.web.internal.controller.campaign;
 
-import org.squashtest.tm.domain.Level;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.campaign.IterationStatus;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
-public enum CampaignStatus implements Level {
-	WORK_IN_PROGRESS(1),
-	UNDER_REVIEW(2),
-	APPROVED(3),
-	OBSOLETE(4),
-	TO_BE_UPDATED(5);
+import javax.inject.Inject;
 
-	private static final String I18N_KEY_ROOT = "campaign.status.";
+@Component
+@Scope("prototype")
+public class IterationStatusJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<IterationStatus, IterationStatusJeditableComboDataBuilder> {
 
-	private final int level;
-
-	private CampaignStatus(int value) {
-		this.level = value;
+	public IterationStatusJeditableComboDataBuilder() {
+		super();
+		setModel(IterationStatus.values());
 	}
 
-	@Override
-	public String getI18nKey() {
-		return I18N_KEY_ROOT + this.name();
+	@Inject
+	public void setLabelFormatter(LevelLabelFormatter formatter) {
+		super.setLabelFormatter(formatter);
 	}
 
-	@Override
-	public int getLevel() {
-		return level;
-	}
 
-	public static CampaignStatus defaultValue() {
-		return WORK_IN_PROGRESS;
-	}
 }

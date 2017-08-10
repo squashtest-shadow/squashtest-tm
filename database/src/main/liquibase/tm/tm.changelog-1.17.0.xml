@@ -36,11 +36,17 @@
 	</changeSet>
 
   <changeSet id="tm-1.17.0-feature-6921" author="zyang">
-    <comment>Adds a status field to campaign</comment>
-    <addColumn tableName="CAMPAIGN">
-      <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
+  <comment>Adds a status field to campaign and iteration</comment>
+  <addColumn tableName="CAMPAIGN">
+    <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
       <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
+    </column>
+  </addColumn>
+  <addColumn tableName="ITERATION">
+    <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
+      <constraints nullable="false"/>
+    </column>
+  </addColumn>
+</changeSet>
+
 </databaseChangeLog>

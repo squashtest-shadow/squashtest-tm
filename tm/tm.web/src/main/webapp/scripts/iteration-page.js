@@ -48,7 +48,7 @@ require([ "common" ], function() {
 
 			WS.init();
 			basicwidg.init();
-			
+
 			var nameHandler = contentHandlers.getNameAndReferenceHandler();
 			nameHandler.identity = config.identity;
 			nameHandler.nameDisplay = "#iteration-name";
@@ -58,8 +58,8 @@ require([ "common" ], function() {
 			// todo : uniform the event handling.
 			// rem : what does it mean ?
 			itermanagement.initEvents();
-			
-			
+
+
 			// init reference
 			if (config.writable){
 				var refEditable = $("#iteration-reference").addClass('editable');
@@ -69,18 +69,39 @@ require([ "common" ], function() {
 					maxLength : 50,
 					callback : function(value, settings){
 						var escaped = $("<span/>").html(value).text();
-						eventBus.trigger('node.update-reference', {identity : config.identity, newRef : escaped});					
+						eventBus.trigger('node.update-reference', {identity : config.identity, newRef : escaped});
 					}
 				});
-				
+
 				refEditable.editable(url, cfg);
 			}
-			
+
+			// init status
+			if (config.writable){
+				var statusEditable = $("#iteration-status").addClass('editable');
+				var url = config.iterationURL;
+				var cfg = confman.getJeditableSelect();
+				cfg = $.extend(cfg, {
+					data: config.iterationStatusComboJson,
+					callback: function (value, settings) {
+						var keyOfValue = _.findKey(settings.data, function (dataValue) {
+							return value === dataValue;
+						});
+						var iconStatus = $("#iteration-status-icon");
+						iconStatus.attr("class", ""); //reset
+						iconStatus.addClass("sq-icon iteration-status-" + keyOfValue);
+					}
+
+				});
+				statusEditable.editable(url, cfg);
+
+			}
+
 
 			// ****** tabs configuration *******
 
-			
-			
+
+
 
 			var fragConf = {
 					active : 2,
@@ -93,7 +114,7 @@ require([ "common" ], function() {
 							eventBus.trigger("dashboard.appear");
 						}
 					}
-			};  
+			};
 			Frag.init(fragConf);
 
 			if (config.hasBugtracker) {
@@ -109,18 +130,18 @@ require([ "common" ], function() {
 					cufvalues.infoSupport.init("#iteration-custom-fields-content", jsonCufs, mode);
 				});
 			}
-			
-			
+
+
 			// ******** rename popup **************
-			
+
 			var renameDialog = $("#rename-iteration-dialog");
 			renameDialog.formDialog();
-			
+
 			renameDialog.on('formdialogopen', function(){
 				var name = $.trim($("#iteration-raw-name").text());
-				$("#rename-iteration-name").val(name);			
+				$("#rename-iteration-name").val(name);
 			});
-			
+
 			renameDialog.on('formdialogconfirm', function(){
 				$.ajax({
 					url : config.iterationURL,
@@ -130,18 +151,18 @@ require([ "common" ], function() {
 				})
 				.done(function(json){
 					renameDialog.formDialog('close');
-					
+
 					eventBus.trigger("node.rename", {
 						identity : config.identity,
 						newName : json.newName
 					});
 				});
 			});
-			
+
 			renameDialog.on('formdialogcancel', function(){
 				renameDialog.formDialog('close');
 			});
-			
+
 			$("#rename-iteration-button").on('click', function(){
 				renameDialog.formDialog('open');
 			});
