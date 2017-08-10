@@ -43,7 +43,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							uiIcon : "ui-icon-minus",
 							jquery : true,
 							onClick : self.removeRowRequirementVersion
-						} ]
+						} ],
+						tooltips : [{
+							tdSelector: "td.verif-req-description",
+							value : function (row, data) {return data["description"];}
+						}]
 					};
 				}
 
