@@ -165,7 +165,7 @@ public class OptimizedServiceImpl implements OptimizedService {
 
 	}
 
-	//well it's trash, it's a POC ^^
+	//well... it's trash, it's a POC ^^
 	private void convertPermissions(Map<Long, JsTreeNode> jsTreeNodes, Map<Long, Set<Integer>> permissionsMap) {
 		for (Long libraryId : jsTreeNodes.keySet()) {
             JsTreeNode jsTreeNode = jsTreeNodes.get(libraryId);

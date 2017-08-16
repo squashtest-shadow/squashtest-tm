@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.optimized.OptimizedService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -48,6 +49,8 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -71,6 +74,12 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Inject
 	private OptimizedService optimizedService;
+
+	@Inject
+	private ProjectDao projectDao;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {
@@ -173,5 +182,23 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		model.addAttribute("executionStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
 		return "test-case-workspace.html";
+	}
+
+	@RequestMapping(path = "/testId",method = RequestMethod.GET)
+	public String getOptimizedWorkspaceToto(Model model, Locale locale,
+										@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+										@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) throws SQLException {
+
+		Project project = entityManager.find(Project.class, 6L);
+		Project project1 = entityManager.find(Project.class, 6L);
+
+		Project project2 = projectDao.findById(6L);
+		Project project3 = projectDao.findById(6L);
+
+		assert project == project1;
+		assert project == project2;
+		assert project == project3;
+
+		return "toto";
 	}
 }
