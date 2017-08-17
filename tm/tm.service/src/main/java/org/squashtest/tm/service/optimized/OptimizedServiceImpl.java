@@ -43,6 +43,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST;
+import static org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT;
+import static org.squashtest.tm.domain.customfield.InputType.TAG;
 import static org.squashtest.tm.service.optimized.SqlCustomFieldModelFactory.*;
 import static org.squashtest.tm.service.optimized.SqlRequest.*;
 
@@ -560,6 +563,9 @@ public class OptimizedServiceImpl implements OptimizedService {
 		CustomFieldModel<String> model = new SingleValuedCustomFieldModel();
 		initModel(rs, model);
 		model.setDefaultValue(rs.getString("DEFAULT_VALUE"));
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(PLAIN_TEXT.name());
+		model.setInputType(inputTypeModel);
 		return model;
 
 	}
@@ -570,6 +576,9 @@ public class OptimizedServiceImpl implements OptimizedService {
 		model.setDefaultValue(rs.getString("DEFAULT_VALUE"));
 		CustomFieldOptionModel customFieldOptionModel = getCustomFieldOptionModel(rs);
 		model.addOption(customFieldOptionModel);
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(DROPDOWN_LIST.name());
+		model.setInputType(inputTypeModel);
 		return model;
 	}
 
@@ -584,6 +593,9 @@ public class OptimizedServiceImpl implements OptimizedService {
 		}
 		CustomFieldOptionModel customFieldOptionModel = getCustomFieldOptionModel(rs);
 		model.addOption(customFieldOptionModel);
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(TAG.name());
+		model.setInputType(inputTypeModel);
 		return model;
 	}
 
@@ -593,7 +605,7 @@ public class OptimizedServiceImpl implements OptimizedService {
 		model.setLabel(rs.getString("LABEL"));
 		model.setName(rs.getString("NAME"));
 		model.setOptional(rs.getBoolean("OPTIONAL"));
-
+		model.setFriendlyOptional("");
 	}
 
 	private CustomFieldOptionModel getCustomFieldOptionModel(ResultSet rs) throws SQLException {

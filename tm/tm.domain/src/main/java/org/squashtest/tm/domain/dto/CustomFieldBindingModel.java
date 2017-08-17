@@ -21,7 +21,9 @@
 package org.squashtest.tm.domain.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property="_type")
 public class CustomFieldBindingModel {
 
 	private long id;

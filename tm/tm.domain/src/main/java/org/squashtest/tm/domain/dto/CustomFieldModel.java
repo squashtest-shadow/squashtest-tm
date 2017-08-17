@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 // TODO : instead of a JsonTypeIdResolver, use something like for AdvancedSearchFieldModel
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="itype", use=JsonTypeInfo.Id.CUSTOM)
-//@JsonTypeIdResolver(CustomFieldModelIdTypeResolver.class)
+@JsonTypeIdResolver(DtoResolver.class)
 public abstract class CustomFieldModel<VALUETYPE> {
 
 	private long id;
