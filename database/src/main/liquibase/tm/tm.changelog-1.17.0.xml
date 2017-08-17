@@ -49,4 +49,12 @@
   </addColumn>
 </changeSet>
 
+  <changeSet id="tm-1.17.0-feature-6921" author="cholc">
+    <comment>Adds a execution status field to the iteration and campaign</comment>
+    <addColumn tableName="ITERATION">
+      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

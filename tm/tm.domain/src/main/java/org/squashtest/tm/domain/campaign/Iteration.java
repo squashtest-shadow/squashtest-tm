@@ -45,11 +45,8 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.Copiable;
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
@@ -62,15 +59,32 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
-	BoundEntity, MilestoneMember {
+	BoundEntity, MilestoneMember, HasExecutionStatus {
 	private static final String ITERATION_ID = "ITERATION_ID";
 	public static final int MAX_REF_SIZE = 50;
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+
+	static {
+		Set<ExecutionStatus> set = new HashSet<>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
+	}
 
 	@Id
 	@Column(name = ITERATION_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "iteration_iteration_id_seq")
 	@SequenceGenerator(name = "iteration_iteration_id_seq", sequenceName = "iteration_iteration_id_seq", allocationSize = 1)
 	private Long id;
+
+	// Not Null & Column missed comparing to requirementStatus
+	@Enumerated(EnumType.STRING)
+	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
@@ -95,7 +109,8 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Embedded @Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 
-	@Embedded @Valid
+	@Embedded
+	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
 	/*
@@ -149,6 +164,20 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	@Override
+	public ExecutionStatus getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public void setExecutionStatus(ExecutionStatus executionStatus) {
+		this.executionStatus = executionStatus;
+	}
+
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
+	}
+
+	@Override
 	public void setName(String name) {
 		this.name = name.trim();
 	}
@@ -169,7 +198,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -652,11 +680,11 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	 * this method is used in case of copy paste of an iteration with test suites.<br>
 	 *
 	 * @return A map of test suite and indexes<br>
-	 *         One entry-set contains
-	 *         <ul>
-	 *         <li>a copied test suite (without it's test plan)</li>
-	 *         <li>and the indexes of the copied test plan that are to be linked with it
-	 *         <em>(taking into account test_plan_items that are test_case deleted)</em></li>
+	 * One entry-set contains
+	 * <ul>
+	 * <li>a copied test suite (without it's test plan)</li>
+	 * <li>and the indexes of the copied test plan that are to be linked with it
+	 * <em>(taking into account test_plan_items that are test_case deleted)</em></li>
 	 */
 	public Map<TestSuite, List<Integer>> createTestSuitesPastableCopy() {
 		Map<TestSuite, List<Integer>> resultMap = new HashMap<>();
@@ -695,7 +723,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	/**
 	 * will update acual end and start dates if are auto and if they were driven by the execution last-executed on
-	 *
 	 */
 	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem) {
 
@@ -836,5 +863,4 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	;
-
 }

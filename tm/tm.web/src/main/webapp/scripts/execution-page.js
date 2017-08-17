@@ -157,10 +157,6 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 						.find('td.assignee-combo')
 						.text(executionStep.executedBy);
 
-					/*var test = $('.toolbar-information-panel');
-					test.load(location.href + " .toolbar-information-panel")*/
-
-
 					infopanel.refresh();
 				}
 			};

@@ -63,6 +63,7 @@ define(
 		'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
 	function ($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
 		"use strict";
+
 		// ****************** TABLE CONFIGURATION **************
 
 		function _rowCallbackReadFeatures($row, data, _conf) {
@@ -150,7 +151,7 @@ define(
 			var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers);
 
 			//Issue 6319. The use strict broke the property assigniation in ""
-			if(listWithUnassignedUsers === ""){
+			if (listWithUnassignedUsers === "") {
 				listWithUnassignedUsers = {};
 			}
 
@@ -267,6 +268,9 @@ define(
 					$statusspan.parents('tr:first')
 						.find('td.assignee-combo')
 						.children().first().text(itp.assignee);
+
+					//refresh iteration status in the "informations" tab
+					squashtm.execution.refreshIterationInfo();
 				},
 
 
@@ -284,7 +288,8 @@ define(
 
 					var $this = $(this),
 						tpid = $this.data('tpid'),
-						ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
+						ui = ($this.is('.run-popup')) ? "popup" : "oer",
+						newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
 
 					$.post(newurl, {
 						mode: 'manual'

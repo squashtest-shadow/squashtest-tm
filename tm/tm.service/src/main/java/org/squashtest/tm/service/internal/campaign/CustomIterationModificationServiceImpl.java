@@ -44,6 +44,8 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -58,6 +60,7 @@ import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -84,7 +87,7 @@ import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 @Service("CustomIterationModificationService")
 @Transactional
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
-IterationTestPlanManager {
+	IterationTestPlanManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
 
@@ -127,7 +130,8 @@ IterationTestPlanManager {
 	@Inject
 	private ExecutionModificationService executionModificationService;
 
-
+	@Inject
+	private IterationModificationService iterationModificationService;
 
 	@Inject
 	private MilestoneMembershipFinder milestoneService;
@@ -142,7 +146,7 @@ IterationTestPlanManager {
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
@@ -180,7 +184,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return campaignDao.findByIdWithInitializedIterations(campaignId).getIterations();
@@ -195,7 +199,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'DELETE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public String delete(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		if (iteration == null) {
@@ -211,7 +215,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -231,7 +235,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Execution> findAllExecutions(long iterationId) {
 		return iterationDao.findOrderedExecutionsByIterationId(iterationId);
@@ -240,7 +244,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId) {
 		return iterationDao.findOrderedExecutionsByIterationAndTestPlan(iterationId, testPlanId);
@@ -249,7 +253,7 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<TestCase> findPlannedTestCases(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -263,8 +267,8 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=Iteration.class)
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = Iteration.class)
 	public void addTestSuite(@Id long iterationId, TestSuite suite) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		addTestSuite(iteration, suite);
@@ -278,7 +282,7 @@ IterationTestPlanManager {
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ')"+ OR_HAS_ROLE_ADMIN)
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		return iterationDao.findAllTestSuites(iterationId);
@@ -286,12 +290,12 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId"),
-					@PreventConcurrent(entityType=Iteration.class,paramName="testSuiteId",coercer=TestSuiteToIterationCoercerForUniqueId.class)}
-			)
-	public TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId")long testSuiteId,@Id("iterationId") long iterationId) {
+		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId"),
+			@PreventConcurrent(entityType = Iteration.class, paramName = "testSuiteId", coercer = TestSuiteToIterationCoercerForUniqueId.class)}
+	)
+	public TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId") long testSuiteId, @Id("iterationId") long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
 
@@ -304,17 +308,17 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=Iteration.class,paramName="testSuiteIds",coercer=TestSuiteToIterationCoercerForArray.class)}
-			)
-	public List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds")Long[] testSuiteIds,@Id("iterationId") long iterationId) {
+		simplesLocks = {@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")},
+		batchsLocks = {@BatchPreventConcurrent(entityType = Iteration.class, paramName = "testSuiteIds", coercer = TestSuiteToIterationCoercerForArray.class)}
+	)
+	public List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds, @Id("iterationId") long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
 	}
 
 	@Override
-	@BatchPreventConcurrent(entityType=Iteration.class,coercer=TestSuiteToIterationCoercerForList.class)
+	@BatchPreventConcurrent(entityType = Iteration.class, coercer = TestSuiteToIterationCoercerForList.class)
 	public OperationReport removeTestSuites(@Ids List<Long> suitesIds) {
 		List<TestSuite> testSuites = suiteDao.findAll(suitesIds);
 		// check
@@ -328,7 +332,14 @@ IterationTestPlanManager {
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		Execution execution = createExec(item);
+		ExecutionStatus formerITPIExecutionStatus = item.getExecutionStatus();
 		item.addExecution(execution);
+		ExecutionStatus newITPIExecutionStatus = testPlanDao.findById(item.getId()).getExecutionStatus();
+
+		if(!formerITPIExecutionStatus.equals(newITPIExecutionStatus)){
+			updateExecutionStatus(item.getIteration().getId());
+		}
+
 		operationsAfterAddingExec(item, execution);
 		return execution;
 	}
@@ -352,7 +363,7 @@ IterationTestPlanManager {
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 	}
 
-	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
+	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution) {
 		customFieldValueService.createAllCustomFieldValues(execution, execution.getProject());
 		customFieldValueService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
@@ -396,21 +407,21 @@ IterationTestPlanManager {
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
 		return iterationDao.findAllIterationContainingTestCase(testCaseId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
 		return statisticsService.gatherIterationStatisticsBundle(iterationId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestones(long iterationId) {
 		return milestoneService.findMilestonesForIteration(iterationId);
 	}
@@ -435,6 +446,13 @@ IterationTestPlanManager {
 		itpi.addExecutionAtPos(execution, order);
 		operationsAfterAddingExec(itpi, execution);
 		return execution;
+	}
+
+	@Override
+	public void updateExecutionStatus(Long id) {
+		ExecutionStatusReport report = iterationDao.getStatusReport(id);
+		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
+		iterationModificationService.changeExecutionStatus(id, newExecutionStatus);
 	}
 
 }

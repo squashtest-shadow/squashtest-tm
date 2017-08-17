@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -98,4 +99,6 @@ public interface IterationDao extends EntityDao<Iteration> {
 	List<Long> findVerifiedTcIdsInIterationsWithExecution(List<Long> tcIds, List<Long> iterationsIds);
 
 	MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds);
+
+	ExecutionStatusReport getStatusReport(Long id);
 }

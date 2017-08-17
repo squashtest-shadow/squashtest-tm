@@ -32,6 +32,7 @@ import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -94,6 +95,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	private static final String ITERATION_COUNT_STATUS = "iteration.countStatuses";
 
 	static {
 		Map<String, String> modeDataMap = new HashMap<>(2);
@@ -209,20 +211,20 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 
-        /**
-         * <p>Will persist a new Iteration, if its test plan contains transient test plan items they will be persisted too.</p>
-         * <p>
-         * Deprecation notice : As of TM 1.15 the simpler method {@link #persist(org.​squashtest.​tm.​domain.​campaign.Iteration) will just 
-         * do the same.
-         * </p>
-         * 
-         * @param iteration
-         * @deprecated
-         */
+	/**
+	 * <p>Will persist a new Iteration, if its test plan contains transient test plan items they will be persisted too.</p>
+	 * <p>
+	 * Deprecation notice : As of TM 1.15 the simpler method {@link #persist(org.​squashtest.​tm.​domain.​campaign.Iteration) will just
+	 * do the same.
+	 * </p>
+	 *
+	 * @param iteration
+	 * @deprecated
+	 */
 	@Override
-        @Deprecated        
+	@Deprecated
 	public void persistIterationAndTestPlan(Iteration iteration) {
-            persist(iteration);
+		persist(iteration);
 	}
 
 
@@ -249,7 +251,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting,
-		Filtering filtering, ColumnFiltering columnFiltering) {
+													Filtering filtering, ColumnFiltering columnFiltering) {
 
 		// get the data
 		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
@@ -267,13 +269,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting,
-		Filtering filtering, ColumnFiltering columnFiltering) {
+																  Filtering filtering, ColumnFiltering columnFiltering) {
 		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering, columnFiltering);
 	}
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId,
-		PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+																  PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
 
 		/* get the data */
 		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
@@ -293,7 +295,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering,
-		MultiSorting multiSorting) {
+												 MultiSorting multiSorting) {
 		StringBuilder hqlBuilder = new StringBuilder();
 
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
@@ -333,7 +335,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering,
-		ColumnFiltering columnFiltering) {
+												   ColumnFiltering columnFiltering) {
 
 		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering, sorting);
 
@@ -348,7 +350,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting.
 	@SuppressWarnings("unchecked")
 	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting,
-		Filtering filtering, ColumnFiltering columnFiltering) {
+												   Filtering filtering, ColumnFiltering columnFiltering) {
 
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering, columnFiltering);
 
@@ -372,7 +374,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering,
-		ColumnFiltering columnFiltering) {
+													   ColumnFiltering columnFiltering) {
 		Query query = entityManager.createQuery(queryString);
 		query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
@@ -454,6 +456,23 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		}
 
 		return result;
+	}
+
+	@Override
+	public ExecutionStatusReport getStatusReport(Long id) {
+		ExecutionStatusReport report = new ExecutionStatusReport();
+
+		Query query = entityManager.createNamedQuery(
+			ITERATION_COUNT_STATUS);
+		query.setParameter("iterationId", id);
+
+		List<Object[]> tuples = query.getResultList();
+
+		for (Object[] tuple:tuples) {
+			report.set((ExecutionStatus) tuple[0], ((Long) tuple[1]).intValue());
+		}
+
+		return report;
 	}
 
 }

@@ -62,13 +62,13 @@
 <%-- ============ module configuration ===================== --%>
 
 <script type="text/javascript">
-	
+
 	requirejs.config({
 		config : {
 			'execution-page' : {
 				basic : {
 					executionId : ${execution.id},
-					automated : ${automated},	
+					automated : ${automated},
 					hasBugtracker : ${execution.project.bugtrackerConnected},
     				stepstable : {
     					colDefs : ${stepsAoColumnDefs},
@@ -85,10 +85,10 @@
 				urls : {
 					attachmentsURL : "${attachmentsUrl}"
 				}
-			}	
+			}
 		}
 	});
-	
+
 	require(["common"], function(){
 		require(['execution-page'], function(){});
 	});
@@ -134,22 +134,22 @@
 					id="delete-execution-button" />
 			</c:if>
 		</div>
-		
+
       <c:if test="${ editable }">
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
       </c:if>
-      
+
       <comp:milestone-messages milestoneConf="${milestoneConf}"  nodeType = "execution"/>
-      
+
       <div class="unsnap"></div>
 	</div>
- 
+
 
 
 	<%----------------------------------- Information -----------------------------------------------%>
-	
+
 	<comp:toggle-panel id="execution-information-panel"
-		titleKey="label.Description" 
+		titleKey="label.Description"
 		open="true">
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
@@ -161,81 +161,81 @@
 				<label class="display-table-cell" for="testcase-description"><f:message key="label.Description" /></label>
 				<div id="testcase-description" class="display-table-cell">${ execution.tcdescription }</div>
 			</div>
-		
-		
+
+
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div  class="display-table-cell">
                   <span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
                 </div>
 			</div>
-          
+
 <c:if test="${execution.datasetLabel != null}">
           <div class="display-table-row">
             <label class="display-table-cell" for="testcase-dataset"><f:message key="label.dataset" /></label>
             <div  class="display-table-cell">
-                    <span>    
+                    <span>
       <f:message var="noneLabel" key="label.None" />
       <c:out value="${(fn:length(execution.datasetLabel) == 0) ? noneLabel : execution.datasetLabel}"/>
     </span>
             </div>
-          </div>      
+          </div>
 </c:if>
-      
+
 <c:if test="${execution.automated}">
 			<div class="display-table-row">
 				<label class="display-table-cell" for="automated-script"><f:message key="test-case.testautomation.section.label" /></label>
 				<div class="display-table-cell" id="automated-script" >${ taDisassociated ? taDisassociatedLabel : execution.automatedExecutionExtender.automatedTest.fullLabel }</div>
 			</div>
-</c:if>			
+</c:if>
 		  </div>
 	     </jsp:attribute>
 	</comp:toggle-panel>
-	
-  
+
+
 <script type="text/javascript">
-  publish('reload.executions.toolbar');  
-</script>	
-		
+  publish('reload.executions.toolbar');
+</script>
+
 	<%----------------------------------- Attribute -----------------------------------------------%>
-	
+
 	<comp:toggle-panel id="test-case-attribut-panel"
 				titleKey="label.Attributes"
 				   open="true">
-				   
+
 	<jsp:attribute name="body">
 	<div id="test-case-attribut-table"  class="display-table">
         <div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>	
+			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>
             <span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
 			</div>
 		</div>
-		
+
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-nature"><f:message key="test-case.nature.label" /></label>
 			<div class="display-table-cell">
-              <span id="test-case-nature-icon" class="sq-icon sq-icon-${execution.nature.iconName}"></span>  
+              <span id="test-case-nature-icon" class="sq-icon sq-icon-${execution.nature.iconName}"></span>
               <span id="test-case-nature"><s:message code="${execution.nature.label}" text="${execution.nature.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-type"><f:message key="test-case.type.label" /></label>
 			<div class="display-table-cell">
-			  <span id="test-case-type-icon" class="sq-icon  sq-icon-${execution.type.iconName}"></span>  
+			  <span id="test-case-type-icon" class="sq-icon  sq-icon-${execution.type.iconName}"></span>
               <span id="test-case-type"><s:message code="${execution.type.label}" text="${execution.type.label}" htmlEscape="true"/></span>
 			</div>
-		</div>		
+		</div>
 	</div>
-    
+
 	</jsp:attribute>
 </comp:toggle-panel>
-	
+
 	<%----------------------------------- Prerequisites -----------------------------------------------%>
 
 	<comp:toggle-panel id="execution-prerequisite-panel"
-		titleKey="generics.prerequisite.title" 
+		titleKey="generics.prerequisite.title"
 		open="${ not empty execution.prerequisite }">
 		<jsp:attribute name="body">
 		<div id="execution-prerequisite-table" class="display-table">
@@ -245,14 +245,14 @@
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
-	
-	
+
+
 
 	<%----------------------------------- result summary -----------------------------------------------%>
 
 	<c:if test="${execution.automated}">
 	<comp:toggle-panel id="auto-execution-result-summary-panel"
-		titleKey="label.resultSummary" 
+		titleKey="label.resultSummary"
 		open="${ not empty execution.resultSummary }">
 		<jsp:attribute name="body">
 			<span>${execution.resultSummary}</span>
@@ -278,7 +278,7 @@
 					</c:forEach>
 					<th><f:message
 								key="executions.steps.table.column-header.action.label" />
-						</th>		
+						</th>
 					<th><f:message
 								key="executions.steps.table.column-header.expected-result.label" />
 						</th>
@@ -290,7 +290,7 @@
 						</th>
 					<th><f:message
 								key="executions.steps.table.column-header.user.label" />
-						</th>		
+						</th>
 					<th><f:message
 								key="executions.steps.table.column-header.comment.label" />
 						</th>
@@ -314,8 +314,8 @@
 	</comp:toggle-panel>
 
 <script type="text/javascript">
-  publish('reload.executions.stepstable');  
-</script> 
+  publish('reload.executions.stepstable');
+</script>
 
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
@@ -332,50 +332,50 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<at:attachment-bloc  editable="${ editable }" 
-						 attachListId="${execution.attachmentList.id}" 
-                         attachmentSet="${attachmentSet}" 
+	<at:attachment-bloc  editable="${ editable }"
+						 attachListId="${execution.attachmentList.id}"
+                         attachmentSet="${attachmentSet}"
                          autoJsInit="false"/>
 
 <script type="text/javascript">
 publish('reload.executions.attachments');
 </script>
 
-    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%>
 <c:if test="${execution.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${execution}" issueDetector="true"/>
-        
+
         <script type="text/javascript">
         publish('reload.executions.bugtracker');
-        </script>          
+        </script>
 </c:if>
 
-    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%>
 
 
 
 	<%------------------------------ /bugs section -------------------------------%>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
-  
+
     <f:message var="deletionDialogTitle" key="dialog.delete-execution.title" />
     <div id="delete-execution-dialog" class="popup-dialog not-displayed" title="${deletionDialogTitle}">
-    
+
         <span style="font-weight:bold;"><f:message key="dialog.delete-execution.message" /></span>
-        
+
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
-          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>        
-        </div>    
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+        </div>
     </div>
 
 <script type="text/javascript">
 publish('reload.executions.dialogs');
-</script>  
+</script>
   <%--------------------------- /Deletion confirmation popup -------------------------------------%>
 
 <script type="text/javascript">
 publish('reload.executions.complete');
-</script>  
+</script>
 
 
 </div>

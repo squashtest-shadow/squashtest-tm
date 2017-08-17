@@ -223,8 +223,9 @@ public class ExecutionModificationController {
 
 	}
 
-	@ResponseBody
+
 	@RequestMapping(value = "/steps/{stepIds}", method = RequestMethod.POST, params = {"status"})
+	@ResponseBody
 	public JsonExecutionInfo editStatusOfExecutionStep(@PathVariable long executionId, @PathVariable("stepIds") List<Long> stepIds,
 													   @RequestParam("status") String status) {
 		ExecutionStatus executionStatus = ExecutionStatus.valueOf(status);

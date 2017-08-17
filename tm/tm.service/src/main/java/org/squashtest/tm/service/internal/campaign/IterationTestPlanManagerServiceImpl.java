@@ -49,6 +49,7 @@ import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -122,6 +123,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private CustomIterationModificationService customIterationModificationService;
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
@@ -133,7 +137,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
-		PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
+																						  PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
 		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
@@ -166,7 +170,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
 	public void addTestCasesToIteration(final List<Long> objectsIds, @Id long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -177,7 +181,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
 	public void addTestCaseToIteration(Long testcaseId, Long datasetId, @Id long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -237,9 +241,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		indexationService.reindexTestCase(testCase.getId());
 	}
-	
-	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
-	public void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId){
+
+	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	public void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId) {
 		List<IterationTestPlanItem> itpis = findTestPlanItems(iterationTestPlanIds);
 
 		for (IterationTestPlanItem itpi : itpis) {
@@ -248,20 +252,21 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 				Long datasetId = itpi.getReferencedDataset() == null ? null : itpi.getReferencedDataset().getId();
 				addTestCaseToIteration(itpi.getReferencedTestCase().getId(), datasetId, iterationId);
 			}
-		}		
+		}
 	}
-	
+
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
+	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, @Id long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
 			iteration.addTestPlan(itp);
 			iterationTestPlanDao.save(itp);
 		}
+		customIterationModificationService.updateExecutionStatus(iterationId);
 	}
 
 	@Override
@@ -295,8 +300,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")
-	public boolean removeTestPlansFromIteration(List<Long> testPlanIds,@Id long iterationId) {
+	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, @Id long iterationId) {
 		Iteration it = iterationDao.findById(iterationId);
 
 		return removeTestPlansFromIterationObj(testPlanIds, it);
@@ -308,11 +313,16 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		boolean unauthorizedDeletion = false;
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanItemsIds);
-
+		int sizeBeforeDeletion = iteration.getTestPlans().size();
 		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution and the user does not have sufficient rights
 			// so we keep track of whether at lease one item couldn't be deleted
 			unauthorizedDeletion = unauthorizedDeletion || removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
+		}
+
+		//if an ITPI was deleted, we update the iteration status
+		if (sizeBeforeDeletion > iteration.getTestPlans().size()) {
+			customIterationModificationService.updateExecutionStatus(iteration.getId());
 		}
 
 		return unauthorizedDeletion;
@@ -385,8 +395,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 * those data according to given parameters.
 	 *
 	 * @param item: the iteration test plan item to update the metadatas of
-	 * @param user : the user that will be set as last executor and assigne
-	 * @param date : the date to set lastExecutedOn property
+	 * @param user  : the user that will be set as last executor and assigne
+	 * @param date  : the date to set lastExecutedOn property
 	 **/
 	private void arbitraryUpdateMetadata(IterationTestPlanItem item, User user, Date date) {
 
@@ -399,7 +409,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 		+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId,
-		PagingAndSorting filter) {
+																				  PagingAndSorting filter) {
 		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
 			DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
@@ -428,7 +438,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	/**
-	 *
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItem(long, long)
 	 */
 	@Override
@@ -445,7 +454,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	/**
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItems(java.util.List,
-	 *      long)
+	 * long)
 	 */
 	@Override
 	public void assignUserToTestPlanItems(List<Long> testPlanIds, long userId) {
@@ -480,6 +489,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	/**
 	 * {@link IterationTestPlanManagerService}{@link #forceExecutionStatus(List, String)}
+	 *
 	 * @return
 	 */
 	@Override
@@ -490,9 +500,16 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		String login = UserContextHolder.getUsername();
 		User user = userDao.findUserByLogin(login);
 		Date date = new Date();
+
+		Set<Iteration> iterationsToUpdate = new HashSet<>();
 		for (IterationTestPlanItem item : testPlanItems) {
 			item.setExecutionStatus(status);
 			arbitraryUpdateMetadata(item, user, date);
+			iterationsToUpdate.add(item.getIteration());
+		}
+
+		for (Iteration iteration : iterationsToUpdate) {
+			customIterationModificationService.updateExecutionStatus(iteration.getId());
 		}
 		return testPlanItems;
 
@@ -518,7 +535,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	/**
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#createTestPlanFragment(org.squashtest.tm.domain.testcase.TestCase,
-	 *      org.squashtest.tm.domain.users.User)
+	 * org.squashtest.tm.domain.users.User)
 	 */
 	@Override
 	public Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee) {

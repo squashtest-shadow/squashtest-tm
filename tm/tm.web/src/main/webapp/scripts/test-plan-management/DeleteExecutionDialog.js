@@ -20,6 +20,7 @@
  */
 define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialog',], function ($, eventBus) {
 	'use strict';
+
 	/**
 	 * Initializes an execution deletion dialog, to be used in a test plan view
 	 * options are :
@@ -30,7 +31,7 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 	 *
 	 * @param options { el, urlRoot }
 	 * @constructor
-     */
+	 */
 	function DeleteExecutionDialog(options) {
 		var deleteExecutionDialog = $(options.el);
 
@@ -44,9 +45,11 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 				type: 'DELETE',
 				dataType: 'json'
 			}).done(function (data) {
+				squashtm.execution.refreshIterationInfo();
 				eventBus.trigger('context.content-modified', {
 					newDates: data
 				});
+
 			});
 		});
 	}

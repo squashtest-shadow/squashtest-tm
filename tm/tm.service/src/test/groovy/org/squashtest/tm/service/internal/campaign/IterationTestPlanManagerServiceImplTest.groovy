@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
+package org.squashtest.tm.service.internal.campaign
 
-
+import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -56,8 +56,9 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IndexationService indexationService = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
+	CustomIterationModificationService customIterationModificationService = Mock();
 
-	def setup(){
+	def setup() {
 		service.testCaseLibraryNodeDao = nodeDao
 		service.iterationDao = iterDao
 		service.iterationTestPlanDao = itemDao
@@ -65,10 +66,11 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
 		service.activeMilestoneHolder = activeMilestoneHolder
+		service.customIterationModificationService = customIterationModificationService
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 	}
 
-	def "should reccursively add a list of test cases to an iteration" () {
+	def "should reccursively add a list of test cases to an iteration"() {
 		given: "a campaign"
 		Iteration iteration = new Iteration()
 		iterDao.findById(10) >> iteration
@@ -76,7 +78,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 			Iteration.set field: "id", of: iteration, to: 10L
 		}
 
-		and : "a bunch of folders and testcases"
+		and: "a bunch of folders and testcases"
 		def folder1 = MockTCF(1L, "f1")
 		def folder2 = MockTCF(2L, "f2")
 		def tc1 = MockTC(3L, "tc1")
@@ -91,19 +93,18 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToIteration([1L, 5L], 10)
 
-		then :
-		def collected = iteration.getTestPlans().collect({it .referencedTestCase})
+		then:
+		def collected = iteration.getTestPlans().collect({ it.referencedTestCase })
 		/*we'll test here that :
 		 the content of collected states that tc3 is positioned last,
 		 collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
 		 */
-		collected[0..1] == [tc1, tc2]|| [tc2, tc1]
-		collected[ 2] == tc3
+		collected[0..1] == [tc1, tc2] || [tc2, tc1]
+		collected[2] == tc3
 	}
 
 
-
-	def "should move a test case"(){
+	def "should move a test case"() {
 		given:
 		TestCase tc1 = Mock()
 		TestCase tc2 = Mock()
@@ -122,7 +123,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		iteration.addTestPlan(itp2)
 		iteration.addTestPlan(itp3)
 		iterDao.findById(_) >> iteration
-		itemDao.findAllByIdIn(_)>> [itp3]
+		itemDao.findAllByIdIn(_) >> [itp3]
 
 		when:
 		service.changeTestPlanPosition(5, 0, [600])
@@ -132,7 +133,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	}
 
 	@Unroll
-	def "should create test plan fragment using datasets #datasets" () {
+	def "should create test plan fragment using datasets #datasets"() {
 		given:
 		TestCase testCase = Mock()
 		User user = Mock()
@@ -149,7 +150,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		then:
 		frag.size() == expectedFragSize
 		frag*.referencedTestCase.inject(true) { res, it -> res && it == testCase } // reduces collection to true when all items equal testCase
-		frag*.user.inject(true) { res, it -> res && it ==  user } // reduces to true when all assignees equal user
+		frag*.user.inject(true) { res, it -> res && it == user } // reduces to true when all assignees equal user
 		frag*.referencedDataset.containsAll(datasets)
 
 		where:
@@ -158,14 +159,15 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 
 	def MockTC(def id, def name) {
 		TestCase tc = new TestCase(name: name)
-		use (ReflectionCategory) {
+		use(ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: tc, to: id
 		}
 		return tc
 	}
+
 	def MockTCF(def id, def name) {
 		TestCaseFolder f = new TestCaseFolder(name: name)
-		use (ReflectionCategory) {
+		use(ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: f, to: id
 		}
 
@@ -174,7 +176,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		return f
 	}
 
-	def "should remove test plan item from iteration by calling deletion handler"(){
+	def "should remove test plan item from iteration by calling deletion handler"() {
 		given:
 		IterationTestPlanItem item = Mock()
 		Iteration iteration = Mock()
@@ -182,16 +184,14 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		item.getExecutions() >> Collections.emptyList()
 		item.getReferencedTestCase() >> null
 
-		itemDao.findById(1L)>>item
+		itemDao.findById(1L) >> item
 		when:
 		service.removeTestPlanFromIteration(1L)
 
 		then:
-		1* deletionHandler.deleteIterationTestPlanItem(item);
+		1 * deletionHandler.deleteIterationTestPlanItem(item);
 
 	}
-
-
 
 
 }

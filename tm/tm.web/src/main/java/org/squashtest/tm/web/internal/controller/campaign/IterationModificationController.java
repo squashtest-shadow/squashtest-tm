@@ -68,6 +68,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -98,6 +99,9 @@ public class IterationModificationController {
 
 	@Inject
 	private IterationModificationService iterationModService;
+
+	@Inject
+	private IterationDao iterationDao;
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
@@ -142,7 +146,6 @@ public class IterationModificationController {
 		populateIterationModel(model, iterationId);
 
 
-
 		return "fragment/iterations/iteration";
 	}
 
@@ -178,7 +181,7 @@ public class IterationModificationController {
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
 
-		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
 
 
@@ -195,6 +198,7 @@ public class IterationModificationController {
 
 	/**
 	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
+	 *
 	 * @param projectId : the id of the concerned {@link Project}
 	 * @return a map representing the active statuses for the given project with :
 	 * <ul><li>key: the status name</li><li>value: the status internationalized label</li></ul>
@@ -249,8 +253,7 @@ public class IterationModificationController {
 	//URL should have been /statistics, but that was already used by another method in this controller
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public
-	IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId) {
+	public IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId) {
 
 		return iterationModService.gatherIterationStatisticsBundle(iterationId);
 	}
@@ -298,6 +301,25 @@ public class IterationModificationController {
 		return formatStatus(status);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-execution-status", VALUE})
+	@ResponseBody
+	public void updateStatus(@RequestParam(VALUE) String value, @PathVariable long iterationId) {
+
+		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
+
+		iterationModService.changeExecutionStatus(iterationId, executionStatus);
+		LOGGER.trace("Iteration " + iterationId + ": updated status to " + value);
+	}
+
+	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
+	@ResponseBody
+	public String getExecutionStatus(@PathVariable long iterationId) {
+
+		String executionStatus = iterationDao.findById(iterationId).getExecutionStatus().toString();
+		return executionStatus;
+
+	}
+
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object rename(@RequestParam("newName") String newName,
@@ -311,9 +333,8 @@ public class IterationModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/duplicateTestSuite/{testSuiteId}", method = RequestMethod.POST)
-	public
-	Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId,
-							@PathVariable("testSuiteId") Long testSuiteId) {
+	public Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId,
+								   @PathVariable("testSuiteId") Long testSuiteId) {
 		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
 		return duplicate.getId();
 	}
@@ -342,9 +363,8 @@ public class IterationModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
-	public
-	String setScheduledStart(@PathVariable long iterationId,
-							 @RequestParam(value = "scheduledStart") String strDate) {
+	public String setScheduledStart(@PathVariable long iterationId,
+									@RequestParam(value = "scheduledStart") String strDate) {
 
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
@@ -373,7 +393,9 @@ public class IterationModificationController {
 
 	}
 
-	/** the next functions may receive null arguments : empty string **/
+	/**
+	 * the next functions may receive null arguments : empty string
+	 **/
 
 	@RequestMapping(value = PLANNING_URL, params = {"actualStart"})
 	@ResponseBody
@@ -439,8 +461,7 @@ public class IterationModificationController {
 	// returns the ID of the newly created execution
 	@ResponseBody
 	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = {"mode=manual"})
-	public
-	String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
+	public String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
 		LOGGER.trace("Add manual execution : creating execution");
 
 		Execution newExecution = iterationModService.addExecution(testPlanItemId);
@@ -457,7 +478,7 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
-			@PathVariable("itemId") long itemId) {
+												 @PathVariable("itemId") long itemId) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
 			itemId);
@@ -483,9 +504,8 @@ public class IterationModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/new", params = NAME, method = RequestMethod.POST)
-	public
-	Map<String, String> addTestSuite(@PathVariable long iterationId,
-									 @Valid @ModelAttribute("new-test-suite") TestSuite suite) {
+	public Map<String, String> addTestSuite(@PathVariable long iterationId,
+											@Valid @ModelAttribute("new-test-suite") TestSuite suite) {
 		iterationModService.addTestSuite(iterationId, suite);
 		Map<String, String> res = new HashMap<>();
 		res.put("id", suite.getId().toString());
@@ -495,8 +515,7 @@ public class IterationModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites", method = RequestMethod.GET)
-	public
-	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
+	public List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
 		Collection<TestSuite> testSuites = iterationModService.findAllTestSuites(iterationId);
 		List<TestSuiteModel> result = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
@@ -508,8 +527,7 @@ public class IterationModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = {RequestParams.IDS})
-	public
-	OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
+	public OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
 		OperationReport report = iterationModService.removeTestSuites(ids);
 		LOGGER.debug("removal of {} Test Suites", report.getRemoved().size());
 		return report;

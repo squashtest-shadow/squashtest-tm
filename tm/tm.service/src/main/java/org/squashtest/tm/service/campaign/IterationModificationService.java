@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.IterationModificationService", entity = Iteration.class)
@@ -39,6 +40,9 @@ public interface IterationModificationService extends CustomIterationModificatio
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeDescription(long iterationId, String newDescription);
+
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
+	void changeExecutionStatus(long iterationId, ExecutionStatus executionStatus);
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeReference(long iterationId, String newReference);

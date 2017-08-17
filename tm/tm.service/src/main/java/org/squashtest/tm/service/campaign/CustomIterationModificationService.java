@@ -127,4 +127,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
 	Execution updateExecutionFromTc(long executionId);
+
+	void updateExecutionStatus(Long id);
 }

@@ -22,13 +22,13 @@
  * conf : must be available as config for the main module. { completeTitle : "title for the completion message dialog",
  * completeTestMessage : "content for the completion message dialog" completeSuiteMessage : "content for the completion
  * of the whole suite message dialog" } + the rest described as in the 'state' variable below
- * 
+ *
  * comment[1] [Issue 1126] Had to use directly "refreshParent" instead of "iframe.unload(refreshParent)" beacause the
  * latest do not work with IE 8
- * 
+ *
  */
 
-define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.messagedialog"], 
+define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.messagedialog"],
 		function($, notification, translator) {
 
 	/* this is a constructor */
@@ -71,6 +71,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 			if (!!window.opener) {
 				try {
 					window.opener.squashtm.execution.refresh(); // should be defined in the calling context.
+					window.opener.squashtm.execution.refreshIterationInfo();
 				} catch (anyex) {
 					window.opener.location.href = window.opener.location.href;
 				}
@@ -107,14 +108,14 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 		}, this);
 
 		// ************ public functions ****************
-	
+
 		this.fillRightPane = function(url) {
 			try {
 
 				url = (url.indexOf('://') == -1) ? 'http://' + url : url;
 				var iframeBody = this.rightPane.find('iframe body');
 			    var iframe = this.rightPane.find('iframe');
-		
+
 					$.post(squashtm.app.contextRoot+ "/checkXFO/", {URL:url} , function(xframeAllowed) {
 					if (! xframeAllowed){
 						iframe.attr('src', "about:blank");
@@ -123,9 +124,9 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 						iframe.attr('src', url);
 					}
 				});
-			
+
 			} catch (ex) {
-			
+
 				this.rightPane.find('iframe body').text(ex);
 			}
 
@@ -141,7 +142,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				testComplete();
 			}
 		};
-		
+
 		this.submitComment = function(){
 			$("#iframe-left").contents().find("#execution-comment-panel").find("button[type=submit]").click();
 		};
@@ -286,7 +287,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 					self.navigateNext();
 				});
 			});
-			
+
 			untsButton.click(function(){
 				$.post(getStatusUrl(),{
 					executionStatus : "UNTESTABLE"
@@ -295,7 +296,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 					self.navigateNext();
 				});
 			});
-			
+
 			blckButton.click(function(){
 				$.post(getStatusUrl(),{
 					executionStatus : "BLOCKED"

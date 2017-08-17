@@ -43,9 +43,11 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
@@ -58,13 +60,7 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
-import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -92,6 +88,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	private IterationDao iterationDao;
 
 	@Inject
+	private IterationTestPlanDao iterationTestPlanDao;
+
+
+	@Inject
 	private TestSuiteDao suiteDao;
 
 	@Inject
@@ -111,6 +111,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private CustomIterationModificationService customIterationModificationService;
+
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -497,11 +501,18 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		deleteExecSteps(execution);
 
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
+		ExecutionStatus formerITPIExecutionStatus = testPlanItem.getExecutionStatus();
 		testPlanItem.removeExecution(execution);
 		deleteAutomatedExecutionExtender(execution);
 
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		customValueService.deleteAllCustomFieldValues(execution);
+
+		//If the ITPI status changed, we update the iteration status
+		ExecutionStatus newITPIExecutionStatus =iterationTestPlanDao.findById(testPlanItem.getId()).getExecutionStatus();
+		if(!formerITPIExecutionStatus.equals(newITPIExecutionStatus)){
+			customIterationModificationService.updateExecutionStatus(testPlanItem.getIteration().getId());
+		}
 
 		deletionDao.removeEntity(execution);
 	}

@@ -29,7 +29,8 @@ define(["jquery", "squash.dateutils", "./general-information-panel-controller"],
 		var newModifiedOn = (infos.modifiedOn !== null && infos.modifiedOn.length>0) ? dateutils.format(infos.modifiedOn, options.format) : "";
 		var newModifiedBy = (infos.modifiedBy !== null && infos.modifiedBy.length>0) ? '('+infos.modifiedBy+')' : options.never;
 
-		var newConnectedOn = (infos.connectedOn !== null && infos.connectedOn.length>0) ? dateutils.format(infos.connectedOn, options.format) : options.never;
+		//when using the refresh function (for the iteration page), the request gives a json(info) without the connectedOn attribute
+		var newConnectedOn = (!!infos.connectedOn && infos.connectedOn.length>0) ? dateutils.format(infos.connectedOn, options.format) : options.never;
 
 
 		$("#created-on > .datetime").text(newCreatedOn);

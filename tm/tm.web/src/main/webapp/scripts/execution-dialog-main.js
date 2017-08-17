@@ -97,6 +97,7 @@ define(['module',
 				var openerSize = Object.keys(window.opener).length;
 	      if (openerSize > 0 && window.opener.squashtm.execution){
 					window.opener.squashtm.execution.refresh();
+					window.opener.squashtm.execution.refreshIterationInfo();
 				}
 				if (openerSize > 0 && window.opener.progressWindow) {
 					window.opener.progressWindow.close();
