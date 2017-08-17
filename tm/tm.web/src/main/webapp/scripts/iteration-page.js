@@ -41,15 +41,14 @@ require(["common"], function () {
 					url: config.iterationURL + "/getExecutionStatus",
 					type: "get"
 				}).done(function (value) {
-					var html;
-					var executionStatusEditable = $("#iteration-execution-status");
-					if (executionStatusEditable.is('.status-display-short')) {
-						html = statusfactory.getIconFor(value);
-					}
-					else {
-						html = statusfactory.getHtmlFor(value);
-					}
-					executionStatusEditable.html(html);
+
+					var executionStatusIcon = $("#iteration-execution-status-icon");
+
+					executionStatusIcon.html(statusfactory.getIconFor(value));
+					$("#iteration-execution-status-icon > span").css("display", "inline");
+
+					var executionStatusEditable = $("#iteration-execution-status")
+					executionStatusEditable.html(statusfactory.translate(value));
 				});
 
 				general.refresh()
@@ -93,48 +92,46 @@ require(["common"], function () {
 						maxLength: 50,
 						callback: function (value, settings) {
 							var escaped = $("<span/>").html(value).text();
-						eventBus.trigger('node.update-reference', {identity : config.identity, newRef : escaped});
+							eventBus.trigger('node.update-reference', {identity: config.identity, newRef: escaped});
 						}
 					});
 
 					refEditable.editable(url, cfg);
 				}
+
+				// init status
+				if (config.writable) {
+					var statusEditable = $("#iteration-status").addClass('editable');
+					var url = config.iterationURL;
+					var cfg = confman.getJeditableSelect();
+					cfg = $.extend(cfg, {
+						data: config.iterationStatusComboJson,
+						callback: function (value, settings) {
+							var keyOfValue = _.findKey(settings.data, function (dataValue) {
+								return value === dataValue;
+							});
+							var iconStatus = $("#iteration-status-icon");
+							iconStatus.attr("class", ""); //reset
+							iconStatus.addClass("sq-icon iteration-status-" + keyOfValue);
+						}
+
+					});
+					statusEditable.editable(url, cfg);
+
+				}
+
 				//init execution status
 				var status = config.iterationExecutionStatus;
-				var html;
-				var executionStatusEditable = $("#iteration-execution-status");
-				if (executionStatusEditable.is('.status-display-short')) {
-					html = statusfactory.getIconFor(status);
-				}
-				else {
-					html = statusfactory.getHtmlFor(status);
-				}
+				var executionStatusIcon = $("#iteration-execution-status-icon");
 
-				executionStatusEditable.html(html);
-			// init status
-			if (config.writable){
-				var statusEditable = $("#iteration-status").addClass('editable');
-				var url = config.iterationURL;
-				var cfg = confman.getJeditableSelect();
-				cfg = $.extend(cfg, {
-					data: config.iterationStatusComboJson,
-					callback: function (value, settings) {
-						var keyOfValue = _.findKey(settings.data, function (dataValue) {
-							return value === dataValue;
-						});
-						var iconStatus = $("#iteration-status-icon");
-						iconStatus.attr("class", ""); //reset
-						iconStatus.addClass("sq-icon iteration-status-" + keyOfValue);
-					}
+				executionStatusIcon.html(statusfactory.getIconFor(status));
+				$("#iteration-execution-status-icon > span").css("display", "inline");
 
-				});
-				statusEditable.editable(url, cfg);
-
-			}
-
+				var executionStatusEditable = $("#iteration-execution-status")
+				executionStatusEditable.html(statusfactory.translate(status));
 
 				if (config.writable) {
-					var executionStatusEditable = $("#iteration-execution-status").addClass('editable');
+					executionStatusEditable.addClass('editable');
 					var statusUrl = config.iterationURL;
 					var statusCfg = confman.getJeditableSelect();
 					statusCfg = $.extend(statusCfg, {
@@ -159,7 +156,7 @@ require(["common"], function () {
 							eventBus.trigger("dashboard.appear");
 						}
 					}
-			};
+				};
 				Frag.init(fragConf);
 
 				if (config.hasBugtracker) {
@@ -184,7 +181,7 @@ require(["common"], function () {
 
 				renameDialog.on('formdialogopen', function () {
 					var name = $.trim($("#iteration-raw-name").text());
-				$("#rename-iteration-name").val(name);
+					$("#rename-iteration-name").val(name);
 				});
 
 				renameDialog.on('formdialogconfirm', function () {

@@ -127,7 +127,8 @@
   config.customFields = {url: "${customFieldsValuesURL}"};
   config.iterationURL = "${iterationUrl}";
   config.iterationStatusComboJson = ${iterationStatusComboJson};
-  config.statuses=${json:serialize (statuses)}
+  config.statuses =
+  ${json:serialize (statuses)}
 </script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
@@ -250,10 +251,19 @@
               </div>
 
             <div class="display-table-row">
-              <label for="iteration-status" class="display-table-cell"><f:message key="iteration.status.combo.label" /></label>
-              <div class="display-table-cell">
-                <span id="iteration-status-icon" style="vertical-align:middle" class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
+              <label for="iteration-status" class="display-table-cell"><f:message
+                key="iteration.status.combo.label"/></label>
+              <div>
+                <span id="iteration-status-icon" style="vertical-align:middle"class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
                 <span id="iteration-status">${ iterationStatusLabel }</span>
+              </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="iteration-execution-status" class="display-table-cell"><f:message key="iteration.execution.status.combo.label"/></label>
+              <div>
+                <span id="iteration-execution-status-icon"> </span>
+                <span id="iteration-execution-status"></span>
               </div>
             </div>
 
@@ -399,7 +409,7 @@
               initialActualEndDate: "${iteration.actualEndDate.time}",
               initialActualStartAuto: ${iteration.actualStartAuto},
               initialActualEndAuto: ${iteration.actualEndAuto}
-        },
+            },
             features: {
               editable: ${writable}
             }
