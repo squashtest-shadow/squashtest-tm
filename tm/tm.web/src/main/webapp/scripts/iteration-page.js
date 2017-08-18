@@ -43,12 +43,15 @@ require(["common"], function () {
 				}).done(function (value) {
 
 					var executionStatusIcon = $("#iteration-execution-status-icon");
-
 					executionStatusIcon.html(statusfactory.getIconFor(value));
 					$("#iteration-execution-status-icon > span").css("display", "inline");
 
-					var executionStatusEditable = $("#iteration-execution-status")
+					var executionStatusEditable = $("#iteration-execution-status");
 					executionStatusEditable.html(statusfactory.translate(value));
+
+					//refresh the iteration execution status in the tree
+					var executionStatusIconTree = $("#Iteration-" + config.identity.resid);
+					executionStatusIconTree.attr('executionstatus', value);
 				});
 
 				general.refresh()

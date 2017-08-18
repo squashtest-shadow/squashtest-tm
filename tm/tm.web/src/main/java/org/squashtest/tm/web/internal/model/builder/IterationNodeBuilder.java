@@ -54,6 +54,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		node.setTitle(model.getFullName());
 
 		node.addAttr("rel", "iteration");
+		node.addAttr("executionStatus", model.getExecutionStatus().toString());
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "iterations");
 		node.setState(model.hasTestSuites() ? State.closed  : State.leaf);
