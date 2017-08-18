@@ -82,7 +82,7 @@ that page won't be editable if
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
