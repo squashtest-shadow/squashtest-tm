@@ -143,14 +143,18 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					var $statusspan = $(this);
 
 					$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + executionStep.executionStatus.toLowerCase());
-					$statusspan.html(settings.data[executionStep.executionStatus]);
+					$statusspan.html(config.basic.statuses[executionStep.executionStatus]);
 
 					// 2/ the date format
 					var format = translator.get('squashtm.dateformat'),
 						$execon = $statusspan.parents('tr:first').find("td.exec-on");
 
-					var newdate = dateutils.format(executionStep.executedOn, format);
-					$execon.text(newdate);
+					if (executionStep.executedOn === null) {
+						$execon.text("-");
+					} else {
+						var newdate = dateutils.format(executionStep.executedOn, format);
+						$execon.text(newdate);
+					}
 
 					// 3/ user assigned
 					$statusspan.parents('tr:first')
@@ -161,8 +165,7 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				}
 			};
 
-			function _rowCallbackEditableStatus($row, data, _conf) {
-
+			function _rowCallbackReadFeatures($row, data, _conf) {
 				var status = data.status;
 				var html;
 				var $statustd = $row.find('.status-combo');
@@ -174,23 +177,19 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				}
 
 				$statustd.html(html);
+			}
 
+			function _rowCallbackEditableStatus($row, data, _conf) {
 				// execution status (edit, thus selected as .status-combo).
 				// Note : the children().first() thing
 				// will return the span element.
-				var statusurl = stepsUrl + "/" + data['entity-id'];
+				var statusUrl = stepsUrl + "/" + data['entity-id'];
 				var statusElt = $row.find('.status-combo').children().first();
 				statusElt.addClass('cursor-arrow');
 				statusElt.editable(
-					statusurl, {
+					statusUrl, {
 						type: 'select',
-						data: translator.get({
-							BLOCKED: "execution.execution-status.BLOCKED",
-							FAILURE: "execution.execution-status.FAILURE",
-							SUCCESS: "execution.execution-status.SUCCESS",
-							RUNNING: "execution.execution-status.RUNNING",
-							READY: "execution.execution-status.READY"
-						}),
+						data: JSON.stringify(config.basic.statuses),
 						name: 'status',
 						onblur: 'cancel',
 						callback: _conf.submitStatusClbk
@@ -204,8 +203,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				fnRowCallback: function (row, data, displayIndex) {
 					var $row = $(row);
 
-					_rowCallbackEditableStatus($row, data, _writeFeaturesConf);
+					_rowCallbackReadFeatures($row, data);
 
+					if (config.permissions.editable) {
+						_rowCallbackEditableStatus($row, data, _writeFeaturesConf);
+					}
 					return row;
 				},
 

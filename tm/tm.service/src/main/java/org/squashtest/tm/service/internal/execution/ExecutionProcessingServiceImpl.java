@@ -178,14 +178,16 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 			newExecutionStatus = ExecutionStatus.computeNewStatus(report);
 		}
 
-		ExecutionStatus formerITPIExecutionStatus =  execution.getTestPlan().getExecutionStatus();
+		ExecutionStatus formerITPIExecutionStatus = execution.getTestPlan().getExecutionStatus();
 		execution.setExecutionStatus(newExecutionStatus);
 
-		// update execution and item test plan data
-		updateExecutionMetadata(execution);
+		// update execution and item test plan data, only if its new status is different from "READY"
+		if (execution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
+			updateExecutionMetadata(execution);
+		}
 
 		//we check if the ITPI execution status has changed, if so, we update the iteration status
-		if (formerITPIExecutionStatus != execution.getTestPlan().getExecutionStatus()){
+		if (formerITPIExecutionStatus != execution.getTestPlan().getExecutionStatus()) {
 			Iteration iteration = execution.getTestPlan().getIteration();
 			customIterationModificationService.updateExecutionStatus(iteration.getId());
 		}
@@ -214,18 +216,11 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	@Override
 	public void updateExecutionMetadata(Execution execution) {
 		LOGGER.debug("update the executed by/on for given execution and it's test plan.");
-		String lastExecutedBy = null;
-		Date lastExecutedOn = null;
 
-		if (execution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
-			// Get the date and user of the most recent step which status is not at READY
-			ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
-			lastExecutedBy = mostRecentStep.getLastExecutedBy();
-			lastExecutedOn = mostRecentStep.getLastExecutedOn();
-		}
-
-		execution.setLastExecutedBy(lastExecutedBy);
-		execution.setLastExecutedOn(lastExecutedOn);
+		// Get the date and user of the most recent step which status is not at READY
+		ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
+		execution.setLastExecutedBy(mostRecentStep.getLastExecutedBy());
+		execution.setLastExecutedOn(mostRecentStep.getLastExecutedOn());
 
 		// forward to the test plan
 		IterationTestPlanItem testPlan = execution.getTestPlan();
@@ -267,7 +262,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 				}
 				// we compare the date and update the value if the step date is greater
 				else if (executionStep.getLastExecutedOn() != null
-						&& mostRecentExecutionStep.getLastExecutedOn().compareTo(executionStep.getLastExecutedOn()) < 0) {
+					&& mostRecentExecutionStep.getLastExecutedOn().compareTo(executionStep.getLastExecutedOn()) < 0) {
 					mostRecentExecutionStep = executionStep;
 				}
 			}

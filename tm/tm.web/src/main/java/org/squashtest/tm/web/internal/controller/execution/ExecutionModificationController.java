@@ -22,10 +22,7 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -38,6 +35,7 @@ import javax.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +68,7 @@ import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelpe
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
+import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
@@ -110,6 +109,10 @@ public class ExecutionModificationController {
 
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
+
+	@Inject
+	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
+
 
 	// ****** custom field services ******************
 
@@ -163,7 +166,7 @@ public class ExecutionModificationController {
 
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsCufDefinitions", stepCufsModels);
-
+		mav.addObject("statuses", getStatuses(execution.getProject().getId()));
 		mav.addObject("milestoneConf", milestoneConf);
 
 		return mav;
@@ -294,6 +297,11 @@ public class ExecutionModificationController {
 			toReturn.append(issueList.get(i).getId());
 		}
 		return toReturn.toString();
+	}
+
+	private Map<String, String> getStatuses(long projectId) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
 	}
 
 	private Paging createPaging(final DataTableDrawParameters params) {
