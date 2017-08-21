@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
@@ -113,6 +114,8 @@ public class ExecutionModificationController {
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	// ****** custom field services ******************
 
@@ -386,6 +389,10 @@ public class ExecutionModificationController {
 		} else {
 			reNewEndDate = null;
 		}
+		if (testPlan.getExecutions().isEmpty()) {
+			iterationTestPlanManagerService.assignUserToTestPlanItem(testPlan.getId(),0);
+		}
+
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
 
