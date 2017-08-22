@@ -347,6 +347,10 @@ public class OptimizedServiceImpl implements OptimizedService {
 	}
 
 	private Map<Long, CustomFieldModel<?>> getCufModelMap(List<Long> cufIds) throws SQLException {
+		if(cufIds.isEmpty()){
+			return new HashMap<>();
+		}
+
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("cufIds", cufIds);
 

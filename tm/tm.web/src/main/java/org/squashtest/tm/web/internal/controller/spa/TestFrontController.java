@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.dto.JsonProject;
 import org.squashtest.tm.domain.dto.ProjectDto;
+import org.squashtest.tm.domain.dto.ProjectFilterDto;
 import org.squashtest.tm.domain.dto.TestCaseLibraryDto;
 import org.squashtest.tm.domain.dto.jstree.JsTreeNode;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -38,6 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.optimized.OptimizedService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
+import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
@@ -106,6 +108,12 @@ public class TestFrontController {
 		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
 		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
 		model.addAttribute("executionStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
+
+		ProjectFilterDto filter = optimizedService.findProjectFilterDto();
+		List<ProjectDto> allProjects = optimizedService.getAllProjects();
+
+		FilterModel filterModel = new FilterModel(filter, allProjects);
+		model.addAttribute("workspaceHelperPayLoad", filterModel);
 
 		return new HashMap<String,Object>(model.asMap());
 	}
