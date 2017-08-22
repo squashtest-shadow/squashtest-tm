@@ -39,19 +39,19 @@ public class RequirementVerifierView {
 	private String type;
 	private InternationalizationHelper internationalizationHelper;
 	private Locale locale;
-	
+
 
 	public RequirementVerifierView(TestCase requirementVerifier) {
 		this.verifier = requirementVerifier;
 		type = "test-cases";
 	}
-	
+
 	public RequirementVerifierView(ActionTestStep verifyingStep) {
 		this.verifier = verifyingStep.getTestCase();
 		this.verifyingStep = verifyingStep;
 		type = "test-step";
 	}
-	
+
 	public RequirementVerifierView(ActionTestStep verifyingStep,InternationalizationHelper internationalizationHelper,Locale locale) {
 		this.verifier = verifyingStep.getTestCase();
 		this.verifyingStep = verifyingStep;
@@ -59,7 +59,7 @@ public class RequirementVerifierView {
 		this.locale = locale;
 		type = "test-step";
 	}
-	
+
 	public TestCase getVerifier() {
 		return verifier;
 	}
@@ -83,7 +83,7 @@ public class RequirementVerifierView {
 	public void setVerifyingStep(ActionTestStep verifyingStep) {
 		this.verifyingStep = verifyingStep;
 	}
-	
+
 	public List<RequirementVersionCoverageView> getCoverages(){
 		List<RequirementVersionCoverageView> coverages = new ArrayList<>(0);
 		for(RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()){
@@ -91,20 +91,20 @@ public class RequirementVerifierView {
 			coverage.calculateMilestoneTimeInterval(internationalizationHelper, locale);
 			coverages.add(coverage);
 		}
-		
+
 		Collections.sort(coverages, new Comparator<RequirementVersionCoverageView>() {
 	        @Override
 	        public int compare(RequirementVersionCoverageView  view1, RequirementVersionCoverageView view2)
 	        {
-	            return  view1.version.getName().compareTo(view2.version.getName());
+	            return  view1.version.getName().compareToIgnoreCase(view2.version.getName());
 	        }
 	    });
-		
+
 		return coverages;
 	}
-	
 
-	
+
+
 	public static final class RequirementVersionCoverageView{
 		private RequirementVersion version;
 		private String milestoneTimeInterval;
@@ -121,7 +121,7 @@ public class RequirementVerifierView {
 				}
 			}
 		}
-		
+
 		public void calculateMilestoneTimeInterval(InternationalizationHelper internationalizationHelper, Locale locale){
 			milestoneTimeInterval = MilestoneModelUtils.timeIntervalToString(version.getMilestones(),internationalizationHelper,locale);
 		}
@@ -133,16 +133,16 @@ public class RequirementVerifierView {
 		public boolean isVerifiedByStep() {
 			return verifiedByStep;
 		}
-		
+
 		public String getMilestoneTimeInterval() {
 			return milestoneTimeInterval;
 		}
-		
+
 		public void setMilestoneTimeInterval(String milestoneTimeInterval) {
 			this.milestoneTimeInterval = milestoneTimeInterval;
 		}
-		
+
 	}
-	
-	
+
+
 }

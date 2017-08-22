@@ -113,6 +113,8 @@ public class TestStepController {
 		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
+		model.addAttribute("testCase", testStepView.testCase);
+		model.addAttribute("testStep", testStep);
 
 		// ------------------------------------ MILLESTONE FEATURE
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testStep.getTestCase());

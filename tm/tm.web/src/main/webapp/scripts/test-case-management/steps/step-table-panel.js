@@ -365,6 +365,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 					var url = urls.steps + stepId;
 					window.open(url, "_blank");
 					window.focus();
+					localStorage.removeItem("selectedRow");
 				}
 			}, {
 				tooltip: language.requirements,

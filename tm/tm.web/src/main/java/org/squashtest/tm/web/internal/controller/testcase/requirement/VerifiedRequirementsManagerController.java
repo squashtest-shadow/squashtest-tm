@@ -368,6 +368,9 @@ public class VerifiedRequirementsManagerController {
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
 			res.put("description", HTMLCleanupUtils.getBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+			res.put("category-icon", item.getCategory().getIconName());
+			res.put("criticality-level", item.getCriticality().getLevel());
+			res.put("status-level", item.getStatus().getLevel());
 			return res;
 		}
 	}

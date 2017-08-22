@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", 
-         "app/ws/squashtm.notification", "squash.translator", 
-         "jquery.squash", "jqueryui",         
-		"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable" ], 
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+         "app/ws/squashtm.notification", "squash.translator",
+         "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable" ],
 		function($, Backbone, _, StringUtil, notification, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var VerifiedRequirementsTable = Backbone.View.extend({
@@ -59,14 +59,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 
 		squashSettings : function(self) {
-			
+
 			var settings = {};
-			
+
 			settings.unbindButtons = {
-				delegate : "#remove-verified-requirement-version-dialog", 
+				delegate : "#remove-verified-requirement-version-dialog",
 				tooltip : translator.get('dialog.unbind-ta-project.tooltip')
 			  };
-	
+
 			if (VRTS.linkable) {
 				settings.buttons = [ {
 					tooltip : VRTS.messages.remove,
@@ -139,7 +139,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 
 		_removeRequirements : function() {
-			var self = this;	
+			var self = this;
 			// Issue 4948 : Selected Id(s) can be a number or an array
 			var ids =  (this.toDeleteIds !== undefined) ? this.toDeleteIds : this.$el.getSelectedIds() ;
 			if (ids.length === 0) {
@@ -149,9 +149,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				url : VRTS.url + '/' + ids.join(','),
 				type : 'delete'
 			}).done(self.refresh);
-
+			localStorage.removeItem("selectedRow");
 		},
-		
+
 		configureRemoveRequirementDialogs : function() {
 			// confirmRemoveRequirementDialog
 			this.confirmRemoveRequirementDialog = $("#remove-verified-requirement-version-dialog").confirmDialog();
@@ -210,17 +210,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.table.refresh();
 			self.trigger("verifiedrequirementversions.refresh");
 		},
-		
+
 		_refreshRestore : function() {
 			var self = this;
 			this.table.refreshRestore();
 			self.trigger("verifiedrequirementversions.refresh");
 		},
-		
+
 		_getRowNumber : function(){
 			return this.table._fnGetTrNodes().length;
 		}
-		
+
 	});
 	return VerifiedRequirementsTable;
 });

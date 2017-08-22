@@ -18,27 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-		"./TestStepVerifiedRequirementsTable", 
-		"jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
-		TestStepVerifiedRequirementsTable) {
+define(["jquery", "backbone", "underscore", "app/util/StringUtil",
+	"./TestStepVerifiedRequirementsTable",
+	"jquery.squash", "jqueryui",
+	"jquery.squash.togglepanel", "squashtable",
+	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+	"jquery.squash.confirmdialog"], function ($, Backbone, _, StringUtil,
+																						TestStepVerifiedRequirementsTable) {
 	var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 	var TestStepVerifiedRequirementsPanel = Backbone.View.extend({
 
-		el : "#verified-requirements-bloc-frag",
+		el: "#verified-requirements-bloc-frag",
 
-		initialize : function() {
+		initialize: function () {
 			VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 			this.table = new TestStepVerifiedRequirementsTable();
 			this.configureButtons.call(this);
+			this.showSelectedRequirement.call(this);
 		},
 
-		events : {},
+		events: {},
 
-		configureButtons : function() {
+		configureButtons: function () {
 			var self = this;
 			// ===============toogle buttons=================
 			// this line below is here because toggle panel
@@ -50,21 +51,51 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			// TODO change our way to make toggle panels buttons
 			// =============/toogle buttons===================
 			this.$("#remove-verified-requirements-button").on('click',
-					function() {
-						self.table.removeSelectedRequirements();
-					});
+				function () {
+					self.table.removeSelectedRequirements();
+				});
 			this.$("#remove-verified-requirements-from-step-button").on(
-					'click', function() {
-						self.table.detachSelectedRequirements();
-					});
+				'click', function () {
+					self.table.detachSelectedRequirements();
+				});
 			this.$("#add-verified-requirements-button").on('click',
-					self.goToRequirementManager);
+				self.goToRequirementManager);
 		},
 
-		goToRequirementManager : function() {
+		goToRequirementManager: function () {
 			document.location.href = VRBS.stepUrl + "/manager";
-		}
+		},
 
+		showSelectedRequirement: function () {
+			var self = this;
+
+			self.table.$el.on('click', 'tbody>tr>td.select-handle', function () {
+				var rowSelected = $(this).closest('tr');
+				var data = self.table.$el.fnGetData(rowSelected);
+				$("#requirement-version-id")[0].innerHTML = '[ID =' + data["entity-id"] + ']';
+				$("#requirement-version-versionNumber")[0].innerHTML = data["versionNumber"];
+				$("#requirement-version-status")[0].innerHTML = data["status-level"]+'-'+data["status"];
+				$("#requirement-version-criticality")[0].innerHTML = data["criticality-level"]+'-'+data["criticality"];
+				$("#requirement-version-category")[0].innerHTML = data["category"];
+				$("#requirement-version-category-icon")[0].className = 'sq-icon sq-icon-' + data["category-icon"];
+				$("#requirement-version-description")[0].innerHTML = data["description"];
+
+				localStorage.setItem("selectedRow", data["entity-index"]);
+
+			});
+
+			var targetRequirementRows = $('.ui-icon-link-dark-e-w').closest('tr');
+			var targetSelectHandle = targetRequirementRows.find('.select-handle');
+			if (targetSelectHandle.length === 0) {
+				var previousSelectedRow = localStorage.getItem("selectedRow");
+				if(previousSelectedRow != null){
+					targetSelectHandle = $('tbody>tr').eq(previousSelectedRow-1).find('.select-handle');
+					targetSelectHandle[0].click();
+				}
+			} else {
+				targetSelectHandle[0].click();
+			}
+		}
 	});
 	return TestStepVerifiedRequirementsPanel;
 });
