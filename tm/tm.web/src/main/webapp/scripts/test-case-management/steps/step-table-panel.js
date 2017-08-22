@@ -383,8 +383,9 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 						var row = cell.parentNode.parentNode;
 						var stepId = table.getODataId(row);
 						var url = urls.steps + stepId + "/verified-requirement-versions/manager";
-						window.open(url, "_blank");
-						window.focus();
+						/*window.open(url, "_blank");
+						window.focus();*/
+						document.location.href = url;
 					}
 				}
 			}]
