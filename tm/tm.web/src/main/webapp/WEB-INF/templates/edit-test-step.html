@@ -122,7 +122,7 @@
             th:text="#{label.callstep} + ' ' + ${testStepView.callStepName}"/></div>
 
           <div class="snap-right">
-            <span class="group" th:if="${writable}">
+            <span class="group" th:if="!${fromExec} and ${writable}">
             <button id="add-test-step-button"
                     data-icon="ui-icon-plusthick"
                     class="button test-step-toolbar-button"
@@ -137,7 +137,7 @@
                       th:title="#{test-case.step.delete.label}">
 					 remove selected steps
 			      </button>
-		      </span>
+		      </span >
             <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "
                                      href="#" id="previous-test-step-button">Previous</a>
             <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#"
@@ -171,9 +171,9 @@
 
               <div id="test-step-info-panel" class="information-panel tg-body"
                    th:classappend="${stepIsDelete} ? disabled-transparent : ''">
-                <div class="display-table" id="test-step-infos-table"
+                <div id="test-step-infos-table"
                      th:style="${testStepView.actionStep}? 'width:100%' : ''">
-                  <div class="display-table-row control-group" th:if="${testStepView.actionStep}"
+                  <div class="control-group" th:if="${testStepView.actionStep}"
                        th:switch="${writable}">
                     <label for="test-step-action" class="control-label" th:text="#{label.action}"
                            style="vertical-align:middle">Action</label>
@@ -183,7 +183,7 @@
                       <span class="help-inline">&nbsp;</span><span>&nbsp;</span></div>
                     <span th:case="${false}" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
                   </div>
-                  <div class="display-table-row control-group" th:if="${testStepView.actionStep}"
+                  <div class="control-group" th:if="${testStepView.actionStep}"
                        th:switch="${writable}">
                     <label for="test-step-expectedResult" class="control-label " th:text="#{label.expectedResult}"
                            style="vertical-align:middle">Expected result</label>
