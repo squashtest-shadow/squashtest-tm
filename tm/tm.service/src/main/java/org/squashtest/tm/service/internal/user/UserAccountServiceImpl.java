@@ -37,9 +37,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
@@ -62,12 +64,16 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private UserAuthenticationService authService;
 
 	@Inject
+	private CustomGenericProjectManager customGenericProjectManager;
+
+	@Inject
 	private TeamModificationService teamModificationService;
 
 	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
-	@Inject private UserManagerService userManager;
+	@Inject
+	private UserManagerService userManager;
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -135,6 +141,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 		String username = userContextService.getUsername();
 		User user = userDao.findUserByLogin(username);
 		user.setEmail(newEmail);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Party getParty(Long id) {
+		return customGenericProjectManager.findPartyById(id);
 	}
 
 	@Override

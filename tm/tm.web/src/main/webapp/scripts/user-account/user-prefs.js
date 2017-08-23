@@ -25,7 +25,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
     var WORKSPACE_CONTENT_DASHBOARD_VALUE = "dashboard";
     var WORKSPACE_CONTENT_DEFAULT_VALUE = "default";
     var VALID_WORKSPACE = ["home","tc","requirement","campaign"];
-
+		var BUGTRACKER_MODE_KEY = ["squash.bug.tracker.mode"];
      //***************** GET PREF METHODS *****************************
 
     function getAllPrefs(){
@@ -33,7 +33,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
     }
 
     function getPref(key) {
-        var prefs = getAllPrefs(); 
+        var prefs = getAllPrefs();
         if (prefs) {
             return prefs[key] || null;
         } else {
@@ -41,7 +41,12 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         }
     }
 
-    function getFavoriteDashboardIdInWorkspace(){
+	function getBugtrackerMode(){
+		var	key = BUGTRACKER_MODE_KEY;
+		return getPref(key);
+	}
+
+	function getFavoriteDashboardIdInWorkspace(){
         var workspace = getWorkspace();
         return getFavoriteDashboardId(workspace);
     }
@@ -67,7 +72,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         if(_.contains(VALID_WORKSPACE,workspace)){
             return root + workspace;
         }
-        throw ("Unknown workspace type " + workspace); 
+        throw ("Unknown workspace type " + workspace);
     }
 
     function chooseDefaultContentInWorkspace(callback){
@@ -75,7 +80,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         updateFavoriteContentInWorkspace(workspace, WORKSPACE_CONTENT_DEFAULT_VALUE, callback);
     }
 
-    function chooseFavoriteDashboardInWorkspace(callback){  
+    function chooseFavoriteDashboardInWorkspace(callback){
         var workspace = getWorkspace();
         updateFavoriteContentInWorkspace(workspace, WORKSPACE_CONTENT_DASHBOARD_VALUE, callback);
     }
@@ -120,7 +125,7 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
 
          else if(squashtm.app.campaignWorkspaceConf){return "campaign";}
 
-         throw ("you must call this function inside a workspace. All workspace conf are undefined in your context"); 
+         throw ("you must call this function inside a workspace. All workspace conf are undefined in your context");
     }
 
 
@@ -132,8 +137,9 @@ define(["underscore","workspace.routing"], function(_,urlBuilder) {
         getPref : getPref,
         getFavoriteDashboardIdInWorkspace : getFavoriteDashboardIdInWorkspace,
         getWorkspaceContentPreferenceKey : getWorkspaceContentPreferenceKey,
+				getBugtrackerMode :getBugtrackerMode,
         chooseDefaultContentInWorkspace : chooseDefaultContentInWorkspace,
         chooseFavoriteDashboardInWorkspace : chooseFavoriteDashboardInWorkspace,
-        shouldShowFavoriteDashboardInWorkspace : shouldShowFavoriteDashboardInWorkspace
+				shouldShowFavoriteDashboardInWorkspace : shouldShowFavoriteDashboardInWorkspace
     };
 });

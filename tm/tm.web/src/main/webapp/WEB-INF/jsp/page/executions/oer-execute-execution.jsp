@@ -280,6 +280,7 @@
 		 <script type="text/javascript">
 		 require(["common"], function() {
 			 require(["jquery", "app/ws/squashtm.notification", "bugtracker/bugtracker-panel"], function($, wtf, bugtracker) {
+			   bugtracker.setBugtrackerMode("${bugtrackerMode}");
 				 bugtracker.load({
 					 url : "${btEntityUrl}"
 				 });

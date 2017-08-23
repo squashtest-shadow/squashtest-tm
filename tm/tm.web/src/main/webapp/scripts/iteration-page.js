@@ -163,6 +163,7 @@ require(["common"], function () {
 				Frag.init(fragConf);
 
 				if (config.hasBugtracker) {
+					bugtracker.setBugtrackerMode(config.bugtrackerMode);
 					bugtracker.load(config.bugtracker);
 				}
 

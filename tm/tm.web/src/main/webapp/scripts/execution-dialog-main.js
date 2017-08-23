@@ -238,7 +238,7 @@ define(['module',
 			var conf = {
 				url : config.urls.bugtracker
 			};
-
+			bugtracker.setBugtrackerMode(config.basic.bugtrackerMode);
 			bugtracker.load(conf);
 
 			//issue 3083 : propagate the information to the parent context

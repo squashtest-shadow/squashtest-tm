@@ -320,7 +320,7 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				var conf = {
 					url: routing.buildURL('bugtracker.execution', config.basic.executionId)
 				}
-
+				bugtracker.setBugtrackerMode(config.basic.bugtrackerMode);
 				bugtracker.load(conf);
 			}
 		}

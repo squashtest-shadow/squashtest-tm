@@ -37,7 +37,10 @@ public enum CorePartyPreference {
 	FAVORITE_DASHBOARD_HOME("squash.core.favorite.dashboard.home"),
 	FAVORITE_DASHBOARD_REQUIREMENT("squash.core.favorite.dashboard.requirement"),
 	FAVORITE_DASHBOARD_TEST_CASE("squash.core.favorite.dashboard.tc"),
-	FAVORITE_DASHBOARD_CAMPAIGN("squash.core.favorite.dashboard.campaign");
+	FAVORITE_DASHBOARD_CAMPAIGN("squash.core.favorite.dashboard.campaign"),
+
+	//for choosing automatic or manual logging to bugtrackers
+	BUGTRACKER_MODE("squash.bug.tracker.mode");
 
 	private String preferenceKey;
 

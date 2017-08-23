@@ -25,6 +25,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -40,10 +41,13 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.Party;
+import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
@@ -69,6 +73,9 @@ public class UserAccountController {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	@Inject
+	PartyPreferenceService partyPreferenceService;
+
+	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
 		this.permissionFinder = permissionFinder;
 	}
@@ -77,10 +84,28 @@ public class UserAccountController {
 		this.userService=service;
 	}
 
+	public PartyPreferenceService getPartyPreferenceService() {
+		return partyPreferenceService;
+	}
+
+	public void setPartyPreferenceService(PartyPreferenceService partyPreferenceService) {
+		this.partyPreferenceService = partyPreferenceService;
+	}
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails() {
 		User user = userService.findCurrentUser();
-
+		Long idUser = user.getId();
+		Party party = userService.getParty(idUser);
+		Map<String, String> map  =  partyPreferenceService.findPreferences(party);
+		String bugtrackerMode= map.get("squash.bug.tracker.mode");
+		Boolean test;
+		if(bugtrackerMode==null){
+			test=true;
+		}else if (bugtrackerMode=="Automatic"){
+			test=true;
+		}else{
+			test=false;
+		}
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
@@ -91,6 +116,7 @@ public class UserAccountController {
 		mav.addObject("user", user);
 		mav.addObject("milestoneList", milestoneList);
 		mav.addObject("projectPermissions", projectPermissions);
+		mav.addObject("bugtrackerMode", bugtrackerMode);
 
 		// also, active milestone
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
@@ -134,4 +160,12 @@ activeMilestone.get().getId(),
 			return m1.getLabel().compareTo(m2.getLabel());
 		}
 	}
+
+	@RequestMapping(value = "/update", method= RequestMethod.POST)
+	@ResponseBody
+	public PartyPreference changeUserBugtrackerMode (@RequestParam(VALUE) String bugtrackerMode){
+		partyPreferenceService.addOrUpdatePreferenceForCurrentUser("squash.bug.tracker.mode",bugtrackerMode);
+		return partyPreferenceService.findPreferenceForCurrentUser("squash.bug.tracker.mode");
+	}
+
 }

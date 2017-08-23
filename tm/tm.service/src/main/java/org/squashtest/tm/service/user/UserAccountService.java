@@ -23,6 +23,7 @@ package org.squashtest.tm.service.user;
 import java.util.Collection;
 
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
@@ -54,6 +55,8 @@ public interface UserAccountService {
 	 * @return the current {@link User} or <code>null</code>
 	 */
 	User findCurrentUser();
+
+	Party getParty(Long id);
 
 	void setCurrentUserEmail(String newEmail);
 

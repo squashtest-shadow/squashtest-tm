@@ -115,7 +115,8 @@
               hasNextStep: ${ (not empty hasNextStep) and hasNextStep },
               hasCufs: ${hasCustomFields},
               hasDenormCufs: ${hasDenormFields},
-              hasBugtracker: ${executionStep.project.bugtrackerConnected}
+                				hasBugtracker : ${executionStep.project.bugtrackerConnected},
+                        bugtrackerMode:"${bugtrackerMode}"
             },
             urls: {
               baseURL: "${currentStepsUrl}",
