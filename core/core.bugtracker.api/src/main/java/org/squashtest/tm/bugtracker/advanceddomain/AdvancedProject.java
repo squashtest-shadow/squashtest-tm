@@ -27,16 +27,19 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 public class AdvancedProject implements RemoteProject {
-	
+
 	private String id;
 	private String name;
-	
+
+	// Beware adding your schemes in this map will not show them in the Anomaly declaration form.
+	// To have a visible scheme selector, you must create a {@link Field} with an {@link InputType} configured with the flag {@link InputType#isFieldSchemeSelector()}
+	// See documentation of {@link InputType} for further information. You can also look inside avanced bugtrackers plugin like Jira to see exemple of code.
 	private MultiValueMap schemes = new MultiValueMap();
-	
+
 	public void setId(String id){
 		this.id = id;
 	}
-	
+
 	public void setName(String name){
 		this.name = name;
 	}
@@ -51,7 +54,7 @@ public class AdvancedProject implements RemoteProject {
 		return name;
 	}
 
-	
+
 	/**
 	 * think of it as a Map<String, Collection<Field>>
 	 */
@@ -59,14 +62,14 @@ public class AdvancedProject implements RemoteProject {
 		return schemes;
 	}
 
-	
+
 	/**
 	 * think of it as a Map<String, Collection<Field>>
 	 */
 	public void setSchemes(MultiValueMap schemes) {
 		this.schemes = schemes;
 	}
-	
+
 
 	public Collection<Field> getFieldScheme(String schemeName){
 		return (Collection<Field>)schemes.get(schemeName);
