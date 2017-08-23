@@ -59,7 +59,7 @@
 <div id="bugtracker-section-main-div">
 
   <comp:structure-configurable-panel id="issue-panel"
-    titleKey="issue.panel.title" isContextual="true" open="true"
+    titleKey="issue.panel.title" isContextual="true" open="false"
     style="${panelStyle}">
 
     <jsp:attribute name="panelButtons">
