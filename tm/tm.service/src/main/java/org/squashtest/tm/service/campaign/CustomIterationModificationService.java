@@ -62,6 +62,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	Execution addExecution(long testPlanItemId);
 
+	void addEmptyExecution(long testPlanItemId);
+
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
 	 * happen.

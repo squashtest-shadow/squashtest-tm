@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -65,6 +66,7 @@ import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
@@ -72,15 +74,12 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.library.TreeNodeCopier;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
@@ -107,6 +106,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ExecutionDao executionDao;
 
 	@Inject
+	private UserDao userDao;
+
+	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
 	@Inject
@@ -131,6 +133,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ExecutionModificationService executionModificationService;
 
 	@Inject
+	private ExecutionProcessingService executionProcessingService;
+
+
+	@Inject
 	private IterationModificationService iterationModificationService;
 
 	@Inject
@@ -142,6 +148,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private Provider<TreeNodeCopier> treeNodeCopierFactory;
+
+	@Inject
+	private UserContextService userContextService;
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
@@ -223,7 +232,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	/**
-	 *
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addExecution(long)
 	 */
 	@Override
@@ -231,6 +239,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public Execution addExecution(long testPlanItemId) {
 		IterationTestPlanItem item = testPlanDao.findById(testPlanItemId);
 		return addExecution(item);
+	}
+
+	@Override
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public void addEmptyExecution(long testPlanItemId) {
+		IterationTestPlanItem item = testPlanDao.findById(testPlanItemId);
+		addEmptyExecution(item);
 	}
 
 	@Override
@@ -334,14 +349,36 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		Execution execution = createExec(item);
 		ExecutionStatus formerITPIExecutionStatus = item.getExecutionStatus();
 		item.addExecution(execution);
+
+		//[issue 6787] if we execute an ITPI with no test step, the execution and ITPI must have a date and a user
+		if (execution.getSteps().isEmpty()) {
+			executionProcessingService.updateExecutionMetadata(execution);
+		}
+
 		ExecutionStatus newITPIExecutionStatus = testPlanDao.findById(item.getId()).getExecutionStatus();
 
-		if(!formerITPIExecutionStatus.equals(newITPIExecutionStatus)){
+		if (!formerITPIExecutionStatus.equals(newITPIExecutionStatus)) {
 			updateExecutionStatus(item.getIteration().getId());
 		}
 
 		operationsAfterAddingExec(item, execution);
 		return execution;
+	}
+
+	public void addEmptyExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+		//we create an execution with the itpi execution status and without execution steps
+		Execution execution = createExec(item);
+		execution.getSteps().clear();
+		execution.setExecutionStatus(item.getExecutionStatus());
+		item.addExecution(execution);
+
+		//[issue 6787] the execution and ITPI must have a date and a user
+		executionProcessingService.updateExecutionMetadata(execution);
+
+		//the itpi has a new status, thus we must update the iteration status
+		updateExecutionStatus(item.getIteration().getId());
+
+		operationsAfterAddingExec(item, execution);
 	}
 
 	private Execution createExec(IterationTestPlanItem item) {

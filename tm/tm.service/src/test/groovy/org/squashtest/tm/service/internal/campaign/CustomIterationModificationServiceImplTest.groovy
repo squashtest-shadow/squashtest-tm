@@ -37,6 +37,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.security.UserContextService
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -59,6 +60,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	IndexationService indexationService = Mock()
 
 	ExecutionModificationService executionModificationService = Mock();
+	UserContextService userContextService = Mock();
 
 	def setup() {
 		service.executionDao = execDao
@@ -70,6 +72,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.denormalizedFieldValueService = denormalizedFieldValueService
 		service.indexationService = indexationService
 		service.executionModificationService = executionModificationService;
+		service.userContextService = userContextService
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {
