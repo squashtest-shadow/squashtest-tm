@@ -293,7 +293,7 @@ public class RequirementVersionModificationController {
 	@ResponseBody
 	public String changeName(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		requirementVersionManager.rename(requirementVersionId, value);
-		return value;
+		return HtmlUtils.htmlEscape(value);
 	}
 
 

@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -84,8 +85,8 @@ public class RequirementSearchResultDataTableModelBuilder extends DataTableModel
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put("requirement-id", item.getRequirement().getId());
 		res.put("requirement-version-id", item.getId());
-		res.put("requirement-reference", item.getReference());
-		res.put("requirement-label", item.getName());
+		res.put("requirement-reference",  HtmlUtils.htmlEscape(item.getReference()));
+		res.put("requirement-label",  HtmlUtils.htmlEscape(item.getName()));
 		res.put("editable", isRequirementVersionEditable(item));
 		res.put("requirement-criticality", formatCriticality(item.getCriticality(), locale));
 		res.put("requirement-category", formatInfoItem(item.getCategory(), locale));

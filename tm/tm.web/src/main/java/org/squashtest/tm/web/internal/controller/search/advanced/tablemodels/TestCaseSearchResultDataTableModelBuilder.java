@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -84,8 +85,8 @@ public class TestCaseSearchResultDataTableModelBuilder extends DataTableModelBui
 		}
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put("test-case-id", item.getId());
-		res.put("test-case-ref", item.getReference());
-		res.put("test-case-label", item.getName());
+		res.put("test-case-ref", HtmlUtils.htmlEscape(item.getReference()));
+		res.put("test-case-label", HtmlUtils.htmlEscape(item.getName()));
 		res.put("editable", isTestCaseEditable(item));
 		res.put("test-case-weight", formatImportance(item.getImportance(), locale));
 		res.put("test-case-weight-auto", item.getImportanceAuto());

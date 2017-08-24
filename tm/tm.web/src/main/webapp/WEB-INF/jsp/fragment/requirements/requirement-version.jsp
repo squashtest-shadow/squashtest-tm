@@ -156,7 +156,7 @@ that page won't be editable if
   		<h2>
 			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
 			<c:if test="${not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0}" >
-				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
+				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }'/>
 			</c:if>
 			<a id="requirement-name" href="${ requirementVersionUrl }/info"><c:out value="${ completeRequirementName }" escapeXml="true"/></a>
 			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
@@ -252,7 +252,7 @@ publish('reload.requirement.toolbar');
 
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
-					<div id="requirement-reference">${ requirementVersion.reference }</div>
+					<div id="requirement-reference"><c:out value="${ requirementVersion.reference }" escapeXml="true" /></div>
 				</div>
 
 				<div class="display-table-row">

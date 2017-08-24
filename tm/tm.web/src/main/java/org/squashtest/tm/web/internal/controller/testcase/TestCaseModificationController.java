@@ -411,7 +411,7 @@ public class TestCaseModificationController {
 		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
 
-		return newName;
+		return HtmlUtils.htmlEscape(newName);
 
 	}
 

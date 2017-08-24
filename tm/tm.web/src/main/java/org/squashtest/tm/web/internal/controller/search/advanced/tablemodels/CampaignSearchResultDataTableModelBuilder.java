@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -57,18 +58,18 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 	public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
 		Map<String, Object> res = new HashMap<>();
-		res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+		res.put(DataTableModelConstants.PROJECT_NAME_KEY, HtmlUtils.htmlEscape(item.getProject().getName()));
 		res.put("project-id", item.getProject().getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-		res.put("campaign-name", item.getCampaign().getName());
-		res.put("iteration-name", item.getIteration().getName());
+		res.put("campaign-name", HtmlUtils.htmlEscape(item.getCampaign().getName()));
+		res.put("iteration-name",  HtmlUtils.htmlEscape(item.getIteration().getName()));
 		res.put("iteration-id", item.getIteration().getId());
 		res.put("editable", isExecutionEditable(item));
 		res.put("itpi-id", item.getId().toString());
 		res.put("tc-weight",
 				item.isTestCaseDeleted() ? "" : formatImportance(item.getReferencedTestCase().getImportance(), locale));
 		res.put("itpi-isauto", item.isAutomated());
-		res.put("itpi-label", item.isTestCaseDeleted() ? "" : item.getReferencedTestCase().getName());
+		res.put("itpi-label", item.isTestCaseDeleted() ? "" : HtmlUtils.htmlEscape(item.getReferencedTestCase().getName()));
 		res.put("itpi-mode", formatMode(item.getExecutionMode(), locale));
 		res.put("itpi-testsuites", item.getTestSuiteNames());
 		res.put("itpi-status", formatExecutionStatus(item.getExecutionStatus(), locale));
@@ -96,7 +97,7 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 	private String formatDatasetsItem(IterationTestPlanItem item) {
 		String dataset = "-";
 		if (item.getReferencedDataset() != null) {
-			dataset = item.getReferencedDataset().getName();
+			dataset = HtmlUtils.htmlEscape(item.getReferencedDataset().getName());
 		}
 		return dataset;
 	}

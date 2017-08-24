@@ -1,12 +1,12 @@
 
 define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squashtm.workspace",
 	        "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs",
-	        "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification",
+	        "custom-field-values", "squash.configmanager","jeditable.simpleJEditable", "app/ws/squashtm.notification",
 	        "workspace.routing",  "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
 	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
 	         "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 			function(module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
-					cufvalues, confman, notification, routing, translator, upload, milestoneNotifier,
+					cufvalues, confman,SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
 					squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView) {
 
 		// event subscription
@@ -76,17 +76,16 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				if (config.permissions.writable){
 
 					// ********** REFERENCE *****************
-
-					var refinput = $("#requirement-reference");
-
-					var refconf = confman.getStdJeditable();
-					refconf.maxlength=50;
-					refconf.callback= function(reference){
-						eventBus.trigger('node.update-reference', { identity : config.basic.identity, newRef : reference});
-					};
-
-					refinput.editable(baseURL, refconf);
-
+					var refconf = new SimpleJEditable({
+						targetUrl : baseURL,
+						componentId : "requirement-reference",
+						submitCallback : function (reference) {
+							eventBus.trigger('node.update-reference', { identity : config.basic.identity, newRef : reference});
+						},
+						jeditableSettings : {
+							maxLength : 50
+						}
+					});
 
 					// ********** CRITICALITY ***************
 					var criticSelect = $("#requirement-criticality");

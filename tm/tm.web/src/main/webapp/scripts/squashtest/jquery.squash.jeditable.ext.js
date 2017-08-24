@@ -41,6 +41,12 @@ define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable",
 		return (input);
 	};
 
+	// [Issue 3830] : need to html decode the content provided by jeditable core for input text (see jeditable.authored, line 176)
+	$.editable.types.text.content = function(string, settings, original) {
+		 var decoded = $("<div/>").html(string).text();
+			$(':input:first', this).val(decoded);
+	};
+
 	/**
 	 * custom rich jeditable for the type 'ckeditor'. The plugin
 	 * jquery.jeditable.ckeditor.js must have been called beforehand. The
