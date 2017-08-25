@@ -76,6 +76,11 @@ require( ["common"], function(){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
 					var td=$(row).find("td:eq(5)");
 					$(td).html(correctAssignee);
+
+					td=$(row).find("td:eq(2)");
+					var encodedSummary = $("<div/>").text(data["summary"]).html();
+					$(td).html(encodedSummary);
+
 					return row;
 				},
 				<c:if test="${not empty tableEntries}">

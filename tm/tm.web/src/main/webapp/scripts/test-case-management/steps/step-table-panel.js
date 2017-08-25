@@ -154,7 +154,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 				(stepinfo.paramMode === 'DELEGATE') ? alllang.delegate :
 					stepinfo.calledDatasetName;
 
-		var decodedTcName = $("<div/>").text(stepinfo.calledTcName).html();
+		var encodedTcName = $("<div/>").text(stepinfo.calledTcName).html();
 		var tcLink = '<a href="' + tcUrl + '">' + decodedTcName + '</a>',
 			dsLink = '<a href="javascript:void(0)" class="called-dataset-link">' + dsName + '</a>';
 

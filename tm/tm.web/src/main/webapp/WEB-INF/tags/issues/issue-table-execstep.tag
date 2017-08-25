@@ -21,12 +21,12 @@
 
 --%>
 <%@ tag description="Table displaying the issues for an ExecutionStep" body-content="empty" %>
-	
+
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>	
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
@@ -40,7 +40,7 @@
 <%--
 
 	columns are :
-	
+
 		- URL (not shown)
 		- ID
 		- owner
@@ -48,7 +48,7 @@
 		- Summary
 
  --%>
- 
+
 <c:url var="tLanguageUrl" value="/datatables/messages"/>
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=centered delete-button"/>
@@ -72,11 +72,17 @@
 <script type="text/javascript">
 require( ["common"], function(){
 		require(["jquery","workspace.event-bus", "issues/issues-table"], function($,eventBus, it){
+	function issueTableRowCallback(row, data, displayIndex) {
+		var td=$(row).find("td:eq(2)");
+		var encodedSummary = $("<div/>").text(data["summary"]).html();
+		$(td).html(encodedSummary);
+		return row;
+	}
 	$(function(){
 			it.initTestStepIssueTable({
 				target : '#issue-table',
 				urls : {
-					bugtracker : "${bugTrackerUrl}",					
+					bugtracker : "${bugTrackerUrl}",
 				},
 				language : {
 					removeMessage : '<f:message key="dialog.remove-testcase-association.message" />',
@@ -86,14 +92,15 @@ require( ["common"], function(){
 					iDeferLoading : ${deferLoading},
 	        		<c:if test="${not empty tableEntries}">
 	        		'aaData' : ${json:serialize(tableEntries)},
-	        		</c:if>		
+	        		</c:if>
 					'ajax' : {
 						url : "${dataUrl}",
 						error : function(xhr){
 							eventBus.trigger('bugtracker.ajaxerror', xhr);
 							return false;
 						}
-					}	        		
+					},
+					'fnRowCallback' : issueTableRowCallback,
 				}
 			});
 		});

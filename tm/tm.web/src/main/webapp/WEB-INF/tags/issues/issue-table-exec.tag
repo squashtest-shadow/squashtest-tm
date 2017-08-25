@@ -25,7 +25,7 @@
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>	
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
@@ -35,9 +35,9 @@
 <%@ attribute name="tableEntries" required="false" type="java.util.List" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
 <%@ attribute name="entityId" required="true" description="id of the current execution" %>
 <%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
-<%-- 
+<%--
 	columns are :
-	
+
 		- URL  (not shown)
 		- ID
 		- owner
@@ -47,34 +47,37 @@
 		- Assignation
 
  --%>
- 
+
 <c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
 
 <script type="text/javascript">
-	
+
 	function refreshTestPlan() {
 		$('#issue-table').squashTable().refresh();
 	}
 
 	function issueTableRowCallback(row, data, displayIndex) {
 		checkEmptyValues(row, data);
+		var td=$(row).find("td:eq(2)");
+		var encodedSummary = $("<div/>").text(data["summary"]).html();
+		$(td).html(encodedSummary);
 		return row;
 	}
-	
+
 	<%-- we check the assignee only (for now) --%>
 	function checkEmptyValues(row, data){
 		var assignee = data['assignee'];
-		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}"; 
+		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}";
 		var td=$(row).find("td:eq(5)");
 		$(td).html(correctAssignee);
 	}
-	
+
 	/* ************************** datatable settings ********************* */
 
 
 	$(function() {
-		
-		var tableSettings = { 
+
+		var tableSettings = {
 				"aaSorting" : [[0,'desc']],
 				"fnRowCallback" : issueTableRowCallback,
 				'iDeferLoading' : ${deferLoading},
@@ -87,9 +90,9 @@
 						squashtm.workspace.eventBus.trigger('bugtracker.ajaxerror', xhr);
 						return false;
 					}
-				}     		
-			};		
-		
+				}
+			};
+
 			var squashSettings = {
 				enableDnD : false,
 				deleteButtons : {
@@ -104,9 +107,9 @@
 
 			$("#issue-table").squashTable(tableSettings, squashSettings);
 	});
-	
+
 </script>
-	
+
 <c:url value='/datatables/messages' var="tableLangUrl" />
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=delete-button"/>

@@ -89,6 +89,10 @@ require( ["common"], function(){
 					$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
 				});
 
+				td=$(row).find("td:eq(2)");
+				var encodedSummary = $("<div/>").text(data["summary"]).html();
+				$(td).html(encodedSummary);
+
 				return row;
 			};
 
