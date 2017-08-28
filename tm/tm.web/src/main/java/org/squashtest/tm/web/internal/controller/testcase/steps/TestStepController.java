@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -112,6 +113,8 @@ public class TestStepController {
 			TestStep testStep) {
 		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
+		model.addAttribute("testStepViewAction", HtmlUtils.htmlEscape(testStepView.actionStep.getAction()));
+		model.addAttribute("testStepViewExpectedResult", HtmlUtils.htmlEscape(testStepView.actionStep.getExpectedResult()));
 		model.addAttribute("workspace", "test-case");
 		model.addAttribute("testCase", testStepView.testCase);
 		model.addAttribute("testStep", testStep);
@@ -183,6 +186,8 @@ public class TestStepController {
 			generateTestStepInfo(model, testStepView, testStep);
 		} else {
 			model.addAttribute("testStepView", testStepView);
+			model.addAttribute("testStepViewAction", HtmlUtils.htmlEscape(testStepView.actionStep.getAction()));
+			model.addAttribute("testStepViewExpectedResult", HtmlUtils.htmlEscape(testStepView.actionStep.getExpectedResult()));
 			model.addAttribute("workspace", "test-case");
 			model.addAttribute("writable", true);
 		}

@@ -179,9 +179,9 @@
                            style="vertical-align:middle">Action</label>
                     <div th:case="${true}" class=" controls"><textarea class="test-step-attr" name="action"
                                                                        id="test-step-action"
-                                                                       sq:unsafe-html="${testStepView.actionStep.action} ">do this</textarea>
+                                                                       sq:unsafe-html="${testStepViewAction} ">do this</textarea>
                       <span class="help-inline">&nbsp;</span><span>&nbsp;</span></div>
-                    <span th:case="${false}" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
+                    <span th:case="${false}" sq:unsafe-html="${testStepViewAction}">do this</span>
                   </div>
                   <div class="control-group" th:if="${testStepView.actionStep}"
                        th:switch="${writable}">
@@ -189,10 +189,10 @@
                            style="vertical-align:middle">Expected result</label>
                     <div th:case="${true}" class=" controls"><textarea class=" test-step-attr" name="expectedResult"
                                                                        id="test-step-expectedResult"
-                                                                       sq:unsafe-html="${testStepView.actionStep.expectedResult}">see that</textarea>
+                                                                       sq:unsafe-html="${testStepViewExpectedResult}">see that</textarea>
                       <span class="help-inline">&nbsp;</span>
                     </div>
-                    <span th:case="${false}" sq:unsafe-html="${testStepView.actionStep.expectedResult}">do this</span>
+                    <span th:case="${false}" sq:unsafe-html="${testStepViewExpectedResult}">do this</span>
                   </div>
                 </div>
               </div>
