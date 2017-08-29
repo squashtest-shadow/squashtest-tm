@@ -155,7 +155,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 					stepinfo.calledDatasetName;
 
 		var encodedTcName = $("<div/>").text(stepinfo.calledTcName).html();
-		var tcLink = '<a href="' + tcUrl + '">' + decodedTcName + '</a>',
+		var tcLink = '<a href="' + tcUrl + '">' + encodedTcName + '</a>',
 			dsLink = '<a href="javascript:void(0)" class="called-dataset-link">' + dsName + '</a>';
 
 		var text = alllang.template.replace('{0}', tcLink).replace('{1}', dsLink);
