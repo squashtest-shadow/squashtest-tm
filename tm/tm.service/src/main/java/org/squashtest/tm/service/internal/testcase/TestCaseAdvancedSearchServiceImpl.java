@@ -271,7 +271,10 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 			// FIXME count + paged query if possible
 			countAll = hibQuery.getResultList().size();
-			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).getResultList();
+			if (!sorting.shouldDisplayAll()){
+				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
+			}
+			result = hibQuery.getResultList();
 		}
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
