@@ -55,10 +55,10 @@
     </a>
 		</c:otherwise>
 		</c:choose>
-		
+
 	</div>
-	
-	
+
+
 </div>
 
 <tree:_html-tree treeId="${ id }" />
@@ -72,39 +72,42 @@ require( ["common"], function(){
     		workspace : "${workspaceType}",
     		treeselector : "#${id}"
     	}
-    	
+
     	$(function(){
-    		
+
     		// thre tree
-    		tree.initLinkableTree(conf);			
-    		
-    		// the button menu
+    		tree.initLinkableTree(conf);
+
+			<%--[Issue 5218] add top margin for jstree to avoid hiding filter reminder--%>
+			$("#${id}")[0].style.marginTop = "1em";
+
+			// the button menu
       		if(conf.workspace === "requirement"){
       			$("#search-tree-button").on('click', function(){
       				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
       			});
-   
+
       		} else if(conf.domain != "requirement"){
-      			
+
       			$("#search-tree-button").buttonmenu();
-      			
+
       			$("#test-case-search-button").on('click', function(){
       				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
       			});
-      			
+
       			$("#search-by-requirement-button").on('click', function(){
       				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
       			});
-      
+
       		} else {
       			$("#search-tree-button").on('click', function(){
       				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
       			});
-      
+
       		}
-    		
+
     	});
 	});
 });
-	
+
 </script>
