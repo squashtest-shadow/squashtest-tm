@@ -246,7 +246,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private <LN extends LibraryNode> NodeContainer<LN> findFolderOrLibraryParent(LN node, LibraryDao libraryDao,
 			FolderDao folderDao) {
 		Library<? extends LibraryNode> parentLib = libraryDao.findByRootContent(node);
-		return parentLib != null ? parentLib : folderDao.findByContent(node);
+		return parentLib != null ? (NodeContainer<LN>) parentLib : folderDao.findByContent(node);
 	}
 
 

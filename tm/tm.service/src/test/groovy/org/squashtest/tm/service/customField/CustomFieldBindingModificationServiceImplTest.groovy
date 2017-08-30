@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.customField
 
-import net.sf.cglib.asm.Opcodes
+
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.util.ReflectionUtils
 import org.squashtest.tm.domain.customfield.BindableEntity
@@ -53,8 +53,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		service.eventPublisher = eventPublisher
 	}
 
-	// Test is ignored until cglib properly handles java 8
-	@IgnoreIf({ !ReflectionUtils.findField(Opcodes, "ASM5") })
+
 	def "should copy paste cuf binding from template"() {
 		given: "a project"
 		Project project = Mock()

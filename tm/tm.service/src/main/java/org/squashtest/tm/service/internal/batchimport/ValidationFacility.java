@@ -190,10 +190,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
-	private CreationStrategy<TestCaseInstruction, TestCaseTarget> testCaseCreationStrategy = new CreationStrategy<>();
-	private UpdateStrategy<TestCaseInstruction, TestCaseTarget> testCaseUpdateStrategy = new UpdateStrategy<>();
-	private CreationStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionCreationStrategy = new CreationStrategy<>();
-	private UpdateStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionUpdateStrategy = new UpdateStrategy<>();
+	// Don't use diamond operator here. Maybe i missed something, but with java 8 it's seems that we cannot use diamond operator with some complex generics
+	// So i kept type in the new operator even if my IDE say i can omit it.
+	// I also kept the type info on the reference to avoid unchecked warnings...
+	private CreationStrategy<TestCaseInstruction, TestCaseTarget> testCaseCreationStrategy = new CreationStrategy<TestCaseInstruction, TestCaseTarget>();
+	private UpdateStrategy<TestCaseInstruction, TestCaseTarget> testCaseUpdateStrategy = new UpdateStrategy<TestCaseInstruction, TestCaseTarget>();
+	private CreationStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionCreationStrategy = new CreationStrategy<RequirementVersionInstruction, RequirementVersionTarget>();
+	private UpdateStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionUpdateStrategy = new UpdateStrategy<RequirementVersionInstruction, RequirementVersionTarget>();
 
 	@Override
 	public Model getModel() {
