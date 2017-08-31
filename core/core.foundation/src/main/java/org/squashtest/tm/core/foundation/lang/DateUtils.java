@@ -143,6 +143,7 @@ public final class DateUtils {
 
 	private static Date parseDate(String strDatetime, String format) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		sdf.setLenient(false);
 		return sdf.parse(strDatetime);
 	}
 
