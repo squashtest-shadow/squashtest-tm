@@ -20,6 +20,8 @@
  */
 package org.squashtest.it.config
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+
 import javax.sql.DataSource
 import javax.validation.ValidatorFactory
 
@@ -53,16 +55,21 @@ class DatasourceSpecConfig {
 	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
-	
+
 	@Bean(name = "squashtest.core.persistence.jdbc.DataSource")
 	DataSource dataSource() {
 		return new UnitilsDataSourceFactoryBean().getObject()
 	}
-	
-	
+
+
 	@Primary
 	@Bean ActiveMilestoneHolder activeMilestoneHolder(){
 		new StubActiveMilestoneHolder()
 	}
-	
+
+	@Bean
+	DataSourceProperties dataSourceProperties() {
+		return new DataSourceProperties()
+	}
+
 }

@@ -269,7 +269,7 @@
       </plugin>
 
       <plugin>
-        <!--  disabling surefire inherited from parent, because it should not run tests : 
+        <!--  disabling surefire inherited from parent, because it should not run tests :
       		that's the job of maven-failsafe-plugin
       	 -->
         <groupId>org.apache.maven.plugins</groupId>
