@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
-import org.squashtest.tm.service.internal.repository.AdministrationDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
@@ -29,13 +29,19 @@ import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateAdministrationDaoIT extends DbunitDaoSpecification {
-	@Inject AdministrationDao administrationDao;
-	
+	@Inject HibernateAdministrationDao administrationDao;
+
+
 	@DataSet("HibernateAdministrationDaoIT.should return administration statistics.xml")
 	def "should return administration statistics"(){
+		given:
+		DataSourceProperties ds = Mock();
+		ds.getUrl() >> "jdbc:h2://127.0.0.1:3306/squash-tm";
+		administrationDao.dataSourceProperties = ds;
+
 		when:
 		def result = administrationDao.findAdministrationStatistics()
-		
+
 		then:
 		result.projectsNumber == 1;
 	}
