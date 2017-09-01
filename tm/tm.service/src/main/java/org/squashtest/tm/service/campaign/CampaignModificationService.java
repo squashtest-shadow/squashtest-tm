@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.CampaignModificationService" , entity=Campaign.class)
@@ -44,6 +45,9 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeStatus(long campaignId, CampaignStatus status);
+
+	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
+	void changeExecutionStatus(long campaignId, ExecutionStatus executionStatus);
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeScheduledStartDate(long campaignId, Date scheduledStart);

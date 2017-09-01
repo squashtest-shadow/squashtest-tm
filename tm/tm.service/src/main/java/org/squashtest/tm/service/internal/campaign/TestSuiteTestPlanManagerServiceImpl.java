@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
@@ -79,9 +80,13 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public TestSuite findTestSuite(long testSuiteId) {
 		return testSuiteDao.findOne(testSuiteId);
 	}
@@ -91,6 +96,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		TestSuite suite = testSuiteDao.findOne(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
+		customTestSuiteModificationService.updateExecutionStatus(suiteId);
 	}
 
 	@Override()
@@ -119,6 +125,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.unBindTestPlan(itemTestPlans);
+		customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
 	}
 
 	@Override
@@ -136,20 +143,20 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	 **/
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long testSuiteId,
-			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
+																						  PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
 		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(testSuiteId),
-					"READ_UNASSIGNED", TestSuite.class.getCanonicalName());
+				"READ_UNASSIGNED", TestSuite.class.getCanonicalName());
 		} catch (AccessDeniedException ade) { // NOSONAR : this exception is part of the nominal use case
 			String userLogin = userService.findCurrentUser().getLogin();
 			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}
 
 		List<IndexedIterationTestPlanItem> indexedItems = testSuiteDao.findIndexedTestPlan(testSuiteId, sorting,
-				userFiltering, columnFiltering);
+			userFiltering, columnFiltering);
 		long testPlanSize = testSuiteDao.countTestPlans(testSuiteId, userFiltering, columnFiltering);
 
 		return new PagingBackedPagedCollectionHolder<>(sorting, testPlanSize,
@@ -186,7 +193,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, @Id long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
@@ -194,14 +201,15 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		Iteration iteration = testSuite.getIteration();
 
 		List<IterationTestPlanItem> listTestPlanItemsToAffectToTestSuite = delegateIterationTestPlanManagerService
-				.addTestPlanItemsToIteration(testCaseIds, iteration);
+			.addTestPlanItemsToIteration(testCaseIds, iteration);
 
 		bindTestPlanObj(testSuite, listTestPlanItemsToAffectToTestSuite);
+		customTestSuiteModificationService.updateExecutionStatus(suiteId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
+	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, @Id long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
@@ -213,12 +221,13 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		}
 
 		unbindTestPlanObj(testSuite, listTestPlanItems);
+		customTestSuiteModificationService.updateExecutionStatus(suiteId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestSuite.class,paramName="suiteId")
-	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds,@Id long suiteId) {
+	@PreventConcurrent(entityType = TestSuite.class, paramName = "suiteId")
+	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, @Id long suiteId) {
 		TestSuite testSuite = testSuiteDao.findOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
@@ -231,7 +240,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public	List<Long> findPlannedTestCasesIds(Long suiteId) {
+	public List<Long> findPlannedTestCasesIds(Long suiteId) {
 		return testSuiteDao.findPlannedTestCasesIds(suiteId);
 	}
 

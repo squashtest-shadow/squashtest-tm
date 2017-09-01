@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.advancedsearch.IndexationService
+import org.squashtest.tm.service.campaign.CustomCampaignModificationService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
@@ -61,6 +62,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 
 	ExecutionModificationService executionModificationService = Mock();
 	UserContextService userContextService = Mock();
+	CustomCampaignModificationService customCampaignModificationService = Mock();
 
 	def setup() {
 		service.executionDao = execDao
@@ -71,8 +73,9 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.customFieldValueService = customFieldService
 		service.denormalizedFieldValueService = denormalizedFieldValueService
 		service.indexationService = indexationService
-		service.executionModificationService = executionModificationService;
+		service.executionModificationService = executionModificationService
 		service.userContextService = userContextService
+		service.customCampaignModificationService = customCampaignModificationService
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {
@@ -218,7 +221,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 			return exec
 		}
 
-		executionModificationService.deleteExecution(_) >> {Execution execution ->
+		executionModificationService.deleteExecution(_) >> { Execution execution ->
 			testPlan.removeExecution(execution);
 		}
 

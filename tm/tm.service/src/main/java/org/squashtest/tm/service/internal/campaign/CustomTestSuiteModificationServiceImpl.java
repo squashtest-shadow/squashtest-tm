@@ -34,10 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -65,11 +68,21 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private MilestoneMembershipFinder milestoneService;
 
+	@Inject
+	private TestSuiteModificationService testSuiteModificationService;
+
 	@Override
 	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void rename(long suiteId, String newName) throws DuplicateNameException {
 		TestSuite suite = testSuiteDao.findOne(suiteId);
 		suite.rename(newName);
+	}
+
+	@Override
+	public void updateExecutionStatus(Long id) {
+		ExecutionStatusReport report = testSuiteDao.getStatusReport(id);
+		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
+		testSuiteModificationService.changeExecutionStatus(id, newExecutionStatus);
 	}
 
 

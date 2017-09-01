@@ -27,10 +27,12 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 class IterationNodeBuilderTest extends NodeBuildingSpecification {
-	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator())
+	InternationalizationHelper internationalizationHelper = Mock()
+	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator(),internationalizationHelper)
 
 	def "should build root node of test case library"() {
 		given:

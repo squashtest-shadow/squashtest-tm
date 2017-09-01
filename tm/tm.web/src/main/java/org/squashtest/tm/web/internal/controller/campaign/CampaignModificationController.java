@@ -70,6 +70,7 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignStatusJeditableComboDataBuilder;
@@ -81,6 +82,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHe
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -105,6 +107,9 @@ public class CampaignModificationController {
 
 	@Inject
 	private CampaignModificationService campaignModService;
+
+	@Inject
+	private CampaignDao campaignDao;
 
 	@Inject
 	private IterationModificationService iterationModService;
@@ -142,6 +147,8 @@ public class CampaignModificationController {
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
 
+	@Inject
+	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
@@ -150,9 +157,9 @@ public class CampaignModificationController {
 		Campaign campaign = campaignModService.findById(campaignId);
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("allowsSettled",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		mav.addObject("allowsUntestable",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		mav.addObject("statisticsEntity", campaignStatistics);
 
 		return mav;
@@ -161,7 +168,7 @@ public class CampaignModificationController {
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showCampaignInfo(@PathVariable long campaignId,
- Model model) {
+								   Model model) {
 		populateCampaignModel(campaignId, model);
 		return "page/campaign-workspace/show-campaign";
 	}
@@ -189,6 +196,7 @@ public class CampaignModificationController {
 		model.addAttribute("modes", getModes());
 		model.addAttribute("campaignStatusComboJson", buildStatusComboData());
 		model.addAttribute("campaignStatusLabel", formatStatus(campaign.getStatus()));
+		model.addAttribute("statuses", getStatuses(campaign.getProject().getId()));
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
@@ -198,17 +206,17 @@ public class CampaignModificationController {
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
 
-		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
 
 		return model;
 	}
 
-	private void populateOptionalExecutionStatuses(Campaign campaign, Model model){
+	private void populateOptionalExecutionStatuses(Campaign campaign, Model model) {
 		model.addAttribute("allowsSettled",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 	private Map<String, String> getAssignableUsers(long campaignId) {
@@ -228,6 +236,11 @@ public class CampaignModificationController {
 		}
 
 		return jsonUsers;
+	}
+
+	private Map<String, String> getStatuses(long projectId) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
 	}
 
 	private Map<String, String> getWeights() {
@@ -254,8 +267,7 @@ public class CampaignModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-description", VALUE})
-	public
-	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
 
 		campaignModService.changeDescription(campaignId, newDescription);
 		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);
@@ -265,8 +277,7 @@ public class CampaignModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-reference", VALUE})
-	public
-	String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
+	public String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
 
 		campaignModService.changeReference(campaignId, newReference);
 		LOGGER.trace("Campaign " + campaignId + ": updated reference to " + newReference);
@@ -275,17 +286,34 @@ public class CampaignModificationController {
 
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-status", VALUE})
 	public String changeStatus(@PathVariable long campaignId, @RequestParam(VALUE) CampaignStatus status) {
 		campaignModService.changeStatus(campaignId, status);
 		return formatStatus(status);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-execution-status", VALUE})
+	@ResponseBody
+	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long campaignId) {
+
+		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
+
+		campaignModService.changeExecutionStatus(campaignId, executionStatus);
+		LOGGER.trace("Campaign " + campaignId + ": updated status to " + value);
+	}
+
+	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
+	 @ResponseBody
+	 public String getExecutionStatus(@PathVariable long campaignId) {
+
+		String executionStatus = campaignDao.findById(campaignId).getExecutionStatus().toString();
+		return executionStatus;
+
+	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
-	public
-	Object rename(@RequestParam("newName") String newName, @PathVariable long campaignId) {
+	public Object rename(@RequestParam("newName") String newName, @PathVariable long campaignId) {
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
 
 		campaignModService.rename(campaignId, newName);
@@ -316,9 +344,8 @@ public class CampaignModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
-	public
-	String setScheduledStart(@PathVariable long campaignId,
-							 @RequestParam(value = "scheduledStart") String strDate) {
+	public String setScheduledStart(@PathVariable long campaignId,
+									@RequestParam(value = "scheduledStart") String strDate) {
 
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
@@ -331,7 +358,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "scheduledEnd" })
+	@RequestMapping(value = PLANNING_URL, params = {"scheduledEnd"})
 	@ResponseBody
 	String setScheduledEnd(@PathVariable long campaignId,
 						   @RequestParam(value = "scheduledEnd") String strDate) {
@@ -347,9 +374,11 @@ public class CampaignModificationController {
 
 	}
 
-	/** the next functions may receive null arguments : empty string **/
+	/**
+	 * the next functions may receive null arguments : empty string
+	 **/
 
-	@RequestMapping(value = PLANNING_URL, params = { "actualStart" })
+	@RequestMapping(value = PLANNING_URL, params = {"actualStart"})
 	@ResponseBody
 	String setActualStart(@PathVariable long campaignId,
 						  @RequestParam(value = "actualStart") String strDate) {
@@ -365,7 +394,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "actualEnd" })
+	@RequestMapping(value = PLANNING_URL, params = {"actualEnd"})
 	@ResponseBody
 	String setActualEnd(@PathVariable long campaignId,
 						@RequestParam(value = "actualEnd") String strDate) {
@@ -381,7 +410,7 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "setActualStartAuto" })
+	@RequestMapping(value = PLANNING_URL, params = {"setActualStartAuto"})
 	@ResponseBody
 	String setActualStartAuto(@PathVariable long campaignId,
 							  @RequestParam(value = "setActualStartAuto") Boolean auto) {
@@ -394,12 +423,12 @@ public class CampaignModificationController {
 		return dateToStr(campaign.getActualStartDate());
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
+	@RequestMapping(value = PLANNING_URL, params = {"setActualEndAuto"})
 	@ResponseBody
 	String setActualEndAuto(@PathVariable long campaignId,
 							@RequestParam(value = "setActualEndAuto") Boolean auto) {
 		LOGGER.info("CampaignModificationController : autosetting actual end date for campaign " + campaignId
-				+ ", new value " + auto.toString());
+			+ ", new value " + auto.toString());
 
 		campaignModService.changeActualEndAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
@@ -419,7 +448,7 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = "/iterations/count", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
 	@ResponseBody
-	public Integer getNbIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId){
+	public Integer getNbIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		return campaignModService.countIterations(campaignId);
 	}
 
@@ -431,10 +460,10 @@ public class CampaignModificationController {
 		Date date;
 		for (JsonIteration iter : iterations) {
 			date = iter.getScheduledStartDate() != null ? DateUtils.parseIso8601DateTime(iter
-					.getScheduledStartDate()) : null;
+				.getScheduledStartDate()) : null;
 			iterationModService.changeScheduledStartDate(iter.getId(), date);
 			date = iter.getScheduledEndDate() != null ? DateUtils.parseIso8601DateTime(iter.getScheduledEndDate())
-					: null;
+				: null;
 			iterationModService.changeScheduledEndDate(iter.getId(), date);
 		}
 	}
@@ -444,15 +473,14 @@ public class CampaignModificationController {
 	// URL should have been /statistics, but that was already used by another method in this controller
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public
-	CampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
+	public CampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = "printmode")
 	public ModelAndView getDashboard(Model model,
-			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			@RequestParam(value="printmode", defaultValue="false") Boolean printmode ) {
+									 @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+									 @RequestParam(value = "printmode", defaultValue = "false") Boolean printmode) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
@@ -476,52 +504,52 @@ public class CampaignModificationController {
 	 *
 	 ********************************************************************** */
 
-	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getBoundMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, DataTableDrawParameters params){
+	public DataTableModel getBoundMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, DataTableDrawParameters params) {
 
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
 
 		return buildMilestoneModel(new ArrayList<>(allMilestones), params.getsEcho());
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneId}", method=RequestMethod.POST)
+	@RequestMapping(value = "/milestones/{milestoneId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestone(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneId") Long milestoneId){
+	public void bindMilestone(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneId") Long milestoneId) {
 
 		campaignModService.bindMilestone(campaignId, milestoneId);
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void unbindMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		campaignModService.unbindMilestones(campaignId, milestoneIds);
 	}
 
-	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones/associables", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getNotYetBoundMilestones(@PathVariable(CAMPAIGN_ID) Long campaignId, DataTableDrawParameters params){
+	public DataTableModel getNotYetBoundMilestones(@PathVariable(CAMPAIGN_ID) Long campaignId, DataTableDrawParameters params) {
 		Collection<Milestone> notBoundMilestones = campaignModService.findAssociableMilestones(campaignId);
-		return buildMilestoneModel(new ArrayList<>(notBoundMilestones),params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(notBoundMilestones), params.getsEcho());
 	}
 
 
-	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable(CAMPAIGN_ID) Long campaignId, Model model){
+	@RequestMapping(value = "/milestones/panel", method = RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable(CAMPAIGN_ID) Long campaignId, Model model) {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
 		Campaign camp = campaignModService.findById(campaignId);
 		// build the needed data
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
-		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones), "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "campaigns");
 		identity.put("resid", campaignId.toString());
 
-		String rootPath = "/campaigns/"+campaignId.toString();
+		String rootPath = "/campaigns/" + campaignId.toString();
 
 		Boolean editable = permissionService.hasRole("ROLE_ADMIN") || permissionService.hasRole("ROLE_TM_PROJECT_MANAGER");
 
@@ -529,7 +557,7 @@ public class CampaignModificationController {
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
-				return ((Milestone)milestone).getStatus().isBindableToObject();
+				return ((Milestone) milestone).getStatus().isBindableToObject();
 			}
 		});
 		Boolean isMilestoneInProject = !mil.isEmpty();
@@ -550,7 +578,7 @@ public class CampaignModificationController {
 
 	}
 
-	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho) {
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =
@@ -567,7 +595,7 @@ public class CampaignModificationController {
 		for (Iteration iter : iterations) {
 
 			JsonIteration jsonIter = new JsonIteration(iter.getId(), iter.getName(), iter.getScheduledStartDate(),
-					iter.getScheduledEndDate());
+				iter.getScheduledEndDate());
 
 			jsonIters.add(jsonIter);
 		}

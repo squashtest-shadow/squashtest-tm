@@ -26,6 +26,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 import java.util.List;
@@ -70,5 +71,6 @@ public interface CustomTestSuiteDao {
 
 	long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering);
 
+	ExecutionStatusReport getStatusReport(Long id);
 
 }

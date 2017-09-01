@@ -34,7 +34,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	/**
 	 * That method will update the name of the suite with newName, identified by suiteId. Will throw a {@link DuplicateNameException}
 	 * if the suite could not rename itself due to name already used by another suite from the same owning Iteration (as as spec of TestSuite).
-	 * 
+	 *
 	 * @param suiteId
 	 * @param newName
 	 * @throws DuplicateNameException
@@ -42,19 +42,17 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void rename(long suiteId, String newName) throws DuplicateNameException;
 
 
-
+	void updateExecutionStatus(Long id);
 
 	/**
 	 * <p>That method will retrieve the data and fill the testSuiteStatistics DTO.</p>
-	 * 
+	 *
 	 * @param suiteId
 	 */
 	TestPlanStatistics findTestSuiteStatistics(long suiteId);
 
 
 	Execution addExecution(long testPlanItemId);
-
-
 
 
 

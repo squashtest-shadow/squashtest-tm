@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
@@ -42,6 +43,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
@@ -71,6 +73,9 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Inject
 	private CustomIterationModificationService customIterationModificationService;
+
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
 	@Override
 	public ExecutionStep findExecutionStep(Long executionStepId) {
@@ -190,6 +195,11 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		if (formerITPIExecutionStatus != execution.getTestPlan().getExecutionStatus()) {
 			Iteration iteration = execution.getTestPlan().getIteration();
 			customIterationModificationService.updateExecutionStatus(iteration.getId());
+		}
+
+		for (TestSuite testSuite : execution.getTestPlan().getTestSuites()) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+
 		}
 	}
 

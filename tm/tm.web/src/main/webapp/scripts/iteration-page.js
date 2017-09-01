@@ -49,13 +49,10 @@ require(["common"], function () {
 					var executionStatusEditable = $("#iteration-execution-status");
 					executionStatusEditable.html(statusfactory.translate(value));
 
-					//refresh the iteration execution status in the tree
-					var executionStatusIconTree = $("#Iteration-" + config.identity.resid);
-					executionStatusIconTree.attr('executionstatus', value);
+					//refresh the tree
+					eventBus.trigger('iteration.execution-status-modified', {data: config});
 				});
-
-				general.refresh()
-
+				general.refresh();
 			}, window);
 
 			squashtm.execution = squashtm.execution || {};
@@ -151,9 +148,9 @@ require(["common"], function () {
 				var fragConf = {
 					active: 2,
 					/*cookie : {
-						name : "iteration-tab-cookie",
-						path : routing.buildURL('iterations.base')
-					},*/
+					 name : "iteration-tab-cookie",
+					 path : routing.buildURL('iterations.base')
+					 },*/
 					activate: function (event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {
 							eventBus.trigger("dashboard.appear");

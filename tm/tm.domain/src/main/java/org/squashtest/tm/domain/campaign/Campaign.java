@@ -42,6 +42,8 @@ import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
@@ -53,10 +55,23 @@ import org.squashtest.tm.exception.DuplicateNameException;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder {
+public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder, HasExecutionStatus {
 
 
 	public static final int MAX_REF_SIZE = 50;
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+
+	static {
+		Set<ExecutionStatus> set = new HashSet<>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
+	}
 
 	@Embedded
 	@Valid
@@ -66,12 +81,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "ITERATION_ORDER")
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
 	private final List<Iteration> iterations = new ArrayList<>();
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinColumn(name = "CAMPAIGN_ID")
 	private final List<CampaignTestPlanItem> testPlan = new ArrayList<>();
@@ -91,6 +106,9 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private CampaignStatus status = CampaignStatus.WORK_IN_PROGRESS;
+
+	@Enumerated(EnumType.STRING)
+	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	public Campaign() {
 		super();
@@ -152,9 +170,27 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		return actualPeriod.isActualEndAuto();
 	}
 
-	public CampaignStatus getStatus() { return status;	}
+	public CampaignStatus getStatus() {
+		return status;
+	}
 
-	public void setStatus(@NotNull CampaignStatus status) { this.status = status; }
+	public void setStatus(@NotNull CampaignStatus status) {
+		this.status = status;
+	}
+
+	@Override
+	public ExecutionStatus getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public void setExecutionStatus(ExecutionStatus executionStatus) {
+		this.executionStatus = executionStatus;
+	}
+
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
+	}
 
 	public void setActualStartAuto(boolean actualStartAuto) {
 		actualPeriod.setActualStartAuto(actualStartAuto);
@@ -184,7 +220,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -195,7 +230,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 *
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
 	 */
@@ -209,7 +243,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 *
 	 * @param itemTestPlan
 	 */
 	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
@@ -244,8 +277,8 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		getIterations().remove(iteration);
 	}
 
-	public void moveIterations(int newIndex, List<Iteration> moved){
-		if (! iterations.isEmpty()){
+	public void moveIterations(int newIndex, List<Iteration> moved) {
+		if (!iterations.isEmpty()) {
 			iterations.removeAll(moved);
 			iterations.addAll(newIndex, moved);
 		}
@@ -256,7 +289,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	public void addIteration(@NotNull Iteration iteration) {
-		if(!isContentNameAvailable(iteration.getName())){
+		if (!isContentNameAvailable(iteration.getName())) {
 			throw new DuplicateNameException(iteration.getName(), iteration.getName());
 		}
 		getIterations().add(iteration);
@@ -264,7 +297,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	public void addIteration(@NotNull Iteration iteration, int position) {
-		if(!isContentNameAvailable(iteration.getName())){
+		if (!isContentNameAvailable(iteration.getName())) {
 			throw new DuplicateNameException(iteration.getName(), iteration.getName());
 		}
 		getIterations().add(position, iteration);
@@ -278,7 +311,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		}
 		return scheduledPeriod;
 	}
-
 
 
 	@Override
@@ -392,7 +424,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 			return null;
 		} else {
 			return Collections
-					.min(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
+				.min(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualStartOrder());
 		}
 	}
 
@@ -440,8 +472,8 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 
-	private void bindSameMilestones(Campaign src){
-		for (Milestone m : src.getMilestones()){
+	private void bindSameMilestones(Campaign src) {
+		for (Milestone m : src.getMilestones()) {
 			bindMilestone(m);
 		}
 	}
@@ -472,12 +504,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	@Override
-	public List<Iteration> getOrderedContent(){
+	public List<Iteration> getOrderedContent() {
 		return getIterations();
 	}
 
 	@Override
-	public boolean hasContent(){
+	public boolean hasContent() {
 		return !getContent().isEmpty();
 	}
 
@@ -502,14 +534,14 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Override
 	public List<String> getContentNames() {
 		List<String> iterationNames = new ArrayList<>(iterations.size());
-		for(Iteration iteration : iterations){
+		for (Iteration iteration : iterations) {
 			iterationNames.add(iteration.getName());
 		}
 		return iterationNames;
 	}
 
 	@Override
-	public Set<Milestone> getMilestones(){
+	public Set<Milestone> getMilestones() {
 		return milestones;
 	}
 
@@ -524,23 +556,23 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	 * is bound to a campaign, the previous milestone will be unbound.
 	 */
 	@Override
-	public void bindMilestone(Milestone milestone){
+	public void bindMilestone(Milestone milestone) {
 		milestones.clear();
 		milestones.add(milestone);
 	}
 
 	@Override
-	public void unbindMilestone(Milestone milestone){
+	public void unbindMilestone(Milestone milestone) {
 		unbindMilestone(milestone.getId());
 	}
 
 	@Override
-	public void unbindMilestone(Long milestoneId){
+	public void unbindMilestone(Long milestoneId) {
 		Iterator<Milestone> iter = milestones.iterator();
 
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			Milestone m = iter.next();
-			if (m.getId().equals(milestoneId)){
+			if (m.getId().equals(milestoneId)) {
 				iter.remove();
 				break;
 			}
@@ -573,9 +605,9 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	@Override
 	public Boolean doMilestonesAllowCreation() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectCreateAndDelete()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
@@ -585,14 +617,16 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	@Override
 	public Boolean doMilestonesAllowEdition() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectModification()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectModification()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
 		}
 		return allowed;
-	};
+	}
+
+	;
 
 }

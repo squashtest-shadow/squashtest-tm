@@ -97,7 +97,11 @@ define(['module',
 				var openerSize = Object.keys(window.opener).length;
 	      if (openerSize > 0 && window.opener.squashtm.execution){
 					window.opener.squashtm.execution.refresh();
-					window.opener.squashtm.execution.refreshIterationInfo();
+					if (window.opener.config.identity.restype === "iterations") {
+						window.opener.squashtm.execution.refreshIterationInfo();
+					} else if (window.opener.config.identity.restype === "test-suites") {
+						window.opener.squashtm.execution.refreshTestSuiteInfo();
+					}
 				}
 				if (openerSize > 0 && window.opener.progressWindow) {
 					window.opener.progressWindow.close();

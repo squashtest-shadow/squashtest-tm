@@ -50,8 +50,16 @@
 </changeSet>
 
   <changeSet id="tm-1.17.0-feature-6921" author="cholc">
-    <comment>Adds a execution status field to the iteration and campaign</comment>
+    <comment>Adds a execution status field to the iteration the campaign and the test suite</comment>
     <addColumn tableName="ITERATION">
+      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
+      </column>
+    </addColumn>
+    <addColumn tableName="CAMPAIGN">
+      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
+      </column>
+    </addColumn>
+    <addColumn tableName="TEST_SUITE">
       <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
       </column>
     </addColumn>

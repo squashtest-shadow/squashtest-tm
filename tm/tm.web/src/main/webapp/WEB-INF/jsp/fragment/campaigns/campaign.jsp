@@ -226,10 +226,23 @@
 
             <div class="display-table-row">
               <label for="campaign-status" class="display-table-cell"><f:message key="campaign.status.combo.label" /></label>
-              <div class="display-table-cell">
+              <div>
                 <span id="campaign-status-icon" style="vertical-align:middle" class="campaign-status-${campaign.status}"> &nbsp &nbsp</span>
                 <span id="campaign-status">${ campaignStatusLabel }</span>
               </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="campaign-execution-status" class="display-table-cell"><f:message key="campaign.execution.status.combo.label"/></label>
+              <div>
+                <span id="campaign-execution-status-icon"> </span>
+                <span id="campaign-execution-status"></span>
+              </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="campaign-progress-status" class="display-table-cell"><f:message key="campaign.progress_status.label" /></label>
+              <span id="campaign-progress-status"><f:message key="${ statistics.status.i18nKey }" /></span>
             </div>
 	    </jsp:attribute>
       </comp:toggle-panel>
@@ -391,7 +404,9 @@ squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
 					initialActualEndDate: "${campaign.actualEndDate.time}",
 					initialActualStartAuto: ${campaign.actualStartAuto},
 					initialActualEndAuto: ${campaign.actualEndAuto},
-          campaignStatusComboJson : ${campaignStatusComboJson}
+          campaignStatusComboJson : ${campaignStatusComboJson},
+          campaignExecutionStatusCombo: ${json:serialize (statuses)},
+          campaignExecutionStatus: "${campaign.executionStatus}"
 				},
 				features : {
 					editable : ${writable},

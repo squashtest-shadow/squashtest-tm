@@ -56,6 +56,7 @@ import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
+import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -134,6 +135,9 @@ public class CampaignLibraryNavigationServiceImpl
 	private CampaignStatisticsService statisticsService;
 
 	@Inject
+	private CustomCampaignModificationService customCampaignModificationService;
+
+	@Inject
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> libraryStrategy;
 
@@ -201,6 +205,7 @@ public class CampaignLibraryNavigationServiceImpl
 									  Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);
+		customCampaignModificationService.updateExecutionStatus(campaignId);
 		return iterIndex;
 	}
 
@@ -279,7 +284,7 @@ public class CampaignLibraryNavigationServiceImpl
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibrary.class)
 	public void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign,
-			Map<Long, RawValue> customFieldValues) {
+											 Map<Long, RawValue> customFieldValues) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
@@ -309,7 +314,7 @@ public class CampaignLibraryNavigationServiceImpl
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	public void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign,
-			Map<Long, RawValue> customFieldValues) {
+											Map<Long, RawValue> customFieldValues) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);

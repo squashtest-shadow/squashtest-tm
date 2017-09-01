@@ -21,30 +21,34 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component
 @Scope("prototype")
 public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, IterationNodeBuilder> {
-
+	protected InternationalizationHelper internationalizationHelper;
 
 	@Inject
-	public IterationNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+	public IterationNodeBuilder(PermissionEvaluationService permissionEvaluationService, InternationalizationHelper internationalizationHelper) {
 		super(permissionEvaluationService);
+		this.internationalizationHelper = internationalizationHelper;
 	}
 
 	/**
-	 *
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
-	 *      org.squashtest.tm.domain.Identified)
+	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override
 	protected JsTreeNode doBuild(JsTreeNode node, Iteration model) {
@@ -57,10 +61,25 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		node.addAttr("executionStatus", model.getExecutionStatus().toString());
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "iterations");
-		node.setState(model.hasTestSuites() ? State.closed  : State.leaf);
+		node.setState(model.hasTestSuites() ? State.closed : State.leaf);
 		node.addAttr("iterationIndex", Integer.toString(index + 1));
 
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+
+		//build tooltip
+		String status = model.getExecutionStatus().getI18nKey();
+		Locale locale = LocaleContextHolder.getLocale();
+		String localizedStatus = internationalizationHelper.internationalize(status, locale);
+		String[] args = {localizedStatus};
+		String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
+		String description = "";
+		if (!model.getTestPlans().isEmpty()) {
+			description = model.getTestPlans().get(0).getReferencedTestCase().getDescription();
+			if (description.length() > 30) {
+				description = description.substring(0, 30);
+			}
+		}
+		node.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
 
 		//milestone attributes
 		node.addAttr("milestones", model.getMilestones().size());
@@ -77,18 +96,18 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	protected void doAddChildren(JsTreeNode node, Iteration model) {
 		if (model.hasContent()) {
 
-			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService);
+			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService, internationalizationHelper);
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
-					.expand(getExpansionCandidates())
-					.setModel(model.getOrderedContent())
-					.build();
+				.expand(getExpansionCandidates())
+				.setModel(model.getOrderedContent())
+				.build();
 
 			node.setChildren(children);
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state =  children.isEmpty() ? State.leaf : State.open;
+			State state = children.isEmpty() ? State.leaf : State.open;
 			node.setState(state);
 		}
 

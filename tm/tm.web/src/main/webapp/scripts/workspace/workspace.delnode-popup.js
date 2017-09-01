@@ -19,14 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * This is an abstract popup, that is usually instancied only once per workspace.  
+ * This is an abstract popup, that is usually instancied only once per workspace.
  * Must be supplied the following options :
- * 
- * a tree, 
+ *
+ * a tree,
  * a permissions-rules
- * 
+ *
  */
-define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
+define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 
 	if (($.squash !== undefined) && ($.squash.delnodeDialog !== undefined)) {
 		// plugin already loaded
@@ -36,63 +36,63 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 	$.widget("squash.delnodeDialog", $.squash.formDialog, {
 
 		// ********** these options are MANDATORY **************
-		options : {
-			tree : null,
-			rules : null
+		options: {
+			tree: null,
+			rules: null
 		},
 
-		open : function() {
+		open: function () {
 			this._super();
 			this.simulateDeletion();
 		},
 
 		// ******************* creates the XHR requests ***********
 
-		getSimulXhr : function(nodes) {
+		getSimulXhr: function (nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
 			var url = rawUrl.replace('{nodeIds}', ids) + '/deletion-simulation';
 			return $.getJSON(url);
 		},
 
-		getConfirmXhr : function(nodes) {
+		getConfirmXhr: function (nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
 			var url = rawUrl.replace('{nodeIds}', ids);
 			return $.ajax({
-				url : url,
-				type : 'delete'
+				url: url,
+				type: 'delete'
 			});
 		},
 
 		// ********************* callbacks *************************************
 
 		// expects an array of array
-		deletionSuccess : function(responsesArray) {
-			
+		deletionSuccess: function (responsesArray) {
+
 			var tree = this.options.tree;
-			
-			var i=0, len = responsesArray.length;
-			for (i=0;i<len;i++){
-				if (responsesArray[i]=== null || responsesArray[i] === undefined){
+
+			var i = 0, len = responsesArray.length;
+			for (i = 0; i < len; i++) {
+				if (responsesArray[i] === null || responsesArray[i] === undefined) {
 					continue;
 				}
 				var commands = responsesArray[i][0];
 				tree.jstree('apply_commands', commands);
 			}
-			
-			 this.close();
+
+			this.close();
 		},
 
 		// expects an array of array
-		simulationSuccess : function(responsesArray) {
+		simulationSuccess: function (responsesArray) {
 
 			var htmlDetail = '';
 
-			$.each(responsesArray, function(idx, arg) {
+			$.each(responsesArray, function (idx, arg) {
 				if (arg !== null && arg !== undefined) {
 					var messages = arg[0].messages;
-					for ( var i = 0, len = messages.length; i < len; i++) {
+					for (var i = 0, len = messages.length; i < len; i++) {
 						htmlDetail += '<li>' + messages[i] + '</li>';
 					}
 				}
@@ -100,7 +100,7 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 			if (htmlDetail.length > 0) {
 				this.element.find('.delete-node-dialog-details').removeClass('not-displayed').find('ul').html(
-						htmlDetail);
+					htmlDetail);
 			} else {
 				this.element.find('.delete-node-dialog-details').addClass('not-displayed');
 			}
@@ -115,21 +115,21 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 		 * deferred in the .when() clause, we must ensure that the result of the operation will be an array of array as
 		 * the callbacks expect it.
 		 */
-		smartAjax : function(xhrs, callback) {
+		smartAjax: function (xhrs, callback) {
 			var self = this;
 			// case of an array of xhr : the result will be an array of array as expected
 			if (_.isArray(xhrs) && xhrs.length > 1) {
-				return $.when.apply($, xhrs).done(function() {
+				return $.when.apply($, xhrs).done(function () {
 					callback.call(self, arguments);
-				}).fail(function(){
+				}).fail(function () {
 					self.close();	// other error handling mechanism should kick in
 				});
 			}
 			// case of a single xhr : the result will be an array, that we transform in an array of array as expected
 			else {
-				return $.when(xhrs).done(function() {
-					callback.call(self, [ arguments ]);
-				}).fail(function(){
+				return $.when(xhrs).done(function () {
+					callback.call(self, [arguments]);
+				}).fail(function () {
 					self.close();	// other error handling mechanism should kick in
 				});
 			}
@@ -137,7 +137,7 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 		// ******************** deletion simulation *************
 
-		simulateDeletion : function() {
+		simulateDeletion: function () {
 			var self = this;
 			var tree = this.options.tree;
 			var rules = this.options.rules;
@@ -152,31 +152,31 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 				var why = rule.whyCantDelete(nodes);
 				this.uiDialog.find('[data-def="state=rejected"]').text(why);
 				this.setState('rejected');
-				
+
 				return;
 			}
 
 			// else we can proceed.
 			var xhrs = this.getSimulXhr(nodes);
 
-			this.smartAjax(xhrs, this.simulationSuccess).fail(function() {
+			this.smartAjax(xhrs, this.simulationSuccess).fail(function () {
 				self.setState('reject');
 			});
 		},
 
 		// ********************** actual deletion*********************
 
-		_findPrevNode : function(nodes) {
+		_findPrevNode: function (nodes) {
 			var tree = this.options.tree;
 			var oknode = tree.find(':library').filter(':first');
 
-			if (nodes.length === 0){
+			if (nodes.length === 0) {
 				return oknode;
 			}
 			var ids = nodes.all('getResId');
 			var ancestry = nodes.first().treeNode().getAncestors().get().reverse();
 
-			$(ancestry).each(function() {
+			$(ancestry).each(function () {
 				var $this = $(this), $thisid = $this.attr('resid');
 				if ($this.is(':library') || $.inArray($thisid, ids) == -1) {
 					oknode = $this.treeNode();
@@ -188,7 +188,7 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 		},
 
-		performDeletion : function() {
+		performDeletion: function () {
 			this.setState("pleasewait");
 
 			var self = this;
@@ -196,17 +196,32 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			var nodes = this.uiDialog.data('selected-nodes');
 			var newSelection = this._findPrevNode(nodes);
 
+
 			/* Issue #6417: While deleting a multi-selection,
-			 * the commented line below try to select 
+			 * the commented line below try to select
 			 * a deleted node and creates an error. */
 			//nodes.all('deselect');
 			nodes.deselect_all();
-			
+
 			newSelection.select();
 
 			this.setState('pleasewait');
 
 			var xhrs = this.getConfirmXhr(nodes);
+
+			var i = 0;
+			var updateCampaign = false;
+			console.log(nodes.length);
+			while (i < nodes.length && !updateCampaign) {
+				if (nodes[i].getAttribute("restype") === "iterations") {
+					updateCampaign = true;
+				}
+				i++;
+			}
+
+			if (updateCampaign) {
+				squashtm.execution.refreshCampaignInfo();
+			}
 
 			this.smartAjax(xhrs, this.deletionSuccess);
 

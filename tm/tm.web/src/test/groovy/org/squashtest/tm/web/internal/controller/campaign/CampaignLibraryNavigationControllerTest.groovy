@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder
@@ -37,6 +38,8 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 	Provider driveNodeBuilder = Mock()
 	Provider iterationNodeBuilder = Mock()
 	Provider campaignLibraryTreeNodeBuilder = Mock()
+	InternationalizationHelper internationalizationHelper = Mock()
+
 
 	def setup() {
 		controller.campaignLibraryNavigationService = service;
@@ -44,10 +47,16 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		controller.iterationNodeBuilder = iterationNodeBuilder
 		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
         controller.permissionEvaluator = permissionEvaluator()
+		controller.internationalizationHelper = internationalizationHelper
+
+		internationalizationHelper.internationalize(_,_)>> ""
+		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
+		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
+		internationalizationHelper.getMessage(_, _, _, _)>>"message"
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService))
-        campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator())
+		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService),internationalizationHelper)
+        campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator(),internationalizationHelper)
 	}
 
 	def "should return iteration nodes of campaign"() {
@@ -55,6 +64,7 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		Iteration iter = Mock()
 		iter.getMilestones() >> []
 		iter.executionStatus >> ExecutionStatus.SUCCESS
+		iter.testPlans >> []
 		iter.doMilestonesAllowCreation() >> Boolean.TRUE
 		iter.doMilestonesAllowEdition() >> Boolean.TRUE
 		service.findIterationsByCampaignId(10) >> [iter]

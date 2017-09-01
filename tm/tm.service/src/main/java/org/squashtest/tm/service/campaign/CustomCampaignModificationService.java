@@ -46,7 +46,7 @@ public interface CustomCampaignModificationService {
 
 
 	/**
-	 * 
+	 *
 	 * @param campaignId the id of the concerned campaign
 	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
 	 */
@@ -66,7 +66,7 @@ public interface CustomCampaignModificationService {
 	/**
 	 * Bind a milestone to a campaign. Any previous milestone will be unbound because a campaign can be bound to only
 	 * one milestone.
-	 * 
+	 *
 	 * @param campaignId
 	 * @param milestoneId
 	 */
@@ -85,4 +85,5 @@ public interface CustomCampaignModificationService {
 	 */
 	Campaign findCampaigWithExistenceCheck(long campaignId);
 
+	void updateExecutionStatus(Long id);
 }

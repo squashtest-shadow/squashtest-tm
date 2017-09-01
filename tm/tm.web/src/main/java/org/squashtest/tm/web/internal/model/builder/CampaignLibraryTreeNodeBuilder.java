@@ -21,10 +21,12 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
@@ -32,18 +34,22 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component
 @Scope("prototype")
 public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<CampaignLibraryNode> {
+	protected InternationalizationHelper internationalizationHelper;
+
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
-	 *
 	 */
 	private class CustomAttributesPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
+
 
 		public CustomAttributesPopulator(JsTreeNode builtNode) {
 			super();
@@ -51,7 +57,6 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		}
 
 		/**
-		 *
 		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.CampaignFolder)
 		 */
 		@Override
@@ -62,7 +67,6 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		}
 
 		/**
-		 *
 		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.Campaign)
 		 */
 		@Override
@@ -75,10 +79,26 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 			// other attributes
 			builtNode.addAttr("rel", "campaign");
+			builtNode.addAttr("executionStatus", campaign.getExecutionStatus().toString());
 			builtNode.addAttr("resType", "campaigns");
 			builtNode.addAttr("reference", campaign.getReference());
 			State state = campaign.hasIterations() ? State.closed : State.leaf;
 			builtNode.setState(state);
+
+			//build tooltip
+			String status = campaign.getExecutionStatus().getI18nKey();
+			Locale locale = LocaleContextHolder.getLocale();
+			String localizedStatus = internationalizationHelper.internationalize(status, locale);
+			String[] args = {localizedStatus};
+			String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
+			String description = "";
+			if (!campaign.getTestPlan().isEmpty()) {
+				description = campaign.getTestPlan().get(0).getReferencedTestCase().getDescription();
+				if (description.length() > 30) {
+					description = description.substring(0, 30);
+				}
+			}
+			builtNode.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
 
 			// milestones
 			builtNode.addAttr("milestones", campaign.getMilestones().size());
@@ -91,7 +111,6 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	 * This visitor is used to populate the children of the currently built {@link JsTreeNode}
 	 *
 	 * @author Gregory Fouquet
-	 *
 	 */
 	private class ChildrenPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -109,12 +128,12 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			if (visited.hasContent()) {
 				builtNode.setState(State.open);
 
-				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService);
+				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper);
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
-						.expand(getExpansionCandidates())
-						.setModel(visited.getOrderedContent())
-						.build();
+					.expand(getExpansionCandidates())
+					.setModel(visited.getOrderedContent())
+					.build();
 
 				builtNode.setChildren(children);
 			}
@@ -127,22 +146,21 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		public void visit(CampaignFolder visited) {
 			if (visited.hasContent()) {
 
-				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService);
+				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService, internationalizationHelper);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
 
-
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
-						.expand(getExpansionCandidates())
-						.setModel(visited.getOrderedContent())
-						.build();
+					.expand(getExpansionCandidates())
+					.setModel(visited.getOrderedContent())
+					.build();
 
 				builtNode.setChildren(children);
 
 
 				// because of the milestoneFilter it may happen that the children collection ends up empty.
 				// in that case we must set the state of the node accordingly
-				State state =  children.isEmpty() ? State.leaf : State.open;
+				State state = children.isEmpty() ? State.leaf : State.open;
 				builtNode.setState(state);
 			}
 		}
@@ -150,8 +168,9 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	}
 
 	@Inject
-	public CampaignLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+	public CampaignLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, InternationalizationHelper internationalizationHelper) {
 		super(permissionEvaluationService);
+		this.internationalizationHelper = internationalizationHelper;
 	}
 
 	@Override
@@ -162,7 +181,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
-	 *      org.squashtest.tm.domain.Identified)
+	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, CampaignLibraryNode model) {
@@ -171,31 +190,27 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	}
 
 
-
-
 	@Override
 	protected boolean passesMilestoneFilter() {
-		if (milestoneFilter != null){
+		if (milestoneFilter != null) {
 			return new MilestoneFilter(milestoneFilter).isValid(node);
-		}
-		else{
+		} else {
 			return true;
 		}
 	}
 
 
-
-	private static final class MilestoneFilter implements CampaignLibraryNodeVisitor{
+	private static final class MilestoneFilter implements CampaignLibraryNodeVisitor {
 
 		private Milestone milestone;
 		private boolean isValid;
 
 
-		private MilestoneFilter(Milestone milestone){
+		private MilestoneFilter(Milestone milestone) {
 			this.milestone = milestone;
 		}
 
-		public boolean isValid(CampaignLibraryNode node){
+		public boolean isValid(CampaignLibraryNode node) {
 			isValid = false;
 			node.accept(this);
 			return isValid;
@@ -212,7 +227,6 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		}
 
 	}
-
 
 
 }

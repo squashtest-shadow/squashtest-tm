@@ -58,6 +58,7 @@ define(['jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statu
 						squashtm.notification.showWarning(conf.messages.unauthorizedTestplanRemoval);
 					}
 					eventBus.trigger('context.content-modified');
+					squashtm.execution.refreshTestSuiteInfo();
 				});
 
 				$(this).formDialog('close');

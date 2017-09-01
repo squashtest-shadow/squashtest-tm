@@ -28,11 +28,13 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
-	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(permissionEvaluator())
+	InternationalizationHelper internationalizationHelper = Mock()
+	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(permissionEvaluator(),internationalizationHelper)
 	def "should build a tree node for a campaign folder"() {
 		given:
 		CampaignFolder node  = new CampaignFolder(name: "f")
@@ -69,54 +71,54 @@ class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 		res.attr['rel'] == "campaign"
 		res.state == State.leaf.name()
 	}
-	
+
 	def "should build a folder with leaf state"(){
 		given :
-			CampaignFolder node = new CampaignFolder(name:"folder") 
-			
+			CampaignFolder node = new CampaignFolder(name:"folder")
+
 		when :
 			def res = builder.setNode(node).build()
-		
+
 		then :
 			res.state == State.leaf.name()
-		
+
 	}
-	
+
 	def "should build a folder with closed state"(){
 		given :
-			CampaignFolder node = new CampaignFolder(name:"folder") 
+			CampaignFolder node = new CampaignFolder(name:"folder")
 			node.addContent(new CampaignFolder());
-		
+
 		when :
 			def res = builder.setNode(node).build()
-		
+
 		then :
 			res.state == State.closed.name()
-		
+
 	}
-	
+
 	def "should expand a folder"(){
 		given :
 			CampaignFolder node = new CampaignFolder(name:"folder")
 			Campaign child = new Campaign(name:"folder child")
 			node.addContent(child);
-			
+
 			use(ReflectionCategory) {
 				CampaignLibraryNode.set field: "id", of: node, to: 10L
 				CampaignLibraryNode.set field: "id", of: child, to: 100L
 			}
-			
+
 		and:
 		MultiMap expanded = new MultiValueMap()
 		expanded.put("CampaignFolder", 10L)
-		
+
 		when :
 			def res = builder.expand(expanded).setNode(node).build()
-		
+
 		then :
 			res.state == State.open.name()
 			res.children.size() == 1
-		
+
 	}
 
 	def "should expand a campaign"(){
@@ -124,21 +126,21 @@ class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 			Campaign node = new Campaign(name:"folder")
 			Iteration child = new Iteration(name:"folder child")
 			node.addContent(child);
-			
+
 			use(ReflectionCategory) {
 				CampaignLibraryNode.set field: "id", of: node, to: 10L
 			}
-			
+
 		and:
 		MultiMap expanded = new MultiValueMap()
 		expanded.put("Campaign", 10L)
-		
+
 		when :
 			def res = builder.expand(expanded).setNode(node).build()
-		
+
 		then :
 			res.state == State.open.name()
 			res.children.size() == 1
-		
+
 	}
 }

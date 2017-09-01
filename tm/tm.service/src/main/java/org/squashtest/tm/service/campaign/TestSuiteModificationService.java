@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestSuiteModificationService", entity = TestSuite.class)
@@ -34,4 +35,8 @@ public interface TestSuiteModificationService extends CustomTestSuiteModificatio
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	void changeDescription(long id, String newDescription);
+
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	void changeExecutionStatus(long id, ExecutionStatus executionStatus);
 }

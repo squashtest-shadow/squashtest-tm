@@ -247,6 +247,8 @@ define(
 					$statusspan.parents('tr:first')
 						.find('td.assignee-combo')
 						.children().first().text(itp.assignee);
+
+					squashtm.execution.refreshTestSuiteInfo();
 				},
 
 				jsonAssignableUsers: JSON.stringify(initconf.basic.assignableUsers),

@@ -127,8 +127,8 @@
   config.customFields = {url: "${customFieldsValuesURL}"};
   config.iterationURL = "${iterationUrl}";
   config.iterationStatusComboJson = ${iterationStatusComboJson};
-  config.statuses =
-  ${json:serialize (statuses)}
+  config.statuses = ${json:serialize (statuses)};
+  config.folderId = ${folderId};
 </script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
@@ -241,26 +241,32 @@
         <jsp:attribute name="body">
               <div class="display-table-row">
                 <label for="iteration-reference" class="display-table-cell"><f:message key="label.Reference"/></label>
+
                 <div class="display-table-cell" id="iteration-reference">${ iteration.reference }</div>
               </div>
 
               <div class="display-table-row">
                 <label for="iteration-description" class="display-table-cell"><f:message
                   key="label.Description"/></label>
+
                 <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
               </div>
 
             <div class="display-table-row">
               <label for="iteration-status" class="display-table-cell"><f:message
                 key="iteration.status.combo.label"/></label>
+
               <div>
-                <span id="iteration-status-icon" style="vertical-align:middle"class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
+                <span id="iteration-status-icon" style="vertical-align:middle"
+                      class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
                 <span id="iteration-status">${ iterationStatusLabel }</span>
               </div>
             </div>
 
             <div class="display-table-row">
-              <label for="iteration-execution-status" class="display-table-cell"><f:message key="iteration.execution.status.combo.label"/></label>
+              <label for="iteration-execution-status" class="display-table-cell"><f:message
+                key="iteration.execution.status.combo.label"/></label>
+
               <div>
                 <span id="iteration-execution-status-icon"> </span>
                 <span id="iteration-execution-status"></span>
@@ -276,9 +282,9 @@
       <comp:toggle-panel id="iteration-custom-fields" titleKey="generics.customfieldvalues.title" open="${hasCUF}">
         <jsp:attribute name="body">
 				<div id="iteration-custom-fields-content">
-                <c:if test="${hasCUF}">
-			     	<comp:waiting-pane/>
-                </c:if>
+          <c:if test="${hasCUF}">
+            <comp:waiting-pane/>
+          </c:if>
         </div>
 			</jsp:attribute>
       </comp:toggle-panel>

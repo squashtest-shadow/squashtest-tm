@@ -28,9 +28,9 @@
 
 <c:if test="${not empty statisticsEntity}">
 				<span ><f:message key="label.progress" />&nbsp;:&nbsp;<b>${ statisticsEntity.progression }</b>%&nbsp;(&nbsp;${ statisticsEntity.nbDone }&nbsp;/&nbsp;${ statisticsEntity.nbTestCases }&nbsp;)&nbsp;&nbsp;&nbsp;</span>
-				<span ><f:message key="label.Status" />&nbsp;:&nbsp;<b><f:message key="${ statisticsEntity.status.i18nKey }" /></b></span>	<br />
-				
-				
+				<br />
+
+
 				<br />
 				<div id="table-div" class="dataTables_wrapper">
 					<table id="stats-table" class="is-contextual center">
@@ -43,7 +43,7 @@
 								</c:if>
 								<th class="ui-state-default"><f:message key="label.plur.failed" /></th>
 								<th class="ui-state-default"><f:message key="label.Running" /></th>
-								<th class="ui-state-default"><f:message key="label.plur.blocked" /></th>								
+								<th class="ui-state-default"><f:message key="label.plur.blocked" /></th>
 								<c:if test="${allowsUntestable}">
 								<th class="ui-state-default"><f:message key="label.plur.untestable" /></th>
 								</c:if>
@@ -59,7 +59,7 @@
 								</c:if>
 								<td>${ statisticsEntity.nbFailure }</td>
 								<td>${ statisticsEntity.nbRunning }</td>
-								<td>${ statisticsEntity.nbBlocked }</td>								
+								<td>${ statisticsEntity.nbBlocked }</td>
 								<c:if test="${allowsUntestable}">
 								<td>${ statisticsEntity.nbUntestable }</td>
 								</c:if>

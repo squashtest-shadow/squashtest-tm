@@ -43,6 +43,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
@@ -103,6 +105,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER = "and TestCase.automatedTest is null ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and Dataset.name like :datasetFilter ";
+
+	private static final String CAMPAIGN_COUNT_ITERATION_STATUS = "campaign.countIterationStatuses";
 
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
@@ -431,6 +435,23 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
 		q.setParameter("milestoneId", milestoneId);
 		return q.list();
+	}
+
+	@Override
+	public ExecutionStatusReport getStatusReport(Long id) {
+		ExecutionStatusReport report = new ExecutionStatusReport();
+
+		javax.persistence.Query query = entityManager.createNamedQuery(
+			CAMPAIGN_COUNT_ITERATION_STATUS);
+		query.setParameter("campaignId", id);
+
+		List<Object[]> tuples = query.getResultList();
+
+		for (Object[] tuple:tuples) {
+			report.set((ExecutionStatus) tuple[0], ((Long) tuple[1]).intValue());
+		}
+
+		return report;
 	}
 
 	@Override

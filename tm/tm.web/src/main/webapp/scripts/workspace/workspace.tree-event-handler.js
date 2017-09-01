@@ -25,7 +25,7 @@
  * in this same package directory.
  */
 
-define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) {
+define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -42,198 +42,208 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 		// Lazily initialized, see below
 		this.tree = null;
 
-		this.setTree = function(tree) {
+		this.setTree = function (tree) {
 			this.tree = tree;
 		};
 
-		this.getTree = function() {
+		this.getTree = function () {
 			if (!this.tree) {
 				this.tree = tree.get().jstree('get_instance');
 			}
 			return this.tree;
 		};
-		
+
 		var self = this;
-		
+
 		// ********* generic attribute changed handler ************
-		 
-		/* Note that this approach might not be sufficient for 
-		 * all cases, for instance a new name and a new reference 
+
+		/* Note that this approach might not be sufficient for
+		 * all cases, for instance a new name and a new reference
 		 * because of their special display.
 		 */
-		eventBus.on('node.attribute-changed', function(evt, data){
+		eventBus.on('node.attribute-changed', function (evt, data) {
 			var node = self.getTree().findNodes(data.identity);
-			if (node.length !== 0){
-				node.setAttr(data.attribute, data.value);			
+			if (node.length !== 0) {
+				node.setAttr(data.attribute, data.value);
 			}
-		});
-		
-		// ********** other handlers ****************
-		
-		eventBus.on('node.rename', function(evt, data){
-			var node = self.getTree().findNodes(data.identity);
-			if (node.length !== 0){
-				node.setName(data.newName);			
-			}
-		});
-		
-		eventBus.on('node.update-reference', function(evt, data){
-			var node = self.getTree().findNodes(data.identity);
-			if (node.length !== 0){
-				node.setReference(data.newRef);			
-			}
-		});
-		
-		eventBus.on('node.update-reqCoverage', function(evt, data){
-			updateEventUpdateReqCoverage(data, self.getTree());
-		});
-		
-		eventBus.on('node.add', function(evt, data){
-			updateEventAdd(data, self.getTree());	
 		});
 
-		eventBus.on('node.remove', function(evt, data){
+		// ********** other handlers ****************
+
+		eventBus.on('node.rename', function (evt, data) {
+			var node = self.getTree().findNodes(data.identity);
+			if (node.length !== 0) {
+				node.setName(data.newName);
+			}
+		});
+
+		eventBus.on('node.update-reference', function (evt, data) {
+			var node = self.getTree().findNodes(data.identity);
+			if (node.length !== 0) {
+				node.setReference(data.newRef);
+			}
+		});
+
+		eventBus.on('node.update-reqCoverage', function (evt, data) {
+			updateEventUpdateReqCoverage(data, self.getTree());
+		});
+
+		eventBus.on('node.add', function (evt, data) {
+			updateEventAdd(data, self.getTree());
+		});
+
+		eventBus.on('node.remove', function (evt, data) {
 			self.getTree().refresh_selected();
 		});
-		
-		
-		eventBus.on('tc-req-links-updated', function(evt, data){
+
+
+		eventBus.on('tc-req-links-updated', function (evt, data) {
 			var tree = self.getTree();
-			var openedNodes  = tree.findNodes({restype : "test-cases"});
-			var openedNodesIds = _.map(openedNodes, function(item){
+			var openedNodes = tree.findNodes({restype: "test-cases"});
+			var openedNodesIds = _.map(openedNodes, function (item) {
 				return item.getAttribute('resid');
 			});
 			var mapIdOldReq = findMapIdOldReq(openedNodesIds, tree);
-			updateCallingTestCasesNodes( tree, mapIdOldReq);
+			updateCallingTestCasesNodes(tree, mapIdOldReq);
 		});
-		
-		/* on this one we will cheat, by assuming that the currently 
+
+		/* on this one we will cheat, by assuming that the currently
 		 * selected test case if the one we want
-		 * 
-		 * We also need to refresh the parent's content because 
-		 * it's the only way to have a proper jstree node for 
+		 *
+		 * We also need to refresh the parent's content because
+		 * it's the only way to have a proper jstree node for
 		 * this new test case.
-		 * 
-		 * The problem is, reloading is asynchronous yet doesn't 
-		 * always provide deferred action support. So we cannot 
-		 * select the new node on completion. Thus we rely on the 
+		 *
+		 * The problem is, reloading is asynchronous yet doesn't
+		 * always provide deferred action support. So we cannot
+		 * select the new node on completion. Thus we rely on the
 		 * following trick :
-		 * 
-		 * We create a proto-node for the new test case, 
+		 *
+		 * We create a proto-node for the new test case,
 		 * insert it in the tree, then refresh the parent. By the magic
-		 * of the tree cookie plugin, the real jstree node will then 
+		 * of the tree cookie plugin, the real jstree node will then
 		 * be selected.
 		 */
-		eventBus.on('test-case.new-version', function(event, jsonTestCase){
-			
+		eventBus.on('test-case.new-version', function (event, jsonTestCase) {
+
 			var tree = self.getTree();
-			
+
 			var selected = tree.get_selected().treeNode();
 			var parent = selected.getParent();
-			
-			var nodeid = '#TestCase-'+jsonTestCase.id;
+
+			var nodeid = '#TestCase-' + jsonTestCase.id;
 			var data = {
-				attr : {
-					id : nodeid, 
-					resid : jsonTestCase.id,
-					restype : 'test-cases',
-					rel : 'test-case'
+				attr: {
+					id: nodeid,
+					resid: jsonTestCase.id,
+					restype: 'test-cases',
+					rel: 'test-case'
 				},
-				data : jsonTestCase.name
+				data: jsonTestCase.name
 			};
-			
-			tree.create_node(selected, 'after', data, function(){
-				var treenode = tree.findNodes({ id : nodeid}).get(0);
+
+			tree.create_node(selected, 'after', data, function () {
+				var treenode = tree.findNodes({id: nodeid}).get(0);
 				selected.deselect();
 				tree.select_node(treenode);
-							
+
 				parent.refresh();
-								
+
 			});
 		});
-		
 
-		
-		eventBus.on('node.unbindmilestones node.bindmilestones', function(evt, data){
+
+		eventBus.on('node.unbindmilestones node.bindmilestones', function (evt, data) {
 			var tree = self.getTree(),
 				id = data.identity,
 				delta = data.milestones.length,
-				evtname = evt.type+'.'+evt.namespace;
-			
+				evtname = evt.type + '.' + evt.namespace;
+
 			var node = tree.findNodes(id);
-						
-			if (!! node){
+
+			if (!!node) {
 				var nbmilestones = parseInt(node.attr('milestones'), 10);
 				if (nbmilestones !== undefined) {
-					
+
 					delta = (evtname === 'node.bindmilestones') ? delta : -delta;
 					nbmilestones += delta;
-					
-					node.attr('milestones', nbmilestones );
+
+					node.attr('milestones', nbmilestones);
 				}
-			}	
+			}
 		});
 
-		
+		//when we change an itpi's status, we update the whole campaign
+		function updateCampaign(evt, data) {
+			var node = self.getTree().findNodes(data.identity);
+			/*node.parents('li[restype="campaigns"]').treeNode().refresh();*/
+
+			var parent = "li[restype=\"campaign-folders\"][resid=\"" + data.data.folderId + "\"]";
+			console.log(parent);
+			node.parents(parent).treeNode().refresh();
+
+		}
+
+		eventBus.on('iteration.execution-status-modified', updateCampaign);
+		eventBus.on('test-suite.execution-status-modified', updateCampaign);
 	}
 
 	/* *************************** update Events ********************* */
-	
+
 	// the more informations in data, the more accurate it is treated
 	function updateEventAdd(data, tree) {
-		
-		if (data === undefined || data.parent === undefined){
+
+		if (data === undefined || data.parent === undefined) {
 			tree.refresh_selected();
 			return;
 		}
-		
-		
+
+
 		var parent = tree.findNodes(data.parent);
-		parent.getChildren().each(function(){
+		parent.getChildren().each(function () {
 			tree.delete_node(this);
 		});
-		
-		parent.load().done(function(){
-			if (!parent.isOpen()){
+
+		parent.load().done(function () {
+			if (!parent.isOpen()) {
 				parent.open();
 			}
 
-			if (data.child){
+			if (data.child) {
 				var child = tree.findNodes(data.child);
-				if (child){
+				if (child) {
 					child.select();
 				}
 			}
 		});
-		
+
 	}
 
 
-	
 	function updateEventUpdateReqCoverage(data, tree) {
-		var openedNodes  = tree.findNodes({restype : "test-cases"});
+		var openedNodes = tree.findNodes({restype: "test-cases"});
 		var targetIds = data.targetIds;
-		var openedTargetIds = $(targetIds).filter(function(index){
+		var openedTargetIds = $(targetIds).filter(function (index) {
 			var itemId = targetIds[index];
-			for(var i = 0; i < openedNodes.length; i++){
-				if( itemId == openedNodes[i].getAttribute('resid')){
+			for (var i = 0; i < openedNodes.length; i++) {
+				if (itemId == openedNodes[i].getAttribute('resid')) {
 					return true;
 				}
 			}
 			return false;
 		});
 		var mapIdOldReq = findMapIdOldReq(targetIds, tree);
-		
 
-		updateCallingTestCasesNodes( tree, mapIdOldReq);
+
+		updateCallingTestCasesNodes(tree, mapIdOldReq);
 	}
-	
-	function findMapIdOldReq(targetIds, tree){
+
+	function findMapIdOldReq(targetIds, tree) {
 		var mapIdOldReq = {};
-		$.each(targetIds, function(index, item){
+		$.each(targetIds, function (index, item) {
 			var treeNode = tree.findNodes({
-				restype : "test-cases",
-				resid : item
+				restype: "test-cases",
+				resid: item
 			});
 			if (treeNode.length !== 0) {
 				var oldReq = treeNode.attr('isreqcovered');
@@ -242,42 +252,44 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 		});
 		return mapIdOldReq;
 	}
-	
+
 	//tree : the tree instance
 	//mapIdOldReq : a map with key=tcId, value= actual 'isreqcovered' attribute value
-	function updateCallingTestCasesNodes( tree, mapIdOldReq){
+	function updateCallingTestCasesNodes(tree, mapIdOldReq) {
 		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
-		
-		var target = tree.findNodes({restype : "test-cases"});
-		var nodeIds = target.map(function(index, item){ return item.getAttribute("resid");});
+
+		var target = tree.findNodes({restype: "test-cases"});
+		var nodeIds = target.map(function (index, item) {
+			return item.getAttribute("resid");
+		});
 		$.ajax({
-			url:squashtm.app.contextRoot+"/test-cases/tree-infos",
-			type:"post",
+			url: squashtm.app.contextRoot + "/test-cases/tree-infos",
+			type: "post",
 			contentType: "application/json",
 			data: JSON.stringify({
-				openedNodesIds :  nodeIds.toArray(),
-				updatedIdsAndOldReq : mapIdOldReq
+				openedNodesIds: nodeIds.toArray(),
+				updatedIdsAndOldReq: mapIdOldReq
 			}),
 			dataType: "json"
-		}).then(function(testCaseTreeIconsUpdate){
-			
-			$.each(testCaseTreeIconsUpdate, function(key, value){
+		}).then(function (testCaseTreeIconsUpdate) {
+
+			$.each(testCaseTreeIconsUpdate, function (key, value) {
 				var target2 = tree.findNodes({
-					restype : "test-cases",
-					resid : value.id
+					restype: "test-cases",
+					resid: value.id
 				});
 				if (!target2 || target2.length === 0) {
 					return;
 				}
-				if(value.isreqcovered != 'same'){
+				if (value.isreqcovered != 'same') {
 					target2.setAttr('isreqcovered', value.isreqcovered);
 				}
-				if(value.importance != 'same'){
+				if (value.importance != 'same') {
 					target2.setAttr('importance', value.importance);
 				}
 			});
 		});
 	}
-	
+
 
 });

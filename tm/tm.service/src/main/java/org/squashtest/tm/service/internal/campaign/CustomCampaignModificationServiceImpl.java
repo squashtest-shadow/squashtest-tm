@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,8 +39,11 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
@@ -62,7 +66,7 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@Inject
 	private CampaignDao campaignDao;
 
@@ -77,10 +81,13 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Inject
 	private CampaignFinder campaignFinder;
-	
+
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
 	private NodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> campaignManagementService;
+
+	@Inject
+	private CampaignModificationService campaignModificationService;
 
 	public CustomCampaignModificationServiceImpl() {
 		super();
@@ -109,13 +116,15 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public Integer countIterations(Long campaignId) {
 		return campaignDao.countIterations(campaignId);
-	};
+	}
+
+	;
 
 
 	@Override
 	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(
-			long campaignId) {
+		long campaignId) {
 		return statisticsService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
@@ -123,15 +132,15 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@Override
 	@PreAuthorize(READ_FOLDER_OR_ADMIN)
 	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(
-Long folderId) {
+		Long folderId) {
 		return statisticsService.gatherFolderStatisticsBundle(folderId);
 	}
 
 
 	/*
-	 * 
+	 *
 	 * Milestones sections
-	 * 
+	 *
 	 */
 
 	@Override
@@ -164,19 +173,26 @@ Long folderId) {
 		return milestoneService.findCampaignsByMilestoneId(milestoneId);
 	}
 
-	/** 
-	* This method calls the {@link org.squashtest.tm.service.campaign#findById() findById()}
-	* method of {@link CampaignFinder} after checking the existence
-	* of the {@link Campaign} in database. Avoiding an AccessDeniedException 
-	* in case the id does not exist in database.
-	*/
+	/**
+	 * This method calls the {@link org.squashtest.tm.service.campaign#findById() findById()}
+	 * method of {@link CampaignFinder} after checking the existence
+	 * of the {@link Campaign} in database. Avoiding an AccessDeniedException
+	 * in case the id does not exist in database.
+	 */
 	@Override
 	public Campaign findCampaigWithExistenceCheck(long campaignId) {
 		Campaign campaign = em.find(Campaign.class, campaignId);
-		if(campaign == null) {
+		if (campaign == null) {
 			return null;
 		}
 		return campaignFinder.findById(campaignId);
+	}
+
+	@Override
+	public void updateExecutionStatus(Long id) {
+		ExecutionStatusReport report = campaignDao.getStatusReport(id);
+		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
+		campaignModificationService.changeExecutionStatus(id, newExecutionStatus);
 	}
 
 }

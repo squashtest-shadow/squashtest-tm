@@ -53,6 +53,8 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -79,6 +81,9 @@ public class TestSuiteModificationController {
 	private TestSuiteModificationService service;
 
 	@Inject
+	private TestSuiteDao testSuiteDao;
+
+	@Inject
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
@@ -102,7 +107,8 @@ public class TestSuiteModificationController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
-
+	@Inject
+	private CampaignFolderDao campaignFolderDao;
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -145,6 +151,7 @@ public class TestSuiteModificationController {
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
 		model.addAttribute("milestoneConf", milestoneConf);
+		model.addAttribute("folderId", campaignFolderDao.findParentOf(testSuite.getIteration().getCampaign().getId()).getId());
 	}
 
 	/**
@@ -236,6 +243,25 @@ public class TestSuiteModificationController {
 		service.changeDescription(suiteId, newDescription);
 		LOGGER.trace("Test-suite " + suiteId + ": updated description to " + newDescription);
 		return newDescription;
+
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-suite-execution-status", VALUE})
+	@ResponseBody
+	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long suiteId) {
+
+		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
+
+		service.changeExecutionStatus(suiteId, executionStatus);
+		LOGGER.trace("Test-suite " + suiteId + ": updated status to " + value);
+	}
+
+	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
+	@ResponseBody
+	public String getExecutionStatus(@PathVariable long suiteId) {
+
+		String executionStatus = testSuiteDao.findOne(suiteId).getExecutionStatus().toString();
+		return executionStatus;
 
 	}
 

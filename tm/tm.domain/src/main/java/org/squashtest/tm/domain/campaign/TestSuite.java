@@ -20,24 +20,9 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -52,7 +37,9 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.Copiable;
+import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -68,8 +55,21 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @Indexed
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember {
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember, HasExecutionStatus {
 	public static final int MAX_NAME_SIZE = 100;
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+
+	static {
+		Set<ExecutionStatus> set = new HashSet<>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
+	}
 
 	@Id
 	@DocumentId
@@ -83,18 +83,22 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private String name;
 
 	@Lob
-	@Type(type="org.hibernate.type.TextType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String description;
+
+	@Enumerated(EnumType.STRING)
+	private ExecutionStatus executionStatus = ExecutionStatus.READY;
+
 
 	@ManyToOne
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = "TEST_SUITE_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", updatable = false, insertable = false))
 	private Iteration iteration;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName = "ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName = "ID"))
 	private List<IterationTestPlanItem> testPlan = new LinkedList<>();
@@ -103,7 +107,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		super();
 	}
 
-	
+
 	@Override
 	public Long getId() {
 		return id;
@@ -123,7 +127,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		String trimedName = newName.trim();
 		if (!iteration.checkSuiteNameAvailable(trimedName)) {
 			throw new DuplicateNameException("Cannot rename suite " + name + " : new name " + trimedName
-					+ " already exists in iteration " + iteration.getName());
+				+ " already exists in iteration " + iteration.getName());
 		}
 		this.name = trimedName;
 	}
@@ -136,10 +140,23 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		this.description = description;
 	}
 
+	@Override
+	public ExecutionStatus getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public void setExecutionStatus(ExecutionStatus executionStatus) {
+		this.executionStatus = executionStatus;
+	}
+
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return LEGAL_EXEC_STATUS;
+	}
+
 	/**
 	 * When one needs to create a suite in the scope of an iteration, it should use
 	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
-	 *
 	 */
 	/* package */void setIteration(@NotNull Iteration iteration) {
 		this.iteration = iteration;
@@ -162,7 +179,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Compares 2 suites, for internal use.
-	 *
 	 */
 	private boolean hasSame(List<TestSuite> suites) {
 
@@ -195,7 +211,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	public IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
 		for (IterationTestPlanItem item : this.getTestPlan()) {
-			if(testerLogin == null || item.isAssignedToUser(testerLogin)){
+			if (testerLogin == null || item.isAssignedToUser(testerLogin)) {
 				return item;
 			}
 		}
@@ -205,7 +221,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite
-	 *
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
@@ -235,12 +250,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
-	 *
 	 */
 	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				if (item.getId().equals(itemId) ) {
+				if (item.getId().equals(itemId)) {
 					bindTestPlanItem(item);
 				}
 			}
@@ -354,16 +368,14 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * Determines if the item is the first of the test plan of the test suite
 	 *
-	 * @param itemId
-	 *            : the id of the item to determine if it is the first executable test plan item
-	 * @param testerLogin
-	 *            : the id of the current user if he is a Test runner
+	 * @param itemId      : the id of the item to determine if it is the first executable test plan item
+	 * @param testerLogin : the id of the current user if he is a Test runner
 	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId, String testerLogin) {
 
 		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
 			if ((testerLogin == null || iterationTestPlanItem.isAssignedToUser(testerLogin))
-					&& boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) {
+				&& boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) {
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
@@ -375,10 +387,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
 	 * <em>can return item linked to test-case with no step</em>
 	 *
-	 * @throws TestPlanItemNotExecutableException
-	 *             if no item is found
-	 * @throws IllegalArgumentException
-	 *             if id does not correspond to an item of the test suite
+	 * @throws TestPlanItemNotExecutableException if no item is found
+	 * @throws IllegalArgumentException           if id does not correspond to an item of the test suite
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
 		return findNextExecutableTestPlanItem(testPlanItemId, null);
@@ -389,11 +399,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
 	 * <em>NB: can return item linked to test-case with no step</em>
 	 *
-	 * @throws TestPlanItemNotExecutableException
-	 *             if no item is found
-	 * @throws IllegalArgumentException
-	 *             if id does not correspond to an item of the test suite
 	 * @param testerLogin : the login of the connected user if he is a Test Runner
+	 * @throws TestPlanItemNotExecutableException if no item is found
+	 * @throws IllegalArgumentException           if id does not correspond to an item of the test suite
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
 		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
@@ -430,7 +438,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		}
 
 		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite["
-				+ id + ']');
+			+ id + ']');
 	}
 
 	@Override
@@ -478,9 +486,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	@Override
 	public Boolean doMilestonesAllowCreation() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectCreateAndDelete()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
@@ -490,13 +498,13 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	@Override
 	public Boolean doMilestonesAllowEdition() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectModification()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectModification()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
 		}
 		return allowed;
-}
+	}
 }

@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -50,6 +51,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -125,6 +127,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private CustomIterationModificationService customIterationModificationService;
+
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -314,15 +319,24 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanItemsIds);
 		int sizeBeforeDeletion = iteration.getTestPlans().size();
+
+		Set<TestSuite> testSuitesToUpdate = new HashSet<>();
+		for (IterationTestPlanItem item : items) {
+			testSuitesToUpdate.addAll(item.getTestSuites());
+		}
+
 		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution and the user does not have sufficient rights
 			// so we keep track of whether at lease one item couldn't be deleted
 			unauthorizedDeletion = unauthorizedDeletion || removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
 		}
 
-		//if an ITPI was deleted, we update the iteration status
+		//if an ITPI was deleted, we update the iteration, campaign and test suites status
 		if (sizeBeforeDeletion > iteration.getTestPlans().size()) {
 			customIterationModificationService.updateExecutionStatus(iteration.getId());
+			for (TestSuite testSuiteToUpdate : testSuitesToUpdate) {
+				customTestSuiteModificationService.updateExecutionStatus(testSuiteToUpdate.getId());
+			}
 		}
 
 		return unauthorizedDeletion;
@@ -502,14 +516,20 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Date date = new Date();
 
 		Set<Iteration> iterationsToUpdate = new HashSet<>();
+		Set<TestSuite> testSuitesToUpdate = new HashSet<>();
 		for (IterationTestPlanItem item : testPlanItems) {
 			item.setExecutionStatus(status);
 			arbitraryUpdateMetadata(item, user, date);
 			iterationsToUpdate.add(item.getIteration());
+			testSuitesToUpdate.addAll(item.getTestSuites());
 		}
 
 		for (Iteration iteration : iterationsToUpdate) {
 			customIterationModificationService.updateExecutionStatus(iteration.getId());
+		}
+
+		for (TestSuite testSuite : testSuitesToUpdate) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
 		}
 		return testPlanItems;
 
@@ -522,7 +542,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 * <li>a unique item when the test case is not parameterized</li>
 	 * <li>one item per dataset when the test case is parameterized</li>
 	 * </ul>
-	 *
+	 * <p>
 	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
 	 *
 	 * @return

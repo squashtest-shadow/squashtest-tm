@@ -35,215 +35,265 @@
  *
  */
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-        "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
-        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
-        "./test-plan-panel", "custom-field-values", "squash.configmanager","favorite-dashboard", "underscore",  "jqueryui", "jquery.squash.formdialog"
-				],
-        function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView, _){
+		"bugtracker/bugtracker-panel", "workspace.event-bus", "squash.translator",
+		"dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
+		"./test-plan-panel", "custom-field-values", "squash.configmanager", "favorite-dashboard", "underscore", 'squash.statusfactory', "page-components/general-information-panel",
+		"jqueryui", "jquery.squash.formdialog"
+	],
+	function ($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
+						dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView, _, statusfactory, general) {
 
 
-	function init(conf){
+		function init(conf) {
 
-		initTranslator();
+			initTranslator();
 
-		basicwidg.init();
+			basicwidg.init();
 
-		initTabs(conf);
+			initTabs(conf);
 
-		initDescription(conf);
+			initDescription(conf);
 
-		initCufs(conf);
+			initCufs(conf);
 
-		initRenameHandler(conf);
+			initRenameHandler(conf);
 
-		initRenameDialog(conf);
+			initRenameDialog(conf);
 
-		initPlanning(conf);
+			initPlanning(conf);
 
-		initDatePickers(conf);
+			initDatePickers(conf);
 
-		initDatePickersAuto(conf);
+			initDatePickersAuto(conf);
 
-		initDashboard(conf);
+			initDashboard(conf);
 
-		initTestplan(conf);
+			initTestplan(conf);
 
-		initBugtracker(conf);
+			initBugtracker(conf);
 
-		initStatus(conf);
+			initStatus(conf);
 
-	}
+			initExecutionStatus(conf);
+		}
 
-	// Load all the needed message properties to the cache
-	function initTranslator() {
-		var messages = {
+		// Load all the needed message properties to the cache
+		function initTranslator() {
+			var messages = {
 				// Properties for datepickers-pair
-				"datePicker-period-notConsistent" : "message.exception.timePeriodNotConsistent",
-				"dateFormatShort"				  : "squashtm.dateformatShort" ,
-				"dateFormatShort-datePicker"	  : "squashtm.dateformatShort.datepicker",
+				"datePicker-period-notConsistent": "message.exception.timePeriodNotConsistent",
+				"dateFormatShort": "squashtm.dateformatShort",
+				"dateFormatShort-datePicker": "squashtm.dateformatShort.datepicker",
 				// Properties for bugtracker-panel
-				"bugtracker-timeout"			  : "message.bugtracker.unavailable.timeout",
+				"bugtracker-timeout": "message.bugtracker.unavailable.timeout",
 				// Properties for campaigns-dashboard-main
-				"dashboard-test-cases-search"	  : "dashboard.test-cases.search",
+				"dashboard-test-cases-search": "dashboard.test-cases.search",
 				// Properties for planning
-				"planning-notConsistent-periods"  : "message.exception.planning.notConsistentPeriods"
-		};
-		translator.load(messages);
-	}
-	// initialize the description bloc (not just the attribute)
-	function initDescription(conf){
-		if (conf.features.writable){
-			var refEditable = $("#campaign-reference").addClass('editable');
-			var url = conf.data.campaignUrl;
-			var cfg = confman.getStdJeditable();
-			cfg = $.extend(cfg, {
-				maxLength : 50,
-				callback : function(value, settings){
-					var escaped = $("<span/>").html(value).text();
-					eventBus.trigger('node.update-reference', {identity : conf.data.identity, newRef : escaped});
-				}
-			});
-
-			refEditable.editable(url, cfg);
+				"planning-notConsistent-periods": "message.exception.planning.notConsistentPeriods"
+			};
+			translator.load(messages);
 		}
-	}
 
-	function initStatus(conf) {
-		if (conf.features.writable) {
-			var statusEditable = $("#campaign-status").addClass('editable');
-			var url = conf.data.campaignUrl;
-			var cfg = confman.getJeditableSelect();
-			cfg = $.extend(cfg, {
-				data: conf.data.campaignStatusComboJson,
-				callback: function (value, settings) {
-					var keyOfValue = _.findKey(settings.data, function (dataValue) {
-						return value === dataValue;
-					});
-					var iconStatus = $("#campaign-status-icon");
-					iconStatus.attr("class", ""); //reset
-					iconStatus.addClass("sq-icon campaign-status-" + keyOfValue);
-				}
+		// initialize the description bloc (not just the attribute)
+		function initDescription(conf) {
+			if (conf.features.writable) {
+				var refEditable = $("#campaign-reference").addClass('editable');
+				var url = conf.data.campaignUrl;
+				var cfg = confman.getStdJeditable();
+				cfg = $.extend(cfg, {
+					maxLength: 50,
+					callback: function (value, settings) {
+						var escaped = $("<span/>").html(value).text();
+						eventBus.trigger('node.update-reference', {identity: conf.data.identity, newRef: escaped});
+					}
+				});
 
-			});
-			statusEditable.editable(url, cfg);
-		}
-	}
-
-	function initCufs(conf){
-		if (conf.features.hasCUF){
-			var url = conf.data.cufValuesUrl + "?boundEntityId="+conf.data.campaignId+"&boundEntityType=CAMPAIGN";
-			$.getJSON(url)
-			.success(function(jsonCufs){
-				$("#campaign-custom-fields-content .waiting-loading").hide();
-				var mode = (conf.features.writable) ? "jeditable" : "static";
-				cufvalues.infoSupport.init("#campaign-custom-fields-content", jsonCufs, mode);
-			});
-		}
-	}
-
-	function initRenameHandler(conf){
-		var nameHandler = contentHandlers.getNameAndReferenceHandler();
-		nameHandler.identity = conf.data.identity;
-		nameHandler.nameDisplay = "#campaign-name";
-		nameHandler.nameHidden = "#campaign-raw-name";
-		nameHandler.referenceHidden = "#campaign-raw-reference";
-	}
-
-	function initTabs(conf){
-		var fragConf = {
-			activate : function(event, ui){
-				if (ui.newPanel.is("#campaign-dashboard")){
-					eventBus.trigger('dashboard.appear');
-				}
+				refEditable.editable(url, cfg);
 			}
+		}
+
+		function initStatus(conf) {
+			if (conf.features.writable) {
+				var statusEditable = $("#campaign-status").addClass('editable');
+				var url = conf.data.campaignUrl;
+				var cfg = confman.getJeditableSelect();
+				cfg = $.extend(cfg, {
+					data: conf.data.campaignStatusComboJson,
+					callback: function (value, settings) {
+						var keyOfValue = _.findKey(settings.data, function (dataValue) {
+							return value === dataValue;
+						});
+						var iconStatus = $("#campaign-status-icon");
+						iconStatus.attr("class", ""); //reset
+						iconStatus.addClass("sq-icon campaign-status-" + keyOfValue);
+					}
+
+				});
+				statusEditable.editable(url, cfg);
+			}
+		}
+
+		function initExecutionStatus(conf) {
+
+			var refreshCampaignInfo = function () {
+				$.ajax({
+					url: conf.data.campaignUrl + "/getExecutionStatus",
+					type: "get"
+				}).done(function (value) {
+
+					var executionStatusIcon = $("#campaign-execution-status-icon");
+					executionStatusIcon.html(statusfactory.getIconFor(value));
+					$("#campaign-execution-status-icon > span").css("display", "inline");
+
+					var executionStatusEditable = $("#campaign-execution-status");
+					executionStatusEditable.html(statusfactory.translate(value));
+
+					//refresh the iteration execution status in the tree
+					var executionStatusIconTree = $("#Campaign-" + conf.data.campaignId);
+					executionStatusIconTree.attr('executionstatus', value);
+				});
+				general.refresh();
+			};
+
+			squashtm.execution = squashtm.execution || {};
+			squashtm.execution.refreshCampaignInfo = refreshCampaignInfo;
+
+			var status = conf.data.campaignExecutionStatus;
+			var executionStatusIcon = $("#campaign-execution-status-icon");
+
+			executionStatusIcon.html(statusfactory.getIconFor(status));
+			$("#campaign-execution-status-icon > span").css("display", "inline");
+
+			var executionStatusEditable = $("#campaign-execution-status");
+			executionStatusEditable.html(statusfactory.translate(status));
+
+			if (conf.features.writable) {
+				executionStatusEditable.addClass('editable');
+				var statusUrl = conf.data.campaignUrl;
+				var statusCfg = confman.getJeditableSelect();
+				statusCfg = $.extend(statusCfg, {
+					data: JSON.stringify(conf.data.campaignExecutionStatusCombo),
+					callback: refreshCampaignInfo
+				});
+
+				executionStatusEditable.editable(statusUrl, statusCfg);
+			}
+		}
+
+		function initCufs(conf) {
+			if (conf.features.hasCUF) {
+				var url = conf.data.cufValuesUrl + "?boundEntityId=" + conf.data.campaignId + "&boundEntityType=CAMPAIGN";
+				$.getJSON(url)
+					.success(function (jsonCufs) {
+						$("#campaign-custom-fields-content .waiting-loading").hide();
+						var mode = (conf.features.writable) ? "jeditable" : "static";
+						cufvalues.infoSupport.init("#campaign-custom-fields-content", jsonCufs, mode);
+					});
+			}
+		}
+
+		function initRenameHandler(conf) {
+			var nameHandler = contentHandlers.getNameAndReferenceHandler();
+			nameHandler.identity = conf.data.identity;
+			nameHandler.nameDisplay = "#campaign-name";
+			nameHandler.nameHidden = "#campaign-raw-name";
+			nameHandler.referenceHidden = "#campaign-raw-reference";
+		}
+
+		function initTabs(conf) {
+			var fragConf = {
+				activate: function (event, ui) {
+					if (ui.newPanel.is("#campaign-dashboard")) {
+						eventBus.trigger('dashboard.appear');
+					}
+				}
+			};
+
+			Frag.init(fragConf);
+		}
+
+		function initBugtracker(conf) {
+			if (conf.features.hasBugtracker) {
+				bugtrackerPanel.load({
+					url: conf.data.bugtrackerUrl,
+					style: "fragment-tab"
+				});
+			}
+		}
+
+		function initPlanning(conf) {
+			if (conf.features.writable) {
+				planning.init(conf);
+			}
+		}
+
+		function initDatePickers(conf) {
+			if (conf.features.writable) {
+				datePickers.init(conf);
+			}
+		}
+
+		function initDatePickersAuto(conf) {
+			if (conf.features.writable) {
+				datePickersAuto.init(conf);
+			}
+		}
+
+		function initDashboard(conf) {
+			var shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard;
+			if (shouldShowFavoriteDashboard) {
+				favoriteView.init();
+			} else {
+				dashboard.init(conf.dashboard);
+			}
+		}
+
+		function initTestplan(conf) {
+			testplan.init(conf);
+		}
+
+		function initRenameDialog(conf) {
+
+			var dialog = $("#rename-campaign-dialog"),
+				campaignUrl = conf.data.campaignUrl,
+				campaignId = conf.data.campaignId;
+
+			dialog.formDialog();
+
+			dialog.on("formdialogopen", function () {
+				var name = $('#campaign-raw-name').text();
+				var trimmed = $.trim(name);
+				$("#rename-campaign-name").val(trimmed);
+			});
+
+			dialog.on('formdialogconfirm', function () {
+				var newName = $("#rename-campaign-name").val();
+				$.ajax({
+					url: campaignUrl,
+					type: 'POST',
+					dataType: 'json',
+					data: {newName: newName}
+				})
+					.done(function (data) {
+						dialog.formDialog('close');
+						eventBus.trigger('node.rename', {identity: conf.data.identity, newName: data.newName});
+					});
+			});
+
+			dialog.on('formdialogcancel', function () {
+				dialog.formDialog('close');
+			});
+
+			$("#rename-campaign-button").on('click', function () {
+				dialog.formDialog('open');
+			});
+
+		}
+
+
+		return {
+			init: init
 		};
 
-		Frag.init(fragConf);
-	}
 
-	function initBugtracker(conf){
-		if (conf.features.hasBugtracker){
-			bugtrackerPanel.load({
-				url : conf.data.bugtrackerUrl,
-				style : "fragment-tab"
-			});
-		}
-	}
-
-	function initPlanning(conf){
-		if (conf.features.writable){
-			planning.init(conf);
-		}
-	}
-
-	function initDatePickers(conf) {
-		if(conf.features.writable) {
-			datePickers.init(conf);
-		}
-	}
-
-	function initDatePickersAuto(conf) {
-		if(conf.features.writable) {
-			datePickersAuto.init(conf);
-		}
-	}
-
-	function initDashboard(conf){
-		var shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard;
-		if(shouldShowFavoriteDashboard){
-			favoriteView.init();
-		} else {
-			dashboard.init(conf.dashboard);
-		}
-	}
-
-	function initTestplan(conf){
-		testplan.init(conf);
-	}
-
-	function initRenameDialog(conf){
-
-		var dialog = $("#rename-campaign-dialog"),
-			campaignUrl = conf.data.campaignUrl,
-			campaignId = conf.data.campaignId;
-
-		dialog.formDialog();
-
-		dialog.on("formdialogopen", function(){
-			var name = $('#campaign-raw-name').text();
-			var trimmed = $.trim(name);
-			$("#rename-campaign-name").val(trimmed);
-		});
-
-		dialog.on('formdialogconfirm', function(){
-			var newName = $("#rename-campaign-name").val();
-			$.ajax({
-				url : campaignUrl,
-				type : 'POST',
-				dataType  : 'json',
-				data : { newName : newName}
-			})
-			.done(function(data){
-				dialog.formDialog('close');
-				eventBus.trigger('node.rename', { identity : conf.data.identity, newName : data.newName});
-			});
-		});
-
-		dialog.on('formdialogcancel', function(){
-			dialog.formDialog('close');
-		});
-
-		$("#rename-campaign-button").on('click', function(){
-			dialog.formDialog('open');
-		});
-
-	}
-
-
-	return {
-		init : init
-	};
-
-
-});
+	});

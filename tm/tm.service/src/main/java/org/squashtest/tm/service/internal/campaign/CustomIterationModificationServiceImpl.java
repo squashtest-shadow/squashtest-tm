@@ -60,9 +60,7 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
-import org.squashtest.tm.service.campaign.CustomIterationModificationService;
-import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.campaign.IterationStatisticsService;
+import org.squashtest.tm.service.campaign.*;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -135,7 +133,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private ExecutionProcessingService executionProcessingService;
 
-
 	@Inject
 	private IterationModificationService iterationModificationService;
 
@@ -151,6 +148,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private UserContextService userContextService;
+
+	@Inject
+	private CustomCampaignModificationService customCampaignModificationService;
+
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
@@ -169,6 +172,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject());
+		customCampaignModificationService.updateExecutionStatus(campaignId);
 		return campaign.getIterations().size() - 1;
 	}
 
@@ -361,6 +365,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			updateExecutionStatus(item.getIteration().getId());
 		}
 
+		for (TestSuite testSuite : item.getTestSuites()) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+		}
+
 		operationsAfterAddingExec(item, execution);
 		return execution;
 	}
@@ -487,9 +495,16 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	public void updateExecutionStatus(Long id) {
+		Iteration iteration = iterationDao.findById(id);
 		ExecutionStatusReport report = iterationDao.getStatusReport(id);
+		ExecutionStatus FormerExecutionStatus = iteration.getExecutionStatus();
 		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
-		iterationModificationService.changeExecutionStatus(id, newExecutionStatus);
+
+		//if the iteration status changed, we modify it, and we update the campaign status
+		if (FormerExecutionStatus != newExecutionStatus) {
+			iterationModificationService.changeExecutionStatus(id, newExecutionStatus);
+			customCampaignModificationService.updateExecutionStatus(iteration.getCampaign().getId());
+		}
 	}
 
 }

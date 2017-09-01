@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
@@ -65,6 +66,8 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
 
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+
+	private static final String TEST_SUITE_COUNT_STATUS = "TestSuite.countStatuses";
 
 	static {
 		Map<String, String> modeDataMap = new HashMap<>(2);
@@ -134,6 +137,22 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 		return query.getResultList().size();
 	}
 
+	@Override
+	public ExecutionStatusReport getStatusReport(Long id) {
+		ExecutionStatusReport report = new ExecutionStatusReport();
+
+		Query query = entityManager.createNamedQuery(
+			TEST_SUITE_COUNT_STATUS);
+		query.setParameter("id", id);
+
+		List<Object[]> tuples = query.getResultList();
+
+		for (Object[] tuple:tuples) {
+			report.set((ExecutionStatus) tuple[0], ((Long) tuple[1]).intValue());
+		}
+
+		return report;
+	}
 
 
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering) {

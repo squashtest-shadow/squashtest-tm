@@ -373,6 +373,7 @@
 	@NamedQuery(name = "campaign.countTestCasesById", query = "select count(tp) from Campaign c join c.testPlan tp where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countIterations", query = "select count(it) from Campaign c join c.iterations it where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countStatuses", query = "select tp.executionStatus, count(tp) from Campaign c join c.iterations it join it.testPlans tp where c.id = :campaignId group by tp.executionStatus"),
+	@NamedQuery(name = "campaign.countIterationStatuses", query = "select it.executionStatus, count(it) from Campaign c join c.iterations it where c.id = :campaignId group by it.executionStatus"),
 	@NamedQuery(name = "campaign.findCampaignByName", query = "from CampaignLibraryNode c where c.name like :campaignName order by c.name asc"),
 	@NamedQuery(name = "campaign.findTestPlanFiltered", query = "select tp from Campaign cp join cp.testPlan tp where cp.id = :campaignId order by index(tp)"),
 	@NamedQuery(name = "campaign.findAllExecutions", query = "select exec from Campaign camp join camp.iterations it join it.testPlans tp join tp.executions exec where camp.id = :campaignId "),

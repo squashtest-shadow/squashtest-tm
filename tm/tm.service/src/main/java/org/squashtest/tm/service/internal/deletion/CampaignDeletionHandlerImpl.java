@@ -47,7 +47,9 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
@@ -90,7 +92,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
 
-
 	@Inject
 	private TestSuiteDao suiteDao;
 
@@ -114,6 +115,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private CustomIterationModificationService customIterationModificationService;
+
+	@Inject
+	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private CustomCampaignModificationService customCampaignModificationService;
 
 
 	@Override
@@ -199,8 +206,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(campaign.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
+				} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
@@ -234,8 +240,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(iteration.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
+				} catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
 					LOGGER.trace("The user is not allowed to delete the iteration");
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
@@ -288,8 +293,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(suite.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
+				} catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
 
 					// The user is not allowed to delete the test suite
 					report = new NotDeletableCampaignsPreviewReport();
@@ -470,6 +474,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		OperationReport report = new OperationReport();
 		report.addRemoved(deletedTargetIds, "iteration");
 
+		Set<Campaign> campaignToUpdate = new HashSet<>();
+		for (Iteration iteration : iterations) {
+			campaignToUpdate.add(iteration.getCampaign());
+		}
+		for (Campaign campaign : campaignToUpdate) {
+			customCampaignModificationService.updateExecutionStatus(campaign.getId());
+		}
+
 		return report;
 	}
 
@@ -509,9 +521,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		customValueService.deleteAllCustomFieldValues(execution);
 
 		//If the ITPI status changed, we update the iteration status
-		ExecutionStatus newITPIExecutionStatus =iterationTestPlanDao.findById(testPlanItem.getId()).getExecutionStatus();
-		if(!formerITPIExecutionStatus.equals(newITPIExecutionStatus)){
+		ExecutionStatus newITPIExecutionStatus = iterationTestPlanDao.findById(testPlanItem.getId()).getExecutionStatus();
+		if (!formerITPIExecutionStatus.equals(newITPIExecutionStatus)) {
 			customIterationModificationService.updateExecutionStatus(testPlanItem.getIteration().getId());
+		}
+
+		for (TestSuite testSuite : testPlanItem.getTestSuites()) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
 		}
 
 		deletionDao.removeEntity(execution);

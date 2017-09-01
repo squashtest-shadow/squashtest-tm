@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", 
+define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator",
          "jquery.squash.messagedialog", "jqueryui" ], function($, _, notification, translator) {
 
 	function TestSuiteMenuNewStatuses() {
@@ -31,11 +31,11 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 		this.getChecked = function() {
 			return this.checkedIds;
 		};
-		
+
 		this.getUnchecked = function() {
 			return this.uncheckedIds;
 		};
-		
+
 		this.reset = function(checked, notChecked) {
 			this.intiallyChecked = checked;
 			this.initiallyNotChecked = notChecked;
@@ -156,7 +156,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 				self.lastAdded = undefined;
 				return;
 			}
-			
+
 			// wipe the previous items
 			this.menu.find('li.suite-item').remove();
 
@@ -177,7 +177,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			this.menu.prepend(sorted);
 
 		}, this);
-		
+
 		var sortItems = function(items){
 			return Array.prototype.sort.call(items, function(a, b) {
 				var textA = $(a).text();
@@ -253,6 +253,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 								toSend['unbound-test-suites'] = uncheckedSuiteIds;
 								toSend['test-plan-items'] = self.testPlanItemIds;
 								self.model.postBindChanged(toSend).success(function() {
+										squashtm.execution.refreshTestSuiteInfo();
 										self.menucontrol.buttonmenu('close');
 								});
 							}else{

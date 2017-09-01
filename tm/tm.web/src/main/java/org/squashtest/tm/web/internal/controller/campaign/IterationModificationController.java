@@ -54,20 +54,16 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationStatus;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.service.campaign.*;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -139,6 +135,11 @@ public class IterationModificationController {
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
 
+	@Inject
+	private CustomCampaignModificationService customCampaignModificationService;
+
+	@Inject
+	private CampaignFolderDao campaignFolderDao;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -177,6 +178,7 @@ public class IterationModificationController {
 		model.addAttribute("milestoneConf", milestoneConf);
 		model.addAttribute("iterationStatusComboJson", buildStatusComboData());
 		model.addAttribute("iterationStatusLabel", formatStatus(iteration.getStatus()));
+		model.addAttribute("folderId", campaignFolderDao.findParentOf(iteration.getCampaign().getId()).getId());
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
@@ -303,12 +305,16 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-execution-status", VALUE})
 	@ResponseBody
-	public void updateStatus(@RequestParam(VALUE) String value, @PathVariable long iterationId) {
+	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long iterationId) {
 
 		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
 
 		iterationModService.changeExecutionStatus(iterationId, executionStatus);
 		LOGGER.trace("Iteration " + iterationId + ": updated status to " + value);
+
+		//we compute and update the campaign status
+		Long campaignId = iterationDao.findById(iterationId).getCampaign().getId();
+		customCampaignModificationService.updateExecutionStatus(campaignId);
 	}
 
 	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
@@ -494,7 +500,6 @@ public class IterationModificationController {
 		mav.addObject(ITERATION_KEY, iter);
 		mav.addObject("executions", executionList);
 		mav.addObject("milestoneConf", milestoneConf);
-
 		return mav;
 
 	}

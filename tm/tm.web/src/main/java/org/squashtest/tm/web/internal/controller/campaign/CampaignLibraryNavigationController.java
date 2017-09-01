@@ -83,6 +83,7 @@ import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.Camp
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
@@ -215,6 +216,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private InternationalizationHelper internationalizationHelper;
+
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public
@@ -310,8 +314,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
-	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
-		return new IterationNodeBuilder(permissionEvaluationService).setModel(iteration).setIndex(iterationIndex).build();
+	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService,InternationalizationHelper internationalizationHelper) {
+		return new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper).setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
@@ -383,7 +387,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createBatchedIterationTreeNode(iteration, i, pev));
+			res.add(createBatchedIterationTreeNode(iteration, i, pev, internationalizationHelper));
 		}
 
 		return res;
@@ -406,7 +410,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
 		for (Iteration iteration : newIterations) {
-			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev,internationalizationHelper));
 			iterationIndex++;
 		}
 

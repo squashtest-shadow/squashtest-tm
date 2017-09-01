@@ -43,20 +43,28 @@ package org.squashtest.tm.web.internal.model.builder;
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import java.util.List;
+import java.util.Locale;
 
 @Component
 @Scope("prototype")
 public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
-
+	protected InternationalizationHelper internationalizationHelper;
 
 	@Inject
-	protected TestSuiteNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+	protected TestSuiteNodeBuilder(PermissionEvaluationService permissionEvaluationService, InternationalizationHelper internationalizationHelper) {
 		super(permissionEvaluationService);
+		this.internationalizationHelper = internationalizationHelper;
 	}
 
 	@Override
@@ -68,6 +76,22 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		node.setTitle(model.getName());
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+		node.addAttr("executionStatus", model.getExecutionStatus().toString());
+
+		//build tooltip
+		String status = model.getExecutionStatus().getI18nKey();
+		Locale locale = LocaleContextHolder.getLocale();
+		String localizedStatus = internationalizationHelper.internationalize(status, locale);
+		String[] args = {localizedStatus};
+		String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
+		String description = "";
+		if (!model.getTestPlan().isEmpty()) {
+			description = model.getTestPlan().get(0).getReferencedTestCase().getDescription();
+			if (description.length() > 30) {
+				description = description.substring(0, 30);
+			}
+		}
+		node.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
 
 		//milestone attributes
 		node.addAttr("milestones", model.getMilestones().size());
@@ -78,14 +102,13 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder #doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, TestSuite model) {
 		// NOOP
 		// Test suite ain't got no children
 	}
-
 
 
 }
