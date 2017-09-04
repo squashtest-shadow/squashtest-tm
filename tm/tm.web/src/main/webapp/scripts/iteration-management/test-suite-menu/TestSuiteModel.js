@@ -67,7 +67,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 		}, self);
 
 		var removeSuites = $.proxy(function(commands) {
-			var removed = commands.removed;			
+			var removed = commands.removed;
 			for ( var i=0,len=removed.length; i<len; i++ ) {
 				var index = indexById(removed[i].resid);
 				if (index != -1) {
@@ -82,7 +82,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				type : 'GET',
 				dataType : 'json'
 			}).success(function(json) {
-				this.data = json;
+				self.data = json;
 			});
 		};
 
@@ -91,14 +91,14 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				this.views[i].redraw(evt);
 			}
 		}, self);
-		
+
 
 		/* ************** public interface (master) *************** */
 
 		this.addView = function(view) {
 			this.views.push(view);
 		};
-		
+
 		this.getData = function() {
 			return this.data;
 		};
@@ -164,7 +164,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				eventBus.trigger("node.bind");
 			});
 		};
-		
+
 		this.postBindChanged = function(toSend){
 			return $.ajax({
 				'url': this.baseUpdateUrl+"/test-plan/",
@@ -177,14 +177,14 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				eventBus.trigger("node.bind");
 			});
 		};
-		
+
 		this.getModel = function(evt) {
 			_getModel().success(function() {
 				redrawViews(evt);
 			});
 		};
 
-		
+
 		// ************** other events **********
 
 		eventBus.onContextual('node.add node.rename node.remove node.refresh node.bind', function(evt){
