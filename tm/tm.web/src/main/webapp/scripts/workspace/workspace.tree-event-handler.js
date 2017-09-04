@@ -185,6 +185,7 @@ define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 		}
 
 		eventBus.on('iteration.execution-status-modified', updateCampaign);
+		eventBus.on('iteration.new-test-suite', updateCampaign);
 		eventBus.on('test-suite.execution-status-modified', updateCampaign);
 	}
 
