@@ -16,6 +16,7 @@
   <properties>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
+    <jooq.sql-dialect>H2</jooq.sql-dialect>
     <database.drivername>org.h2.Driver</database.drivername>
     <database.password>sa</database.password>
     <database.schemaName>public</database.schemaName>
@@ -375,6 +376,7 @@
       <id>mysql</id>
       <properties>
         <database.dialect>mysql</database.dialect>
+        <jooq.sql-dialect>mysql</jooq.sql-dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>${it.database.schemaName}</database.schemaName>
@@ -425,6 +427,7 @@
       <id>postgresql</id>
       <properties>
         <database.dialect>postgresql</database.dialect>
+        <jooq.sql-dialect>postgres</jooq.sql-dialect>
         <database.drivername>org.postgresql.Driver</database.drivername>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>public</database.schemaName>

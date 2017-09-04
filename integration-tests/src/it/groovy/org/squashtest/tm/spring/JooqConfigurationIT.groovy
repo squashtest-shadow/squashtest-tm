@@ -18,28 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.it.basespecs
+package org.squashtest.tm.spring
 
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
-import org.squashtest.it.config.DatasourceSpecConfig
-import org.squashtest.it.config.JooqSpecConfig
-import org.squashtest.it.config.RepositorySpecConfig
-import org.squashtest.tm.service.RepositoryConfig;
+import org.jooq.DSLContext
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext;
+import javax.inject.Inject
 
-import spock.lang.Specification
+import static org.squashtest.tm.jooq.domain.tables.Project.PROJECT
 
+@UnitilsSupport
+@Transactional
+@RunWith(Sputnik)
+class JooqConfigurationIT extends DbunitServiceSpecification {
 
-@ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig])
-@TestPropertySource(["classpath:hibernate.properties"])
-class DatasourceDependantSpecification extends Specification {
+	@Inject
+	DSLContext dslContext
 
-	@PersistenceContext
-	EntityManager em;
+	@DataSet("JooqConfigurationIT.xml")
+	def "should execute jooq query"() {
+		when:
+		def records = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).fetch()
+
+		then:
+		records.size().equals(1)
+	}
+
 
 }
