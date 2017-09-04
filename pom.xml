@@ -315,6 +315,12 @@
           <version>1.4.1</version>
         </plugin>
 
+        <plugin>
+          <groupId>org.jooq</groupId>
+          <artifactId>jooq-codegen-maven</artifactId>
+          <version>3.8.4</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
