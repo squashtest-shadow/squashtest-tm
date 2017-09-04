@@ -38,13 +38,12 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 		// ********** these options are MANDATORY **************
 		options: {
 			tree: null,
-			rules: null
+			rules: null,
 
 			// that one is a private working variable and requires no initialization
 			'ui-state-update' : null
 		},
 
-		open: function () {
 		open : function() {
 			this._super();
 			this.simulateDeletion();
