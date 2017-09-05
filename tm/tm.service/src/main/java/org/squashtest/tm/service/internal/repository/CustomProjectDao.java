@@ -33,9 +33,20 @@ public interface CustomProjectDao {
 	List<String> findUsersWhoCreatedTestCases(List<Long> projectIds);
 
 	List<String> findUsersWhoModifiedTestCases(List<Long> projectIds);
-	
+
 	List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds);
 
 	List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds);
+
+	List<Long> findAllProjectIds();
+
+	/**
+	 * Get the ids of readable {@link org.squashtest.tm.domain.project.Project} for the givens {@link org.squashtest.tm.domain.users.Party} ids
+	 * Thea goal here is to have the projectIds pre fetched to avoid {@link org.springframework.security.access.prepost.PostFilter} expression.
+	 * Performance testing have shown that {@link org.springframework.security.access.prepost.PostFilter} on a big collection has a HUGE performance cost...
+	 * @param partyIds The ids of all concerned parties
+	 * @return ths ids of {@link org.squashtest.tm.domain.project.Project} they can read. {@link org.squashtest.tm.domain.project.ProjectTemplate} are excluded.
+	 */
+	List<Long> findAllProjectIds(List<Long> partyIds);
 
 }

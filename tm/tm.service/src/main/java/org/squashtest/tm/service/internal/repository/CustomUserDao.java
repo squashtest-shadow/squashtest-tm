@@ -48,4 +48,8 @@ public interface CustomUserDao {
 	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
 
 	List<User> findAllAdminOrManager();
+
+	Long findUserId(String login);
+
+
 }

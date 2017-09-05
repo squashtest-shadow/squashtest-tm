@@ -23,13 +23,21 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.Collections;
 import java.util.List;
 
+import org.jooq.DSLContext;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
+import javax.inject.Inject;
+
+import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+
 
 public class ProjectDaoImpl extends HibernateEntityDao<Project> implements CustomProjectDao {
 
+	@Inject
+	private DSLContext DSL;
 
 	@Override
 	public long countNonFoldersInProject(long projectId) {
@@ -79,6 +87,26 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 			return Collections.emptyList();
 		}
 		return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
+	}
+
+	@Override
+	public List<Long> findAllProjectIds() {
+		return DSL.select(PROJECT.PROJECT_ID)
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_TYPE.eq("P"))
+			.fetch(PROJECT.PROJECT_ID, Long.class);
+	}
+
+	@Override
+	public List<Long> findAllProjectIds(List<Long> partyIds) {
+		return DSL
+			.selectDistinct(ACL_OBJECT_IDENTITY.IDENTITY)
+			.from(ACL_RESPONSIBILITY_SCOPE_ENTRY)
+				.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+				.join(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(partyIds)
+				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
+			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
 	}
 
 }

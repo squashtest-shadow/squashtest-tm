@@ -41,12 +41,11 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.security.UserContextHolder;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
@@ -69,7 +68,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private GenericProjectDao genericProjectDao;
 
 	@Inject
-	private DSLContext DSL;
+	private UserDao userDao;
+
+	@Inject
+	private TeamDao teamDao;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -116,43 +118,20 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public List<Long> findAllReadableIds() {
 		String username = UserContextHolder.getUsername();
-
-
-		Long userId = DSL
-			.select(CORE_USER.PARTY_ID)
-			.from(CORE_USER)
-			.where(CORE_USER.LOGIN.eq(username))
-			.fetchOne(CORE_USER.PARTY_ID);
-
-		Integer countAdmin = DSL.select(CORE_PARTY.PARTY_ID.count())
-			.from(CORE_USER)
-				.join(CORE_GROUP_MEMBER).using(CORE_USER.PARTY_ID)
-				.join(CORE_GROUP).using(CORE_GROUP_MEMBER.GROUP_ID)
-			.where(CORE_GROUP.QUALIFIED_NAME.eq(UsersGroup.ADMIN)
-				.and(CORE_PARTY.PARTY_ID.eq(userId)))
-			.fetchOne().value1();
-
-		Boolean isAdmin = countAdmin > 0;
+		Long userId = userDao.findUserId(username);
+		boolean isAdmin = permissionEvaluationService.hasRole(Authorizations.ROLE_ADMIN);
 
 		if (isAdmin) {
-			return DSL.select(PROJECT.PROJECT_ID)
-				.from(PROJECT)
-				.where(PROJECT.PROJECT_TYPE.eq("P"))
-				.fetch(PROJECT.PROJECT_ID, Long.class);
+			return projectDao.findAllProjectIds();
 		} else {
 			//1 We must merge team id with user id.
-			List<Long> partyIds = DSL.select(CORE_TEAM.PARTY_ID)
-				.from(CORE_TEAM)
-				.join(CORE_TEAM_MEMBER).on(CORE_TEAM_MEMBER.TEAM_ID.eq(CORE_TEAM.PARTY_ID))
-				.where(CORE_TEAM_MEMBER.USER_ID.eq(userId))
-				.fetch(CORE_TEAM.PARTY_ID, Long.class);
-
+			List<Long> partyIds = teamDao.findTeamIds(userId);
 			partyIds.add(userId);
-
 			//2 We must retrieve the set of projects ids that all this core parties can read.
+			// by definition, all profile that give access to a project give access at least with read authorization (ie you cannot write or anything else if you can't read...)
+			return projectDao.findAllProjectIds(partyIds);
 
 		}
-		return null;
 
 	}
 

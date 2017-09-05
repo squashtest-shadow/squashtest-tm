@@ -31,6 +31,7 @@ import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateProjectDaoIT extends DbunitDaoSpecification {
+
 	@Inject
 	ProjectDao projectDao
 
@@ -42,7 +43,7 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 		then:
 		list.size() == 3
 	}
-	
+
 	@DataSet("HibernateProjectDaoIT.should count non folders 1.xml")
 	def "should count non folders 1" () {
 		when:
@@ -66,5 +67,23 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 
 		then:
 		count == 2
+	}
+
+	@DataSet("HibernateProjectDaoIT.sandbox.xml")
+	def "should find readable project ids"(){
+
+		when:
+		def projectIds = projectDao.findAllProjectIds(partyIds);
+
+		then:
+		projectIds.sort() == expectedProjectIds.sort()
+
+		where:
+		partyIds 			|| expectedProjectIds
+		[-200L,-1L]			|| [-4L,-3L,-2L,-1L]
+		[-200L]				|| [-4L,-3L,-2L,-1L]
+		[-1L]				|| [-1L]
+		[-2L,-100L]			|| [-3L,-2L,-1L]
+		[-3L]				|| []
 	}
 }

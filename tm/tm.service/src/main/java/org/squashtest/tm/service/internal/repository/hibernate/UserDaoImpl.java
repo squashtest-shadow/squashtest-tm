@@ -25,6 +25,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -36,19 +37,26 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomUserDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UserDaoImpl implements CustomUserDao {
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
+public class UserDaoImpl implements CustomUserDao {
 
 	private static String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.PARTY_ID FROM  CORE_GROUP_MEMBER member inner join CORE_GROUP_AUTHORITY cga on cga.GROUP_ID=member.GROUP_ID WHERE cga.AUTHORITY = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Inject
+	private DSLContext DSL;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -156,6 +164,15 @@ public class UserDaoImpl implements CustomUserDao {
 			.selectFrom(QUser.user)
 			.where(QUser.user.id.in(ids))
 			.fetch();
+	}
+
+	@Override
+	public Long findUserId(String login) {
+		return DSL
+			.select(CORE_USER.PARTY_ID)
+			.from(CORE_USER)
+			.where(CORE_USER.LOGIN.eq(login))
+			.fetchOne(CORE_USER.PARTY_ID);
 	}
 
 }

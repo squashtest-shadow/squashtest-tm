@@ -43,4 +43,11 @@ public interface CustomTeamDao {
 	 */
 	List<Team> findSortedAssociatedTeams(long userId, PagingAndSorting paging, Filtering filtering);
 
+	/**
+	 * Get the ids of the {@link org.squashtest.tm.domain.users.Team} witch include the {@link User} designed by th id
+	 * @param userId id of the {@link User}
+	 * @return List of the {@link org.squashtest.tm.domain.users.Team} or empty list
+	 */
+	List<Long> findTeamIds(Long userId);
+
 }

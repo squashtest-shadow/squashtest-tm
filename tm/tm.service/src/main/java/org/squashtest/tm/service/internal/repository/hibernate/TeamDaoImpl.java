@@ -26,6 +26,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.jooq.DSLContext;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
@@ -35,12 +36,16 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTeamDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 
 public class TeamDaoImpl implements CustomTeamDao {
 
@@ -49,6 +54,9 @@ public class TeamDaoImpl implements CustomTeamDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Inject
+	private DSLContext DSL;
 
 	@Override
 	public List<Team> findSortedTeams(PagingAndSorting paging, Filtering filter) {
@@ -115,6 +123,15 @@ public class TeamDaoImpl implements CustomTeamDao {
 			collected.add(result.get(alias));
 }
 		return collected;
+	}
+
+	@Override
+	public List<Long> findTeamIds(Long userId) {
+		return DSL.select(CORE_TEAM.PARTY_ID)
+			.from(CORE_TEAM)
+			.join(CORE_TEAM_MEMBER).on(CORE_TEAM_MEMBER.TEAM_ID.eq(CORE_TEAM.PARTY_ID))
+			.where(CORE_TEAM_MEMBER.USER_ID.eq(userId))
+			.fetch(CORE_TEAM.PARTY_ID, Long.class);
 	}
 
 }

@@ -111,4 +111,23 @@ class HibernateTeamDaoIT extends DbunitDaoSpecification {
 
 	}
 
+	@DataSet("HibernateTeamDaoIT.setup.xml")
+	def "should retrieve teams id"(){
+
+		when:
+		def teamIds = dao.findTeamIds(userID)
+
+		then:
+		teamIds.sort().equals(expectedTeamIds)
+
+		where:
+		userID 	|| expectedTeamIds
+		-1L 	|| [-300L,-200L,-100L]
+		-2L 	|| [-300L,-100L]
+		-3L 	|| [-300L]
+		-4L 	|| []
+
+
+	}
+
 }
