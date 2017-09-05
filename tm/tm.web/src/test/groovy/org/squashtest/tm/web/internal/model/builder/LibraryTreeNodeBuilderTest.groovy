@@ -28,10 +28,9 @@ import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.library.LibraryNode
 import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
+import org.squashtest.tm.dto.json.JsTreeNode
 
 import spock.lang.Specification
 
@@ -128,7 +127,7 @@ class DummyLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<DummyNode> {
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, org.squashtest.tm.domain.Identified)
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode, org.squashtest.tm.domain.Identified)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, DummyNode model) {

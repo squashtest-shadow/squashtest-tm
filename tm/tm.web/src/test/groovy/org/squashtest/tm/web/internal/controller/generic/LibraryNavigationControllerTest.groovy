@@ -18,10 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.generic;
-
-import java.util.List;
-import java.util.Set;
+package org.squashtest.tm.web.internal.controller.generic
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
@@ -31,14 +28,13 @@ import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.library.LibraryNode
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.library.LibraryNavigationService
 import org.squashtest.tm.security.annotation.AclConstrainedObject
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
+import org.squashtest.tm.dto.json.JsTreeNode
 
 import spock.lang.Specification
 

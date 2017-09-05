@@ -24,11 +24,20 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.DefaultDSLContext
+import org.jooq.impl.DefaultExecuteListenerProvider
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration
+import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator
+import org.springframework.boot.autoconfigure.jooq.SpringTransactionProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.core.env.Environment
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
+import org.springframework.transaction.PlatformTransactionManager
 
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -39,34 +48,7 @@ import javax.sql.DataSource
 @Configuration
 @EnableSpringConfigured
 @PropertySource(["classpath:jooq.properties"])
+@ImportAutoConfiguration(JooqAutoConfiguration.class)
 class JooqSpecConfig {
-
-	@Inject
-	Environment environment
-
-	@Bean
-	public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
-		return new DataSourceConnectionProvider(dataSource);
-	}
-
-
-	@Bean
-	public DefaultConfiguration configuration() {
-		DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-		jooqConfiguration.set(connectionProvider());
-//		jooqConfiguration.set(new DefaultExecuteListenerProvider(exceptionTransformer()));
-
-		String sqlDialectName = environment.getRequiredProperty("jooq.sql-dialect");
-		SQLDialect dialect = SQLDialect.valueOf(sqlDialectName);
-		jooqConfiguration.set(dialect);
-
-		return jooqConfiguration;
-	}
-
-	@Bean
-	public DefaultDSLContext dsl() {
-		return new DefaultDSLContext(configuration());
-	}
-
 
 }

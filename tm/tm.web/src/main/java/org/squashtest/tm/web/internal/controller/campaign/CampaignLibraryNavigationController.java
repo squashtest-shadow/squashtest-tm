@@ -89,7 +89,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import com.google.common.base.Optional;

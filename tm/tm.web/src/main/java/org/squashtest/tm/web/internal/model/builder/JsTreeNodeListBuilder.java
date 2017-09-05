@@ -29,13 +29,13 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 
 /**
  * Decorates an instance of {@link GenericJsTreeNodeBuilder} to build a list of {@link JsTreeNode} from a list of items.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <ITEM>
  */
 public class JsTreeNodeListBuilder<ITEM extends Identified> {

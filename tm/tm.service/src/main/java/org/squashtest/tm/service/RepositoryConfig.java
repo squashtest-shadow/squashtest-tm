@@ -29,11 +29,19 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.validation.ValidatorFactory;
 
+import org.jooq.ConnectionProvider;
+import org.jooq.SQLDialect;
+import org.jooq.TransactionProvider;
 import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
+import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AdviceMode;
@@ -178,6 +186,20 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
     //@Bean
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return transactionManager();
+	}
+
+	@Bean
+	public org.jooq.Configuration jooqConfiguration(TransactionProvider transactionProvider, ConnectionProvider connectionProvider, DefaultExecuteListenerProvider defaultExecuteListenerProvider) {
+		DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+		String sqlDialect = env.getRequiredProperty("jooq.sql.dialect");
+		SQLDialect dialect = SQLDialect.valueOf(sqlDialect);
+		defaultConfiguration.set(dialect);
+		defaultConfiguration.set(connectionProvider);
+		defaultConfiguration.set(transactionProvider);
+		defaultConfiguration.set(defaultExecuteListenerProvider);
+		defaultConfiguration.settings().withRenderCatalog(false);
+		defaultConfiguration.settings().withRenderSchema(false);
+		return defaultConfiguration;
 	}
 
 

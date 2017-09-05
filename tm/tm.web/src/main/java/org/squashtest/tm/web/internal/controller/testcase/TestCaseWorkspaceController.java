@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +29,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
@@ -97,6 +97,11 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	}
 
 	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return null;
+	}
+
+	@Override
 	protected String[] getNodeParentsInWorkspace(Long elementId) {
 		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(elementId);
 		return parents.toArray(new String[parents.size()]);
@@ -106,4 +111,5 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	protected String getTreeElementIdInWorkspace(Long elementId) {
 		return "TestCase-" + elementId;
 	}
+
 }

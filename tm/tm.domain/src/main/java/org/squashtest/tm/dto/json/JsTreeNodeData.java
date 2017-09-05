@@ -18,32 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.project;
+package org.squashtest.tm.dto.json;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.List;
+public class JsTreeNodeData {
 
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
+		/**
+		 * Title of the node
+		 */
+		private String title = "";
 
-/**
- * @author mpagnon
- *
- */
-@Transactional(readOnly = true)
-public interface CustomProjectFinder {
+		/**
+		 * Attributes of the <code>a</code> node
+		 */
+		private Map<String, String> attr = new HashMap<>();
 
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findAllReadable();
+		public String getTitle() {
+			return title;
+		}
 
-	List<GenericProject> findAllICanManage();
+		public void setTitle(String title) {
+			this.title = title;
+		}
 
-	/**
-	 * Get all the ids of projects current user can read.
-	 * @return The list of projects ids
-	 */
-	List<Long> findAllReadableIds();
-}
+		public Map<String, String> getAttr() {
+			return attr;
+		}
+
+		public void setAttr(Map<String, String> attr) {
+			this.attr = attr;
+		}
+
+		public void addAttr(String key, String value){
+			this.attr.put(key, value);
+		}
+
+	}

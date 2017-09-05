@@ -44,7 +44,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -54,6 +53,7 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -63,7 +63,7 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonProject;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 import com.google.common.base.Optional;
@@ -133,7 +133,12 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
 			.setModel(libraries).build();
 
+
+
+
 		model.addAttribute("rootModel", rootNodes);
+
+
 
 		populateModel(model, locale);
 
@@ -304,5 +309,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * @return
 	 */
 	protected abstract Provider<DriveNodeBuilder<LN>> driveNodeBuilderProvider();
+
+	protected abstract WorkspaceDisplayService workspaceDisplayService();
 
 }

@@ -332,7 +332,7 @@
 
           <!-- Generator parameters -->
           <generator>
-            <name>org.jooq.util.DefaultGenerator</name>
+            <name>org.jooq.util.JavaGenerator</name>
             <database>
               <name>org.jooq.util.h2.H2Database</name>
               <includes>.*</includes>
@@ -342,12 +342,14 @@
                   <inputSchema>PUBLIC</inputSchema>
                 </schema>
               </schemata>
+              <outputSchemaToDefault>true</outputSchemaToDefault>
             </database>
             <target>
               <packageName>org.squashtest.tm.jooq.domain</packageName>
               <directory>target/generated-sources/java</directory>
             </target>
           </generator>
+
         </configuration>
 
         <!--Manage the plugin's dependency. In our case H2 database-->

@@ -35,8 +35,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component
@@ -180,7 +180,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode,
 	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override

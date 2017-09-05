@@ -29,10 +29,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component
@@ -47,7 +47,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(JsTreeNode,
 	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override
@@ -90,7 +90,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode, java.lang.Object)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, Iteration model) {

@@ -40,7 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 
 @Controller
 public class CallStepManagerController {
@@ -75,9 +75,9 @@ public class CallStepManagerController {
 	@ResponseBody
 	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId,
 			@RequestParam("called-test-case[]") List<Long> calledTestCaseIds) {
-		
+
 			callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds);
-		
+
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {

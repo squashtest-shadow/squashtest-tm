@@ -45,15 +45,13 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -102,7 +100,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder #doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder #doAddChildren(org.squashtest.tm.dto.json.JsTreeNode, java.lang.Object)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, TestSuite model) {

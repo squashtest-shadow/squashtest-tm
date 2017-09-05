@@ -31,7 +31,7 @@ import javax.inject.Provider;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 
 @Component
 public class CustomReportListTreeNodeBuilder {
@@ -39,11 +39,11 @@ public class CustomReportListTreeNodeBuilder {
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
-	
+
 	public CustomReportListTreeNodeBuilder() {
 		super();
 	}
-	
+
 	/**
 	 * Build a list of {@link JsTreeNode} from a list of {@link CustomReportLibraryNode}
 	 * @param nodes
@@ -51,18 +51,18 @@ public class CustomReportListTreeNodeBuilder {
 	 */
 	public List<JsTreeNode> build(List<TreeLibraryNode> nodes){
 		List<JsTreeNode> builtNodes =new ArrayList<>();
-		
-		
+
+
 		for (TreeLibraryNode tln : nodes) {
 			CustomReportTreeNodeBuilder builder = builderProvider.get();
 			builtNodes.add(builder.build((CustomReportLibraryNode) tln));//NOSONAR cast is safe
 		}
 		return builtNodes;
 	}
-	
+
 	/**
 	 * Build a list of {@link JsTreeNode} from a list of {@link CustomReportLibraryNode}. Will also
-	 * build children if needed by looking inside openedNodesIds if a builded node is open. il a node is open, 
+	 * build children if needed by looking inside openedNodesIds if a builded node is open. il a node is open,
 	 * his children must be retrieved and converted in {@link JsTreeNode}.
 	 * @param nodes
 	 * @param openedNodesIds
@@ -70,13 +70,13 @@ public class CustomReportListTreeNodeBuilder {
 	 */
 	public List<JsTreeNode> buildWithOpenedNodes(List<TreeLibraryNode> nodes, Set<Long> openedNodesIds){
 		List<JsTreeNode> builtNodes =new ArrayList<>();
-		
+
 		for (TreeLibraryNode tln : nodes) {
 			CustomReportTreeNodeBuilder builder = builderProvider.get();
 			builtNodes.add(builder.buildWithOpenedNodes((CustomReportLibraryNode) tln,openedNodesIds));//NOSONAR cast is safe
 		}
 		return builtNodes;
 	}
-	
-	
+
+
 }

@@ -54,7 +54,7 @@ import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 
 import com.google.common.base.Optional;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;

@@ -49,5 +49,16 @@ class JooqConfigurationIT extends DbunitServiceSpecification {
 		records.size().equals(1)
 	}
 
+	@DataSet("JooqConfigurationIT.xml")
+	def "should generate request with upper case on table names"() {
+		when:
+		def request = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).getSQL();
+
+		then:
+		request.contains("PROJECT")
+		!request.contains("project")
+		!request.contains("Project")
+	}
+
 
 }

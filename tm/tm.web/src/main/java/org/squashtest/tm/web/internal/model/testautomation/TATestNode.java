@@ -23,17 +23,17 @@ package org.squashtest.tm.web.internal.model.testautomation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 
 
 public class TATestNode {
-	
-	private State state = State.leaf;	
-	private Attr attr;	
-	private Data data;	
+
+	private State state = State.leaf;
+	private Attr attr;
+	private Data data;
 	private Collection<TATestNode> children = new ArrayList<>();
-	
+
 
 	public State getState() {
 		return state;
@@ -75,34 +75,34 @@ public class TATestNode {
 		}
 		return null;
 	}
-	
+
 	static class Attr{
-		
+
 		private String id;
 		private String rel;
 		private String name;
-		private String restype;	
-		
+		private String restype;
+
 		public String getId() {
 			return id;
 		}
-		
+
 		public void setId(String id) {
 			this.id = id;
 		}
-		
+
 		public String getRel() {
 			return rel;
 		}
-		
+
 		public void setRel(String rel) {
 			this.rel = rel;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public void setName(String name) {
 			this.name = name;
 		}
@@ -114,13 +114,13 @@ public class TATestNode {
 		public void setRestype(String restype) {
 			this.restype = restype;
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	static class Data{
-		
+
 		private String title;
 
 		public String getTitle() {
@@ -130,8 +130,8 @@ public class TATestNode {
 		public void setTitle(String title) {
 			this.title = title;
 		}
-		
-		
+
+
 	}
-	
+
 }

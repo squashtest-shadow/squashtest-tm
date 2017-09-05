@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 import javax.inject.Inject;
 
@@ -178,7 +178,7 @@ public class CustomReportTreeNodeBuilder {
 	private void setNodeOpen(JsTreeNode builtNode){
 		builtNode.setState(State.open);
 	}
-	
+
 	private void setNodeHTMLId(JsTreeNode builtNode, String id){
 		builtNode.addAttr("id", id);
 	}

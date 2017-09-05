@@ -31,7 +31,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
+import org.squashtest.tm.dto.json.JsTreeNode.State
 
 class TestCaseLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 	PermissionEvaluationService permissionEvaluationService = Mock()

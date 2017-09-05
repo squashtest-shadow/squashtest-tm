@@ -23,14 +23,14 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 /**
  * Superclass which builds a {@link JsTreeNode} from a LibraryNode.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends GenericJsTreeNodeBuilder<LN, LibraryTreeNodeBuilder<LN>> {
 	protected LN node;
@@ -43,7 +43,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 	/**
 	 * Hook for template method {@link #build()}. Implementors should add to the {@link JsTreeNode} attributes specific
 	 * to the {@link LibraryNode}.
-	 * 
+	 *
 	 * @param libraryNode
 	 * @param treeNode
 	 * @see #build()
@@ -52,7 +52,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 
 	/**
 	 * Adds to the node being build attributes for a leaf node
-	 * 
+	 *
 	 * @param resType
 	 *            the nodeType attribute of the node
 	 */
@@ -64,7 +64,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 
 	/**
 	 * Adds to the node being build attributes for a folder node
-	 * 
+	 *
 	 * @param resType
 	 */
 	protected final void addFolderAttributes(String resType) {
@@ -80,7 +80,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 	/**
 	 * Builds a {@link JsTreeNode} from the {@link LibraryNode} previously set with {@link #setNode(LibraryNode)}
 	 * Might return null if no jstree node can be built because of some constraints (milestones notably)
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -117,7 +117,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 
 	/**
 	 * s sets the {@link LibraryNode} which will be used to build a {@link JsTreeNode}
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */

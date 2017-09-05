@@ -23,24 +23,24 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 
 /**
  * Interface for a builder of {@link JsTreeNode} objects, which provides a fluent API<br />
- * 
+ *
  * "node" usually refers to the {@link JsTreeNode} being produced<br />
- * 
+ *
  * "model" refers to the object used to produce a {@link JsTreeNode}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <MODEL>
  * @param <BUILDER>
  */
 public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>> {
 	/**
 	 * Sets the model which should be used to produce a {@link JsTreeNode}. Should not be null.
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -50,14 +50,14 @@ public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsT
 	 * Creates a {@link JsTreeNode} using the current builder configuration.
 	 * May return null if no nodes can be built for the given model, most notably
 	 * when the milestone filter is set and that the model doesn't match it.
-	 * 
+	 *
 	 * @return
 	 */
 	JsTreeNode build();
 
 	/**
 	 * Configures which models should produce expanded (ie having a populated "children" attribute) nodes.
-	 * 
+	 *
 	 * @param expansionCandidates
 	 *            the ids of items to expand mapped by their type.
 	 * @return
@@ -73,10 +73,10 @@ public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsT
 
 
 	/**
-	 * 
+	 *
 	 * If desired one can filter out some content that doesn't belong to
 	 * the given milestone.
-	 * 
+	 *
 	 * @param milestone
 	 * @return
 	 */

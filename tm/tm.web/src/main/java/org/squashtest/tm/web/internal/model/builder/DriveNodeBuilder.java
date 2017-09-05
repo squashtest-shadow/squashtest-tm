@@ -24,10 +24,10 @@ import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 import javax.inject.Provider;
 import java.util.List;
@@ -50,7 +50,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(JsTreeNode,
 	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override

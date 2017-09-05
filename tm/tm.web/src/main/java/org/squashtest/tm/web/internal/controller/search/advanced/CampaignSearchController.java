@@ -57,7 +57,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -184,7 +184,7 @@ public class CampaignSearchController extends GlobalSearchController{
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = 
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder =
 				campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, messageSource, permissionService)

@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -79,7 +78,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 

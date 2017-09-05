@@ -16,7 +16,7 @@
   <properties>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
-    <jooq.sql-dialect>H2</jooq.sql-dialect>
+    <jooq.sql.dialect>H2</jooq.sql.dialect>
     <database.drivername>org.h2.Driver</database.drivername>
     <database.password>sa</database.password>
     <database.schemaName>public</database.schemaName>

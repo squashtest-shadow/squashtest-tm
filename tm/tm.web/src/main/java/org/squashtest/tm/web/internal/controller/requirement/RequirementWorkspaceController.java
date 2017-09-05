@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
@@ -96,6 +97,11 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId) {
 		return "Requirement-"+elementId;
+	}
+
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return null;
 	}
 
 }

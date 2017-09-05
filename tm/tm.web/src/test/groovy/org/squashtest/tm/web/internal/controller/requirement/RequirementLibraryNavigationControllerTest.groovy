@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationContro
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
+import org.squashtest.tm.dto.json.JsTreeNode
 
 import javax.inject.Provider
 

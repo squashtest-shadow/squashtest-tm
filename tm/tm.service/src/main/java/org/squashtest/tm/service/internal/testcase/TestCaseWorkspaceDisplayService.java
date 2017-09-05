@@ -18,32 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.project;
+package org.squashtest.tm.service.internal.testcase;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
+@Service
+@Transactional
+public class TestCaseWorkspaceDisplayService implements WorkspaceDisplayService {
+	@Override
+	public List<JsTreeNode> findAllLibraries() {
+		return null;
+	}
 
-/**
- * @author mpagnon
- *
- */
-@Transactional(readOnly = true)
-public interface CustomProjectFinder {
-
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findAllReadable();
-
-	List<GenericProject> findAllICanManage();
-
-	/**
-	 * Get all the ids of projects current user can read.
-	 * @return The list of projects ids
-	 */
-	List<Long> findAllReadableIds();
 }

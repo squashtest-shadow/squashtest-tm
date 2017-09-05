@@ -36,12 +36,12 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.
@@ -193,7 +193,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	/**
 	 *
 	 * @see org.squashtest.tm.web.internal.model.builder.LibraryTreeNodeBuilder#addCustomAttributes(org.squashtest.tm.domain.library.LibraryNode,
-	 *      org.squashtest.tm.web.internal.model.jstree.JsTreeNode)
+	 *      JsTreeNode)
 	 */
 	@Override
 	protected void addCustomAttributes(TestCaseLibraryNode libraryNode, JsTreeNode treeNode) {
@@ -201,7 +201,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode,
 	 *      org.squashtest.tm.domain.Identified)
 	 */
 	@Override

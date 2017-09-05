@@ -35,9 +35,9 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 @SuppressWarnings("rawtypes")
 @Component
@@ -138,7 +138,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode,
 	 *      org.squashtest.tm.domain.Identified)
 	 */
 	@SuppressWarnings("unchecked")
