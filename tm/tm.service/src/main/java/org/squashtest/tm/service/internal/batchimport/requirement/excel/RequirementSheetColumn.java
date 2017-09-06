@@ -30,9 +30,9 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
 
 /**
  * Enum of the columns which can be found in the requirement sheet of an import / export workbook.
- * 
+ *
  * @author Julien Thebault
- * 
+ *
  */
 public enum RequirementSheetColumn implements TemplateColumn {
 	ACTION,
@@ -40,7 +40,9 @@ public enum RequirementSheetColumn implements TemplateColumn {
 	PROJECT_NAME(IGNORED),
 	REQ_PATH(MANDATORY),
 	REQ_NUM,
+	REQ_ID(IGNORED),
 	REQ_VERSION_NUM,
+	REQ_VERSION_ID(IGNORED),
 	REQ_VERSION_REFERENCE,
 	REQ_VERSION_NAME,
 	REQ_VERSION_CRITICALITY,
@@ -56,7 +58,6 @@ public enum RequirementSheetColumn implements TemplateColumn {
 	REQ_VERSION_MILESTONE,
 	REQ_VERSIONS("#_VERSIONS",IGNORED),
 	REQ_VERSION_NB_MILESTONE("#_MIL",IGNORED);
-	
 
 	public final String header; ; // NOSONAR immutable public field
 	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field
@@ -70,7 +71,7 @@ public enum RequirementSheetColumn implements TemplateColumn {
 		this.header = name();
 		this.processingMode = processingMode;
 	}
-	
+
 	private RequirementSheetColumn(String header, ColumnProcessingMode processingMode) {
 		this.header = header;
 		this.processingMode = processingMode;

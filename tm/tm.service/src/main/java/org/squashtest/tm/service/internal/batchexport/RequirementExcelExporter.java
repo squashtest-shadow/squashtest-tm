@@ -76,7 +76,7 @@ public class RequirementExcelExporter {
 		RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM,
 		RequirementLinksSheetColumn.RELATED_REQ_ROLE
 	);
-	
+
 	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
 		CoverageSheetColumn.REQ_PATH,
 		CoverageSheetColumn.REQ_VERSION_NUM,
@@ -87,7 +87,9 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.PROJECT_NAME,
 		RequirementSheetColumn.REQ_PATH,
 		RequirementSheetColumn.REQ_NUM,
+		RequirementSheetColumn.REQ_ID,
 		RequirementSheetColumn.REQ_VERSION_NUM,
+		RequirementSheetColumn.REQ_VERSION_ID,
 		RequirementSheetColumn.REQ_VERSION_REFERENCE,
 		RequirementSheetColumn.REQ_VERSION_NAME,
 		RequirementSheetColumn.REQ_VERSION_CRITICALITY,
@@ -169,29 +171,29 @@ public class RequirementExcelExporter {
 		}
 
 	}
-	
+
 	private void appendLinks(RequirementExportModel model){
 		List<RequirementLinkModel> models = model.getReqLinks();
 		Sheet linkSheet = workbook.getSheet(REQ_LINK_SHEET);
-		
+
 		Row r;
 		int rIdx = linkSheet.getLastRowNum() +1;
 		int cIdx = 0;
-		
+
 		for (RequirementLinkModel lm : models){
 			r = linkSheet.createRow(rIdx);
-			
+
 			r.createCell(cIdx++).setCellValue(lm.getReqPath());
 			r.createCell(cIdx++).setCellValue(lm.getReqVersion());
 			r.createCell(cIdx++).setCellValue(lm.getRelReqPath());
 			r.createCell(cIdx++).setCellValue(lm.getRelReqVersion());
 			r.createCell(cIdx++).setCellValue(lm.getRelatedReqRole());
-			
+
 			rIdx++;
 			cIdx=0;
 		}
-		
-		
+
+
 	}
 
 	private void appendRequirementModel(RequirementExportModel model) {
@@ -210,7 +212,7 @@ public class RequirementExcelExporter {
 	private void createCoverageHeaders() {
 		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
 	}
-	
+
 	private void createLinksHeaders(){
 		createSheetHeaders(REQ_LINK_SHEET, LINKS_COLUMNS);
 	}
@@ -246,7 +248,9 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
 			row.createCell(colIndex++).setCellValue(reqModel.getPath());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementIndex());
+			row.createCell(colIndex++).setCellValue(reqModel.getRequirementId());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionNumber());
+			row.createCell(colIndex++).setCellValue(reqModel.getId());
 			row.createCell(colIndex++).setCellValue(reqModel.getReference());
 			row.createCell(colIndex++).setCellValue(reqModel.getName());
 			row.createCell(colIndex++).setCellValue(reqModel.getCriticality().toString());
