@@ -53,7 +53,7 @@ define(
 					minWidth : 270,
 					helper : "ui-resizable-helper",
 					handles : "e",
-					
+
 					start : function() {
 						confObj.helper = $(".ui-resizable-helper");
 						confObj.overlayRight = new Overlay(confObj.rightPanel);
@@ -76,7 +76,7 @@ define(
 				/**
 				 * we will be using different resizing strategies, that depend
 				 * on the css 'position' attribute of the right panel.
-				 * 
+				 *
 				 */
 				var position = confObj.rightPanel.css('position');
 
@@ -87,6 +87,7 @@ define(
 
 							confObj.leftPanel.width(pos - 10);
 							confObj.rightPanel.css('left', pos + 10 + "px");
+							localStorage.setItem('leftWidth',pos);
 						}
 					});
 				} else /* if (position==='relative' || position==='static') */{
@@ -94,7 +95,7 @@ define(
 					confObj.leftPanel.css('float : left;');
 					confObj.rightPanel.css('overflow', 'hidden');
 					confObj.rightPanel.css('width', 'auto');
-
+					localStorage.setItem('leftWidth', confObj.helper.width());
 				}
 
 				confObj.leftPanel.resizable(conf);
