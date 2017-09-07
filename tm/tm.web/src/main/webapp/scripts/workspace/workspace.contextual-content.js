@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * like the rest of workspace.<elt>, this a a singleton that will be instanciated the first time the module is required, 
+ * like the rest of workspace.<elt>, this a a singleton that will be instanciated the first time the module is required,
  * and subsequent calls will return that instance.
- * 
+ *
  */
 
 define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(ps, $, eventBus) {
@@ -40,8 +40,8 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 				readyState : 4,
 				abort : function() {
 				}
-			}; 
-			
+			};
+
 
 			/* **************** super private ************* */
 
@@ -54,12 +54,12 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 			var cleanContent = $.proxy(function() {
 				// notify the handlers that we're moving to another content
 				this.eventBus.clearContextualListeners();
-				
+
 				// clean the content
 				_cleanPopups();
-				
+
 				this.empty();
-				
+
 			}, this);
 
 			var abortIfRunning = $.proxy(function() {
@@ -71,6 +71,9 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 			/* ******************* public **************** */
 
 			this.loadWith = function(url, params) {
+				// [Issue 4168] Hide datepicker if there is one unclosed
+				$('.ui-datepicker').hide();
+
 				var defer = $.Deferred();
 				var self = this;
 				//firing an event with wreqr for custom dashboard
@@ -89,7 +92,7 @@ define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(p
 					this.currentXhr = $.get(url, params, 'html').success(function(html) {
 						cleanContent();
 						self.html(html);
-						
+
 					});
 
 					return this.currentXhr;
