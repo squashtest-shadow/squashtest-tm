@@ -198,6 +198,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
+		headerCells.add(new CellImpl("DATASET"));
 		headerCells.add(new CellImpl("EXEC_STATUS"));
 		headerCells.add(new CellImpl("EXEC_USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
@@ -321,6 +322,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
 			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+			dataCells.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
 			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
@@ -379,7 +381,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 				for (CustomFieldValue value : values) {
 					CustomField customField = value.getBinding().getCustomField();
 					if (customField.getCode().equals(model.getCode())) {
-						if (customField.getInputType().equals(InputType.NUMERIC)){
+						if (customField.getInputType().equals(InputType.NUMERIC)) {
 							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 						}
 						return value.getValue();
