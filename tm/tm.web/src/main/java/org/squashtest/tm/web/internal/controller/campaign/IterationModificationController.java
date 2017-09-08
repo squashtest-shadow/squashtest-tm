@@ -178,7 +178,6 @@ public class IterationModificationController {
 		model.addAttribute("milestoneConf", milestoneConf);
 		model.addAttribute("iterationStatusComboJson", buildStatusComboData());
 		model.addAttribute("iterationStatusLabel", formatStatus(iteration.getStatus()));
-		model.addAttribute("folderId", campaignFolderDao.findParentOf(iteration.getCampaign().getId()).getId());
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);

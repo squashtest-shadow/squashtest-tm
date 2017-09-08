@@ -26,7 +26,7 @@
  * a permissions-rules
  *
  */
-define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
+define(['jquery', 'underscore', "workspace.event-bus", 'jquery.squash.formdialog'], function ($, _, eventBus) {
 
 	if (($.squash !== undefined) && ($.squash.delnodeDialog !== undefined)) {
 		// plugin already loaded
@@ -41,10 +41,10 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 			rules: null,
 
 			// that one is a private working variable and requires no initialization
-			'ui-state-update' : null
+			'ui-state-update': null
 		},
 
-		open : function() {
+		open: function () {
 			this._super();
 			this.simulateDeletion();
 		},
@@ -207,8 +207,8 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 			//[#6937] : the tree reselects the parent node before the deleted nodes are
 			// actually deleted, which can lead to inaccurate model sometimes
 			this.options['ui-state-update'] = {
-				previous : nodes,
-				next : newSelection
+				previous: nodes,
+				next: newSelection
 			};
 
 
@@ -216,18 +216,8 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 
 			var xhrs = this.getConfirmXhr(nodes);
 
-			var i = 0;
-			var updateCampaign = false;
-			console.log(nodes.length);
-			while (i < nodes.length && !updateCampaign) {
-				if (nodes[i].getAttribute("restype") === "iterations") {
-					updateCampaign = true;
-				}
-				i++;
-			}
-
-			if (updateCampaign) {
-				squashtm.execution.refreshCampaignInfo();
+			if (nodes[0].getAttribute("restype") === "iterations") {
+				eventBus.trigger('iteration.added-or-deleted');
 			}
 
 			this.smartAjax(xhrs, this.deletionSuccess);

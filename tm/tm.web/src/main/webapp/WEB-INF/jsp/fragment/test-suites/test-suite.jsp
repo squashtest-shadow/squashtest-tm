@@ -133,7 +133,6 @@
   config.testSuiteURL = "${testSuiteUrl}";
   config.testSuiteExecutionStatus = "${testSuite.executionStatus}";
   config.testSuiteExecutionStatusCombo= ${json:serialize (statuses)};
-  config.folderId = ${folderId};
   config.api = {
     copy: "${duplicateTestSuiteUrl}"
   };

@@ -128,7 +128,6 @@
   config.iterationURL = "${iterationUrl}";
   config.iterationStatusComboJson = ${iterationStatusComboJson};
   config.statuses = ${json:serialize (statuses)};
-  config.folderId = ${folderId};
 </script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">

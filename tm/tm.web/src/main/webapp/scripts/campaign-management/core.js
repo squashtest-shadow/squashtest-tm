@@ -148,7 +148,7 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 					var executionStatusEditable = $("#campaign-execution-status");
 					executionStatusEditable.html(statusfactory.translate(value));
 
-					//refresh the iteration execution status in the tree
+					//refresh the campaign execution status in the tree
 					var executionStatusIconTree = $("#Campaign-" + conf.data.campaignId);
 					executionStatusIconTree.attr('executionstatus', value);
 				});

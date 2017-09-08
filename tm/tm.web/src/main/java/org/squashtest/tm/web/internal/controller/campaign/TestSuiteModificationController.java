@@ -151,7 +151,6 @@ public class TestSuiteModificationController {
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
 		model.addAttribute("milestoneConf", milestoneConf);
-		model.addAttribute("folderId", campaignFolderDao.findParentOf(testSuite.getIteration().getCampaign().getId()).getId());
 	}
 
 	/**
