@@ -22,8 +22,7 @@ package org.squashtest.tm.service.internal.user;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -39,10 +38,15 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.exception.WrongPasswordException;
+import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.security.Authorizations;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
@@ -74,6 +78,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Inject
 	private UserManagerService userManager;
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private TeamDao teamDao;
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -134,6 +144,19 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public User findCurrentUser() {
 		String username = userContextService.getUsername();
 		return userDao.findUserByLogin(username);
+	}
+
+	@Override
+	public UserDto findCurrentUserDto() {
+		String username = UserContextHolder.getUsername();
+		Long userId = userDao.findUserId(username);
+		boolean isAdmin = permissionEvaluationService.hasRole(Authorizations.ROLE_ADMIN);
+
+
+		//1 We must merge team id with user id.
+		List<Long> partyIds = teamDao.findTeamIds(userId);
+
+		return new UserDto(username, userId, new ArrayList<>(partyIds), isAdmin);
 	}
 
 	@Override

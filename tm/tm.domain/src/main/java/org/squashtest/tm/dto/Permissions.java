@@ -18,16 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.workspace;
-import org.squashtest.tm.dto.UserDto;
-import org.squashtest.tm.dto.json.JsTreeNode;
+package org.squashtest.tm.dto;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface WorkspaceDisplayService {
+public class Permissions {
+
+	private boolean readable;
+	private boolean editable;
+	private boolean creatable;
+	private boolean deletable;
 
 
-	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+	public static Permissions fromMaskList(List<Integer> masks){
+		Permissions permissions = new Permissions();
+		if(masks.contains(PermissionWithMask.READ.getMask())){
+			permissions.setReadable(true);
+		}
+		return permissions;
+	}
 
+	// we could statically initialize fields at true to avoid this method,
+	// but as we are working with permissions i prefer to set anything at false by default
+	public static Permissions adminPermissions(){
+		Permissions permissions = new Permissions();
+		permissions.setReadable(true);
+		return permissions;
+	}
+
+	public boolean isReadable() {
+		return readable;
+	}
+
+	public void setReadable(boolean readable) {
+		this.readable = readable;
+	}
 }

@@ -20,19 +20,47 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import org.jooq.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
+import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
-import java.util.List;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY;
 
 @Service
-@Transactional
-public class TestCaseWorkspaceDisplayService implements WorkspaceDisplayService {
+@Transactional(readOnly = true)
+public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
+
 	@Override
-	public List<JsTreeNode> findAllLibraries() {
-		return null;
+	protected String getRel() {
+		return "drive";
 	}
 
+	@Override
+	protected Field<Long> selectLibraryId() {
+		return TEST_CASE_LIBRARY.TCL_ID;
+	}
+
+	@Override
+	protected TableLike<?> getLibraryTable() {
+		return org.squashtest.tm.jooq.domain.tables.TestCaseLibrary.TEST_CASE_LIBRARY;
+	}
+
+	@Override
+	protected String getClassName() {
+		return TestCaseLibrary.class.getSimpleName() ;
+	}
+
+	@Override
+	protected String getLibraryClassName() {
+		return TestCaseLibrary.class.getName();
+	}
+
+	@Override
+	protected TableField<ProjectRecord, Long> getProjectLibraryColumn() {
+		return PROJECT.TCL_ID;
+	}
 }

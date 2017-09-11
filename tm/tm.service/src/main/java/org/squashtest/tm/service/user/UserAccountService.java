@@ -25,6 +25,7 @@ import java.util.Collection;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.dto.UserDto;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {
@@ -55,6 +56,8 @@ public interface UserAccountService {
 	 * @return the current {@link User} or <code>null</code>
 	 */
 	User findCurrentUser();
+
+	UserDto findCurrentUserDto();
 
 	Party getParty(Long id);
 

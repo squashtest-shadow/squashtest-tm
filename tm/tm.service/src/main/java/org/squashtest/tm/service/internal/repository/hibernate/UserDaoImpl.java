@@ -26,7 +26,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -44,8 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
 public class UserDaoImpl implements CustomUserDao {

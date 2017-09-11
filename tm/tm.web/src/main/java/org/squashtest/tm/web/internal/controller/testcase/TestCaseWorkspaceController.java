@@ -27,6 +27,7 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -48,6 +49,9 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Inject
 	@Named("squashtest.tm.service.TestCasesWorkspaceService")
 	private WorkspaceService<TestCaseLibrary> workspaceService;
+
+	@Inject
+	private TestCaseWorkspaceDisplayService testCaseWorkspaceDisplayService;
 
 	@Inject
 	@Named("testCase.driveNodeBuilder")
@@ -98,7 +102,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Override
 	protected WorkspaceDisplayService workspaceDisplayService() {
-		return null;
+		return testCaseWorkspaceDisplayService;
 	}
 
 	@Override

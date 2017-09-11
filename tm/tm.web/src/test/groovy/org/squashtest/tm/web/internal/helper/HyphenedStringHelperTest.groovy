@@ -18,39 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.helper;
+package org.squashtest.tm.web.internal.helper
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
+import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 
 import spock.lang.Specification;
 
 class HyphenedStringHelperTest  extends Specification{
 	def "should camelcase 'foo-bar'"() {
-		
+
 		when:
 		def res = HyphenedStringHelper.hyphenedToCamelCase('foo-bar')
-		
+
 		then:
 		res == 'FooBar'
 	}
-	
+
 	def "should turn 'foo-bar' into 'foo_bar'"() {
-		
+
 		when:
 		def res = HyphenedStringHelper.hyphenedToUnderscored('foo-bar')
-		
+
 		then:
 		res == 'foo_bar'
 	}
-	
+
 	def "should turn 'fooBar' into 'foo-bar'"() {
-		
+
 		when:
 		def res = HyphenedStringHelper.camelCaseToHyphened("fooBar");
-		
+
 		then:
 		res == 'foo-bar'
 	}

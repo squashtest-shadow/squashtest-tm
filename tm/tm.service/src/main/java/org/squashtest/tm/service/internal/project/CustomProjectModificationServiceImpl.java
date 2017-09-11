@@ -22,15 +22,12 @@ package org.squashtest.tm.service.internal.project;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-import static org.squashtest.tm.jooq.domain.Tables.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.jooq.DSLContext;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -38,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.*;
@@ -72,6 +69,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	@Inject
 	private TeamDao teamDao;
+
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -114,25 +112,14 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	/**
 	 * Optimized implementation with SQL and no hibernate entities.
+	 * @param currentUser
 	 */
 	@Override
-	public List<Long> findAllReadableIds() {
-		String username = UserContextHolder.getUsername();
-		Long userId = userDao.findUserId(username);
-		boolean isAdmin = permissionEvaluationService.hasRole(Authorizations.ROLE_ADMIN);
-
-		if (isAdmin) {
+	public List<Long> findAllReadableIds(UserDto currentUser) {
+		if (currentUser.isAdmin()) {
 			return projectDao.findAllProjectIds();
 		} else {
-			//1 We must merge team id with user id.
-			List<Long> partyIds = teamDao.findTeamIds(userId);
-			partyIds.add(userId);
-			//2 We must retrieve the set of projects ids that all this core parties can read.
-			// by definition, all profile that give access to a project give access at least with read authorization (ie you cannot write or anything else if you can't read...)
-			return projectDao.findAllProjectIds(partyIds);
-
+			return projectDao.findAllProjectIds(currentUser.getPartyIds());
 		}
-
 	}
-
 }

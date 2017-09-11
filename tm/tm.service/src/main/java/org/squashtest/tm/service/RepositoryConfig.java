@@ -21,42 +21,21 @@
 package org.squashtest.tm.service;
 
 
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import javax.validation.ValidatorFactory;
-
 import org.jooq.ConnectionProvider;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionProvider;
-import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
-import org.jooq.impl.DefaultDSLContext;
 import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Role;
+import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -66,6 +45,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import javax.validation.ValidatorFactory;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Configuration for repository layer.

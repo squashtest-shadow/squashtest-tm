@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
+import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.dto.json.JsTreeNode.State;
 
 import javax.inject.Provider;

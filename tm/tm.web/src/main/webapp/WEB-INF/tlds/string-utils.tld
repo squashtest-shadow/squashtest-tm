@@ -28,22 +28,22 @@
 	<uri>http://org.squashtest.tm/taglib/string-utils</uri>
 	<function>
 		<name>hyphenedToCamelCase</name>
-		<function-class>org.squashtest.tm.web.internal.helper.HyphenedStringHelper</function-class>
+		<function-class>org.squashtest.tm.service.internal.helper.HyphenedStringHelper</function-class>
 		<function-signature>java.lang.String hyphenedToCamelCase(java.lang.String)</function-signature>
 	</function>
 	<function>
 		<name>camelCaseToHyphened</name>
-		<function-class>org.squashtest.tm.web.internal.helper.HyphenedStringHelper</function-class>
+		<function-class>org.squashtest.tm.service.internal.helper.HyphenedStringHelper</function-class>
 		<function-signature>java.lang.String camelCaseToHyphened(java.lang.String)</function-signature>
-	</function>	
+	</function>
 	<function>
 		<name>hyphenedToUnderscored</name>
-		<function-class>org.squashtest.tm.web.internal.helper.HyphenedStringHelper</function-class>
+		<function-class>org.squashtest.tm.service.internal.helper.HyphenedStringHelper</function-class>
 		<function-signature>java.lang.String hyphenedToUnderscored(java.lang.String)</function-signature>
 	</function>
 	<function>
 		<name>truncateAndEllipse</name>
 		<function-class>org.squashtest.tm.web.internal.helper.StringEllipser</function-class>
 		<function-signature>java.lang.String truncateAndEllipse(java.lang.String, java.lang.Integer)</function-signature>
-	</function>	
-</taglib>  
+	</function>
+</taglib>

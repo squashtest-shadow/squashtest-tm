@@ -48,11 +48,13 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
@@ -95,6 +97,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	protected I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
 
+	@Inject
+	private UserAccountService userAccountService;
+
 	/**
 	 * Shows a workspace.
 	 *
@@ -133,7 +138,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
 			.setModel(libraries).build();
 
-
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
+		workspaceDisplayService().findAllLibraries(projectIds, currentUser);
 
 
 		model.addAttribute("rootModel", rootNodes);

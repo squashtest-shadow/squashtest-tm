@@ -28,6 +28,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.dto.UserDto;
 
 /**
  * @author mpagnon
@@ -44,6 +45,7 @@ public interface CustomProjectFinder {
 	/**
 	 * Get all the ids of projects current user can read.
 	 * @return The list of projects ids
+	 * @param currentUser
 	 */
-	List<Long> findAllReadableIds();
+	List<Long> findAllReadableIds(UserDto currentUser);
 }
