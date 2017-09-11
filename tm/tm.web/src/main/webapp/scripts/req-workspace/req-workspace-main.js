@@ -41,12 +41,14 @@ define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash
 			mstoneTreeMenu.init();
 		}
 	}
-
+			function resizeLeftPanel(){
+				$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
+				var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
+				$("#contextual-content").css('left',pos+"px");
+			}
 
 	function init(settings){
-		$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
-		var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
-		$("#contextual-content").css('left',pos+"px");
+		resizeLeftPanel();
 		initResizer();
 		initTabbedPane();
 		initMilestoneMenu();

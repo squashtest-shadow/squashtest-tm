@@ -40,12 +40,14 @@ define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squa
 					mstoneTreeMenu.init();
 				}
 			}
-
-
-			function init(settings) {
+			function resizeLeftPanel(){
 				$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
 				var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
 				$("#contextual-content").css('left',pos+"px");
+			}
+
+			function init(settings) {
+				resizeLeftPanel();
 				initResizer();
 				initTabbedPane();
 				initMilestoneMenu();

@@ -95,7 +95,9 @@ define(
 					confObj.leftPanel.css('float : left;');
 					confObj.rightPanel.css('overflow', 'hidden');
 					confObj.rightPanel.css('width', 'auto');
-					localStorage.setItem('leftWidth', confObj.helper.width());
+					if(confObj.helper) {
+						localStorage.setItem('leftWidth', confObj.helper.width());
+					}
 				}
 
 				confObj.leftPanel.resizable(conf);
