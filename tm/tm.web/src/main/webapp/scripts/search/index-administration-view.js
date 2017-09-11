@@ -112,6 +112,8 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 			});
 		},
 
+
+
 		refreshPage : function() {
 			$.ajax({
 				type : "POST",
@@ -120,22 +122,35 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 			}).success(
 					function(json) {
 						$("#monitor-percentage").html(
-								json.writtenEntities + " / " + json.totalEntities + " (" + json.progressPercentage +
+							addCommas(json.writtenEntities) + " / " + addCommas(json.totalEntities) + " (" + json.progressPercentage +
 										"%) ");
+
 						$("#requirement-monitor-percentage").html(
-								json.writtenEntitiesForRequirementVersions + " / " +
-										json.totalEntitiesForRequirementVersions + " (" +
-										json.progressPercentageForRequirementVersions + "%) ");
+							addCommas(json.writtenEntitiesForRequirementVersions) + " / " +
+							addCommas(json.totalEntitiesForRequirementVersions) + " (" +
+							addCommas(json.totalEntitiesForRequirementVersions) + " (" +
+							json.progressPercentageForRequirementVersions + "%) ");
 						$("#testcase-monitor-percentage").html(
-								json.writtenEntitiesForTestcases + " / " + json.totalEntitiesForTestcases + " (" +
-										json.progressPercentageForTestcases + "%) ");
+							addCommas(json.writtenEntitiesForTestcases) + " / " + addCommas(json.totalEntitiesForTestcases) + " (" +
+							json.progressPercentageForTestcases + "%) ");
 						$("#campaign-monitor-percentage").html(
-								json.writtenEntitiesForCampaigns + " / " +
-										json.totalEntitiesForCampaigns + " (" +
-										json.progressPercentageForCampaigns + "%) ");
+							addCommas(json.writtenEntitiesForCampaigns) + " / " +
+							addCommas(json.totalEntitiesForCampaigns) + " (" +
+							json.progressPercentageForCampaigns + "%) ");
 					});
 		}
 	});
 
 	return IndexAdministrationView;
+	function addCommas(nStr){
+		nStr += '';
+		x = nStr.split('.');
+		x1 = x[0];
+		x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ' ' + '$2');
+		}
+		return x1 + x2;
+	};
 });

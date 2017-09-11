@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 
 import javax.persistence.DiscriminatorValue;
@@ -40,7 +42,7 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 		super();
 	}
 
-	public DenormalizedNumericValue(NumericCustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
+	public DenormalizedNumericValue(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
 									DenormalizedFieldHolderType denormalizedFieldHolderType) {
 
 		this.customFieldValue = customFieldValue;
@@ -49,7 +51,7 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 		this.inputType = cuf.getInputType();
 		this.label = cuf.getLabel();
 		this.value = customFieldValue.getValue();
-		this.numericValue = customFieldValue.getNumericValue();
+		setNumericValue();
 		this.position = customFieldValue.getBinding().getPosition();
 		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
@@ -62,5 +64,16 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 
 	public void setNumericValue(BigDecimal numericValue) {
 		this.numericValue = numericValue;
+	}
+
+	public void setNumericValue() {
+		if(StringUtils.isBlank(this.value)){
+			this.numericValue  = null;
+		}else {
+			//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
+			String formattedDefaultValue = this.value.replace(",", ".");
+			BigDecimal bigDecimal = new BigDecimal(formattedDefaultValue);
+			this.numericValue = bigDecimal;
+		}
 	}
 }
