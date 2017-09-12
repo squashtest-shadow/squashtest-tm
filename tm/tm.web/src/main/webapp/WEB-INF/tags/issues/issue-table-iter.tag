@@ -90,7 +90,7 @@ require( ["common"], function(){
 				});
 
 				td=$(row).find("td:eq(2)");
-				var encodedSummary = $("<div/>").text(data["summary"]).html();
+				var encodedSummary = $("<div/>").text(data["issue-summary"]).html();
 				$(td).html(encodedSummary);
 
 				return row;
