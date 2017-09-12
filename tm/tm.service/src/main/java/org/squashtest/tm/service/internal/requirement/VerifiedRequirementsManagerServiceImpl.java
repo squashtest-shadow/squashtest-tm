@@ -816,31 +816,34 @@ List<Long> requirementsIds) {
 		//now retrieve a list of exec steps
 		MultiMap executionsStatus = executionStepDao.findStepExecutionsStatus(mainVersionTCWithItpiIds, testStepsIds);
 		for (Long testStepsId : testStepsIds) {
-			List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
-			for (ExecutionStep executionStep : executionSteps) {
-				//Here come horrible code to detect if ITPI was fast passed AFTER execution.
-				//We have no attribute in model to help us, and no time to develop a proper solution.
-				//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds,
-				//we consider it's a fast pass
-				Execution execution = executionStep.getExecution();
-				IterationTestPlanItem itpi = execution.getTestPlan();
-				Date itpiDateLastExecutedOn = itpi.getLastExecutedOn();
-				Date execDateLastExecutedOn = execution.getLastExecutedOn();
-				ExecutionStatus status = ExecutionStatus.READY;
-				//if execution dates are null, the execution was only READY, so we don't compare dates to avoid npe
-				if (itpiDateLastExecutedOn != null && execDateLastExecutedOn != null) {
-					DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
-					DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
-					Interval interval = new Interval(execLastExecutedOn, itpiLastExecutedOn);
-					boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
-					//If we have a fast path use it for step status
-					status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
-				}
-				Long memo = result.get(status);
-				if (memo == null) {
-					result.put(status, 1L);
-				} else {
-					result.put(status, memo + 1);
+			// [Issue 6943] If the testStep has never been executed, then it will not be take into account for the calculation.
+			if (executionsStatus.containsKey(testStepsId)){
+				List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
+				for (ExecutionStep executionStep : executionSteps) {
+					//Here come horrible code to detect if ITPI was fast passed AFTER execution.
+					//We have no attribute in model to help us, and no time to develop a proper solution.
+					//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds,
+					//we consider it's a fast pass
+					Execution execution = executionStep.getExecution();
+					IterationTestPlanItem itpi = execution.getTestPlan();
+					Date itpiDateLastExecutedOn = itpi.getLastExecutedOn();
+					Date execDateLastExecutedOn = execution.getLastExecutedOn();
+					ExecutionStatus status = ExecutionStatus.READY;
+					//if execution dates are null, the execution was only READY, so we don't compare dates to avoid npe
+					if (itpiDateLastExecutedOn != null && execDateLastExecutedOn != null) {
+						DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
+						DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
+						Interval interval = new Interval(execLastExecutedOn, itpiLastExecutedOn);
+						boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
+						//If we have a fast path use it for step status
+						status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
+					}
+					Long memo = result.get(status);
+					if (memo == null) {
+						result.put(status, 1L);
+					} else {
+						result.put(status, memo + 1);
+					}
 				}
 			}
 		}
