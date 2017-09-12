@@ -161,7 +161,7 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 			// now let's see how we use it
 
 			if (sstyle === "toggle"){
-				if (bugtrackerMode === "Automatic") {
+				if (bugtrackerMode === "Automatic" || !bugtrackerMode) {
 					// execute immediately
 					loadFn();
 				} else {

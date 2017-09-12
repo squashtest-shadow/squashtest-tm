@@ -94,6 +94,11 @@
 						</div>
 					</div>
 				</c:when>
+					<c:otherwise>
+						<div id="bugtracker-section-pleasewait" style="margin-top:50px; margin-bottom:50px ;">
+							<comp:waiting-pane/>
+						</div>
+					</c:otherwise>
 				</c:choose>
 			</c:otherwise>
 		</c:choose>
