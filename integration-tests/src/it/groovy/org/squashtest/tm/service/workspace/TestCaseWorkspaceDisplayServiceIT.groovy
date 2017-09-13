@@ -42,12 +42,14 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find test Case Libraries as JsTreeNode"() {
+		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
-		jsTreeNodes.collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
-		jsTreeNodes.collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
 
 		where:
 		readableProjectIds 	|| expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId

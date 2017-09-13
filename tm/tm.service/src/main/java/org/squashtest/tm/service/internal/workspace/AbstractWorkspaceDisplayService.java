@@ -57,8 +57,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			findPermissionMap(currentUser, jsTreeNodes);
 		}
 
-
-
 		return jsTreeNodes.values();
 	}
 
@@ -99,12 +97,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract Field<Long> getProjectLibraryColumn();
 
 	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-		Map<Long, JsTreeNode> jsTreeNodes = DSL.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
+		Map<Long, JsTreeNode> jsTreeNodes = DSL
+			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
 			.from(getLibraryTable())
-			.join(PROJECT)
-			.using(selectLibraryId())
+				.join(PROJECT).using(selectLibraryId())
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq("P"))
+				.and(PROJECT.PROJECT_TYPE.eq("P"))
 			.fetch()
 			.stream()
 			.map(r -> {
