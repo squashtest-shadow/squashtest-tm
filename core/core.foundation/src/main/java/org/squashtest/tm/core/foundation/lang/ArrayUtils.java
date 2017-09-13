@@ -24,14 +24,14 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility methods for arrays not found in commons-lang
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class ArrayUtils {
 
 	/**
-	 * 
+	 *
 	 */
 	private ArrayUtils() {
 		super();
@@ -39,9 +39,9 @@ public final class ArrayUtils {
 
 	/**
 	 * Returns true if the array is not null and contains at least one non blank string.
-	 * 
-	 * @param array
-	 * @return
+	 *
+	 * @param array array
+	 * @return isNotBlankStringsArray
 	 */
 	public static boolean isNotBlankStringsArray(String[] array) {
 		return !isBlankStringsArray(array);

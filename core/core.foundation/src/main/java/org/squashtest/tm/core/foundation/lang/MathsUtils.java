@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class MathsUtils {
 	private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
@@ -35,10 +35,10 @@ public final class MathsUtils {
 
 	/**
 	 * Computes the rate part / total in percent *without any floating point error* (hopefully)
-	 * 
-	 * @param part
+	 *
+	 * @param part part
 	 * @param total should not be 0
-	 * @return
+	 * @return int
 	 * @throws ArithmeticException when total is 0
 	 */
 	public static int percent(long part, long total) throws ArithmeticException {

@@ -36,6 +36,9 @@ public interface ColumnFiltering {
 	boolean isDefined();
 
 	/**
+	 *
+	 * @param index index
+	 *
 	 * @return the filter String for a column given its index
 	 */
 	String getFilter(Integer index);

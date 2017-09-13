@@ -38,8 +38,9 @@ public final class CollectionUtils {
 	/**
 	 * Coerces the given non-null collection to a list. Collection order is not garanteed to be preserved.
 	 *
-	 * @param collection
-	 * @return
+	 * @param collection collection
+	 * @param <T> <T>
+	 * @return List<T>
 	 */
 	public static <T> List<T> coerceToList(@NotNull Collection<T> collection) {
 		if (collection instanceof List) {

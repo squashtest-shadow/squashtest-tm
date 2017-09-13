@@ -33,9 +33,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
  * Superclass for Spring beans which can resolve internationalized properties using the {@link Locale} set by the Spring
  * Framework. IT uses the {@link Locale} returned by {@link LocaleContextHolder} and defaults to platform default when
  * necessary.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ContextBasedInternationalized implements MessageSourceAware {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContextBasedInternationalized.class);
@@ -44,10 +44,10 @@ public class ContextBasedInternationalized implements MessageSourceAware {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * When the message source is set, this method sends a notification using
 	 * {@link #initializeMessageSource(MessageSource)}
-	 * 
+	 *
 	 * @see org.springframework.context.MessageSourceAware#setMessageSource(org.springframework.context.MessageSource)
 	 */
 	@Override
@@ -58,8 +58,8 @@ public class ContextBasedInternationalized implements MessageSourceAware {
 
 	/**
 	 * This method is to be overriden by subclasses which need to do further initialization using the message source.
-	 * 
-	 * @param messageSource
+	 *
+	 * @param messageSource messageSource
 	 */
 	protected void initializeMessageSource(MessageSource messageSource) {
 		// NOOP

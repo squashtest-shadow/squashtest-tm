@@ -29,21 +29,21 @@ public interface Paging {
 
 	/**
 	 * The 0-based index of the first returned item.
-	 * 
-	 * @return
+	 *
+	 * @return int
 	 */
 	int getFirstItemIndex();
 
 	/**
 	 * The size of a page ie the max number of items in the returned collection.
-	 * 
-	 * @return
+	 *
+	 * @return int
 	 */
 	int getPageSize();
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @return true if the query should return all the valid rows (ie, the paging should not be applied)
 	 */
 	boolean shouldDisplayAll();
