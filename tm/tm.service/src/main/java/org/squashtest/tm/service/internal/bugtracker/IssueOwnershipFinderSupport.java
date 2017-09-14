@@ -48,7 +48,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Implementation of IssueOwnershipFinder using template mehod pattern.
- * <p>
+ *
  * This object collects all the issues (local and remote) "held" by an entity and coerces them into a list of IssueOwnership.
  * All issues are considered declared on the Execution (ie an ExecutionStep will be substituted by its Execution)
  *
@@ -108,12 +108,6 @@ abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 				contextHolder.getContext(), LocaleContextHolder.getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
-			// issue 6583, when we move an anomaly in jira, it's ID is modified, so we change the RemoteIssueId in the issues contained in pairs
-			if (bugTracker.getKind().equals("jira.rest")) {
-				for (int i = 0; i < pairs.size(); i++) {
-					pairs.get(i).right.setRemoteIssueId(btIssues.get(i).getId());
-				}
-			}
 			Map<String, RemoteIssue> remoteById = createRemoteIssueByRemoteIdMap(btIssues);
 
 			ownerships = coerceIntoIssueOwnerships(pairs, remoteById);
@@ -137,26 +131,23 @@ abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 
 	/**
 	 * This method should return the holder entity of the given id
-	 *
 	 * @param id id of the entity which holds the issues
-	 * @return the holder entity
-	 */
+     * @return the holder entity
+     */
 	protected abstract H findEntity(long id);
 
 	/**
 	 * This should find all issues declared on the holder entity and return them as [Exec, Issue] pairs
-	 *
-	 * @param h      the holder entity
+	 * @param h the holder entity
 	 * @param sorter paging / sorting data
-	 */
+     */
 	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(H h, PagingAndSorting sorter);
 
 	/**
 	 * This should
-	 *
 	 * @param h
-	 * @return
-	 */
+     * @return
+     */
 	protected abstract BugTracker findBugTracker(H h);
 
 	protected abstract long countIssues(H h);
