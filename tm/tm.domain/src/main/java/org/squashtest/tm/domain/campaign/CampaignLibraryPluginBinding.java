@@ -25,9 +25,13 @@ import javax.persistence.Entity;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
+import static org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding.CL_TYPE;
+
 @Entity
-@DiscriminatorValue("C")
+@DiscriminatorValue(CL_TYPE)
 public class CampaignLibraryPluginBinding extends LibraryPluginBinding {
+
+	public static final String CL_TYPE = "C";
 
 	public CampaignLibraryPluginBinding() {
 		super();

@@ -25,9 +25,13 @@ import javax.persistence.Entity;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
+import static org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding.TCL_TYPE;
+
 @Entity
-@DiscriminatorValue("T")
+@DiscriminatorValue(TCL_TYPE)
 public class TestCaseLibraryPluginBinding extends LibraryPluginBinding {
+
+	public static final String TCL_TYPE = "T";
 
 	public TestCaseLibraryPluginBinding() {
 		super();
@@ -36,5 +40,5 @@ public class TestCaseLibraryPluginBinding extends LibraryPluginBinding {
 	public TestCaseLibraryPluginBinding(String pluginId) {
 		super(pluginId);
 	}
-	
+
 }

@@ -25,9 +25,13 @@ import javax.persistence.Entity;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
+import static org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding.RL_TYPE;
+
 @Entity
-@DiscriminatorValue("R")
+@DiscriminatorValue(RL_TYPE)
 public class RequirementLibraryPluginBinding extends LibraryPluginBinding {
+
+	public static final String RL_TYPE = "R";
 
 	public RequirementLibraryPluginBinding() {
 		super();
