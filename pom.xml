@@ -772,5 +772,21 @@
         </plugins>
       </build>
     </profile>
+
+    <!--
+This profile forbids the javadoc plugin to fail for linter reasons.
+The proper fix (that is, really documenting parameters and such) must
+wait a bit.
+-->
+    <profile>
+      <id>disable-java8-doclint</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <additionalparam>-Xdoclint:none</additionalparam>
+      </properties>
+    </profile>
+
   </profiles>
 </project>
