@@ -50,7 +50,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	private HashMap<Long, JsTreeNode> initNoWizardJsTreeNodes() {
 		Map<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
-		jsTreeNodes.values().each {it.addAttr("wizards","size=0")}
+		jsTreeNodes.values().each {it.addAttr("wizards",[] as Set)}
 		jsTreeNodes
 	}
 
@@ -162,9 +162,9 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		then:
 		jsTreeNodes.size() == 3
-		jsTreeNodes.get(-1L).getAttr().get("wizards") == ["JiraAgile"]
-		jsTreeNodes.get(-20L).getAttr().get("wizards") == ["JiraAgain","JiraAgile","JiraForSquash"]
-		jsTreeNodes.get(-3L).getAttr().get("wizards") == "size=0"
+		jsTreeNodes.get(-1L).getAttr().get("wizards") == ["JiraAgile"] as Set
+		jsTreeNodes.get(-20L).getAttr().get("wizards") == ["JiraAgain","JiraAgile","JiraForSquash"] as Set
+		jsTreeNodes.get(-3L).getAttr().get("wizards") == [] as Set
 
 	}
 

@@ -30,9 +30,7 @@ import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.groupConcat;
 import static org.squashtest.tm.dto.PermissionWithMask.*;
@@ -130,7 +128,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				// milestone attributes : libraries are yes-men
 				node.addAttr("milestone-creatable-deletable", "true");
 				node.addAttr("milestone-editable", "true");
-				node.addAttr("wizards", "size = 0");
+				node.addAttr("wizards", new HashSet<String>());
 				node.setState(State.closed);
 				return node;
 			})
@@ -161,14 +159,14 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	public void findWizards(List<Long> readableProjectIds, Map<Long, JsTreeNode> jsTreeNodes){
 
-		Map<Long,List<String>> pluginByLibraryId = DSL.select(getProjectLibraryColumn(), LIBRARY_PLUGIN_BINDING.PLUGIN_ID)
+		Map<Long,Set<String>> pluginByLibraryId = DSL.select(getProjectLibraryColumn(), LIBRARY_PLUGIN_BINDING.PLUGIN_ID)
 			.from(PROJECT)
 			.join(getLibraryTable()).using(getProjectLibraryColumn())
 			.join(LIBRARY_PLUGIN_BINDING).on(LIBRARY_PLUGIN_BINDING.LIBRARY_ID.eq(getProjectLibraryColumn()).and(LIBRARY_PLUGIN_BINDING.LIBRARY_TYPE.eq(getLibraryPluginType())))
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds).and((PROJECT.PROJECT_TYPE).eq("P")))
 			.fetch()
 			.stream()
-			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()),mapping( r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID) ,toList())));
+			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()),mapping( r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID) ,toSet())));
 
 		pluginByLibraryId.forEach((libId, pluginIds) -> {
 			jsTreeNodes.get(libId).addAttr("wizards", pluginIds);
