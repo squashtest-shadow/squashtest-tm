@@ -24,6 +24,7 @@ import org.jooq.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
@@ -57,6 +58,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected String getLibraryClassName() {
 		return TestCaseLibrary.class.getName();
+	}
+
+	@Override
+	protected String getLibraryPluginType() {
+		return TestCaseLibraryPluginBinding.TCL_TYPE;
 	}
 
 	@Override

@@ -40,8 +40,23 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@Inject
 	TestCaseWorkspaceDisplayService testCaseWorkspaceDisplayService
 
+	private HashMap<Long, JsTreeNode> initEmptyJsTreeNodes() {
+		Map<Long, JsTreeNode> jsTreeNodes = new HashMap<>()
+		jsTreeNodes.put(-1L, new JsTreeNode())
+		jsTreeNodes.put(-20L, new JsTreeNode())
+		jsTreeNodes.put(-3L, new JsTreeNode())
+		jsTreeNodes
+	}
+
+	private HashMap<Long, JsTreeNode> initNoWizardJsTreeNodes() {
+		Map<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
+		jsTreeNodes.values().each {it.addAttr("wizards","size=0")}
+		jsTreeNodes
+	}
+
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find test Case Libraries as JsTreeNode"() {
+		given:
 		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
 
 		when:
@@ -58,13 +73,38 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find test Case Libraries as JsTreeNode with all perm for admin"() {
+		given:
+		UserDto user = new UserDto("robert", -2L, [], true)
+
+		and:
+		def readableProjectIds = [-1L,-2L,-3L,-4L]
+
+		when:
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
+
+		then:
+		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == [-1L,-20L,-3L].sort() as Set
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.READ.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.WRITE.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.CREATE.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.DELETE.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXECUTE.getQuality()) == null} //execute is only for campaign
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXPORT.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.ATTACH.getQuality()) == String.valueOf(true)}
+		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.MANAGEMENT.getQuality()) == null} //management is only for projects
+	}
+
+
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find permission masks for standard user"(){
 		given:
 		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
-		Map<Long,JsTreeNode> jsTreeNodes = new HashMap<>()
-		jsTreeNodes.put(-1L, new JsTreeNode())
-		jsTreeNodes.put(-20L, new JsTreeNode())
-		jsTreeNodes.put(-3L, new JsTreeNode())
+		HashMap<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
 
 
 		when:
@@ -108,6 +148,24 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		lib3Attr.get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true)
 		lib3Attr.get(PermissionWithMask.ATTACH.getQuality()) == null
 		lib3Attr.get(PermissionWithMask.MANAGEMENT.getQuality()) == null
+	}
+
+
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find wizards for test case library"(){
+		given:
+		def jsTreeNodes = initNoWizardJsTreeNodes()
+
+		when:
+		testCaseWorkspaceDisplayService.findWizards([-1L,-2L,-3L,-4L], jsTreeNodes)
+
+		then:
+		jsTreeNodes.size() == 3
+		jsTreeNodes.get(-1L).getAttr().get("wizards") == ["JiraAgile"]
+		jsTreeNodes.get(-20L).getAttr().get("wizards") == ["JiraAgain","JiraAgile","JiraForSquash"]
+		jsTreeNodes.get(-3L).getAttr().get("wizards") == "size=0"
+
 	}
 
 
