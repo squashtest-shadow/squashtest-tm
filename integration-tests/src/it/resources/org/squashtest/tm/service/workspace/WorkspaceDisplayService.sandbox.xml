@@ -26,7 +26,7 @@
 
   <!-- ========================== infolist ================================ -->
 
-  <INFO_LIST INFO_LIST_ID="-1" CODE="DEF_REQ_CAT" CREATED_BY="DBU" CREATED_ON="2010-02-01"/>
+  <INFO_LIST INFO_LIST_ID="-1" CODE="DEF_REQ_CAT" CREATED_BY="DBU" CREATED_ON="2010-02-01" LABEL="Req Cat" DESCRIPTION="Desc"/>
   <INFO_LIST_ITEM ITEM_ID="-1" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="0" LABEL="requirement.category.CAT_FUNCTIONAL" CODE="CAT_FUNCTIONAL" IS_DEFAULT="false"/>
   <INFO_LIST_ITEM ITEM_ID="-2" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="1" LABEL="requirement.category.CAT_USE_CASE" CODE="CAT_USE_CASE" IS_DEFAULT="false"/>
   <INFO_LIST_ITEM ITEM_ID="-3" ITEM_TYPE="SYS" LIST_ID="-1" ITEM_INDEX="2" LABEL="requirement.category.CAT_UNDEFINED" CODE="CAT_UNDEFINED" IS_DEFAULT="true"/>
@@ -45,6 +45,7 @@
   <INFO_LIST_ITEM ITEM_ID="-10" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="0" LABEL="perso_1" CODE="PERSO_1" IS_DEFAULT="true"/>
   <INFO_LIST_ITEM ITEM_ID="-11" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="1" LABEL="perso_2" CODE="PERSO_2" IS_DEFAULT="false"/>
   <INFO_LIST_ITEM ITEM_ID="-12" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="2" LABEL="perso_3" CODE="PERSO_3" IS_DEFAULT="false"/>
+  <INFO_LIST_ITEM ITEM_ID="-13" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="3" LABEL="perso_4" CODE="PERSO_4" IS_DEFAULT="false"/>
 
   <!-- ========================== projects ================================ -->
 

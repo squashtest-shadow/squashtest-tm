@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.workspace;
 
@@ -27,6 +27,7 @@ import org.squashtest.tm.dto.PermissionWithMask;
 import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.dto.json.JsonInfoList;
+import org.squashtest.tm.dto.json.JsonInfoListItem;
 import org.squashtest.tm.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
@@ -57,9 +58,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Override
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
-		findWizards(readableProjectIds,jsTreeNodes);
+		findWizards(readableProjectIds, jsTreeNodes);
 
-		if(currentUser.isNotAdmin()){
+		if (currentUser.isNotAdmin()) {
 			findPermissionMap(currentUser, jsTreeNodes);
 		}
 
@@ -76,23 +77,59 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return null;
 	}
 
-	protected Set<Long> findUsedInfoList(List<Long> readableProjectIds){
+	protected Set<Long> findUsedInfoList(List<Long> readableProjectIds) {
 		Set<Long> ids = new HashSet<>();
-			DSL.select(PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
-				.from(PROJECT)
-				.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-				.fetch()
-				.forEach(r -> {
-					ids.add(r.get(PROJECT.REQ_CATEGORIES_LIST));
-					ids.add(r.get(PROJECT.TC_NATURES_LIST));
-					ids.add(r.get(PROJECT.TC_TYPES_LIST));
-				});
+		DSL.select(PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
+			.fetch()
+			.forEach(r -> {
+				ids.add(r.get(PROJECT.REQ_CATEGORIES_LIST));
+				ids.add(r.get(PROJECT.TC_NATURES_LIST));
+				ids.add(r.get(PROJECT.TC_TYPES_LIST));
+			});
 
 		return ids;
 	}
 
 	protected Map<Long, JsonInfoList> findInfoListMap(Set<Long> usedInfoListIds) {
-		return null;
+		return DSL.select(INFO_LIST.INFO_LIST_ID,INFO_LIST.CODE,INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
+			,INFO_LIST_ITEM.ITEM_ID,INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE)
+			.from(INFO_LIST)
+			.innerJoin(INFO_LIST_ITEM).on(INFO_LIST.INFO_LIST_ID.eq(INFO_LIST_ITEM.LIST_ID))
+			.where(INFO_LIST.INFO_LIST_ID.in(usedInfoListIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy(//groupingBy as map <JsonInfoList,List<InfoListItems>>
+				r -> {
+					Long id = r.get(INFO_LIST.INFO_LIST_ID);
+					String code = r.get(INFO_LIST.CODE);
+					String label = r.get(INFO_LIST.LABEL);
+					String description = r.get(INFO_LIST.DESCRIPTION);
+					return new JsonInfoList(id, "todo", code, label, description);
+				},
+				mapping(
+					r -> {
+						JsonInfoListItem jsonInfoListItem = new JsonInfoListItem();
+						jsonInfoListItem.setId(r.get(INFO_LIST_ITEM.ITEM_ID));
+						jsonInfoListItem.setCode(r.get(INFO_LIST_ITEM.CODE));
+						jsonInfoListItem.setLabel(r.get(INFO_LIST_ITEM.LABEL));
+						jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
+						jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
+						jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals("SYS"));
+						jsonInfoListItem.setDenormalized(false);
+						return jsonInfoListItem;
+					},
+					toList()
+				)
+			))
+			.entrySet().stream()
+			.map(jsonInfoListListEntry -> {//now we assign each List of items directly inside their infolist as required per object structure
+				JsonInfoList infoList = jsonInfoListListEntry.getKey();
+				infoList.setItems(jsonInfoListListEntry.getValue());
+				return infoList;
+			})
+		.collect(Collectors.toMap(JsonInfoList::getId, Function.identity()));//now put the fully hydrated infolist in a map <id,infolist>
 	}
 
 
@@ -115,17 +152,17 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					toList()
 				)
 			)).forEach((Long nodeId, List<Integer> masks) -> {
-			 JsTreeNode node = jsTreeNodes.get(nodeId);
-			 if(node == null){
-			 	throw new IllegalArgumentException("Programmatic error : the node " + nodeId +" isn't in the Map provided, can't retrieve permissions.");
-			 }
-			 for (Integer mask : masks) {
-				 PermissionWithMask permission = findByMask(mask);
-				 if(permission != null){
-				 	node.addAttr(permission.getQuality(),String.valueOf(true));
-				 }
-			 }
-		 });
+			JsTreeNode node = jsTreeNodes.get(nodeId);
+			if (node == null) {
+				throw new IllegalArgumentException("Programmatic error : the node " + nodeId + " isn't in the Map provided, can't retrieve permissions.");
+			}
+			for (Integer mask : masks) {
+				PermissionWithMask permission = findByMask(mask);
+				if (permission != null) {
+					node.addAttr(permission.getQuality(), String.valueOf(true));
+				}
+			}
+		});
 	}
 
 	protected abstract Field<Long> getProjectLibraryColumn();
@@ -134,9 +171,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, JsTreeNode> jsTreeNodes = DSL
 			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
 			.from(getLibraryTable())
-				.join(PROJECT).using(selectLibraryId())
+			.join(PROJECT).using(selectLibraryId())
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-				.and(PROJECT.PROJECT_TYPE.eq("P"))
+			.and(PROJECT.PROJECT_TYPE.eq("P"))
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -154,7 +191,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				//permissions set to false by default except for admin witch have rights by definition
 				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
 				for (PermissionWithMask permission : permissions) {
-					node.addAttr(permission.getQuality(),String.valueOf(currentUser.isAdmin()));
+					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
 				}
 
 				// milestone attributes : libraries are yes-men
@@ -189,16 +226,16 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return singleResourceType.replaceAll("y$", "ies");
 	}
 
-	public void findWizards(List<Long> readableProjectIds, Map<Long, JsTreeNode> jsTreeNodes){
+	public void findWizards(List<Long> readableProjectIds, Map<Long, JsTreeNode> jsTreeNodes) {
 
-		Map<Long,Set<String>> pluginByLibraryId = DSL.select(getProjectLibraryColumn(), LIBRARY_PLUGIN_BINDING.PLUGIN_ID)
+		Map<Long, Set<String>> pluginByLibraryId = DSL.select(getProjectLibraryColumn(), LIBRARY_PLUGIN_BINDING.PLUGIN_ID)
 			.from(PROJECT)
 			.join(getLibraryTable()).using(getProjectLibraryColumn())
 			.join(LIBRARY_PLUGIN_BINDING).on(LIBRARY_PLUGIN_BINDING.LIBRARY_ID.eq(getProjectLibraryColumn()).and(LIBRARY_PLUGIN_BINDING.LIBRARY_TYPE.eq(getLibraryPluginType())))
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds).and((PROJECT.PROJECT_TYPE).eq(PROJECT_TYPE)))
 			.fetch()
 			.stream()
-			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()),mapping( r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID) ,toSet())));
+			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()), mapping(r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID), toSet())));
 
 		pluginByLibraryId.forEach((libId, pluginIds) -> {
 			jsTreeNodes.get(libId).addAttr("wizards", pluginIds);

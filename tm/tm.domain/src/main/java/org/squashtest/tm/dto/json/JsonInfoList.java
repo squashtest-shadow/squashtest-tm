@@ -38,6 +38,14 @@ public class JsonInfoList {
 		super();
 	}
 
+	public JsonInfoList(long id, String uri, String code, String label, String description) {
+		this.id = id;
+		this.uri = uri;
+		this.code = code;
+		this.label = label;
+		this.description = description;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -86,4 +94,24 @@ public class JsonInfoList {
 		this.uri = uri;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		JsonInfoList that = (JsonInfoList) o;
+
+		if (id != that.id) return false;
+		if (code == null || that.code == null) {
+			return false;
+		}
+		return code.equals(that.code);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = (int) (id ^ (id >>> 32));
+		result = 31 * result + code.hashCode();
+		return result;
+	}
 }
