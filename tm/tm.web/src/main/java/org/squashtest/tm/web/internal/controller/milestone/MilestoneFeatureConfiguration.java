@@ -23,14 +23,14 @@ package org.squashtest.tm.web.internal.controller.milestone;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
+import org.squashtest.tm.dto.json.JsonMilestone;
 
 
 /**
- * 
+ *
  * That class contains whatever is needed for configuring/rendering the feature in the user interface for the various entities
  * (test case, campaign etc). It helps to know which messages should be displayed, if the feature does appear at all and the like.
- * 
+ *
  * @author bsiri
  *
  */
@@ -39,13 +39,13 @@ public class MilestoneFeatureConfiguration {
 	/**
 	 * This attribute tells whether the milestone functionality is globally enabled.
 	 * False means that nothing should be displayed at all.
-	 * 
+	 *
 	 */
 	private boolean globallyEnabled = true;
 
 	/**
 	 * Whether the user is actually using the functionality
-	 * 
+	 *
 	 */
 	private boolean userEnabled = true;
 
@@ -58,7 +58,7 @@ public class MilestoneFeatureConfiguration {
 
 	/**
 	 * How many milestones the entity is bound to
-	 * 
+	 *
 	 */
 	private int totalMilestones = 0;
 
@@ -96,8 +96,8 @@ public class MilestoneFeatureConfiguration {
 	public boolean isGloballyEnabled() {
 		return globallyEnabled;
 	}
-        
-       
+
+
         public boolean isNormalMode(){
             return ! globallyEnabled;
         }
@@ -188,7 +188,7 @@ public class MilestoneFeatureConfiguration {
 	public boolean isEditable(){
 		return ! isLocked();
 	}
-        
+
         public boolean isActiveMilestoneCreatable(){
             return (activeMilestone != null) ? activeMilestone.isCanCreateDelete() : true;
         }
@@ -204,18 +204,18 @@ public class MilestoneFeatureConfiguration {
 
 	/*
 	 * Cautious : split your eyes and read it as :
-	 * 
+	 *
 	 * "Regardless of whether it is actually the case,
 	 * should the message about multiple milestones binding
 	 * be displayed when relevant ? "
-	 * 
-	 * 
+	 *
+	 *
 	 * Here is the point :
-	 * 
+	 *
 	 * returns true -> the message could appear or disappear
 	 * according to the modifications that the user applies
 	 * when the page is displayed
-	 * 
+	 *
 	 * returns false -> no such message is ever displayed
 	 * regardless of what the user is doing
 	 */

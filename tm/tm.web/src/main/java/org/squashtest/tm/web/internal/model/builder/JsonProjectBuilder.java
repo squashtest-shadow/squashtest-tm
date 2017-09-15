@@ -37,11 +37,11 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
+import org.squashtest.tm.dto.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
-import org.squashtest.tm.web.internal.model.json.JsonInfoList;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
-import org.squashtest.tm.web.internal.model.json.JsonProject;
+import org.squashtest.tm.dto.json.JsonInfoList;
+import org.squashtest.tm.dto.json.JsonMilestone;
+import org.squashtest.tm.dto.json.JsonProject;
 
 @Component
 public class JsonProjectBuilder {

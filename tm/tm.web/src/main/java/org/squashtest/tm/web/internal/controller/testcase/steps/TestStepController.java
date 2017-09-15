@@ -56,7 +56,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
+import org.squashtest.tm.dto.CustomFieldValueModel;
 
 @Controller
 @RequestMapping("/test-steps/{testStepId}")

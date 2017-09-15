@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
-import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
+import org.squashtest.tm.dto.RawValueModel;
+import org.squashtest.tm.dto.RawValueModel.RawValueModelMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

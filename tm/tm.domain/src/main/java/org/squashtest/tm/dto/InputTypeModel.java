@@ -18,33 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.json
+package org.squashtest.tm.dto;
 
-import org.squashtest.tm.dto.json.JsonProject
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
+public class InputTypeModel {
 
-import spock.lang.Specification
+	//value of that BindableEntity
+	private String enumName;
 
-/**
- * @author Gregory Fouquet
- *
- */
-class JsonProjectTest extends Specification {
-	def "should build json project"() {
-		given:
-		Project p = new Project(name: "foo")
-		use (ReflectionCategory) {
-			GenericProject.set field: "id", of: p, to: 10000L
-		}
+	//value in human language
+	private String friendlyName;
 
-		when:
-		def res = JsonProject.toJson(p)
-		
-		then:
-		res.id == 10000L
-		res.uri == "/projects/10000"
-		res.name == "foo"
+	public String getEnumName() {
+		return enumName;
 	}
+
+	public void setEnumName(String enumName) {
+		this.enumName = enumName;
+	}
+
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+
 }

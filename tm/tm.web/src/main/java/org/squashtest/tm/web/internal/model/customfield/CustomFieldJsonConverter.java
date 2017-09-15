@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
+import org.squashtest.tm.dto.*;
 import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 @Component

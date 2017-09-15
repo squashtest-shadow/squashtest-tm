@@ -53,12 +53,12 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
+import org.squashtest.tm.dto.json.JsonMilestone;
 import org.squashtest.tm.dto.json.JsTreeNode;
 
 import com.google.common.base.Optional;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
-import org.squashtest.tm.web.internal.model.json.JsonProject;
+import org.squashtest.tm.dto.json.JsonProject;
 
 /**
  * This controller is dedicated to the initial page of Custom Reports

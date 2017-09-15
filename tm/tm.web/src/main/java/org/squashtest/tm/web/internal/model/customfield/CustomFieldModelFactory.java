@@ -41,6 +41,8 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
+import org.squashtest.tm.dto.CustomFieldModel;
+import org.squashtest.tm.dto.InputTypeModel;
 
 
 @Component

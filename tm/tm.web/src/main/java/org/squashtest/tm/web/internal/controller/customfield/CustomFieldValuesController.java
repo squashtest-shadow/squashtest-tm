@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
-import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
+import org.squashtest.tm.dto.CustomFieldValueModel;
+import org.squashtest.tm.dto.RawValueModel;
 
 @Controller
 @RequestMapping("/custom-fields/values")

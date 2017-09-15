@@ -32,8 +32,8 @@ import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.web.internal.model.json.JsonInfoList;
-import org.squashtest.tm.web.internal.model.json.JsonInfoListItem;
+import org.squashtest.tm.dto.json.JsonInfoList;
+import org.squashtest.tm.dto.json.JsonInfoListItem;
 
 @Component
 public class JsonInfoListBuilder {

@@ -54,7 +54,7 @@ import org.squashtest.tm.web.internal.http.JsonEmptyResponseEntity;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.json.JsonInfoListItem;
+import org.squashtest.tm.dto.json.JsonInfoListItem;
 
 @Controller
 @RequestMapping("/info-lists")

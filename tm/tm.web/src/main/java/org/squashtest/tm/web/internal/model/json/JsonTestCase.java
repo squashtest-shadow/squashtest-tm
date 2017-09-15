@@ -21,9 +21,11 @@
 package org.squashtest.tm.web.internal.model.json;
 
 
+import org.squashtest.tm.dto.json.JsonProject;
+
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class JsonTestCase {
 	private long id;
@@ -35,7 +37,7 @@ public class JsonTestCase {
 	private JsonProject project;
 
 	/**
-	 * 
+	 *
 	 */
 	public JsonTestCase() {
 		super();

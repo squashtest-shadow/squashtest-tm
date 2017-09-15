@@ -65,7 +65,7 @@ import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationCo
 import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import org.squashtest.tm.dto.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
@@ -75,7 +75,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 public class TestCaseTestStepsController {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String TEST_CASE = "testCase";
 
@@ -179,10 +179,10 @@ public class TestCaseTestStepsController {
 		}
 
 		ActionTestStep step = stepModel.getActionTestStep();
-		
+
 		Map<Long, RawValue> customFieldValues = stepModel.getCufs();
 		int index = stepModel.getIndex();
-		
+
 		ActionTestStep addActionTestStep;
 
 		if (index!=0) {
@@ -202,7 +202,7 @@ public class TestCaseTestStepsController {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
 		return testCaseModificationService.pasteCopiedTestSteps(testCaseId, idPosition, copiedStepIds);
-		
+
 	}
 
 
@@ -215,7 +215,7 @@ public class TestCaseTestStepsController {
 		return testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, copiedStepIds);
 	}
 
-	
+
 	@RequestMapping(value = "/{stepId}", method = RequestMethod.POST, params = "newIndex")
 	@ResponseBody
 	public void changeStepIndex(@PathVariable long stepId, @RequestParam int newIndex, @PathVariable long testCaseId) {

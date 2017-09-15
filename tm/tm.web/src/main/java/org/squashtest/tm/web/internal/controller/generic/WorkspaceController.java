@@ -63,8 +63,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
-import org.squashtest.tm.web.internal.model.json.JsonProject;
+import org.squashtest.tm.dto.json.JsonMilestone;
+import org.squashtest.tm.dto.json.JsonProject;
 import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
@@ -143,10 +143,8 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		workspaceDisplayService().findAllLibraries(projectIds, currentUser);
 
 
+
 		model.addAttribute("rootModel", rootNodes);
-
-
-
 		populateModel(model, locale);
 
 		// also add meta data about projects

@@ -31,8 +31,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
-import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
+import org.squashtest.tm.dto.RawValueModel;
+import org.squashtest.tm.dto.RawValueModel.RawValueModelMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

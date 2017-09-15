@@ -86,7 +86,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-import org.squashtest.tm.web.internal.model.json.JsonInfoList;
+import org.squashtest.tm.dto.json.JsonInfoList;
 
 /**
  * Controller which receives requirement version management related requests.

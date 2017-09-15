@@ -49,7 +49,7 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
+import org.squashtest.tm.dto.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
 import com.google.common.base.Optional;
