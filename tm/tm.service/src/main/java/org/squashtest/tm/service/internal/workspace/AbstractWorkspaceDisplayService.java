@@ -74,6 +74,32 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
 		Set<Long> usedInfoListIds = findUsedInfoList(readableProjectIds);
 		Map<Long, JsonInfoList> infoListMap = findInfoListMap(usedInfoListIds);
+
+		//extracting cuf, values... and so on, to avoid multiple extractions when fetching projects
+		List<Long> usedCufIds = findUsedCustomFields(readableProjectIds);
+
+
+		//now we extract projects
+		List<JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap);
+
+
+		return null;
+	}
+
+	protected List<Long> findUsedCustomFields(List<Long> readableProjectIds) {
+		return DSL
+			.selectDistinct(CUSTOM_FIELD_BINDING.CF_ID)
+			.from(CUSTOM_FIELD_BINDING)
+			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(readableProjectIds))
+			.fetch(CUSTOM_FIELD_BINDING.CF_ID, Long.class);
+	}
+
+	protected List<JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
+		DSL.select()
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds));
+
+
 		return null;
 	}
 
