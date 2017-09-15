@@ -52,14 +52,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
@@ -85,6 +78,9 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Indexed
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
+@ClassBridges({
+	@ClassBridge(name = "referencedTestCase.*", analyze = Analyze.NO, store = Store.YES, impl=IterationItemBundleClassBridge.class),
+})
 public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
@@ -114,7 +110,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
         // FIXME it seems this field isn't really used after all
         // please use getTestCase.getName() instead
-        // better yet, ditch the attribute and column if one day 
+        // better yet, ditch the attribute and column if one day
         // we have time for non-essential codebase cleaning ...
 	private String label = "";
 
@@ -134,7 +130,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@DateBridge(resolution = Resolution.DAY)
 	private Date lastExecutedOn;
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "reference", "importance", "name" })
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;
@@ -146,17 +141,17 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<Execution> executions = new ArrayList<>();
+
 
 	@IndexedEmbedded(includeEmbeddedObjectId = true, depth=1)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
+
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
-	@IndexedEmbedded(includePaths = "id")
+	@IndexedEmbedded(includeEmbeddedObjectId=true)
 	private List<TestSuite> testSuites = new ArrayList<>();
 
 	public IterationTestPlanItem() {
