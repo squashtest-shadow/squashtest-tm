@@ -47,6 +47,17 @@
   <INFO_LIST_ITEM ITEM_ID="-12" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="2" LABEL="perso_3" CODE="PERSO_3" IS_DEFAULT="false"/>
   <INFO_LIST_ITEM ITEM_ID="-13" ITEM_TYPE="USR" LIST_ID="-4" ITEM_INDEX="3" LABEL="perso_4" CODE="PERSO_4" IS_DEFAULT="false"/>
 
+  <!-- ========================== custom fields ================================ -->
+
+  <CUSTOM_FIELD CF_ID="-1" FIELD_TYPE="CF" NAME="Lot" CODE="LOT" LABEL="Lot Label" INPUT_TYPE="PLAIN_TEXT" OPTIONAL="true"/>
+  <CUSTOM_FIELD CF_ID="-2" FIELD_TYPE="SSF" NAME="Liste" CODE="LISTE" LABEL="Liste Label" INPUT_TYPE="DROPDOWN_LIST" OPTIONAL="false" DEFAULT_VALUE="Option1"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-1" CODE="OPTION1" LABEL="Option1" POSITION="0"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-1" CODE="OPTION2" LABEL="Option2" POSITION="1"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-1" CODE="OPTION3" LABEL="Option3" POSITION="2"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-1" CODE="OPTION4" LABEL="Option4" POSITION="3"/>
+
+
+
   <!-- ========================== projects ================================ -->
 
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987" />
@@ -92,6 +103,15 @@
   <PROJECT PROJECT_ID="-4" TCL_ID="-4" CL_ID="-4" RL_ID="-4" NAME="template" CREATED_BY="DBU" CREATED_ON="2010-02-01"
            REQ_CATEGORIES_LIST="-1" TC_NATURES_LIST="-2" TC_TYPES_LIST="-3"
            ATTACHMENT_LIST_ID="-40" PROJECT_TYPE="T" />
+
+
+  <!-- ========================== cuf bindings ================================ -->
+
+  <CUSTOM_FIELD_BINDING CFB_ID="-1" CF_ID="-1" BOUND_ENTITY="TEST_CASE" POSITION="0" BOUND_PROJECT_ID="-1"/>
+  <CUSTOM_FIELD_BINDING CFB_ID="-2" CF_ID="-1" BOUND_ENTITY="REQUIREMENT_VERSION" POSITION="0" BOUND_PROJECT_ID="-1"/>
+
+  <CUSTOM_FIELD_BINDING CFB_ID="-3" CF_ID="-1" BOUND_ENTITY="REQUIREMENT_VERSION" POSITION="0" BOUND_PROJECT_ID="-2"/>
+  <CUSTOM_FIELD_BINDING CFB_ID="-4" CF_ID="-2" BOUND_ENTITY="TEST_CASE" POSITION="0" BOUND_PROJECT_ID="-2"/>
 
   <!-- ========================== teams ================================ -->
 
