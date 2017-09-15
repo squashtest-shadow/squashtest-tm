@@ -169,4 +169,23 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find infolist ids"(){
+
+		when:
+		def ids = testCaseWorkspaceDisplayService.findUsedInfoList(readableProjectIds)
+
+		then:
+		ids.sort() == expectdInfolistIds.sort()
+
+		where:
+		readableProjectIds 	|| expectdInfolistIds
+		[]					|| []
+		[-1L]				|| [-4L,-2L,-1L]
+		[-1L,-2L]			|| [-4L,-3L,-2L,-1L]
+		[-1L,-2L,-3L,-4L]	|| [-4L,-3L,-2L,-1L]
+	}
+
+
+
 }
