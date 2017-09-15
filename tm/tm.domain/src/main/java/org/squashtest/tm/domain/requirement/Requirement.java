@@ -44,11 +44,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
@@ -74,6 +70,9 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreation
 @Entity
 @Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
+@ClassBridges({
+	@ClassBridge(name = "children", analyze = Analyze.NO, store = Store.YES, impl=RequirementCountChildrenBridge.class)
+})
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 
 	/**
@@ -85,22 +84,18 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@OneToMany(mappedBy = "requirement", cascade = {CascadeType.ALL})
 	@OrderBy("versionNumber DESC")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
 	private List<RequirementVersion> versions = new ArrayList<>();
 
 
 
-        /*
+	/*
         Note about cascading:
-        CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
-        CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
-        */
+	CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
+	CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
+	*/
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
 	private List<Requirement> children = new ArrayList<>();
 
 	@Column
