@@ -26,6 +26,7 @@ import org.jooq.*;
 import org.squashtest.tm.dto.PermissionWithMask;
 import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsonInfoList;
 import org.squashtest.tm.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
@@ -34,6 +35,7 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import static java.util.stream.Collectors.*;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.groupConcat;
+import static org.jooq.impl.DSL.selectDistinct;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.dto.PermissionWithMask.*;
 import static org.squashtest.tm.dto.json.JsTreeNode.*;
@@ -66,8 +68,33 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	@Override
 	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
+		//1 As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests
+		// We do that only on collaborators witch should not be too numerous versus the number of projects
+		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
+		Set<Long> usedInfoListIds = findUsedInfoList(readableProjectIds);
+		Map<Long, JsonInfoList> infoListMap = findInfoListMap(usedInfoListIds);
 		return null;
 	}
+
+	protected Set<Long> findUsedInfoList(List<Long> readableProjectIds){
+		Set<Long> ids = new HashSet<>();
+			DSL.select(PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+				.from(PROJECT)
+				.where(PROJECT.PROJECT_ID.in(readableProjectIds))
+				.fetch()
+				.forEach(r -> {
+					ids.add(r.get(PROJECT.REQ_CATEGORIES_LIST));
+					ids.add(r.get(PROJECT.TC_NATURES_LIST));
+					ids.add(r.get(PROJECT.TC_TYPES_LIST));
+				});
+
+		return ids;
+	}
+
+	protected Map<Long, JsonInfoList> findInfoListMap(Set<Long> usedInfoListIds) {
+		return null;
+	}
+
 
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		DSL
