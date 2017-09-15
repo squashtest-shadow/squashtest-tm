@@ -26,6 +26,7 @@ import org.jooq.*;
 import org.squashtest.tm.dto.PermissionWithMask;
 import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -63,7 +64,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes.values();
 	}
 
-
+	@Override
+	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
+		return null;
+	}
 
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		DSL

@@ -21,13 +21,21 @@
 package org.squashtest.tm.service.workspace;
 import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.dto.json.JsonProject;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface WorkspaceDisplayService {
 
-
+	/**
+	 * Service responsible for building the workspace rootModel as a collection of {@link JsTreeNode}. Only libraries are returned, not their content
+	 * @param readableProjectIds The ids of projects witch must be included
+	 * @param currentUser The {@link UserDto} representing current user and somme of it's attributes
+	 * @return The list of libraries, correctly initialized to be rendered by JsTree
+	 */
 	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+
+	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
 }
