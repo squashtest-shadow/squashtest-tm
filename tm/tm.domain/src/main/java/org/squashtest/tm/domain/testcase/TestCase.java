@@ -192,8 +192,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private AutomatedTest automatedTest;
 
 
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
