@@ -25,16 +25,21 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import static org.squashtest.tm.domain.project.ProjectTemplate.TEMPLATE_TYPE;
+
 /**
  * A Project template, which can hold no nodes but will be used to build "real" projects
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @NamedQueries({ @NamedQuery(name = "ProjectTemplate.findAllReferences", query = "select new org.squashtest.tm.domain.NamedReference(t.id, t.name) from ProjectTemplate t order by t.name") })
 @Entity
-@DiscriminatorValue("T")
+@DiscriminatorValue(TEMPLATE_TYPE)
 public class ProjectTemplate extends GenericProject {
+
+	public static final String TEMPLATE_TYPE = "T";
+
 	/**
 	 * @see org.squashtest.tm.domain.project.GenericProject#accept(org.squashtest.tm.domain.project.ProjectVisitor)
 	 */

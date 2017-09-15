@@ -33,6 +33,7 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import static java.util.stream.Collectors.*;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.groupConcat;
+import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.dto.PermissionWithMask.*;
 import static org.squashtest.tm.dto.json.JsTreeNode.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
@@ -73,7 +74,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
 			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
 			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq(getLibraryClassName())))
-			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq("P"))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
 			.fetch()
 			.stream()
 			.collect(groupingBy(
@@ -163,7 +164,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.from(PROJECT)
 			.join(getLibraryTable()).using(getProjectLibraryColumn())
 			.join(LIBRARY_PLUGIN_BINDING).on(LIBRARY_PLUGIN_BINDING.LIBRARY_ID.eq(getProjectLibraryColumn()).and(LIBRARY_PLUGIN_BINDING.LIBRARY_TYPE.eq(getLibraryPluginType())))
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds).and((PROJECT.PROJECT_TYPE).eq("P")))
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds).and((PROJECT.PROJECT_TYPE).eq(PROJECT_TYPE)))
 			.fetch()
 			.stream()
 			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()),mapping( r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID) ,toSet())));
@@ -174,6 +175,4 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 	protected abstract String getLibraryPluginType();
-
-	;
 }

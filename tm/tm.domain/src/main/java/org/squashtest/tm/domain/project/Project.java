@@ -25,10 +25,15 @@ import javax.persistence.Entity;
 
 import org.hibernate.search.annotations.Indexed;
 
+import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
+
 @Entity
 @Indexed
-@DiscriminatorValue("P")
+@DiscriminatorValue(PROJECT_TYPE)
 public class Project extends GenericProject {
+
+	public static final String PROJECT_TYPE = "P";
+
 	public Project() {
 		super();
 	}
