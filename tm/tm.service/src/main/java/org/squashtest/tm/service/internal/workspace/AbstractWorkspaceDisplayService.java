@@ -164,6 +164,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	private SingleSelectFieldModel getSingleSelectFieldModel(Record r) {
 		SingleSelectFieldModel singleSelectFieldModel = new SingleSelectFieldModel();
 		initCufModel(r,singleSelectFieldModel);
+		singleSelectFieldModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
 		return singleSelectFieldModel;
 	}
 
