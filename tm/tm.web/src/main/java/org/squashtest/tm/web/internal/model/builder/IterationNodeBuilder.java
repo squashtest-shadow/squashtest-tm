@@ -73,8 +73,8 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		String[] args = {localizedStatus};
 		String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
 		String description = "";
-		if (!model.getTestPlans().isEmpty() && model.getTestPlans().get(0).getReferencedTestCase().getDescription() != null) {
-			description = model.getTestPlans().get(0).getReferencedTestCase().getDescription();
+		if (!model.getPlannedTestCase().isEmpty() && model.getPlannedTestCase().get(0).getDescription()!=null) {
+			description =  model.getPlannedTestCase().get(0).getDescription();
 			if (description.length() > 30) {
 				description = description.substring(0, 30);
 			}
