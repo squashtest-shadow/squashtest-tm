@@ -50,6 +50,11 @@ final class IssueOwnershipFinderUtils {
 			return new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), p.left);
 		}).collect(Collectors.toList());
 
+
+			//update the remoteIssueId in the database
+			if (ownership.getIssue().getNewKey() != null) {
+				ish.setRemoteIssueId(ownership.getIssue().getNewKey());
+			}
 	}
 
 	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(IssueDetector holder, Collection<Issue> issues, Map<String, RemoteIssue> remoteIssueByRemoteId) {

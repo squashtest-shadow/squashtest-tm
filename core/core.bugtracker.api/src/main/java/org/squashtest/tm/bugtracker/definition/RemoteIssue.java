@@ -23,33 +23,35 @@ package org.squashtest.tm.bugtracker.definition;
 public interface RemoteIssue {
 
 	String getId();
-	
+
 	String getSummary();
-	
+
 	String getDescription();
-	
+
 	void setDescription(String description);
-	
+
 	String getComment();
-	
+
 	void setComment(String comment);
-	
+
 	RemoteProject getProject();
-	
+
 	RemoteStatus getStatus();
-	
+
 	RemoteUser getAssignee();
-	
+
 	RemotePriority getPriority();
-	
+
 	RemoteCategory getCategory();
-	
+
 	RemoteVersion getVersion();
-	
+
 	void setBugtracker(String btName);
-	
+
 	String getBugtracker();
-	
+
 	boolean hasBlankId();
-	
+
+	String getNewKey();
+
 }

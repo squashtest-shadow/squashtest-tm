@@ -207,4 +207,9 @@ public class AdvancedIssue implements RemoteIssue {
 		FieldValue newValue = new FieldValue(fieldName, fieldName, value);
 		fieldValues.put(fieldName, newValue);
 	}
+
+	@Override
+	public String getNewKey() {
+		return null;
+	}
 }
