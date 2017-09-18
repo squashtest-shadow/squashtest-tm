@@ -47,14 +47,15 @@ final class IssueOwnershipFinderUtils {
 		return pairs.stream().map(p -> {
 			Issue ish = p.right;
 			RemoteIssue remote = remoteIssueByRemoteId.get(ish.getRemoteIssueId());
+			//update the remoteIssueId in the database
+			if (remote.getNewKey() != null) {
+				ish.setRemoteIssueId(remote.getNewKey());
+			}
 			return new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), p.left);
 		}).collect(Collectors.toList());
 
 
-			//update the remoteIssueId in the database
-			if (ownership.getIssue().getNewKey() != null) {
-				ish.setRemoteIssueId(ownership.getIssue().getNewKey());
-			}
+
 	}
 
 	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(IssueDetector holder, Collection<Issue> issues, Map<String, RemoteIssue> remoteIssueByRemoteId) {
@@ -63,6 +64,6 @@ final class IssueOwnershipFinderUtils {
 			RemoteIssue remote = remoteIssueByRemoteId.get(issue.getRemoteIssueId());
 			return new IssueOwnership<>(new RemoteIssueDecorator(remote, issue.getId()), holder);
 		}).collect(Collectors.toList());
-	
+
 	}
 }
