@@ -64,7 +64,7 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		Iteration iter = Mock()
 		iter.getMilestones() >> []
 		iter.executionStatus >> ExecutionStatus.SUCCESS
-		iter.testPlans >> []
+		iter.getPlannedTestCase() >> []
 		iter.doMilestonesAllowCreation() >> Boolean.TRUE
 		iter.doMilestonesAllowEdition() >> Boolean.TRUE
 		service.findIterationsByCampaignId(10) >> [iter]
