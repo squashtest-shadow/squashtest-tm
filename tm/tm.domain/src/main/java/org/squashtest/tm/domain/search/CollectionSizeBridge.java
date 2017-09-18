@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.*;
 import org.hibernate.collection.internal.AbstractPersistentCollection;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.search.bridge.StringBridge;
-import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
@@ -42,9 +42,13 @@ public class CollectionSizeBridge implements StringBridge {
 
 	private static final int EXPECTED_LENGTH = 7;
 
-	private static final Pattern PATTERN = Pattern.compile(	".*\\.(\\w+)\\.(\\w+)");
+	private static final Pattern PATTERN = Pattern.compile(	"^([\\w\\.]+)\\.(\\w+)$");
 
-	private String fallbackHql = null;
+	private static final String ENTITY_ALIAS = "entity";
+	private static final String COL_ALIAS = "coll";
+
+	private String entityClass = null;
+	private String collectionPath = null;
 
 	private String padRawValue(Integer rawValue){
 		return StringUtils.leftPad(Integer.toString(rawValue), EXPECTED_LENGTH, '0');
@@ -99,11 +103,9 @@ public class CollectionSizeBridge implements StringBridge {
 
 		* Method 1 : check whether the collection is initialized. If it is, just return the size.
 
-		* Method 2 : use a trick from http://docs.jboss.org/hibernate/orm/3.3/reference/fr-FR/html/performance.html#performance-fetching-initialization
-		that allows to find the size of a collection without initializing it. However it requires the same, live session
-		that the collection is using.
+		* Method 2 : use the session of that collection then go criteria
 
-		* Method 3 : create a new session and go HQL to find the value.
+		* Method 3 : create a new session and go Criteria to find the value.
 
      */
 
@@ -124,8 +126,9 @@ public class CollectionSizeBridge implements StringBridge {
 			count = collection.size();
 		}
 
+
 		// method 2
-		else if (canGetSizeWithoutInitializing(hibCollection)){
+		if (hasLiveSession(hibCollection)){
 
 			LOGGER.debug("the session is live and reusable, attempting to query the size from it.");
 
@@ -135,9 +138,9 @@ public class CollectionSizeBridge implements StringBridge {
 			 */
 			try {
 
-				count = countUsingFilter(collection);
+				count = countUsingCriteria(collection);
 
-				LOGGER.debug("collection size was found using a hibernate Filter");
+				LOGGER.debug("collection size was found using criteria");
 			}
 			catch(Exception ex){
 
@@ -178,14 +181,13 @@ public class CollectionSizeBridge implements StringBridge {
 
 			session = createNewSession(hibCollection);
 
-			// TODO : we know there are no JTA involved here but in case
-			// this change in the future, have a look at AbstractPersistentCollection#withTemporarySessionIfNeeded
+			// TODO : we know there are no JTA involved here but in case this change in the future, have a look at AbstractPersistentCollection#withTemporarySessionIfNeeded
 
 			tx = session.beginTransaction();
 
-			Query query = createQuery(hibCollection, session);
+			Criteria criteria = createCriteria(hibCollection, session);
 
-			Long count = (Long)query.uniqueResult();
+			Long count = (Long)criteria.uniqueResult();
 
 			LOGGER.debug("found the size using the fallback method");
 
@@ -222,7 +224,7 @@ public class CollectionSizeBridge implements StringBridge {
 		return AbstractPersistentCollection.class.isAssignableFrom(collection.getClass());
 	}
 
-	private boolean canGetSizeWithoutInitializing(AbstractPersistentCollection hibCollection){
+	private boolean hasLiveSession(AbstractPersistentCollection hibCollection){
 		boolean hasSession = false;
 		boolean isLive = false;
 
@@ -242,15 +244,45 @@ public class CollectionSizeBridge implements StringBridge {
 	}
 
 
-	private Integer countUsingFilter(Collection<?> collection) {
+	private Integer countUsingCriteria(Collection<?> collection) {
 		AbstractPersistentCollection hibCollection = (AbstractPersistentCollection) collection;
 
 		// we require the session that created the collection
 		Session session = getLiveSession(hibCollection);
 
-		// use Hibernate filter
-		Long lcount = (Long) session.createFilter(collection, "select count(*)").uniqueResult();
-		return lcount.intValue();
+		Criteria criteria = createCriteria(hibCollection, session);
+		Long res = (Long)criteria.uniqueResult();
+		return res.intValue();
+	}
+
+
+
+	private Criteria createCriteria(AbstractPersistentCollection hibCollection, Session session){
+		if (entityClass == null){
+			initCriteriaData(hibCollection);
+		}
+
+		Identified entity = (Identified)hibCollection.getOwner();
+
+		return session.createCriteria(entityClass, ENTITY_ALIAS)
+				   .setReadOnly(true)
+				   .createAlias(collectionPath, COL_ALIAS)
+				   .add(Restrictions.eq("id", entity.getId()))
+				   .setProjection(Projections.rowCount());
+
+	}
+
+	private void initCriteriaData(AbstractPersistentCollection hibCollection){
+		String role = hibCollection.getRole();
+		Matcher matcher = PATTERN.matcher(role);
+		if (matcher.matches()){
+			entityClass = matcher.group(1);
+			collectionPath = ENTITY_ALIAS+"."+matcher.group(2);
+		}
+		else{
+			throw new RuntimeException("cannot extract entity and collection name from role : "+role);
+		}
+
 	}
 
 
@@ -270,30 +302,6 @@ public class CollectionSizeBridge implements StringBridge {
 
 	}
 
-	private Query createQuery(AbstractPersistentCollection hibCollection, Session session){
-		if (fallbackHql == null){
-			initFallbackHql(hibCollection);
-		}
-
-		Identified entity = (Identified)hibCollection.getOwner();
-		return session.createQuery(fallbackHql)
-					  .setParameter("id", entity.getId(), LongType.INSTANCE);
-
-	}
-
-	private void initFallbackHql(AbstractPersistentCollection hibCollection){
-		String role = hibCollection.getRole();
-		Matcher matcher = PATTERN.matcher(role);
-		if (matcher.matches()){
-			String entity = matcher.group(1);
-			String colName = matcher.group(2);
-			fallbackHql = "select count(elements(entity."+colName+")) from "+entity+" entity where id = :id";
-		}
-		else{
-			throw new RuntimeException("cannot extract entity and collection name from role : "+role);
-		}
-
-	}
 
 }
 

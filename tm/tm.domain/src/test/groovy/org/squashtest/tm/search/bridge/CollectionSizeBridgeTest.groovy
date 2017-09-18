@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.search.bridge
 
+import org.hibernate.Criteria
 import org.hibernate.Filter
 import org.hibernate.FlushMode
 import org.hibernate.Query
@@ -43,7 +44,7 @@ class CollectionSizeBridgeTest extends Specification{
 	MockSessionFactory factory
 	Transaction tx
 	Session newSession
-	Query query
+	Criteria criteria
 	PersistentList collection
 
 	def "when the collection is a plain collection, just return its size"(){
@@ -72,7 +73,7 @@ class CollectionSizeBridgeTest extends Specification{
 			mockHibernateCollection()
 
 		when :
-			def response = bridge.canGetSizeWithoutInitializing collection
+			def response = bridge.hasLiveSession collection
 
 		then :
 			response == true
@@ -84,7 +85,7 @@ class CollectionSizeBridgeTest extends Specification{
 			mockHibernateCollection()
 
 		when :
-			def response = bridge.canGetSizeWithoutInitializing collection
+			def response = bridge.hasLiveSession collection
 
 		then :
 			response == false
@@ -121,7 +122,7 @@ class CollectionSizeBridgeTest extends Specification{
 
 	}
 
-	def "hib collection : init the fallback hql"(){
+	def "hib collection : init the criteria data"(){
 
 		given :
 			mockDeadSession()
@@ -132,14 +133,15 @@ class CollectionSizeBridgeTest extends Specification{
 			collection.setSnapshot(1L, "org.whatever.Entity.stuff", [1,2,3])
 
 		when :
-			bridge.initFallbackHql collection
+			bridge.initCriteriaData collection
 
 		then :
-			bridge.fallbackHql == "select count(elements(entity.stuff)) from Entity entity where id = :id"
+			bridge.entityClass == "org.whatever.Entity"
+			bridge.collectionPath == "entity.stuff"
 
 	}
 
-	def "hib collection : create the fallback query"(){
+	def "hib collection : create the criteria"(){
 
 		given :
 			mockDeadSession()
@@ -147,15 +149,42 @@ class CollectionSizeBridgeTest extends Specification{
 
 		and :
 			collection.setOwner( [ getId : {10L}] as Identified)
-			bridge.fallbackHql = "select count(elements(entity.stuff)) from Entity entity where id = :id"
+			bridge.entityClass = "org.whatever.Entity"
+			bridge.collectionPath = "entity.stuff"
 
 		when :
-			bridge.createQuery(collection, newSession)
+			bridge.createCriteria(collection, newSession)
 
 		then :
 			// hmm, not sure I should test this after all
-			1 * newSession.createQuery(bridge.fallbackHql) >> query
-			1 * query.setParameter("id", 10L, LongType.INSTANCE) >> query
+			1 * newSession.createCriteria("org.whatever.Entity", "entity") >> criteria
+			1 * criteria.createAlias("entity.stuff", "coll") >> criteria
+			1 * criteria.add({
+				it.propertyName == "id" &&
+				it.value == 10L &&
+				it.op == "="
+			}) >> criteria
+	}
+
+	def "hib collection : find by current session"(){
+		given :
+			mockLiveSession()
+			mockHibernateCollection()
+
+		and :
+			collection.setOwner( [ getId : {10L}] as Identified)
+			bridge.entityClass = "org.whatever.Entity"
+			bridge.collectionPath = "entity.stuff"
+			criteria.uniqueResult() >> 3L
+
+		when :
+			def res = bridge.countUsingCriteria collection
+
+		then :
+			res == 3
+			// assert that criteria was created from the live, current session
+			1 * session.createCriteria(_,_) >> criteria
+
 	}
 
 
@@ -166,14 +195,18 @@ class CollectionSizeBridgeTest extends Specification{
 
 		and :
 			collection.setOwner( [ getId : {10L}] as Identified)
-			bridge.fallbackHql = "select count(elements(entity.stuff)) from Entity entity where id = :id"
-			query.uniqueResult() >> 3L
+			bridge.entityClass = "org.whatever.Entity"
+			bridge.collectionPath = "entity.stuff"
+			criteria.uniqueResult() >> 3L
 
 		when :
 			def res = bridge.fallbackHibernate collection
 
 		then :
 			res == 3
+
+			// assert that criteria was created from a new session
+			1 * newSession.createCriteria(_,_) >> criteria
 
 			// test that the method is exited cleanly too
 			1 * newSession.close()
@@ -201,22 +234,6 @@ class CollectionSizeBridgeTest extends Specification{
 
 
 
-	def "hib collection : count with hibernate filter"(){
-
-		given :
-			mockLiveSession()
-			mockHibernateCollection()
-
-		and :
-			query.uniqueResult() >> 3L
-		when :
-			def count = bridge.countUsingFilter collection
-
-		then :
-			count == 3
-
-	}
-
 	def "hib collection : just return the size if initialized"(){
 		given :
 			mockLiveSession()
@@ -239,14 +256,17 @@ class CollectionSizeBridgeTest extends Specification{
 	def mockLiveSession(){
 		factory = Mock()
 		session = Mock()
-		query = Mock()
+		criteria = Mock()
 
 
 		session.isOpen() >> true
 		session.isConnected() >> true
 		session.getSessionFactory() >> factory
 
-		session.createFilter(_,_) >> query
+		session.createCriteria(_,_) >> criteria
+
+		mockCriteria()
+
 	}
 
 
@@ -257,7 +277,7 @@ class CollectionSizeBridgeTest extends Specification{
 		session = Mock()
 		tx = Mock()
 		newSession = Mock()
-		query = Mock()
+		criteria = Mock()
 
 		session.isOpen() >> false
 
@@ -268,11 +288,18 @@ class CollectionSizeBridgeTest extends Specification{
 		newSession.isOpen() >> true
 		newSession.isConnected() >> true
 		newSession.beginTransaction() >> tx
-		newSession.createQuery(_) >> query
+		session.createCriteria(_,_) >> criteria
+
+		mockCriteria()
 
 
-		query.setParameter(_,_,_) >> query
+	}
 
+	def mockCriteria(){
+		criteria.setReadOnly(_) >> criteria
+		criteria.createAlias(_,_) >> criteria
+		criteria.add(_) >> criteria
+		criteria.setProjection(_) >> criteria
 	}
 
 
