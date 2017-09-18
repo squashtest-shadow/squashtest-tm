@@ -23,16 +23,20 @@ package org.squashtest.tm.service.workspace
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.dto.CustomFieldModelFactory
 import org.squashtest.tm.dto.PermissionWithMask
 import org.squashtest.tm.dto.UserDto
 import org.squashtest.tm.dto.json.JsTreeNode
 import org.squashtest.tm.dto.json.JsonInfoList
-import org.squashtest.tm.dto.json.JsonInfoListItem
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel.*
+import static org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel.*
 
 @UnitilsSupport
 @Transactional
@@ -214,7 +218,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find cuf ids"(){
-
 		when:
 		def ids = testCaseWorkspaceDisplayService.findUsedCustomFields(readableProjectIds)
 
@@ -230,6 +233,42 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should fetch correct number of cuf models and options"(){
+		when:
+		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L])
 
+		then:
+		cufMap.size() == 3
+		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel2 = cufMap.get(-2L)
+		singleSelectFieldModel2.options.size() == 4
+
+		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel3 = cufMap.get(-3L)
+		singleSelectFieldModel3.options.size() == 2
+	}
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	@Unroll
+	def "should fetch correct single value cuf models"(){
+		when:
+		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L, -4L, -5L])
+
+		then:
+		def customFieldModel = cufMap.get(cufId)
+		customFieldModel.id == cufId
+		customFieldModel.code == code
+		customFieldModel.label == label
+		customFieldModel.defaultValue == defaultValue
+		customFieldModel.isOptional() == isOptionnal
+		customFieldModel.class == expectedClass
+
+		where:
+
+		cufId 	|| 			code  | 		label   | 			name  | defaultValue 			|	isOptionnal  |  	expectedClass
+		-1L		||			"LOT" |		"Lot Label" |			"Lot" |						null|			true |	CustomFieldModelFactory.SingleValuedCustomFieldModel.class
+		-4L		||			"RICH"|		"Rich Label"|			"Rich"|	   "large default value"|			false|	CustomFieldModelFactory.SingleValuedCustomFieldModel.class
+		-5L		||			"DATE"|		"Date Label"|			"Date"|	   			"2017-09-18"|			true |	CustomFieldModelFactory.DatePickerFieldModel.class
+
+	}
 
 }

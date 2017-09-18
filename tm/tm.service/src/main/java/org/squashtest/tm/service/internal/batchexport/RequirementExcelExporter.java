@@ -57,7 +57,7 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+import org.squashtest.tm.dto.NumericCufHelper;
 
 /**
  * @author jthebault
@@ -76,7 +76,7 @@ public class RequirementExcelExporter {
 		RequirementLinksSheetColumn.RELATED_REQ_VERSION_NUM,
 		RequirementLinksSheetColumn.RELATED_REQ_ROLE
 	);
-	
+
 	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
 		CoverageSheetColumn.REQ_PATH,
 		CoverageSheetColumn.REQ_VERSION_NUM,
@@ -169,29 +169,29 @@ public class RequirementExcelExporter {
 		}
 
 	}
-	
+
 	private void appendLinks(RequirementExportModel model){
 		List<RequirementLinkModel> models = model.getReqLinks();
 		Sheet linkSheet = workbook.getSheet(REQ_LINK_SHEET);
-		
+
 		Row r;
 		int rIdx = linkSheet.getLastRowNum() +1;
 		int cIdx = 0;
-		
+
 		for (RequirementLinkModel lm : models){
 			r = linkSheet.createRow(rIdx);
-			
+
 			r.createCell(cIdx++).setCellValue(lm.getReqPath());
 			r.createCell(cIdx++).setCellValue(lm.getReqVersion());
 			r.createCell(cIdx++).setCellValue(lm.getRelReqPath());
 			r.createCell(cIdx++).setCellValue(lm.getRelReqVersion());
 			r.createCell(cIdx++).setCellValue(lm.getRelatedReqRole());
-			
+
 			rIdx++;
 			cIdx=0;
 		}
-		
-		
+
+
 	}
 
 	private void appendRequirementModel(RequirementExportModel model) {
@@ -210,7 +210,7 @@ public class RequirementExcelExporter {
 	private void createCoverageHeaders() {
 		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
 	}
-	
+
 	private void createLinksHeaders(){
 		createSheetHeaders(REQ_LINK_SHEET, LINKS_COLUMNS);
 	}

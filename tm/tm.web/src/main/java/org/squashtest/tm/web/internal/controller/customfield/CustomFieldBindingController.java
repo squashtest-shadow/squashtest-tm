@@ -32,7 +32,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.dto.CustomFieldBindingModel;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.dto.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;

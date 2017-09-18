@@ -75,7 +75,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.dto.CustomFieldModel;
 import org.squashtest.tm.dto.CustomFieldValueModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;

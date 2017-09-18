@@ -27,7 +27,7 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+import org.squashtest.tm.dto.NumericCufHelper;
 
 import java.util.Collection;
 import java.util.List;

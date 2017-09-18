@@ -47,7 +47,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+import org.squashtest.tm.dto.NumericCufHelper;
 
 @Component
 @Scope("prototype")

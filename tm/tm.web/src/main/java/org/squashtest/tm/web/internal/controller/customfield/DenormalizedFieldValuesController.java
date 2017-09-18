@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.dto.CustomFieldValueModel;
 import org.squashtest.tm.dto.RawValueModel;
 

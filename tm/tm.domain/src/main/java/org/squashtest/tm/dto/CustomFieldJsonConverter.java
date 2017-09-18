@@ -18,14 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.customfield;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
+package org.squashtest.tm.dto;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -34,8 +27,12 @@ import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
-import org.squashtest.tm.dto.*;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class CustomFieldJsonConverter {

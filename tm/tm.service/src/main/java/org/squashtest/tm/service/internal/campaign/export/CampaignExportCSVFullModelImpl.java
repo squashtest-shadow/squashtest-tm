@@ -57,7 +57,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+import org.squashtest.tm.dto.NumericCufHelper;
 
 /*
  * TODO :
@@ -435,8 +435,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells) {
-			
-			
+
+
 			if (execStep == null && actionTestStep != null) {
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(String.valueOf(actionTestStepIndex + 1)));
@@ -446,7 +446,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(N_A));
-				
+
 			} else if (execStep != null) {
 				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
 				dataCells.add(new CellImpl(String.valueOf(stepIndex + 1)));
@@ -457,7 +457,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep)))); // XXX THIS IS WAAAAAAAY TOO
 				// EXPENSIVE !
 				dataCells.add(new CellImpl(formatLongText(execStep.getComment())));
-				
+
 			} else {
 				/* Issue 6351: We also have to import ITPI without any Test Step. */
 				dataCells.add(new CellImpl(N_A));

@@ -56,7 +56,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
-import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
+import org.squashtest.tm.dto.NumericCufHelper;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;

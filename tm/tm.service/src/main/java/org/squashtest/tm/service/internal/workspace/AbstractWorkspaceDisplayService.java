@@ -1,30 +1,36 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.workspace;
 
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.jooq.*;
-import org.squashtest.tm.dto.PermissionWithMask;
-import org.squashtest.tm.dto.UserDto;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.dto.*;
+import org.squashtest.tm.dto.CustomFieldModelFactory.DatePickerFieldModel;
+import org.squashtest.tm.dto.CustomFieldModelFactory.SingleSelectFieldModel;
+import org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel;
 import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.dto.json.JsonInfoList;
 import org.squashtest.tm.dto.json.JsonInfoListItem;
@@ -38,6 +44,7 @@ import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.groupConcat;
 import static org.jooq.impl.DSL.selectDistinct;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
+import static org.squashtest.tm.dto.CustomFieldModelFactory.*;
 import static org.squashtest.tm.dto.PermissionWithMask.*;
 import static org.squashtest.tm.dto.json.JsTreeNode.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
@@ -48,6 +55,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {
+
+	@Inject
+	private MessageSource messageSource;
 
 	@Inject
 	DSLContext DSL;
@@ -75,15 +85,130 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Set<Long> usedInfoListIds = findUsedInfoList(readableProjectIds);
 		Map<Long, JsonInfoList> infoListMap = findInfoListMap(usedInfoListIds);
 
-		//extracting cuf, values... and so on, to avoid multiple extractions when fetching projects
+		//extracting cuf, options... and so on, to avoid multiple identical extractions when fetching projects
 		List<Long> usedCufIds = findUsedCustomFields(readableProjectIds);
-
+		Map<Long, CustomFieldModel> cufMap = findCufMap(usedCufIds);
 
 		//now we extract projects
 		List<JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap);
 
 
 		return null;
+	}
+
+	protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
+		Map<Long, CustomFieldModel> cufMap = new HashMap<>();
+
+		DSL.select(CUSTOM_FIELD.CF_ID, CUSTOM_FIELD.INPUT_TYPE, CUSTOM_FIELD.NAME, CUSTOM_FIELD.LABEL, CUSTOM_FIELD.CODE, CUSTOM_FIELD.OPTIONAL, CUSTOM_FIELD.DEFAULT_VALUE, CUSTOM_FIELD.LARGE_DEFAULT_VALUE
+			, CUSTOM_FIELD_OPTION.CODE, CUSTOM_FIELD_OPTION.LABEL, CUSTOM_FIELD_OPTION.POSITION)
+			.from(CUSTOM_FIELD)
+			.leftJoin(CUSTOM_FIELD_OPTION).using(CUSTOM_FIELD.CF_ID)
+			.where(CUSTOM_FIELD.CF_ID.in(usedCufIds))
+			.fetch()
+			.forEach(r -> {
+				Long cufId = r.get(CUSTOM_FIELD.CF_ID);
+				String type = r.get(CUSTOM_FIELD.INPUT_TYPE);
+				InputType inputType = EnumUtils.getEnum(InputType.class, type);
+				switch (inputType) {
+					case RICH_TEXT:
+						CustomFieldModel richTextCustomFieldModel = getRichTextCustomFieldModel(r);
+						cufMap.put(richTextCustomFieldModel.getId(), richTextCustomFieldModel);
+						break;
+					//here is the not fun case
+					//as we have made a left join, we can have the first tuple witch need to be treated as a cuf AND an option
+					//or subsequent tuple witch must be treated only as option...
+					case DROPDOWN_LIST:
+						if (cufMap.containsKey(cufId)) {
+							SingleSelectFieldModel singleSelectFieldModel = (SingleSelectFieldModel) cufMap.get(cufId);
+							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
+						} else {
+							SingleSelectFieldModel singleSelectFieldModel = getSingleSelectFieldModel(r);
+							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
+							cufMap.put(singleSelectFieldModel.getId(), singleSelectFieldModel);
+						}
+						break;
+
+					case DATE_PICKER:
+						CustomFieldModel datePickerCustomFieldModel = getDatePickerCustomFieldModel(r);
+						cufMap.put(datePickerCustomFieldModel.getId(), datePickerCustomFieldModel);
+						break;
+
+					case TAG:
+						if (cufMap.containsKey(cufId)) {
+							MultiSelectFieldModel multiSelectFieldModel = (MultiSelectFieldModel) cufMap.get(cufId);
+							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
+						} else {
+							MultiSelectFieldModel multiSelectFieldModel = getMultiSelectFieldModel(r);
+							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
+							cufMap.put(multiSelectFieldModel.getId(), multiSelectFieldModel);
+						}
+						break;
+
+					default:
+						CustomFieldModel cufModel = getSingleValueCustomFieldModel(r);
+						cufMap.put(cufId, cufModel);
+				}
+			});
+
+		return cufMap;
+	}
+
+	private MultiSelectFieldModel getMultiSelectFieldModel(Record r) {
+		MultiSelectFieldModel multiSelectFieldModel = new MultiSelectFieldModel();
+		for (String value : r.get(CUSTOM_FIELD.DEFAULT_VALUE).split(MultiSelectField.SEPARATOR_EXPR)) {
+			multiSelectFieldModel.addDefaultValue(value);
+		}
+		return multiSelectFieldModel;
+	}
+
+	private SingleSelectFieldModel getSingleSelectFieldModel(Record r) {
+		SingleSelectFieldModel singleSelectFieldModel = new SingleSelectFieldModel();
+		initCufModel(r,singleSelectFieldModel);
+		return singleSelectFieldModel;
+	}
+
+	private CustomFieldOptionModel getCufValueOptionModel(Record r) {
+		CustomFieldOptionModel optionModel = new CustomFieldOptionModel();
+		optionModel.setCode(r.get(CUSTOM_FIELD_OPTION.CODE));
+		optionModel.setLabel(r.get(CUSTOM_FIELD_OPTION.LABEL));
+		return optionModel;
+	}
+
+	private CustomFieldModel getDatePickerCustomFieldModel(Record r) {
+		DatePickerFieldModel cufModel = new DatePickerFieldModel();
+		initCufModel(r,cufModel);
+		Locale locale = LocaleContextHolder.getLocale();
+		cufModel.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
+		cufModel.setLocale(locale.toString());
+		return cufModel;
+	}
+
+	private CustomFieldModel getRichTextCustomFieldModel(Record r) {
+		SingleValuedCustomFieldModel cufModel = new SingleValuedCustomFieldModel();
+		initCufModel(r, cufModel);
+		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.LARGE_DEFAULT_VALUE));
+		return cufModel;
+	}
+
+	private SingleValuedCustomFieldModel getSingleValueCustomFieldModel(Record r) {//take care if you change the JOOQ request, the result can become incompatible.
+		SingleValuedCustomFieldModel cufModel = new SingleValuedCustomFieldModel();
+		initCufModel(r, cufModel);
+		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
+		return cufModel;
+	}
+
+	private void initCufModel(Record r, CustomFieldModel cufModel) {
+		cufModel.setId(r.get(CUSTOM_FIELD.CF_ID));
+		cufModel.setCode(r.get(CUSTOM_FIELD.CODE));
+		cufModel.setName(r.get(CUSTOM_FIELD.NAME));
+		cufModel.setLabel(r.get(CUSTOM_FIELD.LABEL));
+		cufModel.setOptional(r.get(CUSTOM_FIELD.OPTIONAL));
+		cufModel.setDenormalized(false);
+
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(r.get(CUSTOM_FIELD.INPUT_TYPE));
+
+		cufModel.setInputType(inputTypeModel);
 	}
 
 	protected List<Long> findUsedCustomFields(List<Long> readableProjectIds) {
@@ -119,8 +244,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 	protected Map<Long, JsonInfoList> findInfoListMap(Set<Long> usedInfoListIds) {
-		return DSL.select(INFO_LIST.INFO_LIST_ID,INFO_LIST.CODE,INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
-			,INFO_LIST_ITEM.ITEM_ID,INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE)
+		return DSL.select(INFO_LIST.INFO_LIST_ID, INFO_LIST.CODE, INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
+			, INFO_LIST_ITEM.ITEM_ID, INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE)
 			.from(INFO_LIST)
 			.innerJoin(INFO_LIST_ITEM).on(INFO_LIST.INFO_LIST_ID.eq(INFO_LIST_ITEM.LIST_ID))
 			.where(INFO_LIST.INFO_LIST_ID.in(usedInfoListIds))
@@ -155,7 +280,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				infoList.setItems(jsonInfoListListEntry.getValue());
 				return infoList;
 			})
-		.collect(Collectors.toMap(JsonInfoList::getId, Function.identity()));//now put the fully hydrated infolist in a map <id,infolist>
+			.collect(Collectors.toMap(JsonInfoList::getId, Function.identity()));//now put the fully hydrated infolist in a map <id,infolist>
 	}
 
 
@@ -269,4 +394,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 	protected abstract String getLibraryPluginType();
+
+	private String getMessage(String key) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return messageSource.getMessage(key, null, locale);
+	}
 }
