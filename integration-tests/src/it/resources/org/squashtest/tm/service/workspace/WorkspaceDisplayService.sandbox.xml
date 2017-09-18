@@ -24,6 +24,45 @@
 <!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.17.0.dtd">
 <dataset>
 
+  <!-- ========================== teams ================================ -->
+
+  <CORE_PARTY  	PARTY_ID="-100"/>
+  <CORE_TEAM 		PARTY_ID="-100" 	NAME="double team"  CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+
+  <CORE_PARTY		PARTY_ID="-200"/>
+  <CORE_TEAM		PARTY_ID="-200" 	NAME="simple team" CREATED_ON="2013-03-15"    CREATED_BY="dbu"/>
+
+  <CORE_PARTY		PARTY_ID="-300"/>
+  <CORE_TEAM		PARTY_ID="-300" 	NAME="triple team" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+
+
+  <!-- ========================== users ================================= -->
+
+  <CORE_PARTY		PARTY_ID="-1"/>
+  <CORE_USER 		PARTY_ID="-1" 	LOGIN="bob"  CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+
+  <CORE_PARTY		PARTY_ID="-2"/>
+  <CORE_USER 		PARTY_ID="-2" 	LOGIN="robert" CREATED_ON="2013-03-15" CREATED_BY="dbu"/>
+
+  <CORE_PARTY		PARTY_ID="-3"/>
+  <CORE_USER 		PARTY_ID="-3" 	LOGIN="mike" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+
+  <CORE_PARTY		PARTY_ID="-4"/>
+  <CORE_USER 		PARTY_ID="-4" 	LOGIN="donald" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+
+  <!-- ======================= membership ============================== -->
+
+  <CORE_TEAM_MEMBER TEAM_ID="-200" USER_ID="-1"/>
+
+
+  <CORE_TEAM_MEMBER TEAM_ID="-100" USER_ID="-1"/>
+  <CORE_TEAM_MEMBER TEAM_ID="-100" USER_ID="-2"/>
+
+
+  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-1"/>
+  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-2"/>
+  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-3"/>
+
   <!-- ========================== infolist ================================ -->
 
   <INFO_LIST INFO_LIST_ID="-1" CODE="DEF_REQ_CAT" CREATED_BY="DBU" CREATED_ON="2010-02-01" LABEL="Req Cat" DESCRIPTION="Desc"/>
@@ -69,6 +108,15 @@
   <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="lol" POSITION="0"/>
   <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="toto" POSITION="1"/>
   <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="titi" POSITION="2"/>
+
+
+  <!-- ========================== milestones ================================ -->
+
+  <MILESTONE MILESTONE_ID="-1" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="bob" M_RANGE="GLOBAL" STATUS="PLANNED" LABEL="My milestone" END_DATE="2014-10-10"/>
+  <MILESTONE MILESTONE_ID="-2" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="bob" M_RANGE="GLOBAL" STATUS="PLANNED" LABEL="My milestone 2" END_DATE="2014-10-11"/>
+  <MILESTONE MILESTONE_ID="-3" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="bob" M_RANGE="GLOBAL" STATUS="IN_PROGRESS" LABEL="My milestone 3" END_DATE="2014-10-12"/>
+  <MILESTONE MILESTONE_ID="-4" USER_ID="-2" CREATED_ON="2014-10-10" CREATED_BY="bob" M_RANGE="GLOBAL" STATUS="LOCKED" LABEL="My milestone 4" END_DATE="2014-10-13"/>
+  <MILESTONE MILESTONE_ID="-5" USER_ID="-1" CREATED_ON="2014-10-10" CREATED_BY="bob" M_RANGE="GLOBAL" STATUS="PLANNED" LABEL="My milestone 5" END_DATE="2014-10-10"/>
 
 
   <!-- ========================== projects ================================ -->
@@ -126,44 +174,14 @@
   <CUSTOM_FIELD_BINDING CFB_ID="-3" CF_ID="-1" BOUND_ENTITY="REQUIREMENT_VERSION" POSITION="0" BOUND_PROJECT_ID="-2"/>
   <CUSTOM_FIELD_BINDING CFB_ID="-4" CF_ID="-2" BOUND_ENTITY="TEST_CASE" POSITION="0" BOUND_PROJECT_ID="-2"/>
 
-  <!-- ========================== teams ================================ -->
+  <!-- ========================== milestones bindings ================================ -->
 
-  <CORE_PARTY  	PARTY_ID="-100"/>
-  <CORE_TEAM 		PARTY_ID="-100" 	NAME="double team"  CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
-
-  <CORE_PARTY		PARTY_ID="-200"/>
-  <CORE_TEAM		PARTY_ID="-200" 	NAME="simple team" CREATED_ON="2013-03-15"    CREATED_BY="dbu"/>
-
-  <CORE_PARTY		PARTY_ID="-300"/>
-  <CORE_TEAM		PARTY_ID="-300" 	NAME="triple team" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-1"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-2"/>
+  <MILESTONE_BINDING PROJECT_ID="-1" MILESTONE_ID="-3"/>
+  <MILESTONE_BINDING PROJECT_ID="-2" MILESTONE_ID="-1"/>
 
 
-  <!-- ========================== users ================================= -->
-
-  <CORE_PARTY		PARTY_ID="-1"/>
-  <CORE_USER 		PARTY_ID="-1" 	LOGIN="bob"  CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
-
-  <CORE_PARTY		PARTY_ID="-2"/>
-  <CORE_USER 		PARTY_ID="-2" 	LOGIN="robert" CREATED_ON="2013-03-15" CREATED_BY="dbu"/>
-
-  <CORE_PARTY		PARTY_ID="-3"/>
-  <CORE_USER 		PARTY_ID="-3" 	LOGIN="mike" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
-
-  <CORE_PARTY		PARTY_ID="-4"/>
-  <CORE_USER 		PARTY_ID="-4" 	LOGIN="donald" CREATED_ON="2013-03-15"   CREATED_BY="dbu"/>
-
-  <!-- ======================= membership ============================== -->
-
-  <CORE_TEAM_MEMBER TEAM_ID="-200" USER_ID="-1"/>
-
-
-  <CORE_TEAM_MEMBER TEAM_ID="-100" USER_ID="-1"/>
-  <CORE_TEAM_MEMBER TEAM_ID="-100" USER_ID="-2"/>
-
-
-  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-1"/>
-  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-2"/>
-  <CORE_TEAM_MEMBER TEAM_ID="-300" USER_ID="-3"/>
 
 
   <!-- ========================= groups ================================== -->

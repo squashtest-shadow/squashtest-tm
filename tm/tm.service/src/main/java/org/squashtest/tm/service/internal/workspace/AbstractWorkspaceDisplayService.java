@@ -79,7 +79,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	@Override
 	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
-		//1 As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests
+		//1 As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
 		// We do that only on collaborators witch should not be too numerous versus the number of projects
 		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
 		Set<Long> usedInfoListIds = findUsedInfoList(readableProjectIds);
@@ -89,11 +89,21 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		List<Long> usedCufIds = findUsedCustomFields(readableProjectIds);
 		Map<Long, CustomFieldModel> cufMap = findCufMap(usedCufIds);
 
+		List<Long> usedMilestonesIds = findUsedMilestones(readableProjectIds);
+
 		//now we extract projects
-		List<JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap);
+		List<JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, cufMap);
 
 
 		return null;
+	}
+
+	protected List<Long> findUsedMilestones(List<Long> readableProjectIds) {
+		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
+			.from(PROJECT)
+			.naturalJoin(MILESTONE_BINDING)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
+			.fetch(MILESTONE_BINDING.MILESTONE_ID,Long.class);
 	}
 
 	protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
@@ -222,7 +232,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.fetch(CUSTOM_FIELD_BINDING.CF_ID, Long.class);
 	}
 
-	protected List<JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
+	protected List<JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, CustomFieldModel> cufMap) {
 		DSL.select()
 			.from(PROJECT)
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds));

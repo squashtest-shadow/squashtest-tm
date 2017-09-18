@@ -320,4 +320,22 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	}
 
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find milestones ids"(){
+		when:
+		def ids = testCaseWorkspaceDisplayService.findUsedMilestones(readableProjectIds)
+
+		then:
+		ids.sort() == expectdInfolistIds.sort()
+
+		where:
+		readableProjectIds 	|| expectdInfolistIds
+		[]					|| []
+		[-1L]				|| [-1L,-2L,-3L]
+		[-1L,-2L]			|| [-1L,-2L,-3L]
+		[-2L]				|| [-1L]
+	}
+
+
 }
