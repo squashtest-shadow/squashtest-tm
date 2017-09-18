@@ -275,7 +275,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@Unroll
 	def "should fetch correct SSF cuf models "(){
 		when:
-		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L, -4L, -5L])
+		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L, -4L, -5L, -6L])
 
 		then:
 		CustomFieldModelFactory.SingleSelectFieldModel customFieldModel = cufMap.get(cufId) as CustomFieldModelFactory.SingleSelectFieldModel
@@ -293,6 +293,30 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		cufId 	|| 			code  | 		label   | 			name  | defaultValue 			|	isOptionnal  | 			optionCodes							|		optionLabels							|  	expectedClass
 		-2L		||		   "LISTE"|	  "Liste Label" |		  "Liste" |				   "Option1"|			false|	["OPTION1","OPTION2","OPTION3","OPTION4"]	|	["Option1","Option2","Option3","Option4"]	|CustomFieldModelFactory.SingleSelectFieldModel.class
 		-3L		||		 "LISTE_2"|	"Liste Label 2" |		"Liste 2" |				   "Option2"|			true |	["OPTION1","OPTION2"]						|	["Option1","Option2"]						|CustomFieldModelFactory.SingleSelectFieldModel.class
+
+	}
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	@Unroll
+	def "should fetch correct MSF cuf models "(){
+		when:
+		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L, -4L, -5L, -6L])
+
+		then:
+		CustomFieldModelFactory.MultiSelectFieldModel customFieldModel = cufMap.get(cufId) as CustomFieldModelFactory.MultiSelectFieldModel
+		customFieldModel.id == cufId
+		customFieldModel.code == code
+		customFieldModel.label == label
+		customFieldModel.defaultValue.sort() as Set == defaultValue.sort() as Set
+		customFieldModel.isOptional() == isOptionnal
+		customFieldModel.class == expectedClass
+		customFieldModel.options.collect{it.code}.sort() == optionCodes.sort()
+		customFieldModel.options.collect{it.label}.sort() == optionLabels.sort()
+
+		where:
+
+		cufId 	|| 			code  | 		label   | 			name  | defaultValue 					|	isOptionnal  | 			optionCodes	|		optionLabels		|  	expectedClass
+		-6L		||		   	 "TAG"|	  	 "Tag Label"|		   "Tags" |				   	 ["lol", "titi"]|			false|			["","",""]	|	["lol","toto","titi"]	|CustomFieldModelFactory.MultiSelectFieldModel.class
 
 	}
 

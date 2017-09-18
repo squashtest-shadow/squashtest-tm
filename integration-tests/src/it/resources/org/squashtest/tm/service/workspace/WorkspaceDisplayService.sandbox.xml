@@ -65,6 +65,11 @@
   <CUSTOM_FIELD CF_ID="-4" FIELD_TYPE="RTF" NAME="Rich" CODE="RICH" LABEL="Rich Label" INPUT_TYPE="RICH_TEXT" OPTIONAL="false" LARGE_DEFAULT_VALUE="large default value"/>
   <CUSTOM_FIELD CF_ID="-5" FIELD_TYPE="CF" NAME="Date" CODE="DATE" LABEL="Date Label" INPUT_TYPE="DATE_PICKER" OPTIONAL="true" DEFAULT_VALUE="2017-09-18"/>
 
+  <CUSTOM_FIELD CF_ID="-6" FIELD_TYPE="MSF" NAME="Tags" CODE="TAG" LABEL="Tag Label" INPUT_TYPE="TAG" OPTIONAL="false" DEFAULT_VALUE="lol|titi"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="lol" POSITION="0"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="toto" POSITION="1"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="" LABEL="titi" POSITION="2"/>
+
 
   <!-- ========================== projects ================================ -->
 

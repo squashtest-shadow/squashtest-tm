@@ -155,6 +155,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private MultiSelectFieldModel getMultiSelectFieldModel(Record r) {
 		MultiSelectFieldModel multiSelectFieldModel = new MultiSelectFieldModel();
+		initCufModel(r,multiSelectFieldModel);
 		for (String value : r.get(CUSTOM_FIELD.DEFAULT_VALUE).split(MultiSelectField.SEPARATOR_EXPR)) {
 			multiSelectFieldModel.addDefaultValue(value);
 		}
