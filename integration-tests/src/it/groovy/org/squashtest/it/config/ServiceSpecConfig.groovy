@@ -54,7 +54,7 @@ excludeFilters = [
 @EnableSpringConfigured
 class ServiceSpecConfig {
 
-	
+
 	@Bean
 	@Primary
 	BugTrackersService bugTrackerService() {
@@ -65,18 +65,20 @@ class ServiceSpecConfig {
 	UserContextService userContextService(){
 		new SpringSecurityUserContextService();
 	}
-	
+
 	@Bean
 	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
 		new PropertySourcesPlaceholderConfigurer();
 	}
-	
 
 
-	
+
+
 	@Bean
 	ObjectIdentityService objectIdentityService(){
 		new ObjectIdentityServiceImpl()
 	}
-	
+
+
+
 }

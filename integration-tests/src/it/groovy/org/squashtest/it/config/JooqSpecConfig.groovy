@@ -31,13 +31,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration
 import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator
 import org.springframework.boot.autoconfigure.jooq.SpringTransactionProvider
+import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.PropertySource
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.core.env.Environment
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 import org.springframework.transaction.PlatformTransactionManager
+import org.squashtest.it.stub.messages.MessageSourceStub
 
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -51,4 +54,9 @@ import javax.sql.DataSource
 @ImportAutoConfiguration(JooqAutoConfiguration.class)
 class JooqSpecConfig {
 
+	@Primary
+	@Bean
+	MessageSource messageSource() {
+		return new MessageSourceStub()
+	}
 }

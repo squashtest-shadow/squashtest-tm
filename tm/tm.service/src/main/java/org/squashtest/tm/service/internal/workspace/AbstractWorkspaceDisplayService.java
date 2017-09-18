@@ -180,6 +180,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Locale locale = LocaleContextHolder.getLocale();
 		cufModel.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
 		cufModel.setLocale(locale.toString());
+		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
 		return cufModel;
 	}
 
