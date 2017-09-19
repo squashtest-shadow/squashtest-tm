@@ -20,9 +20,9 @@
  */
 /**
  * This file contains Hibernate named queries used by hibernate search bridges.
- * 
+ *
  * /!\ Before adding a query, check it does not exist somewhere else !
- *  
+ *
  * @author Gregory Fouquet
  */
 @NamedQueries({
@@ -34,10 +34,11 @@
 	@NamedQuery(name = "requirementVersion.countAttachments", query = "select count(att) from RequirementVersion rv join rv.attachmentList al join al.attachments att where rv.id = :id"),
 
 	// ====== TestCase queries ======
-	@NamedQuery(name = "testCase.countAttachments", query = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id"), 
+	@NamedQuery(name = "testCase.countAttachments", query = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
 
-		// ====== Execution queries ======
-		@NamedQuery(name = "execution.countAttachments", query = "select count(att) from Execution tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
+	// ====== Execution queries ======
+	// I believe that query is not used. TODO : assert whether we can remove this
+	@NamedQuery(name = "execution.countAttachments", query = "select count(att) from Execution tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
 
 })
 package org.squashtest.tm.domain.search;

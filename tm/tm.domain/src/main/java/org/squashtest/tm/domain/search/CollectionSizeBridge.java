@@ -36,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
 
+// TODO: extract the logic regarding finding and eventually managing a session(roughly the same than SessionFieldBridge)
+// here, we try to extract it from a hibernate object, but it wont work on non-proxied hibernate entities
+// the SessionFieldBridge is injected with the EntityManager via aspects and often fails to retrieve the current session, which is not much better
 public class CollectionSizeBridge implements StringBridge {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionSizeBridge.class);
@@ -128,7 +131,7 @@ public class CollectionSizeBridge implements StringBridge {
 
 
 		// method 2
-		if (hasLiveSession(hibCollection)){
+		else if (hasLiveSession(hibCollection)){
 
 			LOGGER.debug("the session is live and reusable, attempting to query the size from it.");
 
