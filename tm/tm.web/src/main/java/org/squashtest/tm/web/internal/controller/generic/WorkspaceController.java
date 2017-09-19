@@ -135,20 +135,19 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 			nodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
-			.setModel(libraries).build();
+//		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
+//			.setModel(libraries).build();
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		workspaceDisplayService().findAllLibraries(projectIds, currentUser);
-
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser);
 
 
 		model.addAttribute("rootModel", rootNodes);
 		populateModel(model, locale);
 
 		// also add meta data about projects
-		Collection<JsonProject> jsProjects = jsonProjectBuilder.getExtendedReadableProjects();
+		Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(projectIds, currentUser);
 
 		model.addAttribute("projects", jsProjects);
 
