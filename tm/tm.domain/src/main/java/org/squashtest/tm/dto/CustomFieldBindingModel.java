@@ -85,4 +85,18 @@ public class CustomFieldBindingModel {
 		this.renderingLocations = renderingLocations.clone();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		CustomFieldBindingModel that = (CustomFieldBindingModel) o;
+
+		return id != 0 && id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return (int) (id ^ (id >>> 32));
+	}
 }

@@ -1,58 +1,61 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.workspace;
 
 
 import org.apache.commons.lang3.EnumUtils;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.TableLike;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.milestone.MilestoneRange;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.dto.*;
 import org.squashtest.tm.dto.CustomFieldModelFactory.DatePickerFieldModel;
 import org.squashtest.tm.dto.CustomFieldModelFactory.SingleSelectFieldModel;
 import org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsonInfoList;
-import org.squashtest.tm.dto.json.JsonInfoListItem;
-import org.squashtest.tm.dto.json.JsonProject;
+import org.squashtest.tm.dto.json.*;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
-
-import static java.util.stream.Collectors.*;
-import static org.jooq.impl.DSL.count;
-import static org.jooq.impl.DSL.groupConcat;
-import static org.jooq.impl.DSL.selectDistinct;
-import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
-import static org.squashtest.tm.dto.CustomFieldModelFactory.*;
-import static org.squashtest.tm.dto.PermissionWithMask.*;
-import static org.squashtest.tm.dto.json.JsTreeNode.*;
-import static org.squashtest.tm.jooq.domain.Tables.*;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
+import static org.squashtest.tm.core.foundation.lang.NullFilterListCollector.toNullFilteredList;
+import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
+import static org.squashtest.tm.dto.CustomFieldModelFactory.CustomFieldOptionModel;
+import static org.squashtest.tm.dto.CustomFieldModelFactory.MultiSelectFieldModel;
+import static org.squashtest.tm.dto.PermissionWithMask.findByMask;
+import static org.squashtest.tm.dto.json.JsTreeNode.State;
+import static org.squashtest.tm.jooq.domain.Tables.*;
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {
 
@@ -90,20 +93,41 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, CustomFieldModel> cufMap = findCufMap(usedCufIds);
 
 		List<Long> usedMilestonesIds = findUsedMilestones(readableProjectIds);
+		Map<Long, JsonMilestone> milestoneMap = findJsonMilestones(usedMilestonesIds);
 
 		//now we extract projects
-		List<JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, cufMap);
+		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, cufMap, milestoneMap);
 
 
-		return null;
+		return jsonProjects.values();
+	}
+
+	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
+		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
+			, CORE_USER.LOGIN)
+			.from(MILESTONE)
+			.join(CORE_USER).on(MILESTONE.USER_ID.eq(CORE_USER.PARTY_ID))
+			.where(MILESTONE.MILESTONE_ID.in(usedMilestonesIds))
+			.fetch()
+			.stream()
+			.map(r -> {
+				String mRangeKey = r.get(MILESTONE.M_RANGE);
+				MilestoneRange milestoneRange = EnumUtils.getEnum(MilestoneRange.class, mRangeKey);
+
+				String mStatusKey = r.get(MILESTONE.STATUS);
+				MilestoneStatus milestoneStatus = EnumUtils.getEnum(MilestoneStatus.class, mStatusKey);
+
+				return new JsonMilestone(r.get(MILESTONE.MILESTONE_ID), r.get(MILESTONE.LABEL), milestoneStatus, milestoneRange, r.get(MILESTONE.END_DATE), r.get(CORE_USER.LOGIN));
+			})
+			.collect(Collectors.toMap(JsonMilestone::getId, Function.identity()));
 	}
 
 	protected List<Long> findUsedMilestones(List<Long> readableProjectIds) {
 		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
 			.from(PROJECT)
-			.naturalJoin(MILESTONE_BINDING)
+			.naturalJoin(MILESTONE_BINDING)//YEAH !!! at last one clean pair of tables on witch we can do a natural join...
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-			.fetch(MILESTONE_BINDING.MILESTONE_ID,Long.class);
+			.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
 	}
 
 	protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
@@ -165,7 +189,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private MultiSelectFieldModel getMultiSelectFieldModel(Record r) {
 		MultiSelectFieldModel multiSelectFieldModel = new MultiSelectFieldModel();
-		initCufModel(r,multiSelectFieldModel);
+		initCufModel(r, multiSelectFieldModel);
 		for (String value : r.get(CUSTOM_FIELD.DEFAULT_VALUE).split(MultiSelectField.SEPARATOR_EXPR)) {
 			multiSelectFieldModel.addDefaultValue(value);
 		}
@@ -174,7 +198,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private SingleSelectFieldModel getSingleSelectFieldModel(Record r) {
 		SingleSelectFieldModel singleSelectFieldModel = new SingleSelectFieldModel();
-		initCufModel(r,singleSelectFieldModel);
+		initCufModel(r, singleSelectFieldModel);
 		singleSelectFieldModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
 		return singleSelectFieldModel;
 	}
@@ -188,7 +212,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private CustomFieldModel getDatePickerCustomFieldModel(Record r) {
 		DatePickerFieldModel cufModel = new DatePickerFieldModel();
-		initCufModel(r,cufModel);
+		initCufModel(r, cufModel);
 		Locale locale = LocaleContextHolder.getLocale();
 		cufModel.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
 		cufModel.setLocale(locale.toString());
@@ -232,13 +256,114 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.fetch(CUSTOM_FIELD_BINDING.CF_ID, Long.class);
 	}
 
-	protected List<JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, CustomFieldModel> cufMap) {
-		DSL.select()
+	//here come the fun part. Fetch project with custom field bindings and infolist ids in a first request -> hydrate with the already fetched models
+	//milestone are fetched in a second request witch will be avoided if milestone are not activated on instance.
+	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, CustomFieldModel> cufMap, Map<Long, JsonMilestone> milestoneMap) {
+
+		Map<Long, JsonProject> jsonProjectMap = DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
 			.from(PROJECT)
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds));
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.orderBy(PROJECT.PROJECT_ID)
+			.stream()
+			.map(r -> {
+				Long projectId = r.get(PROJECT.PROJECT_ID);
+				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
+				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
+				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
+				return jsonProject;
 
+			}).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
 
-		return null;
+		//Now we retrieve the bindings for projects, injecting cuf inside
+		Map<Long, Map<String, List<CustomFieldBindingModel>>> bindingMap = DSL
+			.select(CUSTOM_FIELD_BINDING.CFB_ID, CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID, CUSTOM_FIELD_BINDING.POSITION, CUSTOM_FIELD_BINDING.BOUND_ENTITY, CUSTOM_FIELD_BINDING.CF_ID
+				, CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION)
+			.from(CUSTOM_FIELD_BINDING)
+			.leftJoin(CUSTOM_FIELD_RENDERING_LOCATION).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_RENDERING_LOCATION.CFB_ID))
+			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(readableProjectIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy(r -> {//creating a map <CustomFieldBindingModel, List<RenderingLocationModel>>
+					//here we create custom field binding model
+				    //double created by joins are filtered by the grouping by as we have implemented equals on id attribute
+					CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
+					customFieldBindingModel.setId(r.get(CUSTOM_FIELD_BINDING.CFB_ID));
+					customFieldBindingModel.setProjectId(r.get(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID));
+					customFieldBindingModel.setPosition(r.get(CUSTOM_FIELD_BINDING.POSITION));
+					String boundEntityKey = r.get(CUSTOM_FIELD_BINDING.BOUND_ENTITY);
+					BindableEntity bindableEntity = EnumUtils.getEnum(BindableEntity.class, boundEntityKey);
+					BindableEntityModel bindableEntityModel = new BindableEntityModel();
+					bindableEntityModel.setEnumName(boundEntityKey);
+					bindableEntityModel.setFriendlyName(getMessage(bindableEntity.getI18nKey()));
+					customFieldBindingModel.setBoundEntity(bindableEntityModel);
+					customFieldBindingModel.setCustomField(cufMap.get(r.get(CUSTOM_FIELD_BINDING.CF_ID)));
+					return customFieldBindingModel;
+				}, mapping(r -> {
+					String renderingLocationKey = r.get(CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION);
+					if (renderingLocationKey == null) {
+						return null;//it's ok, we collect with a null filtering collector
+					}
+					RenderingLocationModel renderingLocationModel = new RenderingLocationModel();
+					RenderingLocation renderingLocation = EnumUtils.getEnum(RenderingLocation.class, renderingLocationKey);
+					renderingLocationModel.setEnumName(renderingLocationKey);
+					renderingLocationModel.setFriendlyName(getMessage(renderingLocation.getI18nKey()));
+					return renderingLocationModel;
+				}, toNullFilteredList())
+			))
+			.entrySet().stream()
+			.map(entry -> { //we inject the rendering location directly inside the binding model
+				CustomFieldBindingModel bindingModel = entry.getKey();
+				List<RenderingLocationModel> renderingLocationModels = entry.getValue();
+				bindingModel.setRenderingLocations(renderingLocationModels.toArray(new RenderingLocationModel[]{}));
+				return bindingModel;
+			}) //so we have now just a list of CustomFieldBindingModel
+			.collect(
+				groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
+					//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
+					groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
+					() ->{
+						//here we create the empty list, initial step of the reducing operation
+						HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
+						EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
+						bindableEntities.forEach(bindableEntity -> {
+							map.put(bindableEntity.name(), new ArrayList<>());
+						});
+						return map;
+					},
+					mapping(
+						Function.identity(),
+						toList()
+					))
+			));
+
+		//We find the milestone bindings and provide projects with them
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
+			.from(MILESTONE_BINDING)
+			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
+				mapping((r) -> {
+					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
+					return milestoneMap.get(milestoneId);
+				}, toList())
+			));
+
+		//We provide the projects with their bindings and milestones
+		jsonProjectMap.forEach((projectId, jsonProject) -> {
+			if(bindingMap.containsKey(projectId)){
+				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = bindingMap.get(projectId);
+				jsonProject.setCustomFieldBindings(bindingsByEntityType);
+			}
+
+			if(milestoneByProjectId.containsKey(projectId)){
+				List<JsonMilestone> jsonMilestone = milestoneByProjectId.get(projectId);
+				jsonProject.setMilestones(new HashSet<>(jsonMilestone));
+			}
+		});
+
+		return jsonProjectMap;
 	}
 
 	protected Set<Long> findUsedInfoList(List<Long> readableProjectIds) {
@@ -412,4 +537,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Locale locale = LocaleContextHolder.getLocale();
 		return messageSource.getMessage(key, null, locale);
 	}
+
+
 }

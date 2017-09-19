@@ -23,6 +23,7 @@ package org.squashtest.tm.dto.json;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.dto.CustomFieldBindingModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,16 @@ public class JsonProject {
 		res.uri = "/projects/" + res.id;
 		res.name = project.getName();
 		return res;
+	}
+
+	private JsonProject(){
+		super();
+	}
+
+	public JsonProject (Long id, String name) {
+		this.id = id;
+		this.uri = "/projects/" + id;
+		this.name = name;
 	}
 
 
@@ -101,6 +112,17 @@ public class JsonProject {
 
 	public void setCustomFieldBindings(Map<String, List<CustomFieldBindingModel>> customFieldBindings) {
 		this.customFieldBindings = customFieldBindings;
+	}
+
+	public void addCustomFieldBindingModel (CustomFieldBindingModel customFieldBindingModel){
+		String boundEntity = customFieldBindingModel.getBoundEntity().getEnumName();
+		if(customFieldBindings.containsKey(boundEntity)){
+			customFieldBindings.get(boundEntity).add(customFieldBindingModel);
+		} else {
+			ArrayList<CustomFieldBindingModel> models = new ArrayList<>();
+			models.add(customFieldBindingModel);
+			customFieldBindings.put(boundEntity, models);
+		}
 	}
 
 	public void setRequirementCategories(JsonInfoList requirementCategories) {

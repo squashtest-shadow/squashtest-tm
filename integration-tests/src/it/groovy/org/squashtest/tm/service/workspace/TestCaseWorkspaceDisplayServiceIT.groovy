@@ -23,20 +23,20 @@ package org.squashtest.tm.service.workspace
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.dto.CustomFieldBindingModel
 import org.squashtest.tm.dto.CustomFieldModelFactory
 import org.squashtest.tm.dto.PermissionWithMask
 import org.squashtest.tm.dto.UserDto
 import org.squashtest.tm.dto.json.JsTreeNode
 import org.squashtest.tm.dto.json.JsonInfoList
+import org.squashtest.tm.dto.json.JsonMilestone
+import org.squashtest.tm.dto.json.JsonProject
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-
-import static org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel.*
-import static org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel.*
 
 @UnitilsSupport
 @Transactional
@@ -227,9 +227,9 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		where:
 		readableProjectIds 	|| expectdInfolistIds
 		[]					|| []
-		[-1L]				|| [-1L]
-		[-1L,-2L]			|| [-1L,-2L]
-		[-1L,-2L,-3L,-4L]	|| [-1L,-2L]
+		[-1L]				|| [-1L,-3L]
+		[-1L,-2L]			|| [-1L,-2L,-3L]
+		[-1L,-2L,-3L,-4L]	|| [-1L,-2L,-3L]
 	}
 
 
@@ -297,7 +297,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	@Unroll
 	def "should fetch correct MSF cuf models "(){
 		when:
 		def cufMap = testCaseWorkspaceDisplayService.findCufMap([-1L, -2L, -3L, -4L, -5L, -6L])
@@ -337,5 +336,68 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		[-2L]				|| [-1L]
 	}
 
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find milestones models"(){
+		given:
+		List<Long> milestoneIds = [-1L,-2L,-3L,-4L]
+
+		when:
+		def milestoneModels = testCaseWorkspaceDisplayService.findJsonMilestones(milestoneIds)
+
+		then:
+		milestoneModels.size() == 4
+		def milestone1 = milestoneModels.get(-1L)
+		milestone1.getId() == -1L
+		milestone1.getLabel() == "My milestone"
+		!milestone1.canEdit
+		!milestone1.canCreateDelete
+		milestone1.getOwnerLogin() == "bob"
+
+		def milestone3 = milestoneModels.get(-3L)
+		milestone3.getId() == -3L
+		milestone3.getLabel() == "My milestone 3"
+		milestone3.canEdit
+		milestone3.canCreateDelete
+		milestone3.getOwnerLogin() == "bob"
+	}
+
+	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find projects models"(){
+		given :
+		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+
+		when:
+		def jsonProjects = testCaseWorkspaceDisplayService.findAllProjects([-1L, -2L, -3L, -4L], user)
+
+		then:
+		jsonProjects.size() == 3
+		jsonProjects.collect{it.name}.sort() == ["bar","baz","foo"]
+
+		def jsonProject1 = jsonProjects.getAt(0)
+		jsonProject1.getId() == -1L
+		jsonProject1.getName().equals("foo")
+		jsonProject1.getRequirementCategories().id == -1L
+		jsonProject1.getTestCaseNatures().id == -2L
+		jsonProject1.getTestCaseTypes().id == -4L
+
+		def customFieldBindings = jsonProject1.getCustomFieldBindings()
+		customFieldBindings.size() == 8
+		def customFieldBindingModels = customFieldBindings.get("REQUIREMENT_VERSION")
+		customFieldBindingModels.size() == 2
+		customFieldBindingModels.collect{it.id}.sort() == [-3L,-2L]
+		customFieldBindingModels.collect{it.customField.id}.sort() == [-3L,-1L]
+		customFieldBindingModels.collect{it.customField.name}.sort() == ["Liste 2","Lot"]
+
+		def customFieldBindingModels2 = customFieldBindings.get("TEST_STEP")
+		customFieldBindingModels2.size() == 2
+		customFieldBindingModels2.collect{it.customField.id}.sort() == [-3L,-1L]
+		def customFieldBindingModel = customFieldBindingModels2.get(0)
+		customFieldBindingModel.getRenderingLocations().size() == 2
+		customFieldBindingModel.getRenderingLocations().collect{it.enumName}.sort() == ["STEP_TABLE","TEST_PLAN"]
+
+		def jsonMilestones = jsonProject1.getMilestones()
+		jsonMilestones.size() == 3
+		jsonMilestones.collect{it.label}.sort() == ["My milestone","My milestone 2", "My milestone 3"]
+	}
 
 }
