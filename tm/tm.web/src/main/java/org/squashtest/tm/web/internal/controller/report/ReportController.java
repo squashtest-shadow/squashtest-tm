@@ -63,7 +63,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
-import org.squashtest.tm.web.internal.model.jquery.FilterModel;
+import org.squashtest.tm.dto.FilterModel;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;

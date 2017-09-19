@@ -36,7 +36,7 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
-import org.squashtest.tm.web.internal.model.jquery.FilterModel;
+import org.squashtest.tm.dto.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 import javax.servlet.ServletContext;

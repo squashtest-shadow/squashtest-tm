@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.web.internal.model.jquery.FilterModel;
+import org.squashtest.tm.dto.FilterModel;
 
 /*
  *
