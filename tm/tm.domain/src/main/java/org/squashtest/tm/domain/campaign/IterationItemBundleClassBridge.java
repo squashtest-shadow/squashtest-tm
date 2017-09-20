@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testcase.TestCase;
 
-import java.lang.reflect.Constructor;
 
 /**
  * <p>This "bridge" actually serve several fields, most notably those of the referenced test case. Indeed when @IndexEmbedding
@@ -81,8 +80,8 @@ public class IterationItemBundleClassBridge implements FieldBridge{
 
 		// note : not indexing testcase id as a LongField because result is weird
 		Field tcId = new StringField(FIELD_TC_ID, tc.getId().toString(), Field.Store.YES);
-		Field tcName = new StringField(FIELD_TC_NAME, tc.getName(), Field.Store.YES);
-		Field tcRef = new StringField(FIELD_TC_REFERENCE, tc.getReference(), Field.Store.YES);
+		Field tcName = new StringField(FIELD_TC_NAME, tc.getName().toLowerCase(), Field.Store.YES);
+		Field tcRef = new StringField(FIELD_TC_REFERENCE, tc.getReference().toLowerCase(), Field.Store.YES);
 
 		document.add(tcId);
 		document.add(tcName);

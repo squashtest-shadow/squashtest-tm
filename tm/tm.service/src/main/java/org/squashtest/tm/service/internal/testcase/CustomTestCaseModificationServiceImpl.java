@@ -98,6 +98,8 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -171,8 +173,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
             TestCase testCase = testCaseDao.findById(testCaseId);
             testCaseManagementService.renameNode(testCaseId, newName);
+            
             // [Issue 6337] sorry ma, they forced me to
             reindexItpisReferencingTestCase(testCase);
+    		
+    		// Issue #6776 : it seems that the more we fix it the more we break it...
+    		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));       
 	}
 
 	@Override
@@ -180,18 +186,20 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void changeReference(long testCaseId, String reference) {
             TestCase testCase = testCaseDao.findById(testCaseId);
             testCase.setReference(reference);
+            
             // [Issue 6337] sorry ma, they forced me to
             reindexItpisReferencingTestCase(testCase);
+    		
+    		// Issue #6776 : it seems that the more we fix it the more we break it...
+    		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));       
 	}
         
         @Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void changeImportance(long testCaseId, TestCaseImportance importance){
             TestCase testCase = testCaseDao.findById(testCaseId);
-            testCase.setImportance(importance);
-            // [Issue 6337] sorry ma, they forced me to
-            reindexItpisReferencingTestCase(testCase);          
-        }
+            testCase.setImportance(importance);   
+    }
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
