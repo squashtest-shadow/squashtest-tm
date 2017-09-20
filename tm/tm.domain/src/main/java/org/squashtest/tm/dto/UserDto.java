@@ -60,6 +60,9 @@ public class UserDto {
 		this.teamIds = teamIds;
 	}
 
+	/*
+	 * Give the list of of party ids for this user, including it's own id and teams ids
+	 */
 	public List<Long> getPartyIds(){
 		List<Long> partyIds = new ArrayList<>(teamIds);
 		partyIds.add(userId);

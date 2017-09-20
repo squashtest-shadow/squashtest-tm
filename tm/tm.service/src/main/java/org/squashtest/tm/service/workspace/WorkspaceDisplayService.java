@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.workspace;
+import org.squashtest.tm.dto.FilterModel;
 import org.squashtest.tm.dto.UserDto;
 import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.dto.json.JsonProject;
@@ -37,5 +38,7 @@ public interface WorkspaceDisplayService {
 	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
+
+	FilterModel findFilterModel();
 
 }

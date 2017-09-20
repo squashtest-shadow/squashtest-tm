@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.workspace;
 
@@ -41,6 +41,8 @@ import org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldMode
 import org.squashtest.tm.dto.json.*;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -67,6 +69,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	@Inject
 	private CustomProjectModificationService projectService;
+
+	@Inject
+	private UserAccountService userAccountService;
+
+	@Inject
+	protected ProjectFinder projectFinder;
 
 	@Override
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
@@ -100,6 +108,52 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 
 		return jsonProjects.values();
+	}
+
+	@Override
+	public FilterModel findFilterModel() {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
+		return doFindFilterModel(currentUser, projectIds);
+	}
+
+	protected FilterModel doFindFilterModel(UserDto currentUser, List<Long> projectIds) {
+		Map<FilterModel, List<Long>> filterModels = DSL.select(PROJECT_FILTER.PROJECT_FILTER_ID, PROJECT_FILTER.ACTIVATED
+			, PROJECT_FILTER_ENTRY.PROJECT_ID)
+			.from(PROJECT_FILTER)
+			.join(PROJECT_FILTER_ENTRY).on(PROJECT_FILTER.PROJECT_FILTER_ID.eq(PROJECT_FILTER_ENTRY.FILTER_ID))
+			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
+			.fetch()
+			.stream()
+			.collect(groupingBy((r) -> {
+				FilterModel filterModel = new FilterModel();
+				filterModel.setId(r.get(PROJECT_FILTER.PROJECT_FILTER_ID));
+				filterModel.setEnabled(r.get(PROJECT_FILTER.ACTIVATED));
+				return filterModel;
+			}, mapping((r) -> r.get(PROJECT_FILTER_ENTRY.PROJECT_ID), toList())));
+
+		//for now, an user can only have one filter so we can get the first or default model if the user have no filter
+		FilterModel filterModel;
+		List<Long> selectedProjectIds;
+		if (filterModels.size() == 0) {
+			filterModel = new FilterModel();
+			filterModel.setEnabled(false);
+			selectedProjectIds = projectIds;
+		} else {
+			filterModel = filterModels.keySet().iterator().next();
+			selectedProjectIds = filterModels.get(filterModel);
+		}
+
+		//fetch the necessary data for all readable projects
+		DSL.select(PROJECT.PROJECT_ID, PROJECT.PROJECT_TYPE, PROJECT.NAME, PROJECT.LABEL)
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(projectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.fetch()
+			.forEach(r -> {
+				boolean selected = selectedProjectIds.contains(r.get(PROJECT.PROJECT_ID));
+				filterModel.addProject(r.get(PROJECT.PROJECT_ID), r.get(PROJECT.NAME), selected, r.get(PROJECT.LABEL));
+			});
+		return filterModel;
 	}
 
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
@@ -286,7 +340,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.stream()
 			.collect(groupingBy(r -> {//creating a map <CustomFieldBindingModel, List<RenderingLocationModel>>
 					//here we create custom field binding model
-				    //double created by joins are filtered by the grouping by as we have implemented equals on id attribute
+					//double created by joins are filtered by the grouping by as we have implemented equals on id attribute
 					CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
 					customFieldBindingModel.setId(r.get(CUSTOM_FIELD_BINDING.CFB_ID));
 					customFieldBindingModel.setProjectId(r.get(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID));
@@ -322,20 +376,20 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
 					//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
 					groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
-					() ->{
-						//here we create the empty list, initial step of the reducing operation
-						HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
-						EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
-						bindableEntities.forEach(bindableEntity -> {
-							map.put(bindableEntity.name(), new ArrayList<>());
-						});
-						return map;
-					},
-					mapping(
-						Function.identity(),
-						toList()
-					))
-			));
+						() -> {
+							//here we create the empty list, initial step of the reducing operation
+							HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
+							EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
+							bindableEntities.forEach(bindableEntity -> {
+								map.put(bindableEntity.name(), new ArrayList<>());
+							});
+							return map;
+						},
+						mapping(
+							Function.identity(),
+							toList()
+						))
+				));
 
 		//We find the milestone bindings and provide projects with them
 		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
@@ -352,12 +406,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		//We provide the projects with their bindings and milestones
 		jsonProjectMap.forEach((projectId, jsonProject) -> {
-			if(bindingMap.containsKey(projectId)){
+			if (bindingMap.containsKey(projectId)) {
 				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = bindingMap.get(projectId);
 				jsonProject.setCustomFieldBindings(bindingsByEntityType);
 			}
 
-			if(milestoneByProjectId.containsKey(projectId)){
+			if (milestoneByProjectId.containsKey(projectId)) {
 				List<JsonMilestone> jsonMilestone = milestoneByProjectId.get(projectId);
 				jsonProject.setMilestones(new HashSet<>(jsonMilestone));
 			}

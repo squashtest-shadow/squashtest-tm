@@ -40,6 +40,8 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 public final class FilterModel {
 	private List<Object[]> projectData = new ArrayList<>();
 	private boolean enabled;
+	//used only for equals method...
+	private Long id;
 
 	public FilterModel(){
 		super();
@@ -88,8 +90,35 @@ public final class FilterModel {
 	public void setEnabled(boolean activated) {
 		this.enabled = activated;
 	}
+
 	public void addProject(long id, String name, String label) {
 		projectData.add(new Object[] {id, name, false, label});
 	}
 
+	public void addProject(long id, String name, boolean selected, String label) {
+		projectData.add(new Object[] {id, name, selected, label});
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		FilterModel that = (FilterModel) o;
+
+		return id != null && id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
 }
