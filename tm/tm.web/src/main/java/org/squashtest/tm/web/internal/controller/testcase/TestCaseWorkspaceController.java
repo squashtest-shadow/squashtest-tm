@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.dto.json.JsTreeNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService;
 import org.squashtest.tm.service.library.WorkspaceService;
@@ -33,11 +34,16 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.rest.RestLibrary;
+import org.squashtest.tm.web.internal.model.rest.RestProject;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Controller
 @RequestMapping("/test-case-workspace")
@@ -80,15 +86,26 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
-		Collections.sort(libraries, new Comparator<TestCaseLibrary>() {
-			@Override
-			public int compare(TestCaseLibrary o1, TestCaseLibrary o2) {
-				String name1 = o1.getProject().getName();
-				String name2 = o2.getProject().getName();
-				return  name1.compareTo(name2);
-			}
-		});
+		//Degenerated code
+		//Client side needs the editable libraries in a different shape. the sad part is that libraries are already in model with all needed information
+		//No time to find and refactor HTML and JS that use that, and maybe it can't be done
+		//So i just reshape data without refetching in database like it was done previously, witch is a pain with just Objects :-(
+		List<JsTreeNode> jsTreeNodes = (List<JsTreeNode>) model.asMap().get("rootModel");//NOSONAR it's should be safe, we just created that in WorkspaceController
+		List<RestLibrary> libraries = jsTreeNodes.stream()
+			.filter(jsTreeNode -> {
+				Object editable = jsTreeNode.getAttr().get("editable");
+				return Objects.nonNull(editable) && Objects.equals(editable.toString(), "true");
+			})
+			.sorted(Comparator.comparing(JsTreeNode::getTitle))
+			.map(jsTreeNode -> {
+				RestLibrary restLibrary = new RestLibrary();
+				restLibrary.setId(Long.parseLong(jsTreeNode.getAttr().get("resId").toString()));
+				RestProject restProject = new RestProject();
+				restProject.setId(Long.parseLong(jsTreeNode.getAttr().get("resId").toString()));
+				restProject.setName(jsTreeNode.getTitle());
+				restLibrary.setProject(restProject);
+				return restLibrary;
+			}).collect(toList());
 		model.addAttribute("editableLibraries", libraries);
 	}
 
