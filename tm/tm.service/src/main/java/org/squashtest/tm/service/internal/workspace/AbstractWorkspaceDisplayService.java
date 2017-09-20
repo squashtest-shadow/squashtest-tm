@@ -410,6 +410,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 						jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
 						jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals("SYS"));
 						jsonInfoListItem.setDenormalized(false);
+						jsonInfoListItem.setFriendlyLabel(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale()));
+						jsonInfoListItem.setUri("todo");
 						return jsonInfoListItem;
 					},
 					toList()
