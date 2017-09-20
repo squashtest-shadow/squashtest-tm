@@ -184,6 +184,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 		defaultConfiguration.set(connectionProvider);
 		defaultConfiguration.set(transactionProvider);
 		defaultConfiguration.set(defaultExecuteListenerProvider);
+		//no need to render schema, squash tm should always be on default schema
 		defaultConfiguration.settings().withRenderCatalog(false);
 		defaultConfiguration.settings().withRenderSchema(false);
 		switch (dialect) {
@@ -194,7 +195,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 				defaultConfiguration.settings().setRenderNameStyle(RenderNameStyle.LOWER); //postgres names are all lower case
 				break;
 			default:
-				throw new IllegalArgumentException("Invalid JOOQ dialect. use H2, MYSQL or POSTGRES ");
+				throw new IllegalArgumentException("Invalid jOOQ dialect. Use H2, MYSQL or POSTGRES ");
 		}
 		return defaultConfiguration;
 	}

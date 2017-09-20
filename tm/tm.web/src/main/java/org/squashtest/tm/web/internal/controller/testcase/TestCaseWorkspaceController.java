@@ -90,7 +90,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		//Client side needs the editable libraries in a different shape. the sad part is that libraries are already in model with all needed information
 		//No time to find and refactor HTML and JS that use that, and maybe it can't be done
 		//So i just reshape data without refetching in database like it was done previously, witch is a pain with just Objects :-(
-		List<JsTreeNode> jsTreeNodes = (List<JsTreeNode>) model.asMap().get("rootModel");//NOSONAR it's should be safe, we just created that in WorkspaceController
+		Collection<JsTreeNode> jsTreeNodes = (Collection<JsTreeNode>) model.asMap().get("rootModel");//NOSONAR it's should be safe, we just created that in WorkspaceController
 		List<RestLibrary> libraries = jsTreeNodes.stream()
 			.filter(jsTreeNode -> {
 				Object editable = jsTreeNode.getAttr().get("editable");
