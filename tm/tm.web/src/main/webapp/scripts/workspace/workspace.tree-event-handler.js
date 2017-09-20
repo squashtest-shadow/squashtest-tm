@@ -176,13 +176,13 @@ define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 		function updateTreeStatuses(evt) {
 			var selected = self.getTree().get_selected().treeNode();
 			var nodesToUpdate = new Set();
-			var parent;
+			var nodeToUpdate;
 			selected.each(function () {
-				parent = $(this).treeNode().getParent().getParent();
+				nodeToUpdate = $(this).treeNode();
 				if (this.getAttribute('restype') === "test-suites") {
-					parent = parent.getParent();
+					nodeToUpdate = nodeToUpdate.getParent();
 				}
-				nodesToUpdate.add(parent);
+				nodesToUpdate.add(nodeToUpdate);
 			});
 			nodesToUpdate.forEach(function(value){
 				value.refresh();
@@ -190,8 +190,7 @@ define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 		}
 
 		eventBus.on('iteration.new-test-suite', updateTreeStatuses);
-		eventBus.on('iteration.added-or-deleted', updateTreeStatuses);
-		eventBus.on('iteration.execution-status-modified', updateTreeStatuses);
+		eventBus.on('iteration.itpi-execution-status-modified', updateTreeStatuses);
 		eventBus.on('test-suite.execution-status-modified', updateTreeStatuses);
 
 	}

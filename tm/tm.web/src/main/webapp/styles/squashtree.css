@@ -76,63 +76,11 @@ li[rel="test-case"] > a > .jstree-icon{
 @import url("testCaseTreeIcons.css");
 
 li[rel="campaign"] > a > .jstree-icon{
-	width: 32px;
-	background-position: left, right;
 	background-image: url("../images/Icon_Tree_Campaign.png");  /** sprite-ref: sprites-icons; */
 }
 
-li[rel="campaign"][executionstatus="SUCCESS"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_Green.png"); /** sprite-ref: sprites-icons; */
-
-}
-
-li[rel="campaign"][executionstatus="UNTESTABLE"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_White.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="campaign"][executionstatus="BLOCKED"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_Yellow.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="campaign"][executionstatus="FAILURE"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_Red.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="campaign"][executionstatus="RUNNING"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_Blue.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="campaign"][executionstatus="READY"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Campaign.png"), url("../images/Icon_Grey.png"); /** sprite-ref: sprites-icons; */
-}
-
 li[rel="iteration"] > a > .jstree-icon {
-	width: 32px;
-	background-position: left, right;
-}
-
-li[rel="iteration"][executionstatus="SUCCESS"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_Green.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="iteration"][executionstatus="UNTESTABLE"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_White.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="iteration"][executionstatus="BLOCKED"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_Yellow.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="iteration"][executionstatus="FAILURE"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_Red.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="iteration"][executionstatus="RUNNING"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_Blue.png"); /** sprite-ref: sprites-icons; */
-}
-
-li[rel="iteration"][executionstatus="READY"] > a > .jstree-icon {
-	background-image: url("../images/Icon_Tree_Iteration.png"), url("../images/Icon_Grey.png"); /** sprite-ref: sprites-icons; */
+	background-image: url("../images/Icon_Tree_Iteration.png")
 }
 
 li[rel="test-suite"] > a > .jstree-icon{

@@ -124,7 +124,6 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 
 			dialog.on('formdialogadd-close', function () {
 				postNode(dialog, tree).then(function () {
-					eventBus.trigger('iteration.added-or-deleted');
 					dialog.formDialog('close');
 				});
 			});
@@ -134,7 +133,6 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 					var cnt = dialog.formDialog('option', 'itercount');
 					dialog.formDialog('option', 'itercount', (cnt + 1));
 					dialog.formDialog('cleanup');
-					eventBus.trigger('iteration.added-or-deleted');
 				});
 			});
 

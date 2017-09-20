@@ -55,23 +55,10 @@ import org.squashtest.tm.exception.DuplicateNameException;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder, HasExecutionStatus {
+public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder{
 
 
 	public static final int MAX_REF_SIZE = 50;
-	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-
-	static {
-		Set<ExecutionStatus> set = new HashSet<>();
-		set.add(ExecutionStatus.SUCCESS);
-		set.add(ExecutionStatus.BLOCKED);
-		set.add(ExecutionStatus.FAILURE);
-		set.add(ExecutionStatus.RUNNING);
-		set.add(ExecutionStatus.READY);
-		set.add(ExecutionStatus.UNTESTABLE);
-		set.add(ExecutionStatus.SETTLED);
-		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
-	}
 
 	@Embedded
 	@Valid
@@ -105,10 +92,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Column(name = "CAMPAIGN_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
-	private CampaignStatus status = CampaignStatus.WORK_IN_PROGRESS;
-
-	@Enumerated(EnumType.STRING)
-	private ExecutionStatus executionStatus = ExecutionStatus.READY;
+	private CampaignStatus status = CampaignStatus.PLANNED;
 
 	public Campaign() {
 		super();
@@ -178,19 +162,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		this.status = status;
 	}
 
-	@Override
-	public ExecutionStatus getExecutionStatus() {
-		return executionStatus;
-	}
 
-	public void setExecutionStatus(ExecutionStatus executionStatus) {
-		this.executionStatus = executionStatus;
-	}
-
-	@Override
-	public Set<ExecutionStatus> getLegalStatusSet() {
-		return LEGAL_EXEC_STATUS;
-	}
 
 	public void setActualStartAuto(boolean actualStartAuto) {
 		actualPeriod.setActualStartAuto(actualStartAuto);

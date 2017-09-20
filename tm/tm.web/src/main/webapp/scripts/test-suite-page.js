@@ -57,7 +57,7 @@ require(["common"], function () {
 						var executionStatusEditable = $("#test-suite-execution-status");
 						executionStatusEditable.html(statusfactory.translate(value));
 
-						eventBus.trigger('test-suite.execution-status-modified', {data: config});
+						eventBus.trigger('test-suite.execution-status-modified');
 					});
 					$("#general-information-panel").setAttribute
 					general.refresh();

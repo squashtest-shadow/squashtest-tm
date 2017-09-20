@@ -216,10 +216,6 @@ define(['jquery', 'underscore', "workspace.event-bus", 'jquery.squash.formdialog
 
 			var xhrs = this.getConfirmXhr(nodes);
 
-			if (nodes[0].getAttribute("restype") === "iterations") {
-				eventBus.trigger('iteration.added-or-deleted');
-			}
-
 			this.smartAjax(xhrs, this.deletionSuccess);
 
 		}

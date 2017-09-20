@@ -59,6 +59,7 @@ import java.util.Locale;
 @Component
 @Scope("prototype")
 public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
+
 	protected InternationalizationHelper internationalizationHelper;
 
 	@Inject
@@ -83,13 +84,15 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		Locale locale = LocaleContextHolder.getLocale();
 		String localizedStatus = internationalizationHelper.internationalize(status, locale);
 		String[] args = {localizedStatus};
-		String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
-		String description = "";
-		if (!model.getTestPlan().isEmpty()) {
-			description = model.getTestPlan().get(0).getReferencedTestCase().getDescription();
+		String tooltip = internationalizationHelper.getMessage("label.tree.testSuite.tooltip", args, status, locale);
+		String description;
+		try {
+			description = model.getFirstPlannedTestCase().getDescription();
 			if (description.length() > 30) {
 				description = description.substring(0, 30);
 			}
+		} catch (Exception e) {
+			description = "";
 		}
 		node.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
 

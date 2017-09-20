@@ -24,7 +24,6 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,8 +44,6 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -77,7 +74,6 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
@@ -102,9 +98,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private ExecutionDao executionDao;
-
-	@Inject
-	private UserDao userDao;
 
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
@@ -134,9 +127,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ExecutionProcessingService executionProcessingService;
 
 	@Inject
-	private IterationModificationService iterationModificationService;
-
-	@Inject
 	private MilestoneMembershipFinder milestoneService;
 
 	@Inject
@@ -145,12 +135,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private Provider<TreeNodeCopier> treeNodeCopierFactory;
-
-	@Inject
-	private UserContextService userContextService;
-
-	@Inject
-	private CustomCampaignModificationService customCampaignModificationService;
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
@@ -172,7 +156,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject());
-		customCampaignModificationService.updateExecutionStatus(campaignId);
 		return campaign.getIterations().size() - 1;
 	}
 
@@ -351,18 +334,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		Execution execution = createExec(item);
-		ExecutionStatus formerITPIExecutionStatus = item.getExecutionStatus();
 		item.addExecution(execution);
 
 		//[issue 6787] if we execute an ITPI with no test step, the execution and ITPI must have a date and a user
 		if (execution.getSteps().isEmpty()) {
 			executionProcessingService.updateExecutionMetadata(execution);
-		}
-
-		ExecutionStatus newITPIExecutionStatus = testPlanDao.findById(item.getId()).getExecutionStatus();
-
-		if (!formerITPIExecutionStatus.equals(newITPIExecutionStatus)) {
-			updateExecutionStatus(item.getIteration().getId());
 		}
 
 		for (TestSuite testSuite : item.getTestSuites()) {
@@ -382,9 +358,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		//[issue 6787] the execution and ITPI must have a date and a user
 		executionProcessingService.updateExecutionMetadata(execution);
-
-		//the itpi has a new status, thus we must update the iteration status
-		updateExecutionStatus(item.getIteration().getId());
 
 		operationsAfterAddingExec(item, execution);
 	}
@@ -491,20 +464,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		itpi.addExecutionAtPos(execution, order);
 		operationsAfterAddingExec(itpi, execution);
 		return execution;
-	}
-
-	@Override
-	public void updateExecutionStatus(Long id) {
-		Iteration iteration = iterationDao.findById(id);
-		ExecutionStatusReport report = iterationDao.getStatusReport(id);
-		ExecutionStatus FormerExecutionStatus = iteration.getExecutionStatus();
-		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
-
-		//if the iteration status changed, we modify it, and we update the campaign status
-		if (FormerExecutionStatus != newExecutionStatus) {
-			iterationModificationService.changeExecutionStatus(id, newExecutionStatus);
-			customCampaignModificationService.updateExecutionStatus(iteration.getCampaign().getId());
-		}
 	}
 
 }

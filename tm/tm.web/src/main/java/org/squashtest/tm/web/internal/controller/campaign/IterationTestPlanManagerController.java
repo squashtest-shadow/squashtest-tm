@@ -290,7 +290,9 @@ public class IterationTestPlanManagerController {
 																		@RequestParam("status") String status) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		for (IterationTestPlanItem itpi : itpis) {
-			customIterationModificationService.addEmptyExecution(itpi.getId());
+			if (itpi.getReferencedTestCase() != null) {
+				customIterationModificationService.addEmptyExecution(itpi.getId());
+			}
 		}
 		return createJsonITPI(itpis.get(0));
 	}

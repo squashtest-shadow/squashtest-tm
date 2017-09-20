@@ -63,8 +63,6 @@ import org.squashtest.tm.service.campaign.*;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -95,9 +93,6 @@ public class IterationModificationController {
 
 	@Inject
 	private IterationModificationService iterationModService;
-
-	@Inject
-	private IterationDao iterationDao;
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
@@ -134,12 +129,6 @@ public class IterationModificationController {
 
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
-
-	@Inject
-	private CustomCampaignModificationService customCampaignModificationService;
-
-	@Inject
-	private CampaignFolderDao campaignFolderDao;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -300,29 +289,6 @@ public class IterationModificationController {
 	public String changeStatus(@PathVariable long iterationId, @RequestParam(VALUE) IterationStatus status) {
 		iterationModService.changeStatus(iterationId, status);
 		return formatStatus(status);
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-execution-status", VALUE})
-	@ResponseBody
-	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long iterationId) {
-
-		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
-
-		iterationModService.changeExecutionStatus(iterationId, executionStatus);
-		LOGGER.trace("Iteration " + iterationId + ": updated status to " + value);
-
-		//we compute and update the campaign status
-		Long campaignId = iterationDao.findById(iterationId).getCampaign().getId();
-		customCampaignModificationService.updateExecutionStatus(campaignId);
-	}
-
-	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
-	@ResponseBody
-	public String getExecutionStatus(@PathVariable long iterationId) {
-
-		String executionStatus = iterationDao.findById(iterationId).getExecutionStatus().toString();
-		return executionStatus;
-
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})

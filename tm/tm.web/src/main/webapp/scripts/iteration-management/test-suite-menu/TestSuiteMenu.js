@@ -258,7 +258,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 							}else{
 								self.menucontrol.buttonmenu('close');
 							}
-							eventBus.trigger('iteration.new-test-suite', {data: config});
+							eventBus.trigger('iteration.new-test-suite');
 						}
 					});
 			}, this);

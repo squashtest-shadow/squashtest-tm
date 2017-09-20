@@ -1794,68 +1794,42 @@ width: 24px;
 height: 16px;
 }
 
-.campaign-status-WORK_IN_PROGRESS{
+.campaign-status-IN_PROGRESS{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -129px -48px ;
 	width: 24px;
 	height: 16px;
 }
-.campaign-status-UNDER_REVIEW{
+.campaign-status-PLANNED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -153px -0px ;
 	width: 24px;
 	height: 16px;
 }
 
-.campaign-status-APPROVED{
+.campaign-status-FINISHED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -177px -0px ;
 	width: 24px;
 	height: 16px;
 }
-.campaign-status-OBSOLETE{
-	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -201px -0px ;
-	width: 24px;
-	height: 16px;
-}
 
-.campaign-status-TO_BE_UPDATED{
-	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -225px -0px ;
-	width: 24px;
-	height: 16px;
-}
-
-.iteration-status-WORK_IN_PROGRESS{
+.iteration-status-IN_PROGRESS{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -129px -48px ;
 	width: 24px;
 	height: 16px;
 }
-.iteration-status-UNDER_REVIEW{
+.iteration-status-PLANNED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -153px -0px ;
 	width: 24px;
 	height: 16px;
 }
 
-.iteration-status-APPROVED{
+.iteration-status-FINISHED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 	background-position : -177px -0px ;
-	width: 24px;
-	height: 16px;
-}
-.iteration-status-OBSOLETE{
-	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -201px -0px ;
-	width: 24px;
-	height: 16px;
-}
-
-.iteration-status-TO_BE_UPDATED{
-	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -225px -0px ;
 	width: 24px;
 	height: 16px;
 }
