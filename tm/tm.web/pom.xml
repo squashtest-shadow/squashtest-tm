@@ -203,10 +203,10 @@
       <artifactId>nekohtml</artifactId>
     </dependency>
 
-    <dependency>
+    <!-- dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-    </dependency>
+    </dependency -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
