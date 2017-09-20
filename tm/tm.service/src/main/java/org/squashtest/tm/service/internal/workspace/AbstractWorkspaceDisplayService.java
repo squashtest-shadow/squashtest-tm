@@ -243,10 +243,14 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		cufModel.setName(r.get(CUSTOM_FIELD.NAME));
 		cufModel.setLabel(r.get(CUSTOM_FIELD.LABEL));
 		cufModel.setOptional(r.get(CUSTOM_FIELD.OPTIONAL));
+
 		cufModel.setDenormalized(false);
 
 		InputTypeModel inputTypeModel = new InputTypeModel();
-		inputTypeModel.setEnumName(r.get(CUSTOM_FIELD.INPUT_TYPE));
+		String inputTypeKey = r.get(CUSTOM_FIELD.INPUT_TYPE);
+		InputType inputType = EnumUtils.getEnum(InputType.class, inputTypeKey);
+		inputTypeModel.setEnumName(inputTypeKey);
+		inputTypeModel.setFriendlyName(getMessage(inputType.getI18nKey()));
 
 		cufModel.setInputType(inputTypeModel);
 	}
