@@ -39,6 +39,6 @@ public interface WorkspaceDisplayService {
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
-	FilterModel findFilterModel();
+
 
 }

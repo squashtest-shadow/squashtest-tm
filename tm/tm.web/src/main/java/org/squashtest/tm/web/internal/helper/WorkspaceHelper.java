@@ -35,6 +35,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
+import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.dto.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -100,12 +101,8 @@ public class WorkspaceHelper extends SimpleTagSupport {
 
 	public static FilterModel getProjectFilter(ServletContext context) {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
-		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
-
-		ProjectFilter filter = service.findProjectFilterByUserLogin();
-		List<Project> allProjects = service.getAllProjects();
-
-		return new FilterModel(filter, allProjects);
+		WorkspaceHelperService service = wac.getBean(WorkspaceHelperService.class);
+		return service.findFilterModel();
 	}
 
 }
