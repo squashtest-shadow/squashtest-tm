@@ -21,9 +21,13 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import com.google.common.base.Optional
+import org.squashtest.tm.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.springframework.ui.Model
 import org.squashtest.tm.service.user.PartyPreferenceService
+import org.squashtest.tm.service.user.UserAccountService
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -39,19 +43,23 @@ import javax.inject.Provider
 class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
-    DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(permissionEvaluator(), Mock(Provider))
+	TestCaseWorkspaceDisplayService testCaseWorkspaceDisplayService = Mock()
+	DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(permissionEvaluator(), Mock(Provider))
 	ProjectFinder projFinder = Mock()
 	JsonProjectBuilder projBuilder = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 	Provider provider = Mock()
 	PartyPreferenceService partyPreferenceService = Mock();
 	I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper = Mock();
+	UserAccountService userAccountService = Mock()
 
 	def setup() {
 		controller.workspaceService = service
 		controller.projectFinder = projFinder
+		controller.userAccountService = userAccountService
 		controller.jsonProjectBuilder = projBuilder
 		controller.activeMilestoneHolder = activeMilestoneHolder
+		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		provider.get() >> driveNodeBuilder
 		controller.partyPreferenceService = partyPreferenceService;
@@ -67,17 +75,19 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		library.getClassSimpleName() >> "TestCaseLibrary"
 		Project project = Mock()
 		library.project >> project
-		service.findAllLibraries() >> [library]
-		service.findAllImportableLibraries() >> [library]
-                projBuilder.getExtendedReadableProjects() >> []
+		testCaseWorkspaceDisplayService.findAllLibraries(_,_) >> [library]
+//		service.findAllImportableLibraries() >> [library]
+		testCaseWorkspaceDisplayService.findAllProjects(_,_) >> []
 		def model = Mock(Model)
+		def modelMap = ["rootModel" : new ArrayList<JsTreeNode>()]
+		model.asMap() >> modelMap
 
 		when:
-		String view = controller.showWorkspace(model, Locale.getDefault() , [] as String[], "" as String)
+		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[], "" as String)
 
 		then:
 		view == "test-case-workspace.html"
-		1 * model.addAttribute ("rootModel", _)
+		1 * model.addAttribute("rootModel", _)
 		1 * model.addAttribute("projects", [])
 	}
 }

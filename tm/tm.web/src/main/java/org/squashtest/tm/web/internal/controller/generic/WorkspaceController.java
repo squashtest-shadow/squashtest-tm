@@ -98,7 +98,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	protected I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
 
 	@Inject
-	private UserAccountService userAccountService;
+	protected UserAccountService userAccountService;
 
 	/**
 	 * Shows a workspace.
