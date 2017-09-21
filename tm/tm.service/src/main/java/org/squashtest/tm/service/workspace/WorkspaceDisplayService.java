@@ -26,6 +26,7 @@ import org.squashtest.tm.dto.json.JsonProject;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface WorkspaceDisplayService {
 
@@ -39,6 +40,6 @@ public interface WorkspaceDisplayService {
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
-
+	Map<String,String> findSystemInfoListItemLabels ();
 
 }

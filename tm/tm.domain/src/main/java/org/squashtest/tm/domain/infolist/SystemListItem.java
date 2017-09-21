@@ -27,6 +27,8 @@ import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 
+import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
+
 
 /**
  * a SystemListItem is an InfoListItem that belongs to the vanilla business originally implemented in Squash.
@@ -34,15 +36,17 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
  * and {@link TestCaseType}.
  * It may have in the future a different signification, compared to the {@link UserListItem} which is
  * user-defined (as the name suggests).
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
 
 @Entity
-@DiscriminatorValue("SYS")
+@DiscriminatorValue(SYSTEM_INFO_LIST_IDENTIFIER)
 public class SystemListItem extends InfoListItem {
+
+	public static final String SYSTEM_INFO_LIST_IDENTIFIER = "SYS";
 
 	public static final String SYSTEM_REQ_CATEGORY = "CAT_FUNCTIONAL";
 	public static final String SYSTEM_TC_NATURE = "NAT_UNDEFINED";

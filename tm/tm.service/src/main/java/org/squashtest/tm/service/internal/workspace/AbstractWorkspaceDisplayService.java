@@ -40,9 +40,7 @@ import org.squashtest.tm.dto.CustomFieldModelFactory.SingleSelectFieldModel;
 import org.squashtest.tm.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel;
 import org.squashtest.tm.dto.json.*;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
-import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -52,6 +50,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.squashtest.tm.core.foundation.lang.NullFilterListCollector.toNullFilteredList;
+import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.dto.CustomFieldModelFactory.CustomFieldOptionModel;
 import static org.squashtest.tm.dto.CustomFieldModelFactory.MultiSelectFieldModel;
@@ -104,6 +103,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsonProjects.values();
 	}
 
+	@Override
+	public Map<String, String> findSystemInfoListItemLabels() {
+		return DSL.select(INFO_LIST_ITEM.LABEL)
+			.from(INFO_LIST_ITEM)
+			.where(INFO_LIST_ITEM.ITEM_TYPE.eq(SYSTEM_INFO_LIST_IDENTIFIER))
+		.fetch(INFO_LIST_ITEM.LABEL, String.class)
+		.stream()
+		.collect(Collectors.toMap(Function.identity(), this::getMessage));
+	}
 
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
 		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
@@ -412,7 +420,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 						jsonInfoListItem.setLabel(r.get(INFO_LIST_ITEM.LABEL));
 						jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
 						jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
-						jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals("SYS"));
+						jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals(SYSTEM_INFO_LIST_IDENTIFIER));
 						jsonInfoListItem.setDenormalized(false);
 						jsonInfoListItem.setFriendlyLabel(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale()));
 						jsonInfoListItem.setUri("todo");
