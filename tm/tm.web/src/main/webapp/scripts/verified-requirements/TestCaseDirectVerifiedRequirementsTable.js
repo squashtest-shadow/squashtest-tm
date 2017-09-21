@@ -46,7 +46,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 						} ],
 						tooltips : [{
 							tdSelector: "td.verif-req-description",
-							value : function (row, data) {return data["description"];}
+							value : function (row, data) {return data["short-description"];}
 						}]
 					};
 				}

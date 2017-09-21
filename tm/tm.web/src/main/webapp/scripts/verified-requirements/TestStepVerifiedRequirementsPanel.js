@@ -23,7 +23,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 	"jquery.squash", "jqueryui",
 	"jquery.squash.togglepanel", "squashtable",
 	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-	"jquery.squash.confirmdialog"], function ($, Backbone, _, StringUtil,
+	"jquery.squash.confirmdialog","jquery.squash.buttonmenu"], function ($, Backbone, _, StringUtil,
 																						TestStepVerifiedRequirementsTable) {
 	var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 	var TestStepVerifiedRequirementsPanel = Backbone.View.extend({
@@ -50,6 +50,12 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 			// to the toggle panel header.
 			// TODO change our way to make toggle panels buttons
 			// =============/toogle buttons===================
+			this.$("#remove-associated-requirements-button").buttonmenu();
+			this.$("#remove-associated-requirements-button").on('click', function () {
+				// check if current test step is associated to a requirement, if so, user can remove this requirement from test step.
+				var nbAssociatedReqToStep = $(".ui-icon-link-dark-e-w").length;
+				$("#remove-verified-requirements-from-step-button").toggleClass("ui-state-disabled", nbAssociatedReqToStep === 0);
+				});
 			this.$("#remove-verified-requirements-button").on('click',
 				function () {
 					self.table.removeSelectedRequirements();
