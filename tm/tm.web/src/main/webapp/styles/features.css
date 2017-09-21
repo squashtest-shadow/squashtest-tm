@@ -505,7 +505,7 @@ th.width-tenperc, td.width-tenperc {
 /* ---------------->>> Hypenation <<<------------------*/
 /* ---------------------------------------------------------*/
 p {
-    word-break: break-all;
+    word-break: normal;
 	-moz-hyphens: auto;
 	-webkit-hyphens: auto;
 	hyphens: auto;
