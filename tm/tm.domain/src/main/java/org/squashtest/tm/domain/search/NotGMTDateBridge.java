@@ -29,10 +29,31 @@ import org.hibernate.search.bridge.LuceneOptions;
 import org.joda.time.LocalDateTime;
 import org.springframework.util.ReflectionUtils;
 
+/**
+ * Sets the time component of a date to 00h00 accounting for the timezone of the server and the daylight saving
+ * time for this date, then stores it as milliseconds since epoch in the index. Yuk.
+ */
 public class NotGMTDateBridge implements FieldBridge {
 
+	/*
+	 	XXX replaced the systematic set accessible true/false on each method call by a static init block .
+	 	Still awful but wont change the behavior.
 
+	 	 I've considered other solutions but truncating the time by other means would either truncate to midnight UTC -
+	 	 which is not what we want because anyone not living in UK would then have day effectively set back to the day before,
+	 	 or would take too long if we account for timezone offset and the daylight saving time (the later requires to be checked
+	 	 again for each date treated).
 
+	 	 The current solution is disgusting yet accurate (the meaning of "accurate" here is also twisted in a disgusting way).
+
+	 	 Another option, instead of storing the milliseconds since epoch we could format then store the date as string.
+	  */
+	private static final Field miliField;
+
+	static {
+		miliField = ReflectionUtils.findField(LocalDateTime.class, "iLocalMillis");
+		miliField.setAccessible(true);
+	}
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
@@ -40,22 +61,12 @@ public class NotGMTDateBridge implements FieldBridge {
 			return;
 		}
 
-		
 		Date date = (Date) value;
-		Field miliField = ReflectionUtils.findField(LocalDateTime.class, "iLocalMillis");
-		try {
 
-			miliField.setAccessible(true);
-			long numericDate = (long) ReflectionUtils.getField(miliField,
-					new LocalDateTime(date.getTime()).withTime(0, 0, 0, 0));
-			luceneOptions.addNumericFieldToDocument(name, numericDate, document);
-			
-		} finally{
-			miliField.setAccessible(false);
-		}
-	
+		long numericDate = (long) ReflectionUtils.getField(miliField,
+				new LocalDateTime(date.getTime()).withTime(0, 0, 0, 0));
+		luceneOptions.addNumericFieldToDocument(name, numericDate, document);
 
-	
 	}
 
 

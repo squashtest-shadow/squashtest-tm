@@ -27,6 +27,8 @@
  */
 @NamedQueries({
 	// ====== RequirementVersion queries ======
+	// returns how many children a given requirement has
+	@NamedQuery(name="requirement.countChildren", query="select count(elements(r.children)) from Requirement r where r.id = :id"),
 	// returns either 0 or 1 when the given version has a parent requirement (ie is nested)
 	@NamedQuery(name = "requirementVersion.countParentRequirement", query = "select count(r) from Requirement r join r.children c join c.versions v where v.id = :id"),
 	// returns either 0 or 1 when the given version is the current version of the requirement
