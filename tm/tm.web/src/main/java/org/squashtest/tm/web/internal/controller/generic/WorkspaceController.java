@@ -164,7 +164,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 
 		model.addAttribute("userPrefs", getWorkspaceUserPref());
-		model.addAttribute("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+		model.addAttribute("defaultInfoLists", workspaceDisplayService().findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
 		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
 		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
