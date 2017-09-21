@@ -31,4 +31,6 @@ public interface ActiveMilestoneHolder {
 
 	void clearContext();
 
+	Optional<Long> getActiveMilestoneId();
+
 }

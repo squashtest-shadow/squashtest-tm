@@ -112,7 +112,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	                            @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 	                            @CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
-		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
+//		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen;
 
 		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen
@@ -128,12 +128,12 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		if (activeMilestone.isPresent()) {
-			nodeBuilder.filterByMilestone(activeMilestone.get());
-		}
+//		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
+//
+//		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+//		if (activeMilestone.isPresent()) {
+//			nodeBuilder.filterByMilestone(activeMilestone.get());
+//		}
 
 //		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
 //			.setModel(libraries).build();
@@ -151,15 +151,12 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		model.addAttribute("projects", jsProjects);
 
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+
 		// also, milestones
-		if (activeMilestone.isPresent()) {
+		if (activeMilestoneId.isPresent()) {
 			JsonMilestone jsMilestone =
-				new JsonMilestone(
-					activeMilestone.get().getId(),
-					activeMilestone.get().getLabel(), activeMilestone.get().getStatus(),
-					activeMilestone.get().getRange(), activeMilestone.get().getEndDate(),
-					activeMilestone.get().getOwner().getLogin()
-				);
+				workspaceDisplayService().findMilestoneModel(activeMilestoneId.get());
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 

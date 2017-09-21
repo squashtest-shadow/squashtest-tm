@@ -58,8 +58,6 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 			activeMilestoneHolder.set(Optional.fromNullable(milestone));
 		}
 
-
-
 		return activeMilestoneHolder.get();
 	}
 
@@ -74,6 +72,11 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 	public void clearContext() {
 		activeMilestoneHolder.remove();
 		activeMilestoneIdHolder.remove();
+	}
+
+	@Override
+	public Optional<Long> getActiveMilestoneId() {
+		return Optional.fromNullable(activeMilestoneIdHolder.get());
 	}
 
 }

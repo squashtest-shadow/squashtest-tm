@@ -22,10 +22,7 @@ package org.squashtest.tm.service.internal.workspace;
 
 
 import org.apache.commons.lang3.EnumUtils;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.TableLike;
+import org.jooq.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -108,9 +105,17 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return DSL.select(INFO_LIST_ITEM.LABEL)
 			.from(INFO_LIST_ITEM)
 			.where(INFO_LIST_ITEM.ITEM_TYPE.eq(SYSTEM_INFO_LIST_IDENTIFIER))
-		.fetch(INFO_LIST_ITEM.LABEL, String.class)
-		.stream()
-		.collect(Collectors.toMap(Function.identity(), this::getMessage));
+			.fetch(INFO_LIST_ITEM.LABEL, String.class)
+			.stream()
+			.collect(Collectors.toMap(Function.identity(), this::getMessage));
+	}
+
+	@Override
+	public JsonMilestone findMilestoneModel(Long activeMilestoneId) {
+		ArrayList<Long> milestoneIds = new ArrayList<>();
+		milestoneIds.add(activeMilestoneId);
+		Map<Long, JsonMilestone> jsonMilestones = findJsonMilestones(milestoneIds);
+		return jsonMilestones.get(activeMilestoneId);
 	}
 
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
@@ -440,6 +445,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
+		Set<Long> libraryIds = jsTreeNodes.keySet();
+
 		DSL
 			.selectDistinct(selectLibraryId(), ACL_GROUP_PERMISSION.PERMISSION_MASK)
 			.from(getLibraryTable())
@@ -448,7 +455,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
 			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
 			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq(getLibraryClassName())))
-			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE)).and(getProjectLibraryColumn().in(libraryIds))
 			.fetch()
 			.stream()
 			.collect(groupingBy(
@@ -459,9 +466,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				)
 			)).forEach((Long nodeId, List<Integer> masks) -> {
 			JsTreeNode node = jsTreeNodes.get(nodeId);
-			if (node == null) {
-				throw new IllegalArgumentException("Programmatic error : the node " + nodeId + " isn't in the Map provided, can't retrieve permissions.");
-			}
+
 			for (Integer mask : masks) {
 				PermissionWithMask permission = findByMask(mask);
 				if (permission != null) {
@@ -474,12 +479,20 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract Field<Long> getProjectLibraryColumn();
 
 	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
+		List<Long> filteredProjectIds;
+		if (hasActiveFilter(currentUser)) {
+			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
+		} else {
+			filteredProjectIds = readableProjectIds;
+		}
+
+
 		Map<Long, JsTreeNode> jsTreeNodes = DSL
 			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq("P"))
+			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
+			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -511,6 +524,27 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		//TODO opened nodes and content
 		return jsTreeNodes;
+	}
+
+	private List<Long> findFilteredProjectIds(List<Long> readableProjectIds, String username) {
+		return DSL.select(PROJECT_FILTER_ENTRY.PROJECT_ID)
+			.from(PROJECT_FILTER)
+			.join(PROJECT_FILTER_ENTRY).on(PROJECT_FILTER.PROJECT_FILTER_ID.eq(PROJECT_FILTER_ENTRY.FILTER_ID))
+			.where(PROJECT_FILTER.USER_LOGIN.eq(username)).and(PROJECT_FILTER_ENTRY.PROJECT_ID.in(readableProjectIds))
+			.fetch(PROJECT_FILTER_ENTRY.PROJECT_ID, Long.class);
+	}
+
+	private boolean hasActiveFilter(UserDto currentUser) {
+		//first we must filter by global filter
+		Record1<Boolean> record1 = DSL.select(PROJECT_FILTER.ACTIVATED)
+			.from(PROJECT_FILTER)
+			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
+			.fetchOne();
+
+		if (record1 == null) {
+			return false;
+		}
+		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
 
 	protected abstract String getRel();
