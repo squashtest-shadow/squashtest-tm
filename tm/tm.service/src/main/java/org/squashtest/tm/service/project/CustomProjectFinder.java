@@ -43,9 +43,15 @@ public interface CustomProjectFinder {
 	List<GenericProject> findAllICanManage();
 
 	/**
+	 * Get all the ids of projects user can read.
+	 * @return The list of projects ids
+	 * @param userDto
+	 */
+	List<Long> findAllReadableIds(UserDto userDto);
+
+	/**
 	 * Get all the ids of projects current user can read.
 	 * @return The list of projects ids
-	 * @param currentUser
 	 */
-	List<Long> findAllReadableIds(UserDto currentUser);
+	List<Long> findAllReadableIds();
 }

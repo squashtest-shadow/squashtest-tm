@@ -61,8 +61,8 @@ public class WorkspaceHelper extends SimpleTagSupport {
 		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
 		BugTrackerFinderService bugtrackerService = wac.getBean(BugTrackerFinderService.class);
 
-		List<Project> projects = projectFinder.findAllReadable();
-		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
+		List<Long> projectsIds =  projectFinder.findAllReadableIds();
+
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 	}
 

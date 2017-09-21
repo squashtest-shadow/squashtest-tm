@@ -44,6 +44,7 @@ import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 /**
  * @author mpagnon
@@ -63,6 +64,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private GenericProjectDao genericProjectDao;
+	@Inject
+	protected UserAccountService userAccountService;
 
 	@Inject
 	private UserDao userDao;
@@ -112,14 +115,20 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	/**
 	 * Optimized implementation with SQL and no hibernate entities.
-	 * @param currentUser
+	 * @param userDto
 	 */
 	@Override
-	public List<Long> findAllReadableIds(UserDto currentUser) {
-		if (currentUser.isAdmin()) {
+	public List<Long> findAllReadableIds(UserDto userDto) {
+		if (userDto.isAdmin()) {
 			return projectDao.findAllProjectIds();
 		} else {
-			return projectDao.findAllProjectIds(currentUser.getPartyIds());
+			return projectDao.findAllProjectIds(userDto.getPartyIds());
 		}
+	}
+
+	@Override
+	public List<Long> findAllReadableIds() {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		return findAllReadableIds(currentUser);
 	}
 }
