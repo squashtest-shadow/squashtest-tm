@@ -21,7 +21,11 @@
 package org.squashtest.tm.service.workspace;
 
 import org.squashtest.tm.dto.FilterModel;
+import org.squashtest.tm.dto.UserDto;
+
+import java.util.List;
 
 public interface WorkspaceHelperService {
 	FilterModel findFilterModel();
+	FilterModel findFilterModel(UserDto currentUser, List<Long> projectIds);
 }

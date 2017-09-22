@@ -62,10 +62,11 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 	public FilterModel findFilterModel() {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		return doFindFilterModel(currentUser, projectIds);
+		return findFilterModel(currentUser, projectIds);
 	}
 
-	protected FilterModel doFindFilterModel(UserDto currentUser, List<Long> projectIds) {
+	@Override
+	public FilterModel findFilterModel(UserDto currentUser, List<Long> projectIds) {
 		Map<FilterModel, List<Long>> filterModels = DSL.select(PROJECT_FILTER.PROJECT_FILTER_ID, PROJECT_FILTER.ACTIVATED
 			, PROJECT_FILTER_ENTRY.PROJECT_ID)
 			.from(PROJECT_FILTER)
