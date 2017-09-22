@@ -60,4 +60,8 @@ public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
 
 	}
 
+	@Override
+	Optional<Long> getActiveMilestoneId() {
+		return null
+	}
 }

@@ -23,15 +23,11 @@ package org.squashtest.tm.service.workspace
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.dto.CustomFieldBindingModel
 import org.squashtest.tm.dto.CustomFieldModelFactory
-import org.squashtest.tm.dto.FilterModel
 import org.squashtest.tm.dto.PermissionWithMask
 import org.squashtest.tm.dto.UserDto
 import org.squashtest.tm.dto.json.JsTreeNode
 import org.squashtest.tm.dto.json.JsonInfoList
-import org.squashtest.tm.dto.json.JsonMilestone
-import org.squashtest.tm.dto.json.JsonProject
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
@@ -61,7 +57,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes
 	}
 
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find test Case Libraries as JsTreeNode"() {
 		given:
 		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
@@ -80,6 +76,24 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
+	def "should find test Case Libraries as JsTreeNode with filter"() {
+		given:
+		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+
+		when:
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
+
+		then:
+		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+
+		where:
+		readableProjectIds 	|| expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]					|| []					|[]						|[]
+		[-1L,-2L,-3L,-4L]	|| [-1L,-20L]		|["foo","bar"]	|["TestCaseLibrary-1","TestCaseLibrary-20"]
+	}
+
+	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find test Case Libraries as JsTreeNode with all perm for admin"() {
 		given:
 		UserDto user = new UserDto("robert", -2L, [], true)
@@ -180,7 +194,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	def "should find infolist ids"(){
 
 		when:
-		def ids = testCaseWorkspaceDisplayService.findUsedInfoList(readableProjectIds)
+		def ids = testCaseWorkspaceDisplayService.findUsedInfoListIds(readableProjectIds)
 
 		then:
 		ids.sort() == expectdInfolistIds.sort()
