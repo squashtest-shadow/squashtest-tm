@@ -59,10 +59,10 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
+    <!-- dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
-    </dependency>
+    </dependency -->
 
     <dependency>
       <groupId>commons-fileupload</groupId>
