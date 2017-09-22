@@ -83,8 +83,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		//1 As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
 		// We do that only on collaborators witch should not be too numerous versus the number of projects
 		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
-		Set<Long> usedInfoListIds = findUsedInfoList(readableProjectIds);
-		Map<Long, JsonInfoList> infoListMap = findInfoListMap(usedInfoListIds);
+		Map<Long, JsonInfoList> infoListMap = findUsedInfolist(readableProjectIds);
 
 		//extracting cuf, options... and so on, to avoid multiple identical extractions when fetching projects
 		List<Long> usedCufIds = findUsedCustomFields(readableProjectIds);
@@ -98,6 +97,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 
 		return jsonProjects.values();
+	}
+
+	private Map<Long, JsonInfoList> findUsedInfolist(List<Long> readableProjectIds) {
+		Set<Long> usedInfoListIds = findUsedInfoListIds(readableProjectIds);
+		return findInfoListMap(usedInfoListIds);
 	}
 
 	@Override
@@ -386,7 +390,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsonProjectMap;
 	}
 
-	protected Set<Long> findUsedInfoList(List<Long> readableProjectIds) {
+	protected Set<Long> findUsedInfoListIds(List<Long> readableProjectIds) {
 		Set<Long> ids = new HashSet<>();
 		DSL.select(PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
 			.from(PROJECT)
@@ -480,7 +484,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 		List<Long> filteredProjectIds;
-		if (hasActiveFilter(currentUser)) {
+		if (hasActiveFilter(currentUser.getUsername())) {
 			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
 		} else {
 			filteredProjectIds = readableProjectIds;
@@ -534,11 +538,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.fetch(PROJECT_FILTER_ENTRY.PROJECT_ID, Long.class);
 	}
 
-	private boolean hasActiveFilter(UserDto currentUser) {
+	private boolean hasActiveFilter(String userName) {
 		//first we must filter by global filter
 		Record1<Boolean> record1 = DSL.select(PROJECT_FILTER.ACTIVATED)
 			.from(PROJECT_FILTER)
-			.where(PROJECT_FILTER.USER_LOGIN.eq(currentUser.getUsername()))
+			.where(PROJECT_FILTER.USER_LOGIN.eq(userName))
 			.fetchOne();
 
 		if (record1 == null) {
