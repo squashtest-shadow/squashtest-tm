@@ -30,7 +30,7 @@
 
 	<!-- MAIN MENUBAR FRAGMENT -->
 	<div class="main-menubar" th:fragment="menubar" >
-		<div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${#workspace.projectFilter()}">
+		<div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${(projectFilter == null) ? #workspace.projectFilter() : projectFilter}">
 
 		<div style="display: inline-flex;">
 			<input type="checkbox" id="menu-toggle-filter-ckbox" th:checked="${filter.enabled}"></input>
@@ -131,12 +131,12 @@
         <div id="generic-warning-dialog" class="not-displayed popup-dialog" th:title="#{label.warning}">
           <div th:include="fragments-utils/static-panels :: warning-pane"></div>
           <input type="button" th:value="#{label.Ok}"/>
-        </div>          
+        </div>
 
         <div id="generic-info-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.info}">
           <div th:include="fragments-utils/static-panels :: info-pane"></div>
           <input type="button" th:value="#{label.Ok}"/>
-        </div>          
+        </div>
 
       <script type="text/javascript" >
       publish("load.notification");

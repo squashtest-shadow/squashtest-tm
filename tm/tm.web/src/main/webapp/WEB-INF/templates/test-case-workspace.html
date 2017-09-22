@@ -208,7 +208,7 @@
 
             <div th:remove="tag"
               th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
-              <div th:remove="tag" th:with="filter = ${#workspace.projectFilter()}">
+              <div th:remove="tag" th:with="filter = ${projectFilter}">
                 <div class="tree-filter-reminder-div">
                   <span th:class="${filter.enabled} ? '' : 'not-displayed'"
                     th:text="#{tabbed_panel.tree.pane.filter.enabled.label}">filter enabled</span>

@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
@@ -56,6 +57,7 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
+import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -99,6 +101,12 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	@Inject
 	protected UserAccountService userAccountService;
+
+	@Inject
+	private WorkspaceHelperService workspaceHelperService;
+
+	@Inject
+	private BugTrackerFinderService bugTrackerFinderService;
 
 	/**
 	 * Shows a workspace.
@@ -168,6 +176,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
 		model.addAttribute("executionStatus",
 			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
+
+		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, projectIds));
+		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(projectIds));
 
 		return getWorkspaceViewName();
 	}
