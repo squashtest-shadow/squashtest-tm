@@ -25,6 +25,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.jooq.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
@@ -464,7 +465,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		Function<Record, JsonInfoListItem> infoListItemTransformer = getInfoListItemTransformer();
 
-		return StreamUtils.performJoinAggregateIntoMap(infolistTransformer, infoListItemTransformer, (jsonInfoList, items) -> jsonInfoList.setItems(items), result);
+
+
+		return StreamUtils.<Record,JsonInfoList, JsonInfoListItem>performJoinAggregateIntoMap(infolistTransformer, infoListItemTransformer, (JsonInfoList jsonInfoList, List<JsonInfoListItem> items) -> jsonInfoList.setItems(items), result);
 	}
 
 	private Function<Record, JsonInfoListItem> getInfoListItemTransformer() {

@@ -34,11 +34,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.rest.RestLibrary;
 
 @Controller
 @RequestMapping("/requirement-workspace")
@@ -51,9 +53,11 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider;
 
-
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+
+	@Inject
+	private WorkspaceDisplayService requirementWorkspaceDisplayService;
 
 
 	@Override
@@ -68,7 +72,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
+		List<RestLibrary> libraries = getEditableLibraries(model);
 		model.addAttribute("editableLibraries", libraries);
 	}
 
@@ -96,12 +100,12 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId) {
-		return "Requirement-"+elementId;
+		return "Requirement-" + elementId;
 	}
 
 	@Override
 	protected WorkspaceDisplayService workspaceDisplayService() {
-		return null;
+		return requirementWorkspaceDisplayService;
 	}
 
 }

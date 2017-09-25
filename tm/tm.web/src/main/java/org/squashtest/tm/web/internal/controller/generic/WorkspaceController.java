@@ -68,9 +68,13 @@ import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.dto.json.JsonMilestone;
 import org.squashtest.tm.dto.json.JsonProject;
 import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.web.internal.model.rest.RestLibrary;
+import org.squashtest.tm.web.internal.model.rest.RestProject;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 import com.google.common.base.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 public abstract class WorkspaceController<LN extends LibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
@@ -313,6 +317,29 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	protected InternationalizationHelper getI18nHelper() {
 		return i18nHelper;
+	}
+
+	protected List<RestLibrary> getEditableLibraries(Model model) {
+		//Degenerated code
+		//Client side needs the editable libraries in a different shape. the sad part is that libraries are already in model with all needed information
+		//No time to find and refactor HTML and JS that use that, and maybe it can't be done
+		//So i just reshape data without refetching in database like it was done previously, witch is a pain with just Objects :-(
+		Collection<JsTreeNode> jsTreeNodes = (Collection<JsTreeNode>) model.asMap().get("rootModel");//NOSONAR it's should be safe, we just created that in WorkspaceController
+		return jsTreeNodes.stream()
+			.filter(jsTreeNode -> {
+				Object editable = jsTreeNode.getAttr().get("editable");
+				return Objects.nonNull(editable) && Objects.equals(editable.toString(), "true");
+			})
+			.sorted(Comparator.comparing(JsTreeNode::getTitle))
+			.map(jsTreeNode -> {
+				RestLibrary restLibrary = new RestLibrary();
+				restLibrary.setId(Long.parseLong(jsTreeNode.getAttr().get("resId").toString()));
+				RestProject restProject = new RestProject();
+				restProject.setId(Long.parseLong(jsTreeNode.getAttr().get("resId").toString()));
+				restProject.setName(jsTreeNode.getTitle());
+				restLibrary.setProject(restProject);
+				return restLibrary;
+			}).collect(toList());
 	}
 
 	/**

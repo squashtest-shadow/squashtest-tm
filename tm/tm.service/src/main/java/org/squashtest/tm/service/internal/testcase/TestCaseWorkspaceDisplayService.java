@@ -31,7 +31,7 @@ import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayServ
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY;
 
-@Service
+@Service("testCaseWorkspaceDisplayService")
 @Transactional(readOnly = true)
 public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
 
