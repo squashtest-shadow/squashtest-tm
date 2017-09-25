@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
 import org.squashtest.tm.web.testutils.MockFactory;
-import org.squashtest.tm.dto.json.JsTreeNode.State
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 
 class RequirementLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 	RequirementLibraryTreeNodeBuilder builder = new RequirementLibraryTreeNodeBuilder(permissionEvaluator())

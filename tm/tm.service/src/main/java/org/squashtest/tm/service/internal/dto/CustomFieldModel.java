@@ -18,10 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto;
+package org.squashtest.tm.service.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 // TODO : instead of a JsonTypeIdResolver, use something like for AdvancedSearchFieldModel
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="itype", use=JsonTypeInfo.Id.CUSTOM)

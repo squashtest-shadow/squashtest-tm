@@ -35,9 +35,9 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 @SuppressWarnings("rawtypes")
 @Component

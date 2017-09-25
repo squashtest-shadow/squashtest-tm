@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 /**
  * Helper class to manipulate jsTree related data.

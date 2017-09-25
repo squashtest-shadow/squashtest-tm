@@ -18,37 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto;
+package org.squashtest.tm.service.internal.dto.json;
 
-import org.squashtest.tm.domain.customfield.BindableEntity;
+import java.util.HashMap;
+import java.util.Map;
 
+public class JsTreeNodeData {
 
-public class BindableEntityModel {
+		/**
+		 * Title of the node
+		 */
+		private String title = "";
 
-	//value of that BindableEntity
-	private String enumName;
+		/**
+		 * Attributes of the <code>a</code> node
+		 */
+		private Map<String, String> attr = new HashMap<>();
 
-	//value in human language
-	private String friendlyName;
+		public String getTitle() {
+			return title;
+		}
 
-	public String getEnumName() {
-		return enumName;
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public Map<String, String> getAttr() {
+			return attr;
+		}
+
+		public void setAttr(Map<String, String> attr) {
+			this.attr = attr;
+		}
+
+		public void addAttr(String key, String value){
+			this.attr.put(key, value);
+		}
+
 	}
-
-	public void setEnumName(String enumName) {
-		this.enumName = enumName;
-	}
-
-	public String getFriendlyName() {
-		return friendlyName;
-	}
-
-	public void setFriendlyName(String friendlyName) {
-		this.friendlyName = friendlyName;
-	}
-
-	public BindableEntity toDomain(){
-		return BindableEntity.valueOf(enumName);
-	}
-
-}

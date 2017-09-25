@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 /**
  * Interface for a builder of {@link JsTreeNode} objects, which provides a fluent API<br />

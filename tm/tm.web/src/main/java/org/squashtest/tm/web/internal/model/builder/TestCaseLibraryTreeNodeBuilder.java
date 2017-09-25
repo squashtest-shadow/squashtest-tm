@@ -36,12 +36,12 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.

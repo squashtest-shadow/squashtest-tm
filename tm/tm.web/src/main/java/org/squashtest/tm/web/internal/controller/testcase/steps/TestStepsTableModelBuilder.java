@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
-import org.squashtest.tm.dto.NumericCufHelper;
+import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**

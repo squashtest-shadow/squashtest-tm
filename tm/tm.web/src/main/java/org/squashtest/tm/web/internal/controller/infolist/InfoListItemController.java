@@ -37,7 +37,7 @@ import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
-import org.squashtest.tm.dto.json.JsonInfoListItem;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller

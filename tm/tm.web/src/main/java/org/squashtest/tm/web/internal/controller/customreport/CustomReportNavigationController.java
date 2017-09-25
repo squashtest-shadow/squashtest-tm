@@ -53,7 +53,7 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 /**
  * This controller is dedicated to the operations in the tree of Custom Reports

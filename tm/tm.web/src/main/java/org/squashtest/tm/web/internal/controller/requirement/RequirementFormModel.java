@@ -33,8 +33,8 @@ import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.dto.RawValueModel;
-import org.squashtest.tm.dto.RawValueModel.RawValueModelMap;
+import org.squashtest.tm.service.internal.dto.RawValueModel;
+import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

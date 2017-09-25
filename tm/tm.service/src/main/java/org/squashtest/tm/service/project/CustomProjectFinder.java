@@ -28,7 +28,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.UserDto;
 
 /**
  * @author mpagnon

@@ -23,11 +23,11 @@ package org.squashtest.tm.service.workspace
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.dto.CustomFieldModelFactory
-import org.squashtest.tm.dto.PermissionWithMask
-import org.squashtest.tm.dto.UserDto
-import org.squashtest.tm.dto.json.JsTreeNode
-import org.squashtest.tm.dto.json.JsonInfoList
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory
+import org.squashtest.tm.service.internal.dto.PermissionWithMask
+import org.squashtest.tm.service.internal.dto.UserDto
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.dto.json.JsonInfoList
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll

@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto.json;
+package org.squashtest.tm.service.internal.dto.json;
 
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 
 import java.util.ArrayList;
 import java.util.List;

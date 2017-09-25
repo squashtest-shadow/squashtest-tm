@@ -45,7 +45,7 @@ import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface
 import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInputInterfaceModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
-import org.squashtest.tm.dto.json.JsonProject;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 import com.google.common.base.Optional;
 

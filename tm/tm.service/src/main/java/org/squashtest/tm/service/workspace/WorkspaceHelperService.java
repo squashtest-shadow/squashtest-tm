@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.workspace;
 
-import org.squashtest.tm.dto.FilterModel;
-import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.service.internal.dto.UserDto;
 
 import java.util.List;
 

@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.model.testautomation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 
 

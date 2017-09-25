@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.controller.milestone;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.squashtest.tm.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 
 
 /**

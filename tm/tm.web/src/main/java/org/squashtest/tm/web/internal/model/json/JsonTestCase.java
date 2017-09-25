@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.model.json;
 
 
-import org.squashtest.tm.dto.json.JsonProject;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 /**
  * @author Gregory Fouquet

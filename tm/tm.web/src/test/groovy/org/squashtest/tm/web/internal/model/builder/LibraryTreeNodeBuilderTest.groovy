@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 
 import spock.lang.Specification
 

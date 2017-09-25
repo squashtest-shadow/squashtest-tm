@@ -35,8 +35,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component

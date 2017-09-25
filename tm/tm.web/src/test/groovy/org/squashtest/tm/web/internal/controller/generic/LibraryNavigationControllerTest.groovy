@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.library.LibraryNavigationService
 import org.squashtest.tm.security.annotation.AclConstrainedObject
-import org.squashtest.tm.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 
 import spock.lang.Specification
 

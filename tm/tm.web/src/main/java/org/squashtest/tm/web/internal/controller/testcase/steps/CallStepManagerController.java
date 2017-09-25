@@ -40,7 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 @Controller
 public class CallStepManagerController {

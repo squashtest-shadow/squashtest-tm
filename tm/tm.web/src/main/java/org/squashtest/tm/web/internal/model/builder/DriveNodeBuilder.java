@@ -24,10 +24,10 @@ import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 import javax.inject.Provider;
 import java.util.List;

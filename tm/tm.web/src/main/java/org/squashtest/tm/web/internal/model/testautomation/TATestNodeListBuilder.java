@@ -29,7 +29,7 @@ import java.util.ListIterator;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Attr;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Data;
 

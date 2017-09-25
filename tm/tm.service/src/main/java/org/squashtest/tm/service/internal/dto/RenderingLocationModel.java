@@ -18,14 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto;
+package org.squashtest.tm.service.internal.dto;
 
-public class InputTypeModel {
+public class RenderingLocationModel {
 
-	//value of that BindableEntity
 	private String enumName;
 
-	//value in human language
 	private String friendlyName;
 
 	public String getEnumName() {
@@ -43,5 +41,7 @@ public class InputTypeModel {
 	public void setFriendlyName(String friendlyName) {
 		this.friendlyName = friendlyName;
 	}
+
+
 
 }

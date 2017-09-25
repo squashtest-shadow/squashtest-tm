@@ -41,7 +41,7 @@ import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationContro
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder
-import org.squashtest.tm.dto.json.JsTreeNode.State
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 
 class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification {
 	TestCaseLibraryNavigationController controller = new TestCaseLibraryNavigationController()

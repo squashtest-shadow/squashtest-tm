@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 import javax.inject.Inject;
 

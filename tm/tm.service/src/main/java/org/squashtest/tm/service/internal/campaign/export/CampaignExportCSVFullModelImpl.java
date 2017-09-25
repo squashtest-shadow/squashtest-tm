@@ -57,7 +57,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.dto.NumericCufHelper;
+import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 
 /*
  * TODO :

@@ -25,7 +25,7 @@ import java.util.Collection;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.UserDto;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {

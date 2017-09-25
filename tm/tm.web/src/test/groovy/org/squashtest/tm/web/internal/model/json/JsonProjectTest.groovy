@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json
 
-import org.squashtest.tm.dto.json.JsonProject
+import org.squashtest.tm.service.internal.dto.json.JsonProject
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -41,7 +41,7 @@ class JsonProjectTest extends Specification {
 
 		when:
 		def res = JsonProject.toJson(p)
-		
+
 		then:
 		res.id == 10000L
 		res.uri == "/projects/10000"

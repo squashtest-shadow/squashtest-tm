@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 /**
  * Generic superclass for builders of {@link JsTreeNode}

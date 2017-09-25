@@ -40,7 +40,7 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
-import org.squashtest.tm.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 
 import com.google.common.base.Optional;
 

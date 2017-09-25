@@ -57,7 +57,7 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.dto.NumericCufHelper;
+import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 
 /**
  * @author jthebault

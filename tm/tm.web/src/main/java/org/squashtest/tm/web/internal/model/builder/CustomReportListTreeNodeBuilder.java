@@ -31,7 +31,7 @@ import javax.inject.Provider;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 @Component
 public class CustomReportListTreeNodeBuilder {

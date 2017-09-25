@@ -18,30 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto;
+package org.squashtest.tm.service.internal.dto;
 
-public class RenderingLocationModel {
+import java.util.List;
 
-	private String enumName;
+public class Permissions {
 
-	private String friendlyName;
+	private boolean readable;
+	private boolean editable;
+	private boolean creatable;
+	private boolean deletable;
 
-	public String getEnumName() {
-		return enumName;
+
+	public static Permissions fromMaskList(List<Integer> masks){
+		Permissions permissions = new Permissions();
+		if(masks.contains(PermissionWithMask.READ.getMask())){
+			permissions.setReadable(true);
+		}
+		return permissions;
 	}
 
-	public void setEnumName(String enumName) {
-		this.enumName = enumName;
+	// we could statically initialize fields at true to avoid this method,
+	// but as we are working with permissions i prefer to set anything at false by default
+	public static Permissions adminPermissions(){
+		Permissions permissions = new Permissions();
+		permissions.setReadable(true);
+		return permissions;
 	}
 
-	public String getFriendlyName() {
-		return friendlyName;
+	public boolean isReadable() {
+		return readable;
 	}
 
-	public void setFriendlyName(String friendlyName) {
-		this.friendlyName = friendlyName;
+	public void setReadable(boolean readable) {
+		this.readable = readable;
 	}
-
-
-
 }

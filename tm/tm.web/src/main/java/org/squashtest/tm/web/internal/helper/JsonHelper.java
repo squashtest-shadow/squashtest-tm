@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.inject.Inject;

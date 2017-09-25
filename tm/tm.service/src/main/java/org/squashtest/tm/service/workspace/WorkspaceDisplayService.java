@@ -19,12 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.workspace;
-import com.google.common.base.Optional;
-import org.squashtest.tm.dto.FilterModel;
-import org.squashtest.tm.dto.UserDto;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsonMilestone;
-import org.squashtest.tm.dto.json.JsonProject;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 import java.util.Collection;
 import java.util.List;

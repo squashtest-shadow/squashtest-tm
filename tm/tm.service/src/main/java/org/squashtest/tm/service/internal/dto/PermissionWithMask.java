@@ -18,12 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.dto;
+package org.squashtest.tm.service.internal.dto;
 
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 public enum PermissionWithMask {
 	READ("readable",1),

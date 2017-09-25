@@ -23,8 +23,8 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 /**
  * Superclass which builds a {@link JsTreeNode} from a LibraryNode.

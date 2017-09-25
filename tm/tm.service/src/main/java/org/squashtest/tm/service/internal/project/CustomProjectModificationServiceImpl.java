@@ -35,14 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 

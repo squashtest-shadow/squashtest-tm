@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.TeamDao;

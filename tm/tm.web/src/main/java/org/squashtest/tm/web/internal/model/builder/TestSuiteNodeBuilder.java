@@ -48,8 +48,8 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.dto.json.JsTreeNode;
-import org.squashtest.tm.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.util.Locale;
@@ -100,7 +100,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder #doAddChildren(org.squashtest.tm.dto.json.JsTreeNode, java.lang.Object)
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder #doAddChildren(org.squashtest.tm.service.internal.dto.json.JsTreeNode, java.lang.Object)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, TestSuite model) {

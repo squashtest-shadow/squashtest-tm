@@ -21,13 +21,12 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import com.google.common.base.Optional
-import org.squashtest.tm.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.springframework.ui.Model
 import org.squashtest.tm.service.user.PartyPreferenceService
 import org.squashtest.tm.service.user.UserAccountService
-import org.squashtest.tm.service.workspace.WorkspaceDisplayService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
