@@ -35,6 +35,7 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
+import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
@@ -54,6 +55,10 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider;
+
+	@Inject
+	@Named("campaignWorkspaceDisplayService")
+	private AbstractWorkspaceDisplayService workspaceDisplayService;
 
 	/**
 	 *
@@ -89,7 +94,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Override
 	protected WorkspaceDisplayService workspaceDisplayService() {
-		return null;
+		return workspaceDisplayService;
 	}
 
 	@Override
