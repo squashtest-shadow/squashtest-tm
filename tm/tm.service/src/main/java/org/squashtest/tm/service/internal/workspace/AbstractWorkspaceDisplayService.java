@@ -357,6 +357,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		};
 
 		List<CustomFieldBindingModel> list = StreamUtils.performJoinAggregate(customFieldBindingModelTransformer, renderingLocationModelTransformer, injector, result);
+
+		return groupByProjectAndType(list);
+	}
+
+	private Map<Long, Map<String, List<CustomFieldBindingModel>>> groupByProjectAndType(List<CustomFieldBindingModel> list) {
 		return list.stream().collect(
 			groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
 				//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
@@ -448,45 +453,44 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 	protected Map<Long, JsonInfoList> findInfoListMap(Set<Long> usedInfoListIds) {
-		return DSL.select(INFO_LIST.INFO_LIST_ID, INFO_LIST.CODE, INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
+		Result result = DSL.select(INFO_LIST.INFO_LIST_ID, INFO_LIST.CODE, INFO_LIST.LABEL, INFO_LIST.DESCRIPTION
 			, INFO_LIST_ITEM.ITEM_ID, INFO_LIST_ITEM.CODE, INFO_LIST_ITEM.LABEL, INFO_LIST_ITEM.ICON_NAME, INFO_LIST_ITEM.IS_DEFAULT, INFO_LIST_ITEM.ITEM_TYPE)
 			.from(INFO_LIST)
 			.innerJoin(INFO_LIST_ITEM).on(INFO_LIST.INFO_LIST_ID.eq(INFO_LIST_ITEM.LIST_ID))
 			.where(INFO_LIST.INFO_LIST_ID.in(usedInfoListIds))
-			.fetch()
-			.stream()
-			.collect(groupingBy(//groupingBy as map <JsonInfoList,List<InfoListItems>>
-				r -> {
-					Long id = r.get(INFO_LIST.INFO_LIST_ID);
-					String code = r.get(INFO_LIST.CODE);
-					String label = r.get(INFO_LIST.LABEL);
-					String description = r.get(INFO_LIST.DESCRIPTION);
-					return new JsonInfoList(id, "todo", code, label, description);
-				},
-				mapping(
-					r -> {
-						JsonInfoListItem jsonInfoListItem = new JsonInfoListItem();
-						jsonInfoListItem.setId(r.get(INFO_LIST_ITEM.ITEM_ID));
-						jsonInfoListItem.setCode(r.get(INFO_LIST_ITEM.CODE));
-						jsonInfoListItem.setLabel(r.get(INFO_LIST_ITEM.LABEL));
-						jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
-						jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
-						jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals(SYSTEM_INFO_LIST_IDENTIFIER));
-						jsonInfoListItem.setDenormalized(false);
-						jsonInfoListItem.setFriendlyLabel(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale()));
-						jsonInfoListItem.setUri("todo");
-						return jsonInfoListItem;
-					},
-					toList()
-				)
-			))
-			.entrySet().stream()
-			.map(jsonInfoListListEntry -> {//now we assign each List of items directly inside their infolist as required per object structure
-				JsonInfoList infoList = jsonInfoListListEntry.getKey();
-				infoList.setItems(jsonInfoListListEntry.getValue());
-				return infoList;
-			})
-			.collect(Collectors.toMap(JsonInfoList::getId, Function.identity()));//now put the fully hydrated infolist in a map <id,infolist>
+			.fetch();
+
+		Function<Record, JsonInfoList> infolistTransformer = getInfoListTransformer();
+
+		Function<Record, JsonInfoListItem> infoListItemTransformer = getInfoListItemTransformer();
+
+		return StreamUtils.performJoinAggregateIntoMap(infolistTransformer, infoListItemTransformer, (jsonInfoList, items) -> jsonInfoList.setItems(items), result);
+	}
+
+	private Function<Record, JsonInfoListItem> getInfoListItemTransformer() {
+		return r -> {
+			JsonInfoListItem jsonInfoListItem = new JsonInfoListItem();
+			jsonInfoListItem.setId(r.get(INFO_LIST_ITEM.ITEM_ID));
+			jsonInfoListItem.setCode(r.get(INFO_LIST_ITEM.CODE));
+			jsonInfoListItem.setLabel(r.get(INFO_LIST_ITEM.LABEL));
+			jsonInfoListItem.setIconName(r.get(INFO_LIST_ITEM.ICON_NAME));
+			jsonInfoListItem.setDefault(r.get(INFO_LIST_ITEM.IS_DEFAULT));
+			jsonInfoListItem.setSystem(r.get(INFO_LIST_ITEM.ITEM_TYPE).equals(SYSTEM_INFO_LIST_IDENTIFIER));
+			jsonInfoListItem.setDenormalized(false);
+			jsonInfoListItem.setFriendlyLabel(messageSource.getMessage(r.get(INFO_LIST_ITEM.LABEL), null, r.get(INFO_LIST_ITEM.LABEL), LocaleContextHolder.getLocale()));
+			jsonInfoListItem.setUri("todo");
+			return jsonInfoListItem;
+		};
+	}
+
+	private Function<Record, JsonInfoList> getInfoListTransformer() {
+		return r -> {
+			Long id = r.get(INFO_LIST.INFO_LIST_ID);
+			String code = r.get(INFO_LIST.CODE);
+			String label = r.get(INFO_LIST.LABEL);
+			String description = r.get(INFO_LIST.DESCRIPTION);
+			return new JsonInfoList(id, "todo", code, label, description);
+		};
 	}
 
 

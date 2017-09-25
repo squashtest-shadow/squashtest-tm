@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.dto.json;
 
+import org.squashtest.tm.domain.Identified;
+
 import java.util.List;
 
 
 
-public class JsonInfoList {
+public class JsonInfoList implements Identified {
 
 	private long id;
 	private String uri;
@@ -46,7 +48,8 @@ public class JsonInfoList {
 		this.description = description;
 	}
 
-	public long getId() {
+	@Override
+	public Long getId() {
 		return id;
 	}
 
