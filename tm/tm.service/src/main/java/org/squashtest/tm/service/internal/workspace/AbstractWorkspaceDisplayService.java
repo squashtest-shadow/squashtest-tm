@@ -46,7 +46,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
-import static org.squashtest.tm.core.foundation.lang.NullFilterListCollector.toNullFilteredList;
 import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.dto.CustomFieldModelFactory.CustomFieldOptionModel;
@@ -296,79 +295,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
 
 		//Now we retrieve the bindings for projects, injecting cuf inside
-		Map<Long, Map<String, List<CustomFieldBindingModel>>> bindingMap = DSL
-			.select(CUSTOM_FIELD_BINDING.CFB_ID, CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID, CUSTOM_FIELD_BINDING.POSITION, CUSTOM_FIELD_BINDING.BOUND_ENTITY, CUSTOM_FIELD_BINDING.CF_ID
-				, CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION)
-			.from(CUSTOM_FIELD_BINDING)
-			.leftJoin(CUSTOM_FIELD_RENDERING_LOCATION).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_RENDERING_LOCATION.CFB_ID))
-			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(readableProjectIds))
-			.fetch()
-			.stream()
-			.collect(groupingBy(r -> {//creating a map <CustomFieldBindingModel, List<RenderingLocationModel>>
-					//here we create custom field binding model
-					//double created by joins are filtered by the grouping by as we have implemented equals on id attribute
-					CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
-					customFieldBindingModel.setId(r.get(CUSTOM_FIELD_BINDING.CFB_ID));
-					customFieldBindingModel.setProjectId(r.get(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID));
-					customFieldBindingModel.setPosition(r.get(CUSTOM_FIELD_BINDING.POSITION));
-					String boundEntityKey = r.get(CUSTOM_FIELD_BINDING.BOUND_ENTITY);
-					BindableEntity bindableEntity = EnumUtils.getEnum(BindableEntity.class, boundEntityKey);
-					BindableEntityModel bindableEntityModel = new BindableEntityModel();
-					bindableEntityModel.setEnumName(boundEntityKey);
-					bindableEntityModel.setFriendlyName(getMessage(bindableEntity.getI18nKey()));
-					customFieldBindingModel.setBoundEntity(bindableEntityModel);
-					customFieldBindingModel.setCustomField(cufMap.get(r.get(CUSTOM_FIELD_BINDING.CF_ID)));
-					return customFieldBindingModel;
-				}, mapping(r -> {
-					String renderingLocationKey = r.get(CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION);
-					if (renderingLocationKey == null) {
-						return null;//it's ok, we collect with a null filtering collector
-					}
-					RenderingLocationModel renderingLocationModel = new RenderingLocationModel();
-					RenderingLocation renderingLocation = EnumUtils.getEnum(RenderingLocation.class, renderingLocationKey);
-					renderingLocationModel.setEnumName(renderingLocationKey);
-					renderingLocationModel.setFriendlyName(getMessage(renderingLocation.getI18nKey()));
-					return renderingLocationModel;
-				}, toNullFilteredList())
-			))
-			.entrySet().stream()
-			.map(entry -> { //we inject the rendering location directly inside the binding model
-				CustomFieldBindingModel bindingModel = entry.getKey();
-				List<RenderingLocationModel> renderingLocationModels = entry.getValue();
-				bindingModel.setRenderingLocations(renderingLocationModels.toArray(new RenderingLocationModel[]{}));
-				return bindingModel;
-			}) //so we have now just a list of CustomFieldBindingModel
-			.collect(
-				groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
-					//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
-					groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
-						() -> {
-							//here we create the empty list, initial step of the reducing operation
-							HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
-							EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
-							bindableEntities.forEach(bindableEntity -> {
-								map.put(bindableEntity.name(), new ArrayList<>());
-							});
-							return map;
-						},
-						mapping(
-							Function.identity(),
-							toList()
-						))
-				));
+		//it's a map like :
+		//projectId :
+			// TEST-CASE : List <CustomFieldBindingModel> linked to test case for this project
+			// REQUIREMENT : List <CustomFieldBindingModel> linked to requirements for this project
+		//...
+		Map<Long, Map<String, List<CustomFieldBindingModel>>> bindingMap = findCustomFieldsBindingsByProject(readableProjectIds, cufMap);
 
 		//We find the milestone bindings and provide projects with them
-		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
-			.from(MILESTONE_BINDING)
-			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
-			.fetch()
-			.stream()
-			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
-				mapping((r) -> {
-					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
-					return milestoneMap.get(milestoneId);
-				}, toList())
-			));
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = findMilestoneByProject(readableProjectIds, milestoneMap);
 
 		//We provide the projects with their bindings and milestones
 		jsonProjectMap.forEach((projectId, jsonProject) -> {
@@ -384,6 +319,100 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		});
 
 		return jsonProjectMap;
+	}
+
+	private Map<Long, List<JsonMilestone>> findMilestoneByProject(List<Long> readableProjectIds, Map<Long, JsonMilestone> milestoneMap) {
+		return DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
+			.from(MILESTONE_BINDING)
+			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
+				mapping((r) -> {
+					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
+					return milestoneMap.get(milestoneId);
+				}, toList())
+			));
+	}
+
+	private Map<Long, Map<String, List<CustomFieldBindingModel>>> findCustomFieldsBindingsByProject(List<Long> readableProjectIds, Map<Long, CustomFieldModel> cufMap) {
+		Result result = DSL
+			.select(CUSTOM_FIELD_BINDING.CFB_ID, CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID, CUSTOM_FIELD_BINDING.POSITION, CUSTOM_FIELD_BINDING.BOUND_ENTITY, CUSTOM_FIELD_BINDING.CF_ID
+				, CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION)
+			.from(CUSTOM_FIELD_BINDING)
+			.leftJoin(CUSTOM_FIELD_RENDERING_LOCATION).on(CUSTOM_FIELD_BINDING.CFB_ID.eq(CUSTOM_FIELD_RENDERING_LOCATION.CFB_ID))
+			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(readableProjectIds))
+			.fetch();
+
+		Function<Record,CustomFieldBindingModel> customFieldBindingModelTransformer = getCustomFieldModelTransformer(cufMap);
+
+		Function<Record, RenderingLocationModel> renderingLocationModelTransformer = getRenderingLocationModelTransformer();
+
+		//we inject the rendering location directly inside the binding model
+		Function<Map.Entry<CustomFieldBindingModel,List<RenderingLocationModel>>, CustomFieldBindingModel> injector = entry -> {
+			CustomFieldBindingModel bindingModel = entry.getKey();
+			List<RenderingLocationModel> renderingLocationModels = entry.getValue();
+			bindingModel.setRenderingLocations(renderingLocationModels.toArray(new RenderingLocationModel[]{}));
+			return bindingModel;
+		};
+
+		List<CustomFieldBindingModel> list = StreamUtils.performJoinAggregate(customFieldBindingModelTransformer, renderingLocationModelTransformer, injector, result);
+		return list.stream().collect(
+			groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
+				//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
+				groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
+					() -> {
+						//here we create the empty list, initial step of the reducing operation
+						HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
+						EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
+						bindableEntities.forEach(bindableEntity -> {
+							map.put(bindableEntity.name(), new ArrayList<>());
+						});
+						return map;
+					},
+					mapping(
+						Function.identity(),
+						toList()
+					))
+			));
+	}
+
+	private Function<Record, RenderingLocationModel> getRenderingLocationModelTransformer() {
+		return r -> {
+			String renderingLocationKey = r.get(CUSTOM_FIELD_RENDERING_LOCATION.RENDERING_LOCATION);
+			if (renderingLocationKey == null) {
+				return null;//it's ok, we collect with a null filtering collector
+			}
+			RenderingLocationModel renderingLocationModel = new RenderingLocationModel();
+			RenderingLocation renderingLocation = EnumUtils.getEnum(RenderingLocation.class, renderingLocationKey);
+			renderingLocationModel.setEnumName(renderingLocationKey);
+			renderingLocationModel.setFriendlyName(getMessage(renderingLocation.getI18nKey()));
+			return renderingLocationModel;
+		};
+	}
+
+	/**
+	 * Return a function that will be responsible to transform a tuple to CustomFieldBidingModel
+	 * @param cufMap a pre fetched map
+	 * @return the function that will be called to transform a Tuple to a CustomFieldBindingModel
+	 */
+	private Function<Record, CustomFieldBindingModel> getCustomFieldModelTransformer(Map<Long, CustomFieldModel> cufMap) {
+		return r -> {//creating a map <CustomFieldBindingModel, List<RenderingLocationModel>>
+			//here we create custom field binding model
+			//double created by joins are filtered by the grouping by as we have implemented equals on id attribute
+			CustomFieldBindingModel customFieldBindingModel = new CustomFieldBindingModel();
+			customFieldBindingModel.setId(r.get(CUSTOM_FIELD_BINDING.CFB_ID));
+			customFieldBindingModel.setProjectId(r.get(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID));
+			customFieldBindingModel.setPosition(r.get(CUSTOM_FIELD_BINDING.POSITION));
+			String boundEntityKey = r.get(CUSTOM_FIELD_BINDING.BOUND_ENTITY);
+			BindableEntity bindableEntity = EnumUtils.getEnum(BindableEntity.class, boundEntityKey);
+			BindableEntityModel bindableEntityModel = new BindableEntityModel();
+			bindableEntityModel.setEnumName(boundEntityKey);
+			bindableEntityModel.setFriendlyName(getMessage(bindableEntity.getI18nKey()));
+			customFieldBindingModel.setBoundEntity(bindableEntityModel);
+			customFieldBindingModel.setCustomField(cufMap.get(r.get(CUSTOM_FIELD_BINDING.CF_ID)));
+			return customFieldBindingModel;
+		};
 	}
 
 	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {

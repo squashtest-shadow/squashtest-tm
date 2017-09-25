@@ -14,16 +14,16 @@ import static org.squashtest.tm.core.foundation.lang.NullFilterListCollector.toN
 
 public class StreamUtils {
 
-	public static <I extends Record, K, V> List<? extends V> performJoinAggregate(Function<? super I, ? extends K> keyCreator,
-																			   Function<? super I, ? extends V> valueCreator,
-																			   Function<? super Map.Entry<? extends K, ? extends List<? extends V>>, ? extends V> injector,
-																			   Collection<? extends I> records) {
+	public static <I extends Record, K, V> List<K>  performJoinAggregate(Function<I,K> leftTupleTransformer,
+																			   Function<I,V> rightTupleTransformer,
+																			   Function<Map.Entry<K,List<V>>, K> injector,
+																			   Collection<I> records) {
 
 		return records.stream().collect(
 			Collectors.groupingBy(
-				keyCreator,
+				leftTupleTransformer,
 				mapping(
-					valueCreator,
+					rightTupleTransformer,
 					toNullFilteredList()
 				)))
 			.entrySet().stream()
