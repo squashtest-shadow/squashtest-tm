@@ -21,10 +21,11 @@
 package org.squashtest.tm.service.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 // TODO : instead of a JsonTypeIdResolver, use something like for AdvancedSearchFieldModel
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="itype", use=JsonTypeInfo.Id.CUSTOM)
-//@JsonTypeIdResolver(CustomFieldModelIdTypeResolver.class)
+@JsonTypeIdResolver(CustomFieldModelIdTypeResolver.class)
 public abstract class CustomFieldModel<VALUETYPE> {
 
 	private long id;
