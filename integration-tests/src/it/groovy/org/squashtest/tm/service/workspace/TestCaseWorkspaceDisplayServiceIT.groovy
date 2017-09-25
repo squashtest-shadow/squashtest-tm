@@ -234,7 +234,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find cuf ids"(){
 		when:
-		def ids = testCaseWorkspaceDisplayService.findUsedCustomFields(readableProjectIds)
+		def ids = testCaseWorkspaceDisplayService.findUsedCustomFieldIds(readableProjectIds)
 
 		then:
 		ids.sort() == expectdInfolistIds.sort()
@@ -338,7 +338,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find milestones ids"(){
 		when:
-		def ids = testCaseWorkspaceDisplayService.findUsedMilestones(readableProjectIds)
+		def ids = testCaseWorkspaceDisplayService.findUsedMilestoneIds(readableProjectIds)
 
 		then:
 		ids.sort() == expectdInfolistIds.sort()

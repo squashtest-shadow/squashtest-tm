@@ -86,22 +86,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, JsonInfoList> infoListMap = findUsedInfolist(readableProjectIds);
 
 		//extracting cuf, options... and so on, to avoid multiple identical extractions when fetching projects
-		List<Long> usedCufIds = findUsedCustomFields(readableProjectIds);
-		Map<Long, CustomFieldModel> cufMap = findCufMap(usedCufIds);
+		Map<Long, CustomFieldModel> cufMap = findUsedCustomFields(readableProjectIds);
 
-		List<Long> usedMilestonesIds = findUsedMilestones(readableProjectIds);
-		Map<Long, JsonMilestone> milestoneMap = findJsonMilestones(usedMilestonesIds);
+		Map<Long, JsonMilestone> milestoneMap = findUsedMilestones(readableProjectIds);
 
 		//now we extract projects
 		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, cufMap, milestoneMap);
 
 
 		return jsonProjects.values();
-	}
-
-	private Map<Long, JsonInfoList> findUsedInfolist(List<Long> readableProjectIds) {
-		Set<Long> usedInfoListIds = findUsedInfoListIds(readableProjectIds);
-		return findInfoListMap(usedInfoListIds);
 	}
 
 	@Override
@@ -121,6 +114,22 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, JsonMilestone> jsonMilestones = findJsonMilestones(milestoneIds);
 		return jsonMilestones.get(activeMilestoneId);
 	}
+
+	private Map<Long, CustomFieldModel> findUsedCustomFields(List<Long> readableProjectIds) {
+		List<Long> usedCufIds = findUsedCustomFieldIds(readableProjectIds);
+		return findCufMap(usedCufIds);
+	}
+
+	private Map<Long, JsonInfoList> findUsedInfolist(List<Long> readableProjectIds) {
+		Set<Long> usedInfoListIds = findUsedInfoListIds(readableProjectIds);
+		return findInfoListMap(usedInfoListIds);
+	}
+
+	private Map<Long, JsonMilestone> findUsedMilestones(List<Long> readableProjectIds) {
+		List<Long> usedMilestonesIds = findUsedMilestoneIds(readableProjectIds);
+		return findJsonMilestones(usedMilestonesIds);
+	}
+
 
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
 		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
@@ -142,7 +151,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.collect(Collectors.toMap(JsonMilestone::getId, Function.identity()));
 	}
 
-	protected List<Long> findUsedMilestones(List<Long> readableProjectIds) {
+	protected List<Long> findUsedMilestoneIds(List<Long> readableProjectIds) {
 		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
 			.from(PROJECT)
 			.naturalJoin(MILESTONE_BINDING)//YEAH !!! at last one clean pair of tables on witch we can do a natural join...
@@ -272,7 +281,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		cufModel.setInputType(inputTypeModel);
 	}
 
-	protected List<Long> findUsedCustomFields(List<Long> readableProjectIds) {
+	protected List<Long> findUsedCustomFieldIds(List<Long> readableProjectIds) {
 		return DSL
 			.selectDistinct(CUSTOM_FIELD_BINDING.CF_ID)
 			.from(CUSTOM_FIELD_BINDING)
@@ -284,20 +293,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	//milestone are fetched in a second request witch will be avoided if milestone are not activated on instance.
 	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, CustomFieldModel> cufMap, Map<Long, JsonMilestone> milestoneMap) {
 
-		Map<Long, JsonProject> jsonProjectMap = DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
-			.from(PROJECT)
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.orderBy(PROJECT.PROJECT_ID)
-			.stream()
-			.map(r -> {
-				Long projectId = r.get(PROJECT.PROJECT_ID);
-				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
-				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
-				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
-				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
-				return jsonProject;
-
-			}).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
+		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
 
 		//Now we retrieve the bindings for projects, injecting cuf inside
 		Map<Long, Map<String, List<CustomFieldBindingModel>>> bindingMap = DSL
@@ -388,6 +384,23 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		});
 
 		return jsonProjectMap;
+	}
+
+	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
+		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+                .from(PROJECT)
+                .where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+                .orderBy(PROJECT.PROJECT_ID)
+                .stream()
+                .map(r -> {
+                    Long projectId = r.get(PROJECT.PROJECT_ID);
+                    JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+                    jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
+                    jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
+                    jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
+                    return jsonProject;
+
+                }).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
 	}
 
 	protected Set<Long> findUsedInfoListIds(List<Long> readableProjectIds) {
