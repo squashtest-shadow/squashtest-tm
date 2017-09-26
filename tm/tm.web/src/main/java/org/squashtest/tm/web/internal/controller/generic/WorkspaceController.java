@@ -52,6 +52,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -91,9 +92,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	protected JsonProjectBuilder jsonProjectBuilder;
 
 	@Inject
-	protected MilestoneFinderService milestoneFinder;
-
-	@Inject
 	protected ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
@@ -111,6 +109,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	private BugTrackerFinderService bugTrackerFinderService;
 
+	@Inject
+	private MilestoneModelService milestoneModelService;
+
 	/**
 	 * Shows a workspace.
 	 *
@@ -126,7 +127,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 //		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen;
 
-		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen
+		// #5585 : the case where elementId explicitly equals string literal "null" can and will happen
 		// thus the test here
 		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
 			nodesToOpen = openedNodes;
@@ -167,7 +168,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		// also, milestones
 		if (activeMilestoneId.isPresent()) {
 			JsonMilestone jsMilestone =
-				workspaceDisplayService().findMilestoneModel(activeMilestoneId.get());
+				milestoneModelService.findMilestoneModel(activeMilestoneId.get());
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 

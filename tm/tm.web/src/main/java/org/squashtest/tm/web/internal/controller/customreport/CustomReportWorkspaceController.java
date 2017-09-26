@@ -166,7 +166,6 @@ public class CustomReportWorkspaceController {
 		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, readableProjectIds));
 		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(readableProjectIds));
 
-
 		return getWorkspaceViewName();
 	}
 

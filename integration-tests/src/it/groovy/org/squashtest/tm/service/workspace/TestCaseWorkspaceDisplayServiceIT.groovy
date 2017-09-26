@@ -351,30 +351,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		[-2L]				|| [-1L]
 	}
 
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	def "should find milestones models"(){
-		given:
-		List<Long> milestoneIds = [-1L,-2L,-3L,-4L]
 
-		when:
-		def milestoneModels = testCaseWorkspaceDisplayService.findJsonMilestones(milestoneIds)
-
-		then:
-		milestoneModels.size() == 4
-		def milestone1 = milestoneModels.get(-1L)
-		milestone1.getId() == -1L
-		milestone1.getLabel() == "My milestone"
-		!milestone1.canEdit
-		!milestone1.canCreateDelete
-		milestone1.getOwnerLogin() == "bob"
-
-		def milestone3 = milestoneModels.get(-3L)
-		milestone3.getId() == -3L
-		milestone3.getLabel() == "My milestone 3"
-		milestone3.canEdit
-		milestone3.canCreateDelete
-		milestone3.getOwnerLogin() == "bob"
-	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find projects models"(){

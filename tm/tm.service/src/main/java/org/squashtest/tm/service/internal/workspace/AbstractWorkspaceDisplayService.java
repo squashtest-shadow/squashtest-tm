@@ -37,6 +37,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory.SingleSele
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory.SingleValuedCustomFieldModel;
 import org.squashtest.tm.service.internal.dto.json.*;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
@@ -65,6 +66,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	protected ProjectFinder projectFinder;
 
+	@Inject
+	private MilestoneModelService milestoneModelService;
+
 	@Override
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
@@ -87,7 +91,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		//extracting cuf, options... and so on, to avoid multiple identical extractions when fetching projects
 		Map<Long, CustomFieldModel> cufMap = findUsedCustomFields(readableProjectIds);
 
-		Map<Long, JsonMilestone> milestoneMap = findUsedMilestones(readableProjectIds);
+		Map<Long, JsonMilestone> milestoneMap = milestoneModelService.findUsedMilestones(readableProjectIds);
 
 		//now we extract projects
 		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, cufMap, milestoneMap);
@@ -106,14 +110,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.collect(Collectors.toMap(Function.identity(), this::getMessage));
 	}
 
-	@Override
-	public JsonMilestone findMilestoneModel(Long activeMilestoneId) {
-		ArrayList<Long> milestoneIds = new ArrayList<>();
-		milestoneIds.add(activeMilestoneId);
-		Map<Long, JsonMilestone> jsonMilestones = findJsonMilestones(milestoneIds);
-		return jsonMilestones.get(activeMilestoneId);
-	}
-
 	private Map<Long, CustomFieldModel> findUsedCustomFields(List<Long> readableProjectIds) {
 		List<Long> usedCufIds = findUsedCustomFieldIds(readableProjectIds);
 		return findCufMap(usedCufIds);
@@ -122,32 +118,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	private Map<Long, JsonInfoList> findUsedInfolist(List<Long> readableProjectIds) {
 		Set<Long> usedInfoListIds = findUsedInfoListIds(readableProjectIds);
 		return findInfoListMap(usedInfoListIds);
-	}
-
-	private Map<Long, JsonMilestone> findUsedMilestones(List<Long> readableProjectIds) {
-		List<Long> usedMilestonesIds = findUsedMilestoneIds(readableProjectIds);
-		return findJsonMilestones(usedMilestonesIds);
-	}
-
-
-	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
-		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
-			, CORE_USER.LOGIN)
-			.from(MILESTONE)
-			.join(CORE_USER).on(MILESTONE.USER_ID.eq(CORE_USER.PARTY_ID))
-			.where(MILESTONE.MILESTONE_ID.in(usedMilestonesIds))
-			.fetch()
-			.stream()
-			.map(r -> {
-				String mRangeKey = r.get(MILESTONE.M_RANGE);
-				MilestoneRange milestoneRange = EnumUtils.getEnum(MilestoneRange.class, mRangeKey);
-
-				String mStatusKey = r.get(MILESTONE.STATUS);
-				MilestoneStatus milestoneStatus = EnumUtils.getEnum(MilestoneStatus.class, mStatusKey);
-
-				return new JsonMilestone(r.get(MILESTONE.MILESTONE_ID), r.get(MILESTONE.LABEL), milestoneStatus, milestoneRange, r.get(MILESTONE.END_DATE), r.get(CORE_USER.LOGIN));
-			})
-			.collect(Collectors.toMap(JsonMilestone::getId, Function.identity()));
 	}
 
 	protected List<Long> findUsedMilestoneIds(List<Long> readableProjectIds) {
@@ -255,7 +225,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return cufModel;
 	}
 
-	private SingleValuedCustomFieldModel getSingleValueCustomFieldModel(Record r) {//take care if you change the JOOQ request, the result can become incompatible.
+	//Take care if you change the JOOQ request, the result can become incompatible.
+	private SingleValuedCustomFieldModel getSingleValueCustomFieldModel(Record r) {
 		SingleValuedCustomFieldModel cufModel = new SingleValuedCustomFieldModel();
 		initCufModel(r, cufModel);
 		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
