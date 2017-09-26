@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.library.WorkspaceService;
@@ -112,6 +113,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	private MilestoneModelService milestoneModelService;
 
+	@Inject
+	private InfoListModelService infoListModelService;
+
 	/**
 	 * Shows a workspace.
 	 *
@@ -173,7 +177,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 
 		model.addAttribute("userPrefs", getWorkspaceUserPref());
-		model.addAttribute("defaultInfoLists", workspaceDisplayService().findSystemInfoListItemLabels());
+		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
 		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
 		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
