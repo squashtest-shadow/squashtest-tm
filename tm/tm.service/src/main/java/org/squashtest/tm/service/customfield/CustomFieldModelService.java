@@ -14,8 +14,8 @@ public interface CustomFieldModelService {
 	 * @return a map with {@link CustomFieldBindingModel} grouped by {@link org.squashtest.tm.domain.project.Project} id and {@link org.squashtest.tm.domain.customfield.BindableEntity}
 	 * Example if i call this method for {@link org.squashtest.tm.domain.project.Project} 1 and 32
 	 * PROJECT_ID : 1 The key for first project : 1
-	 * 		TEST-CASE : {@link List} of {@link CustomFieldBindingModel} bound to {@link org.squashtest.tm.domain.testcase.TestCase} for the project designed by id 1.
-	 * 		REQUIREMENT : {@link List} of {@link CustomFieldBindingModel} bound to {@link org.squashtest.tm.domain.requirement.Requirement} for the project designed by id 1.
+	 * 		TEST_CASE : {@link List} of {@link CustomFieldBindingModel} bound to {@link org.squashtest.tm.domain.testcase.TestCase} for the project designed by id 1.
+	 * 		REQUIREMENT_VERSION : {@link List} of {@link CustomFieldBindingModel} bound to {@link org.squashtest.tm.domain.requirement.Requirement} for the project designed by id 1.
 	 * 	... (All other {@link org.squashtest.tm.domain.customfield.BindableEntity})
 	 *
 	 * PROJECT_ID : 32 The key for second project : 32

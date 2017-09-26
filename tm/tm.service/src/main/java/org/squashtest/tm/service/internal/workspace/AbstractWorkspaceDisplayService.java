@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.workspace;
 
@@ -99,28 +99,20 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsonProjects.values();
 	}
 
-
-	//here come the fun part. Fetch project with custom field bindings and infolist ids in a first request -> hydrate with the already fetched models
-	//milestone are fetched in a second request witch will be avoided if milestone are not activated on instance.
 	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, JsonMilestone> milestoneMap) {
 
 		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
 
 		//Now we retrieve the bindings for projects, injecting cuf inside
-		//it's a map like :
-		//projectId :
-			// TEST-CASE : List <CustomFieldBindingModel> linked to test case for this project
-			// REQUIREMENT : List <CustomFieldBindingModel> linked to requirements for this project
-		//...
-		Map<Long, Map<String, List<CustomFieldBindingModel>>> bindingMap = customFieldModelService.findCustomFieldsBindingsByProject(readableProjectIds);
+		Map<Long, Map<String, List<CustomFieldBindingModel>>> customFieldsBindingsByProject = customFieldModelService.findCustomFieldsBindingsByProject(readableProjectIds);
 
 		//We find the milestone bindings and provide projects with them
 		Map<Long, List<JsonMilestone>> milestoneByProjectId = findMilestoneByProject(readableProjectIds, milestoneMap);
 
 		//We provide the projects with their bindings and milestones
 		jsonProjectMap.forEach((projectId, jsonProject) -> {
-			if (bindingMap.containsKey(projectId)) {
-				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = bindingMap.get(projectId);
+			if (customFieldsBindingsByProject.containsKey(projectId)) {
+				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = customFieldsBindingsByProject.get(projectId);
 				jsonProject.setCustomFieldBindings(bindingsByEntityType);
 			}
 
@@ -147,23 +139,21 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			));
 	}
 
-
-
 	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
 		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
-                .from(PROJECT)
-                .where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-                .orderBy(PROJECT.PROJECT_ID)
-                .stream()
-                .map(r -> {
-                    Long projectId = r.get(PROJECT.PROJECT_ID);
-                    JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
-                    jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
-                    jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
-                    jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
-                    return jsonProject;
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.orderBy(PROJECT.PROJECT_ID)
+			.stream()
+			.map(r -> {
+				Long projectId = r.get(PROJECT.PROJECT_ID);
+				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
+				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
+				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
+				return jsonProject;
 
-                }).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
+			}).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
 	}
 
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {

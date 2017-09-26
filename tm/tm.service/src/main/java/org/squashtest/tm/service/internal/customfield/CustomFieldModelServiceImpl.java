@@ -36,8 +36,6 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 	@Inject
 	private MessageSource messageSource;
 
-
-
 	@Override
 	public Map<Long, Map<String, List<CustomFieldBindingModel>>> findCustomFieldsBindingsByProject(List<Long> projectIds) {
 		Map<Long, CustomFieldModel> cufMap = findUsedCustomFields(projectIds);
@@ -202,7 +200,15 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 
 		List<CustomFieldBindingModel> list = StreamUtils.performJoinAggregate(customFieldBindingModelTransformer, renderingLocationModelTransformer, injector, result);
 
-		return groupByProjectAndType(list);
+		Map<Long, Map<String, List<CustomFieldBindingModel>>> cufBindingsByProject = groupByProjectAndType(list);
+
+		for (Long id : readableProjectIds) {
+			if(!cufBindingsByProject.containsKey(id)){
+				cufBindingsByProject.put(id, createEmptyCufMap());
+			}
+		}
+
+		return cufBindingsByProject;
 	}
 
 	private Map<Long, Map<String, List<CustomFieldBindingModel>>> groupByProjectAndType(List<CustomFieldBindingModel> list) {
@@ -212,11 +218,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 				groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
 					() -> {
 						//here we create the empty list, initial step of the reducing operation
-						HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
-						EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
-						bindableEntities.forEach(bindableEntity -> {
-							map.put(bindableEntity.name(), new ArrayList<>());
-						});
+						HashMap<String, List<CustomFieldBindingModel>> map = createEmptyCufMap();
 						return map;
 					},
 					mapping(
@@ -224,6 +226,15 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 						toList()
 					))
 			));
+	}
+
+	private HashMap<String, List<CustomFieldBindingModel>> createEmptyCufMap() {
+		HashMap<String, List<CustomFieldBindingModel>> map = new HashMap<>();
+		EnumSet<BindableEntity> bindableEntities = EnumSet.allOf(BindableEntity.class);
+		bindableEntities.forEach(bindableEntity -> {
+            map.put(bindableEntity.name(), new ArrayList<>());
+        });
+		return map;
 	}
 
 	private Function<Record, RenderingLocationModel> getRenderingLocationModelTransformer() {

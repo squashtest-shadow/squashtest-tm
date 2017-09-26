@@ -117,6 +117,23 @@ class CustomFieldModelServiceIT extends DbunitServiceSpecification {
 
 	}
 
+	def "should find custom field binding by projects"() {
+		when:
+		def bindingsByProject = customFieldModelService.findCustomFieldsBindingsByProject([-1L,-2L,-3L])
 
+		then:
+		bindingsByProject.get(-1L).get("TEST_CASE").collect{it.id}.sort() == [-1L]
+		bindingsByProject.get(-1L).get("REQUIREMENT_VERSION").collect{it.id}.sort() == [-3L,-2L]
+		bindingsByProject.get(-1L).get("TEST_STEP").collect{it.id}.sort() == [-5L,-4L]
+
+		bindingsByProject.get(-2L).get("TEST_CASE").collect{it.id}.sort() == [-7L]
+		bindingsByProject.get(-2L).get("REQUIREMENT_VERSION").collect{it.id}.sort() == [-6L]
+		bindingsByProject.get(-2L).get("TEST_STEP").collect{it.id}.sort() == []
+
+		bindingsByProject.get(-3L).get("TEST_CASE").collect{it.id}.sort() == []
+		bindingsByProject.get(-3L).get("REQUIREMENT_VERSION").collect{it.id}.sort() == []
+		bindingsByProject.get(-3L).get("TEST_STEP").collect{it.id}.sort() == []
+
+	}
 
 }
