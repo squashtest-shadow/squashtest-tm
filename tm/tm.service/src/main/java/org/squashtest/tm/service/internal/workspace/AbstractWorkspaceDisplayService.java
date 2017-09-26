@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.internal.dto.*;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory.DatePickerFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory.SingleSelectFieldModel;
@@ -69,6 +70,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private MilestoneModelService milestoneModelService;
 
+	@Inject
+	private CustomFieldModelService customFieldModelService;
+
 	@Override
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
@@ -89,7 +93,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		Map<Long, JsonInfoList> infoListMap = findUsedInfolist(readableProjectIds);
 
 		//extracting cuf, options... and so on, to avoid multiple identical extractions when fetching projects
-		Map<Long, CustomFieldModel> cufMap = findUsedCustomFields(readableProjectIds);
+		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findUsedCustomFields(readableProjectIds);
 
 		Map<Long, JsonMilestone> milestoneMap = milestoneModelService.findUsedMilestones(readableProjectIds);
 
@@ -110,153 +114,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.collect(Collectors.toMap(Function.identity(), this::getMessage));
 	}
 
-	private Map<Long, CustomFieldModel> findUsedCustomFields(List<Long> readableProjectIds) {
-		List<Long> usedCufIds = findUsedCustomFieldIds(readableProjectIds);
-		return findCufMap(usedCufIds);
-	}
-
 	private Map<Long, JsonInfoList> findUsedInfolist(List<Long> readableProjectIds) {
 		Set<Long> usedInfoListIds = findUsedInfoListIds(readableProjectIds);
 		return findInfoListMap(usedInfoListIds);
-	}
-
-	protected List<Long> findUsedMilestoneIds(List<Long> readableProjectIds) {
-		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
-			.from(PROJECT)
-			.naturalJoin(MILESTONE_BINDING)//YEAH !!! at last one clean pair of tables on witch we can do a natural join...
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
-			.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
-	}
-
-	protected Map<Long, CustomFieldModel> findCufMap(List<Long> usedCufIds) {
-		Map<Long, CustomFieldModel> cufMap = new HashMap<>();
-
-		DSL.select(CUSTOM_FIELD.CF_ID, CUSTOM_FIELD.INPUT_TYPE, CUSTOM_FIELD.NAME, CUSTOM_FIELD.LABEL, CUSTOM_FIELD.CODE, CUSTOM_FIELD.OPTIONAL, CUSTOM_FIELD.DEFAULT_VALUE, CUSTOM_FIELD.LARGE_DEFAULT_VALUE
-			, CUSTOM_FIELD_OPTION.CODE, CUSTOM_FIELD_OPTION.LABEL, CUSTOM_FIELD_OPTION.POSITION)
-			.from(CUSTOM_FIELD)
-			.leftJoin(CUSTOM_FIELD_OPTION).using(CUSTOM_FIELD.CF_ID)
-			.where(CUSTOM_FIELD.CF_ID.in(usedCufIds))
-			.fetch()
-			.forEach(r -> {
-				Long cufId = r.get(CUSTOM_FIELD.CF_ID);
-				String type = r.get(CUSTOM_FIELD.INPUT_TYPE);
-				InputType inputType = EnumUtils.getEnum(InputType.class, type);
-				switch (inputType) {
-					case RICH_TEXT:
-						CustomFieldModel richTextCustomFieldModel = getRichTextCustomFieldModel(r);
-						cufMap.put(richTextCustomFieldModel.getId(), richTextCustomFieldModel);
-						break;
-					//here is the not fun case
-					//as we have made a left join, we can have the first tuple witch need to be treated as a cuf AND an option
-					//or subsequent tuple witch must be treated only as option...
-					case DROPDOWN_LIST:
-						if (cufMap.containsKey(cufId)) {
-							SingleSelectFieldModel singleSelectFieldModel = (SingleSelectFieldModel) cufMap.get(cufId);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							SingleSelectFieldModel singleSelectFieldModel = getSingleSelectFieldModel(r);
-							singleSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(singleSelectFieldModel.getId(), singleSelectFieldModel);
-						}
-						break;
-
-					case DATE_PICKER:
-						CustomFieldModel datePickerCustomFieldModel = getDatePickerCustomFieldModel(r);
-						cufMap.put(datePickerCustomFieldModel.getId(), datePickerCustomFieldModel);
-						break;
-
-					case TAG:
-						if (cufMap.containsKey(cufId)) {
-							MultiSelectFieldModel multiSelectFieldModel = (MultiSelectFieldModel) cufMap.get(cufId);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-						} else {
-							MultiSelectFieldModel multiSelectFieldModel = getMultiSelectFieldModel(r);
-							multiSelectFieldModel.addOption(getCufValueOptionModel(r));
-							cufMap.put(multiSelectFieldModel.getId(), multiSelectFieldModel);
-						}
-						break;
-
-					default:
-						CustomFieldModel cufModel = getSingleValueCustomFieldModel(r);
-						cufMap.put(cufId, cufModel);
-				}
-			});
-
-		return cufMap;
-	}
-
-	private MultiSelectFieldModel getMultiSelectFieldModel(Record r) {
-		MultiSelectFieldModel multiSelectFieldModel = new MultiSelectFieldModel();
-		initCufModel(r, multiSelectFieldModel);
-		for (String value : r.get(CUSTOM_FIELD.DEFAULT_VALUE).split(MultiSelectField.SEPARATOR_EXPR)) {
-			multiSelectFieldModel.addDefaultValue(value);
-		}
-		return multiSelectFieldModel;
-	}
-
-	private SingleSelectFieldModel getSingleSelectFieldModel(Record r) {
-		SingleSelectFieldModel singleSelectFieldModel = new SingleSelectFieldModel();
-		initCufModel(r, singleSelectFieldModel);
-		singleSelectFieldModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
-		return singleSelectFieldModel;
-	}
-
-	private CustomFieldOptionModel getCufValueOptionModel(Record r) {
-		CustomFieldOptionModel optionModel = new CustomFieldOptionModel();
-		optionModel.setCode(r.get(CUSTOM_FIELD_OPTION.CODE));
-		optionModel.setLabel(r.get(CUSTOM_FIELD_OPTION.LABEL));
-		return optionModel;
-	}
-
-	private CustomFieldModel getDatePickerCustomFieldModel(Record r) {
-		DatePickerFieldModel cufModel = new DatePickerFieldModel();
-		initCufModel(r, cufModel);
-		Locale locale = LocaleContextHolder.getLocale();
-		cufModel.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
-		cufModel.setLocale(locale.toString());
-		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
-		return cufModel;
-	}
-
-	private CustomFieldModel getRichTextCustomFieldModel(Record r) {
-		SingleValuedCustomFieldModel cufModel = new SingleValuedCustomFieldModel();
-		initCufModel(r, cufModel);
-		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.LARGE_DEFAULT_VALUE));
-		return cufModel;
-	}
-
-	//Take care if you change the JOOQ request, the result can become incompatible.
-	private SingleValuedCustomFieldModel getSingleValueCustomFieldModel(Record r) {
-		SingleValuedCustomFieldModel cufModel = new SingleValuedCustomFieldModel();
-		initCufModel(r, cufModel);
-		cufModel.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
-		return cufModel;
-	}
-
-	private void initCufModel(Record r, CustomFieldModel cufModel) {
-		cufModel.setId(r.get(CUSTOM_FIELD.CF_ID));
-		cufModel.setCode(r.get(CUSTOM_FIELD.CODE));
-		cufModel.setName(r.get(CUSTOM_FIELD.NAME));
-		cufModel.setLabel(r.get(CUSTOM_FIELD.LABEL));
-		cufModel.setOptional(r.get(CUSTOM_FIELD.OPTIONAL));
-
-		cufModel.setDenormalized(false);
-
-		InputTypeModel inputTypeModel = new InputTypeModel();
-		String inputTypeKey = r.get(CUSTOM_FIELD.INPUT_TYPE);
-		InputType inputType = EnumUtils.getEnum(InputType.class, inputTypeKey);
-		inputTypeModel.setEnumName(inputTypeKey);
-		inputTypeModel.setFriendlyName(getMessage(inputType.getI18nKey()));
-
-		cufModel.setInputType(inputTypeModel);
-	}
-
-	protected List<Long> findUsedCustomFieldIds(List<Long> readableProjectIds) {
-		return DSL
-			.selectDistinct(CUSTOM_FIELD_BINDING.CF_ID)
-			.from(CUSTOM_FIELD_BINDING)
-			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(readableProjectIds))
-			.fetch(CUSTOM_FIELD_BINDING.CF_ID, Long.class);
 	}
 
 	//here come the fun part. Fetch project with custom field bindings and infolist ids in a first request -> hydrate with the already fetched models
