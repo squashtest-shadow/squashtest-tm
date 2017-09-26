@@ -117,9 +117,10 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		if (t === undefined ||  t.length === 0) {
 			console.log("WARN Cannot destroy ckeditor for unknown target", target);
 		}
-		var ckInstance = CKEDITOR.instances[t.attr('id')];
-		if (ckInstance) {
-			ckInstance.destroy(true);
+		try {
+			CKEDITOR.instances[t.attr('id')].destroy(true);
+		} catch (e) {
+			// do nothing
 		}
 	}
 
