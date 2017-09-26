@@ -123,8 +123,11 @@ class CustomFieldModelServiceIT extends DbunitServiceSpecification {
 
 		then:
 		bindingsByProject.get(-1L).get("TEST_CASE").collect{it.id}.sort() == [-1L]
+		bindingsByProject.get(-1L).get("TEST_CASE").find {it.id == -1L}.renderingLocations.collect{it.enumName}.sort() == []
 		bindingsByProject.get(-1L).get("REQUIREMENT_VERSION").collect{it.id}.sort() == [-3L,-2L]
 		bindingsByProject.get(-1L).get("TEST_STEP").collect{it.id}.sort() == [-5L,-4L]
+		bindingsByProject.get(-1L).get("TEST_STEP").find {it.id == -4L}.renderingLocations.collect{it.enumName}.sort() == ["STEP_TABLE","TEST_PLAN"]
+		bindingsByProject.get(-1L).get("TEST_STEP").find {it.id == -5L}.renderingLocations.collect{it.enumName}.sort() == ["STEP_TABLE"]
 
 		bindingsByProject.get(-2L).get("TEST_CASE").collect{it.id}.sort() == [-7L]
 		bindingsByProject.get(-2L).get("REQUIREMENT_VERSION").collect{it.id}.sort() == [-6L]
