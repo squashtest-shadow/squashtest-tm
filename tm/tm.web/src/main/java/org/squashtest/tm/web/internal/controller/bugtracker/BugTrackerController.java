@@ -207,7 +207,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(EXECUTION_STEP_TYPE, stepId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -322,7 +322,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(EXECUTION_TYPE, execId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -433,7 +433,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(TEST_CASE_TYPE, tcId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -479,7 +479,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(ITERATION_TYPE, iterId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -525,7 +525,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(CAMPAIGN_TYPE, campId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -570,7 +570,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(TEST_SUITE_TYPE, testSuiteId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
@@ -620,7 +620,7 @@ public class BugTrackerController {
 		if (shouldGetTableData(mav)) {
 			DataTableModel issues = getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId,
 					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
 		return mav;
