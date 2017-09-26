@@ -26,6 +26,11 @@ define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
 			var linkName = $("#navigation").data("highlight");
 			$("#"+linkName+"-link").addClass('navigation-selected');
 			$("#bugtracker-link").buttonmenu({display:"block"});
+
+			var bugTrackerList = $("#bugtracker-link").next('ul');
+			if (bugTrackerList.children().length > 7){
+				bugTrackerList.css("overflow-y", "scroll");
+			}
 		}
 	};
 
