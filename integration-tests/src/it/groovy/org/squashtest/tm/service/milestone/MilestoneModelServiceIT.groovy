@@ -3,6 +3,7 @@ package org.squashtest.tm.service.milestone
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone
 import org.squashtest.tm.service.internal.milestone.MilestoneModelServiceImpl
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
@@ -18,6 +19,21 @@ class MilestoneModelServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private MilestoneModelServiceImpl milestoneModelService
 
+	@DataSet("MilestoneModelService.sandbox.xml")
+	def "should find used milestone ids"(){
+		when:
+		def usedMilestonesIds = milestoneModelService.findUsedMilestoneIds(projectIds)
+
+		then:
+		usedMilestonesIds.sort() == milestoneIds.sort()
+
+		where:
+		projectIds		||	milestoneIds
+		[]				||	[]
+		[-1L]			||	[-1L,-2L,-3L]
+		[-1L,-2L]		||	[-1L,-2L,-3L]
+		[-2L]			||	[-1L]
+	}
 
 	@DataSet("MilestoneModelService.sandbox.xml")
 	def "should find milestones models"() {
