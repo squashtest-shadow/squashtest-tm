@@ -42,14 +42,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
+import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
@@ -94,6 +99,22 @@ public class CustomReportWorkspaceController {
 	@Inject
 	private JsonProjectBuilder jsonProjectBuilder;
 
+	@Inject
+	protected ProjectFinder projectFinder;
+
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	@Named("customReportWorkspaceDisplayService")
+	private WorkspaceDisplayService workspaceDisplayService;
+
+	@Inject
+	private WorkspaceHelperService workspaceHelperService;
+
+	@Inject
+	private BugTrackerFinderService bugTrackerFinderService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
@@ -118,34 +139,34 @@ public class CustomReportWorkspaceController {
 
 		model.addAttribute("rootModel", rootNodes);
 
-		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
 
-		//Active Milestone
-		if (milestone.isPresent()){
+		// also, milestones
+		if (activeMilestoneId.isPresent()) {
 			JsonMilestone jsMilestone =
-                            new JsonMilestone(
-                                milestone.get().getId(),
-                                milestone.get().getLabel(),
-                                milestone.get().getStatus(),
-                                milestone.get().getRange(),
-                                milestone.get().getEndDate(),
-                                milestone.get().getOwner().getLogin()
-                            );
+				workspaceDisplayService.findMilestoneModel(activeMilestoneId.get());
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 
-                // json projects
-                Collection<JsonProject> projects = jsonProjectBuilder.getExtendedReadableProjects();
-                model.addAttribute("projects", projects);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+		model.addAttribute("projects", projects);
+
 
 		//defaults lists and enums levels
-		model.addAttribute("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+		model.addAttribute("defaultInfoLists", workspaceDisplayService.findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
 		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
 		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
 		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
 		model.addAttribute("executionStatus",
 				i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
+
+		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, readableProjectIds));
+		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(readableProjectIds));
+
+
 		return getWorkspaceViewName();
 	}
 
