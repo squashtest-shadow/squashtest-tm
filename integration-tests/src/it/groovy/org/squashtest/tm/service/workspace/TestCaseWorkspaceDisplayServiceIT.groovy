@@ -190,64 +190,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	def "should find infolist ids"(){
-
-		when:
-		def ids = testCaseWorkspaceDisplayService.findUsedInfoListIds(readableProjectIds)
-
-		then:
-		ids.sort() == expectdInfolistIds.sort()
-
-		where:
-		readableProjectIds 	|| expectdInfolistIds
-		[]					|| []
-		[-1L]				|| [-4L,-2L,-1L]
-		[-1L,-2L]			|| [-4L,-3L,-2L,-1L]
-		[-1L,-2L,-3L,-4L]	|| [-4L,-3L,-2L,-1L]
-	}
-
-
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	def "should find infolist json models"(){
-		when:
-		Map<Long, JsonInfoList> infolistMap = testCaseWorkspaceDisplayService.findInfoListMap([-1L,-2L,-3L,-4L] as Set);
-
-		then:
-		infolistMap.size() == 4
-		JsonInfoList infoList = infolistMap.get(-1L)
-		infoList.getId() == -1L
-		infoList.getCode() == "DEF_REQ_CAT"
-		infoList.getLabel() == "Req Cat"
-		infoList.getDescription() == "Desc"
-
-		def infoListItems = infoList.getItems()
-		infoListItems.size() == 3
-		infoListItems.collect{it.id}.sort() == [-1L,-2L,-3L].sort()
-
-		JsonInfoList customInfoList = infolistMap.get(-4L)
-		customInfoList.getItems().size() == 4
-		customInfoList.getItems().collect{it.id}.sort() == [-13L,-12L,-11L,-10L].sort()
-
-	}
-
-
-
-	@DataSet("WorkspaceDisplayService.sandbox.xml")
-	def "should find milestones ids"(){
-		when:
-		def ids = testCaseWorkspaceDisplayService.findUsedMilestoneIds(readableProjectIds)
-
-		then:
-		ids.sort() == expectdInfolistIds.sort()
-
-		where:
-		readableProjectIds 	|| expectdInfolistIds
-		[]					|| []
-		[-1L]				|| [-1L,-2L,-3L]
-		[-1L,-2L]			|| [-1L,-2L,-3L]
-		[-2L]				|| [-1L]
-	}
 
 
 
