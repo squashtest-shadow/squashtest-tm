@@ -20,7 +20,7 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 
 /**
  *  As for Squash 1.17, all our DAO are JPA or Hibernate DAO.
- *  Decision was made to not create specific DAO for jOOQ and Models. So the request are in service object.
+ *  Decision was made to not create specific DAO for jOOQ and Models. So the requests are in service object.
  */
 @Service
 @Transactional(readOnly = true)
@@ -65,9 +65,8 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 
 	protected List<Long> findUsedMilestoneIds(List<Long> readableProjectIds) {
 		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
-			.from(PROJECT)
-			.naturalJoin(MILESTONE_BINDING)//YEAH !!! at last one clean pair of tables on witch we can do a natural join...
-			.where(PROJECT.PROJECT_ID.in(readableProjectIds))
+			.from(MILESTONE_BINDING)
+			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
 			.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
 	}
 }
