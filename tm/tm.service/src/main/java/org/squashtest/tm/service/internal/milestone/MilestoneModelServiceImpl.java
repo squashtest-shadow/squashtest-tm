@@ -36,6 +36,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 /**
@@ -63,6 +66,12 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 		return jsonMilestones.get(milestoneId);
 	}
 
+	@Override
+	public Map<Long, List<JsonMilestone>> findMilestoneByProject(List<Long> readableProjectIds) {
+		Map<Long, JsonMilestone> milestoneMap = findUsedMilestones(readableProjectIds);
+		return doFindMilestoneByProject(readableProjectIds, milestoneMap);
+	}
+
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
 		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
 			, CORE_USER.LOGIN)
@@ -88,5 +97,26 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 			.from(MILESTONE_BINDING)
 			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
 			.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
+	}
+
+	private Map<Long, List<JsonMilestone>> doFindMilestoneByProject(List<Long> readableProjectIds, Map<Long, JsonMilestone> milestoneMap) {
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
+			.from(MILESTONE_BINDING)
+			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
+			.fetch()
+			.stream()
+			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
+				mapping((r) -> {
+					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
+					return milestoneMap.get(milestoneId);
+				}, toList())
+			));
+
+		//filling with empty list to return a nice map, with all project ids filed
+		readableProjectIds.stream()
+			.filter(id -> !milestoneByProjectId.containsKey(id))
+			.forEach(id -> milestoneByProjectId.put(id, new ArrayList<>()));
+
+		return milestoneByProjectId;
 	}
 }

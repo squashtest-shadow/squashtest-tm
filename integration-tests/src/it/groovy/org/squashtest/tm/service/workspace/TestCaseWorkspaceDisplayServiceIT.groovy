@@ -120,7 +120,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 
-
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find permission masks for standard user"(){
 		given:
@@ -172,7 +171,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 
-
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
 	def "should find wizards for test case library"(){
 		given:
@@ -188,9 +186,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes.get(-3L).getAttr().get("wizards") == [] as Set
 
 	}
-
-
-
 
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")

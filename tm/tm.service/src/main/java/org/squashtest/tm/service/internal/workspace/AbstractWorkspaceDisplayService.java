@@ -61,9 +61,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	DSLContext DSL;
 
 	@Inject
-	protected ProjectFinder projectFinder;
-
-	@Inject
 	private MilestoneModelService milestoneModelService;
 
 	@Inject
@@ -86,30 +83,25 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	@Override
 	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
+		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds);
+		return jsonProjects.values();
+	}
+
+	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds) {
 		// As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
 		// We do that only on collaborators witch should not be too numerous versus the number of projects
 		// good candidate for this pre fetch are infolists, custom fields (not bindings), milestones...
 		Map<Long, JsonInfoList> infoListMap = infoListModelService.findUsedInfoList(readableProjectIds);
 
-		Map<Long, JsonMilestone> milestoneMap = milestoneModelService.findUsedMilestones(readableProjectIds);
-
-		//now we extract projects
-		Map<Long, JsonProject> jsonProjects = doFindAllProjects(readableProjectIds, infoListMap, milestoneMap);
-
-		return jsonProjects.values();
-	}
-
-	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap, Map<Long, JsonMilestone> milestoneMap) {
-
 		Map<Long, JsonProject> jsonProjectMap = findJsonProjects(readableProjectIds, infoListMap);
 
-		//Now we retrieve the bindings for projects, injecting cuf inside
+		// Now we retrieve the bindings for projects, injecting cuf inside
 		Map<Long, Map<String, List<CustomFieldBindingModel>>> customFieldsBindingsByProject = customFieldModelService.findCustomFieldsBindingsByProject(readableProjectIds);
 
-		//We find the milestone bindings and provide projects with them
-		Map<Long, List<JsonMilestone>> milestoneByProjectId = findMilestoneByProject(readableProjectIds, milestoneMap);
+		// We find the milestone bindings and provide projects with them
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = milestoneModelService.findMilestoneByProject(readableProjectIds);
 
-		//We provide the projects with their bindings and milestones
+		// We provide the projects with their bindings and milestones
 		jsonProjectMap.forEach((projectId, jsonProject) -> {
 			if (customFieldsBindingsByProject.containsKey(projectId)) {
 				Map<String, List<CustomFieldBindingModel>> bindingsByEntityType = customFieldsBindingsByProject.get(projectId);
@@ -123,20 +115,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		});
 
 		return jsonProjectMap;
-	}
-
-	private Map<Long, List<JsonMilestone>> findMilestoneByProject(List<Long> readableProjectIds, Map<Long, JsonMilestone> milestoneMap) {
-		return DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
-			.from(MILESTONE_BINDING)
-			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
-			.fetch()
-			.stream()
-			.collect(groupingBy((r) -> r.get(MILESTONE_BINDING.PROJECT_ID),
-				mapping((r) -> {
-					Long milestoneId = r.get(MILESTONE_BINDING.MILESTONE_ID);
-					return milestoneMap.get(milestoneId);
-				}, toList())
-			));
 	}
 
 	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {

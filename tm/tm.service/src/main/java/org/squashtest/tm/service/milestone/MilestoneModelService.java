@@ -45,5 +45,7 @@ public interface MilestoneModelService {
 	 */
 	JsonMilestone findMilestoneModel(Long milestoneId);
 
+	Map<Long, List<JsonMilestone>> findMilestoneByProject(List<Long> readableProjectIds);
+
 
 }

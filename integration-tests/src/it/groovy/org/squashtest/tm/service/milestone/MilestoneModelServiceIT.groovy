@@ -33,13 +33,14 @@ import javax.inject.Inject
 @UnitilsSupport
 @Transactional
 @NotThreadSafe
+@DataSet("MilestoneModelService.sandbox.xml")
 class MilestoneModelServiceIT extends DbunitServiceSpecification {
 
 
 	@Inject
 	private MilestoneModelServiceImpl milestoneModelService
 
-	@DataSet("MilestoneModelService.sandbox.xml")
+
 	def "should find used milestone ids"(){
 		when:
 		def usedMilestonesIds = milestoneModelService.findUsedMilestoneIds(projectIds)
@@ -55,7 +56,6 @@ class MilestoneModelServiceIT extends DbunitServiceSpecification {
 		[-2L]			||	[-1L]
 	}
 
-	@DataSet("MilestoneModelService.sandbox.xml")
 	def "should find milestones models"() {
 		given:
 		List<Long> milestoneIds = [-1L, -2L, -3L, -4L]
@@ -79,4 +79,25 @@ class MilestoneModelServiceIT extends DbunitServiceSpecification {
 		milestone3.canCreateDelete
 		milestone3.getOwnerLogin() == "bob"
 	}
+
+	def "should find milestone binding for projects"(){
+		given:
+		List<Long> projectIds = [-1L,-2L,-3L]
+
+		when:
+		def milestoneByProject = milestoneModelService.findMilestoneByProject(projectIds)
+
+		then:
+		milestoneByProject.size() == 3
+
+		def jsonMilestones1 = milestoneByProject.get(-1L)
+		jsonMilestones1.collect{it.id}.sort() == [-3L,-2L,-1L]
+
+		def jsonMilestones2 = milestoneByProject.get(-2L)
+		jsonMilestones2.collect{it.id}.sort() == [-1L]
+
+		def jsonMilestones3 = milestoneByProject.get(-3L)
+		jsonMilestones3.collect{it.id}.sort() == []
+	}
+
 }
