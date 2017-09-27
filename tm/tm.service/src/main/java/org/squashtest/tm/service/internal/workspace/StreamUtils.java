@@ -64,16 +64,20 @@ public class StreamUtils {
 			return key;
 		};
 
+		return transformTupleIntoMap(leftTupleTransformer, rightTupleTransformer, records)
+			.entrySet().stream()
+			.map(function)
+			.collect(Collectors.toList());
+	}
+
+	private static <I extends Record, K, V> Map<K, List<V>> transformTupleIntoMap(Function<I, K> leftTupleTransformer, Function<I, V> rightTupleTransformer, Collection<I> records) {
 		return records.stream().collect(
 			Collectors.groupingBy(
 				leftTupleTransformer,
 				mapping(
 					rightTupleTransformer,
 					toNullFilteredList()
-				)))
-			.entrySet().stream()
-			.map(function)
-			.collect(Collectors.toList());
+				)));
 	}
 
 	public static <I extends Record, K extends Identified, V>  Map<Long,K>  performJoinAggregateIntoMap(Function<I,K> leftTupleTransformer,

@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import org.apache.commons.lang3.EnumUtils;
-import org.jooq.DSLContext;
+import org.jooq.*;
+import org.jooq.exception.DataTypeException;
+import org.jooq.exception.MappingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -30,6 +32,7 @@ import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 
 import javax.inject.Inject;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
