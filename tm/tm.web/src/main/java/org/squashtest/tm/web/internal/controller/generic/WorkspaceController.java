@@ -105,16 +105,16 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	protected UserAccountService userAccountService;
 
 	@Inject
-	private WorkspaceHelperService workspaceHelperService;
+	protected WorkspaceHelperService workspaceHelperService;
 
 	@Inject
-	private BugTrackerFinderService bugTrackerFinderService;
+	protected BugTrackerFinderService bugTrackerFinderService;
 
 	@Inject
-	private MilestoneModelService milestoneModelService;
+	protected MilestoneModelService milestoneModelService;
 
 	@Inject
-	private InfoListModelService infoListModelService;
+	protected InfoListModelService infoListModelService;
 
 	/**
 	 * Shows a workspace.

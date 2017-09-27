@@ -49,8 +49,10 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
+import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -115,6 +117,13 @@ public class CustomReportWorkspaceController {
 	@Inject
 	private BugTrackerFinderService bugTrackerFinderService;
 
+
+	@Inject
+	private MilestoneModelService milestoneModelService;
+
+	@Inject
+	private InfoListModelService infoListModelService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
@@ -144,7 +153,7 @@ public class CustomReportWorkspaceController {
 		// also, milestones
 		if (activeMilestoneId.isPresent()) {
 			JsonMilestone jsMilestone =
-				workspaceDisplayService.findMilestoneModel(activeMilestoneId.get());
+				milestoneModelService.findMilestoneModel(activeMilestoneId.get());
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 
@@ -155,7 +164,7 @@ public class CustomReportWorkspaceController {
 
 
 		//defaults lists and enums levels
-		model.addAttribute("defaultInfoLists", workspaceDisplayService.findSystemInfoListItemLabels());
+		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
 		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
 		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));

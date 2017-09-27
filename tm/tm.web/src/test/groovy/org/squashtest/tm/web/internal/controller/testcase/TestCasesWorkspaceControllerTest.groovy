@@ -21,12 +21,17 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import com.google.common.base.Optional
+import org.mockito.Mock
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService
+import org.squashtest.tm.service.infolist.InfoListModelService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.springframework.ui.Model
+import org.squashtest.tm.service.milestone.MilestoneModelService
 import org.squashtest.tm.service.user.PartyPreferenceService
 import org.squashtest.tm.service.user.UserAccountService
+import org.squashtest.tm.service.workspace.WorkspaceHelperService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -37,6 +42,7 @@ import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 
+import javax.inject.Inject
 import javax.inject.Provider
 
 class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
@@ -51,6 +57,11 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	PartyPreferenceService partyPreferenceService = Mock();
 	I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper = Mock();
 	UserAccountService userAccountService = Mock()
+	MilestoneModelService milestoneModelService = Mock()
+	InfoListModelService infoListModelService = Mock()
+	WorkspaceHelperService workspaceHelperService = Mock()
+	BugTrackerFinderService bugTrackerFinderService = Mock()
+
 
 	def setup() {
 		controller.workspaceService = service
@@ -59,10 +70,14 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		controller.jsonProjectBuilder = projBuilder
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.absent()
 		provider.get() >> driveNodeBuilder
 		controller.partyPreferenceService = partyPreferenceService;
 		controller.i18nLevelEnumInfolistHelper = i18nLevelEnumInfolistHelper;
+		controller.milestoneModelService = milestoneModelService
+		controller.infoListModelService = infoListModelService
+		controller.workspaceHelperService = workspaceHelperService
+		controller.bugTrackerFinderService = bugTrackerFinderService
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
 		}
@@ -75,7 +90,6 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		Project project = Mock()
 		library.project >> project
 		testCaseWorkspaceDisplayService.findAllLibraries(_,_) >> [library]
-//		service.findAllImportableLibraries() >> [library]
 		testCaseWorkspaceDisplayService.findAllProjects(_,_) >> []
 		def model = Mock(Model)
 		def modelMap = ["rootModel" : new ArrayList<JsTreeNode>()]
