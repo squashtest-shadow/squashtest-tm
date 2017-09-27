@@ -20,18 +20,13 @@
  */
 package org.squashtest.tm.service.internal.user
 
-import static org.junit.Assert.*
-
-import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.domain.users.UsersGroup
-import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.internal.repository.UsersGroupDao;
-import org.squashtest.tm.service.internal.user.AdministrationServiceImpl;
+import org.squashtest.tm.service.feature.FeatureManager
+import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.service.internal.repository.UsersGroupDao
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
-import org.squashtest.tm.service.user.AdministrationService;
-
+import org.squashtest.tm.service.user.AdministrationService
 import spock.lang.Specification
 
 class AdministrationServiceImplTest extends Specification {
