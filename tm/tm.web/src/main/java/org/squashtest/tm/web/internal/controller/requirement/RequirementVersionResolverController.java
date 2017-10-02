@@ -89,12 +89,7 @@ public class RequirementVersionResolverController {
 
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 
-		// Requirement name can not be modified when its status is approved or obsolete.
-		if(version.isModifiable()){
-			requirementVersionManager.rename(version.getId(), newName);
-		} else {
-			newName = version.getName();
-		}
+		requirementVersionManager.rename(version.getId(), newName);
 
 		return new  RenameModel(newName);
 	}

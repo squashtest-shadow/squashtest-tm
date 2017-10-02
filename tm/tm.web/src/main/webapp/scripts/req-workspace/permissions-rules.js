@@ -183,7 +183,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (nodes.is(':synchronized')){
 				return "synchronized";
 			}
-			else if (!nodes.is(':req-version-modifiable')){
+			else if (!nodes.is(':folder') && !nodes.is(':req-version-modifiable')){
 				return "non-editable";
 			}
 			else {

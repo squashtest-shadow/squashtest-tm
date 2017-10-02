@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -182,7 +183,13 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		 * in the mean time.
 		 */
 
-		v.setName(newName.trim());
+		// Requirement name can not be modified when its status is approved or obsolete.
+		if(v.isModifiable()){
+			v.setName(newName.trim());
+		} else {
+			throw new IllegalRequirementModificationException();
+		}
+
 	}
 
 	/**
