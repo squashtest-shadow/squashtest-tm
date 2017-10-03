@@ -32,7 +32,7 @@ public class RemoteIssueDecorator implements RemoteIssue {
 
 	protected final RemoteIssue issue;
 	private final long issueId;
-	
+
 	public RemoteIssueDecorator(RemoteIssue remoteIssue, long issueId) {
 		this.issue = remoteIssue;
 		this.issueId = issueId;
@@ -41,17 +41,17 @@ public class RemoteIssueDecorator implements RemoteIssue {
 	public long getIssueId() {
 		return issueId;
 	}
-	
+
 	@Override
 	public String getId(){
 		return this.issue.getId();
 	}
-	
+
 	@Override
 	public boolean hasBlankId(){
 		return this.issue.hasBlankId();
 	}
-	
+
 
 	@Override
 	public RemoteCategory getCategory() {
@@ -120,4 +120,8 @@ public class RemoteIssueDecorator implements RemoteIssue {
 		this.issue.setComment(comment);
 	}
 
+	@Override
+	public String getNewKey() {
+		return this.issue.getNewKey();
+	}
 }

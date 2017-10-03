@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-tm</artifactId>
-    <version>1.17.0.IT1-SNAPSHOT</version>
+    <version>1.17.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.domain</artifactId>
@@ -133,11 +133,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-acl</artifactId>
     </dependency>
@@ -159,6 +154,12 @@
       <artifactId>spock-test-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
 

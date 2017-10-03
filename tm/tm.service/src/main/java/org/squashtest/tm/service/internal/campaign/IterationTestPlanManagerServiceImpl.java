@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -50,7 +49,6 @@ import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -124,9 +122,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
-
-	@Inject
-	private CustomIterationModificationService customIterationModificationService;
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
@@ -271,7 +266,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			iteration.addTestPlan(itp);
 			iterationTestPlanDao.save(itp);
 		}
-		customIterationModificationService.updateExecutionStatus(iterationId);
 	}
 
 	@Override
@@ -331,9 +325,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			unauthorizedDeletion = unauthorizedDeletion || removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
 		}
 
-		//if an ITPI was deleted, we update the iteration, campaign and test suites status
+		//if an ITPI was deleted, we update the test suites status
 		if (sizeBeforeDeletion > iteration.getTestPlans().size()) {
-			customIterationModificationService.updateExecutionStatus(iteration.getId());
 			for (TestSuite testSuiteToUpdate : testSuitesToUpdate) {
 				customTestSuiteModificationService.updateExecutionStatus(testSuiteToUpdate.getId());
 			}
@@ -515,17 +508,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		User user = userDao.findUserByLogin(login);
 		Date date = new Date();
 
-		Set<Iteration> iterationsToUpdate = new HashSet<>();
 		Set<TestSuite> testSuitesToUpdate = new HashSet<>();
 		for (IterationTestPlanItem item : testPlanItems) {
 			item.setExecutionStatus(status);
 			arbitraryUpdateMetadata(item, user, date);
-			iterationsToUpdate.add(item.getIteration());
 			testSuitesToUpdate.addAll(item.getTestSuites());
-		}
-
-		for (Iteration iteration : iterationsToUpdate) {
-			customIterationModificationService.updateExecutionStatus(iteration.getId());
 		}
 
 		for (TestSuite testSuite : testSuitesToUpdate) {

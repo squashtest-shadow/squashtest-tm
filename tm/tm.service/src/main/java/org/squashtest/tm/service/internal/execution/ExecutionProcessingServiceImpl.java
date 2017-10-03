@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -42,7 +41,6 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
-import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -70,9 +68,6 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Inject
 	private IterationTestPlanManagerService testPlanService;
-
-	@Inject
-	private CustomIterationModificationService customIterationModificationService;
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
@@ -183,18 +178,11 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 			newExecutionStatus = ExecutionStatus.computeNewStatus(report);
 		}
 
-		ExecutionStatus formerITPIExecutionStatus = execution.getTestPlan().getExecutionStatus();
 		execution.setExecutionStatus(newExecutionStatus);
 
 		// update execution and item test plan data, only if its new status is different from "READY"
 		if (execution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
 			updateExecutionMetadata(execution);
-		}
-
-		//we check if the ITPI execution status has changed, if so, we update the iteration status
-		if (formerITPIExecutionStatus != execution.getTestPlan().getExecutionStatus()) {
-			Iteration iteration = execution.getTestPlan().getIteration();
-			customIterationModificationService.updateExecutionStatus(iteration.getId());
 		}
 
 		for (TestSuite testSuite : execution.getTestPlan().getTestSuites()) {

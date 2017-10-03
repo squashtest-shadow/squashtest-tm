@@ -87,7 +87,9 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.PROJECT_NAME,
 		RequirementSheetColumn.REQ_PATH,
 		RequirementSheetColumn.REQ_NUM,
+		RequirementSheetColumn.REQ_ID,
 		RequirementSheetColumn.REQ_VERSION_NUM,
+		RequirementSheetColumn.REQ_VERSION_ID,
 		RequirementSheetColumn.REQ_VERSION_REFERENCE,
 		RequirementSheetColumn.REQ_VERSION_NAME,
 		RequirementSheetColumn.REQ_VERSION_CRITICALITY,
@@ -246,7 +248,9 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
 			row.createCell(colIndex++).setCellValue(reqModel.getPath());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementIndex());
+			row.createCell(colIndex++).setCellValue(reqModel.getRequirementId());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionNumber());
+			row.createCell(colIndex++).setCellValue(reqModel.getId());
 			row.createCell(colIndex++).setCellValue(reqModel.getReference());
 			row.createCell(colIndex++).setCellValue(reqModel.getName());
 			row.createCell(colIndex++).setCellValue(reqModel.getCriticality().toString());

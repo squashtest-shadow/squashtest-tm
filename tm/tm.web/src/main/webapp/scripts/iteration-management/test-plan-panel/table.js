@@ -59,9 +59,9 @@ define(
 	['jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 		'squash.dateutils', 'squash.statusfactory',
 		'test-automation/automated-suite-overview',
-		'squash.configmanager', 'workspace.routing',
+		'squash.configmanager', 'workspace.routing', "workspace.event-bus",
 		'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
-	function ($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
+	function ($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing,eventBus) {
 		"use strict";
 
 		// ****************** TABLE CONFIGURATION **************
@@ -269,8 +269,8 @@ define(
 						.find('td.assignee-combo')
 						.children().first().text(itp.assignee);
 
-					//refresh iteration status in the "informations" tab
-					squashtm.execution.refreshIterationInfo();
+					//update the tree
+					eventBus.trigger('iteration.itpi-execution-status-modified');
 				},
 
 

@@ -43,7 +43,7 @@ public final class DateUtils {
 	 * Formats a date into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
 	 * timezone</strong>
 	 *
-	 * @param date
+	 * @param date date
 	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
 	 */
 	public static String formatIso8601Date(Date date) {
@@ -63,7 +63,7 @@ public final class DateUtils {
 	 * Formats a timestamp into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
 	 * timezone</strong>
 	 *
-	 * @param date
+	 * @param date date
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
 	 */
 	public static String formatIso8601DateTime(Date date) {
@@ -79,6 +79,9 @@ public final class DateUtils {
 	 * that the month is between 1 and 12 and the day between 0 and 31.
 	 * It won't check leap years etc. Potentially faster than #strongCheckIso8601Date but
 	 * is less secure.
+	 *
+	 * @param date date
+	 * @return boolean
 	 */
 	public static boolean weakCheckIso8601Date(String date) {
 		boolean success;
@@ -102,6 +105,8 @@ public final class DateUtils {
 	/**
 	 * full check of whether the date is a valid iso 8601 date or not. Potentially slower than
 	 * #weakCheckIso8601Date but safer.
+	 * @param date date
+	 * @return boolean
 	 *
 	 */
 	public static boolean strongCheckIso8601Date(String date) {
@@ -118,7 +123,7 @@ public final class DateUtils {
 	}
 
 	/**
-	 * @param strDate
+	 * @param strDate strDate
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd
 	 */
 	public static Date parseIso8601Date(String strDate) throws ParseException {
@@ -130,7 +135,7 @@ public final class DateUtils {
 	}
 
 	/**
-	 * @param strDate
+	 * @param strDatetime strDatetime
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd'T'HH:mm:ssZ
 	 */
 	public static Date parseIso8601DateTime(String strDatetime) throws ParseException {
@@ -149,7 +154,7 @@ public final class DateUtils {
 
 	/**
 	 *
-	 * @param milliseconds
+	 * @param milliseconds milliseconds
 	 * @return <code>null</code> if the string is empty, or a date otherwise. No check regarding the actual content of
 	 *         strDate.
 	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
@@ -168,8 +173,8 @@ public final class DateUtils {
 
 	/**
 	 *
-	 * @param date
-	 * @return
+	 * @param date date
+	 * @return String
 	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
 	 */
 	@Deprecated

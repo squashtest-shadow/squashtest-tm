@@ -32,7 +32,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 
 class IterationNodeBuilderTest extends NodeBuildingSpecification {
 	InternationalizationHelper internationalizationHelper = Mock()
-	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator(),internationalizationHelper)
+	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator(), internationalizationHelper)
 
 	def "should build root node of test case library"() {
 		given:
@@ -40,10 +40,10 @@ class IterationNodeBuilderTest extends NodeBuildingSpecification {
 		c.getMilestones() >> []
 		c.doMilestonesAllowCreation() >> Boolean.TRUE
 		c.doMilestonesAllowEdition() >> Boolean.TRUE
-		Iteration iter = new Iteration(name: "it", campaign : c, reference : "ref")
+		Iteration iter = new Iteration(name: "it", campaign: c, reference: "ref")
 		def id = 10L
 		use(ReflectionCategory) {
-			Iteration.set(field: "id", of:iter, to: id)
+			Iteration.set(field: "id", of: iter, to: id)
 		}
 
 
@@ -58,21 +58,22 @@ class IterationNodeBuilderTest extends NodeBuildingSpecification {
 		res.title == "ref - it"
 	}
 
-	def "should expand itreration"() {
+	def "should expand iteration"() {
 		given:
 		Campaign c = Mock()
 		c.getMilestones() >> []
 		c.doMilestonesAllowCreation() >> Boolean.TRUE
 		c.doMilestonesAllowEdition() >> Boolean.TRUE
-		Iteration iter = new Iteration(name: "it", campaign : c)
+		Iteration iter = new Iteration(name: "it", campaign: c)
 		def id = 10L
 		use(ReflectionCategory) {
-			Iteration.set(field: "id", of:iter, to: id)
+			Iteration.set(field: "id", of: iter, to: id)
 		}
 
 		and:
-		TestSuite ts = new TestSuite(iteration:iter)
+		TestSuite ts = new TestSuite(iteration: iter)
 		iter.testSuites << ts
+
 
 		and:
 		MultiMap expand = new MultiValueMap()

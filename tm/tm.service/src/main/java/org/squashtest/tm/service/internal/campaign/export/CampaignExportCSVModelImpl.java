@@ -204,6 +204,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
+		headerCells.add(new CellImpl("DATASET"));
 		headerCells.add(new CellImpl("EXEC_STATUS"));
 		headerCells.add(new CellImpl("EXEC_USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
@@ -291,6 +292,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
 			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+			dataCells.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
 			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));

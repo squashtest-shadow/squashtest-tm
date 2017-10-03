@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
@@ -32,6 +33,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 
 
@@ -60,13 +62,13 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 
 		Execution exec = executeEntityNamedQuery("executionStep.findParentNode",
 				newCallBack);
-		
+
 		Hibernate.initialize(exec.getSteps());
 
 		return exec;
-		
+
 	}
-	
+
 	private static final class ChildIdQueryParameterCallback implements SetQueryParametersCallback{
 		private Long childId;
 		private ChildIdQueryParameterCallback(Long childId){
@@ -94,11 +96,12 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		}
 		MultiMap result = new MultiValueMap();
 		for (ExecutionStep executionStep : execSteps) {
-			if (testStepIds.contains(executionStep.getReferencedTestStep().getId())) {
-				result.put(executionStep.getReferencedTestStep().getId(), executionStep);
-			}
+			// [Issue 6943] In case the referencedTestStep of an executionStep has been deleted, to avoid a npe, Optional util is utilized here
+			Optional.of(executionStep).map(ExecutionStep :: getReferencedTestStep).map(TestStep :: getId).ifPresent(
+				g -> result.put(executionStep.getReferencedTestStep().getId(), executionStep)
+			);
 		}
-		return result; 
+		return result;
 	}
 
 

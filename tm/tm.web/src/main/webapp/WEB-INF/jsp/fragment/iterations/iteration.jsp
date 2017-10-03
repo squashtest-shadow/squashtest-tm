@@ -33,7 +33,6 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <f:message var="squashlocale" key="squashtm.locale"/>
 
@@ -122,13 +121,10 @@
   config.hasFields = ${ hasCUF };
   config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
   config.identity = {resid: ${iteration.id}, restype: "iterations"};
-  config.iterationExecutionStatus = "${iteration.executionStatus}";
   config.bugtracker = {url: "${btEntityUrl}", style: "fragment-tab"};
   config.customFields = {url: "${customFieldsValuesURL}"};
   config.iterationURL = "${iterationUrl}";
   config.iterationStatusComboJson = ${iterationStatusComboJson};
-  config.statuses = ${json:serialize (statuses)};
-  config.folderId = ${folderId};
 </script>
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
@@ -260,16 +256,6 @@
                 <span id="iteration-status-icon" style="vertical-align:middle"
                       class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
                 <span id="iteration-status">${ iterationStatusLabel }</span>
-              </div>
-            </div>
-
-            <div class="display-table-row">
-              <label for="iteration-execution-status" class="display-table-cell"><f:message
-                key="iteration.execution.status.combo.label"/></label>
-
-              <div>
-                <span id="iteration-execution-status-icon"> </span>
-                <span id="iteration-execution-status"></span>
               </div>
             </div>
 

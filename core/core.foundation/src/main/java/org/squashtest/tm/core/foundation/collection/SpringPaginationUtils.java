@@ -28,12 +28,12 @@ import org.springframework.data.domain.Sort.Direction;
 
 /**
  * TRANSITIONAL
- * 
+ *
  * his toolbox bridge the gap between our old messy API and
  * the Pageable API from Spring
  */
 public class SpringPaginationUtils {
-    
+
     public static final int DEFAULT_SIZE = 50;
 
     private SpringPaginationUtils(){
@@ -64,21 +64,21 @@ public class SpringPaginationUtils {
     }
 
     /**
-     * Returns a Pageable that will search for the DEFAULT_SIZE first items. Since no sorting directive 
+     * Returns a Pageable that will search for the DEFAULT_SIZE first items. Since no sorting directive
      * is specified either, this method rather means "return me DEFAULT_SIZE random items".
-     * 
-     * @return 
+     *
+     * @return Pageable
      */
     public static Pageable defaultPaging(){
         return new PageRequest(0, DEFAULT_SIZE);
     }
 
     /**
-     * Returns a Pageable that will search for the DEFAULT_SIZE first items, sorted by the given 
+     * Returns a Pageable that will search for the DEFAULT_SIZE first items, sorted by the given
      * attribute ascending.
-     * 
-     * @param attribute
-     * @return 
+     *
+     * @param attribute attribute
+     * @return Pageable
      */
     public static Pageable defaultPaging(String attribute){
         return new PageRequest(0, DEFAULT_SIZE, Direction.ASC, attribute);

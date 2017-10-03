@@ -24,10 +24,9 @@ require(["common"], function () {
 	require(["jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing",
 			"iteration-management", "app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager",
-			"favorite-dashboard", "./user-account/user-prefs", "jeditable.selectJEditable", 'squash.translator',
-			'squash.statusfactory', "page-components/general-information-panel", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog"],
+			"favorite-dashboard", "./user-account/user-prefs", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog"],
 		function ($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues,
-							confman, favoriteView, userPrefs, SelectJEditable, translator, statusfactory, general) {
+							confman, favoriteView, userPrefs) {
 
 			// *********** event handler ***************
 
@@ -36,28 +35,8 @@ require(["common"], function () {
 				$("#iteration-test-plans-table").squashTable().refresh();
 			}, window);
 
-			var refreshIterationInfo = _.bind(function () {
-				$.ajax({
-					url: config.iterationURL + "/getExecutionStatus",
-					type: "get"
-				}).done(function (value) {
-
-					var executionStatusIcon = $("#iteration-execution-status-icon");
-					executionStatusIcon.html(statusfactory.getIconFor(value));
-					$("#iteration-execution-status-icon > span").css("display", "inline");
-
-					var executionStatusEditable = $("#iteration-execution-status");
-					executionStatusEditable.html(statusfactory.translate(value));
-
-					//refresh the tree
-					eventBus.trigger('iteration.execution-status-modified', {data: config});
-				});
-				general.refresh();
-			}, window);
-
 			squashtm.execution = squashtm.execution || {};
 			squashtm.execution.refresh = refreshTestPlan;
-			squashtm.execution.refreshIterationInfo = refreshIterationInfo;
 
 			// this is executed on each fragment load
 			ps.subscribe("reload.iteration", function () {
@@ -118,28 +97,6 @@ require(["common"], function () {
 					});
 					statusEditable.editable(url, cfg);
 
-				}
-
-				//init execution status
-				var status = config.iterationExecutionStatus;
-				var executionStatusIcon = $("#iteration-execution-status-icon");
-
-				executionStatusIcon.html(statusfactory.getIconFor(status));
-				$("#iteration-execution-status-icon > span").css("display", "inline");
-
-				var executionStatusEditable = $("#iteration-execution-status")
-				executionStatusEditable.html(statusfactory.translate(status));
-
-				if (config.writable) {
-					executionStatusEditable.addClass('editable');
-					var statusUrl = config.iterationURL;
-					var statusCfg = confman.getJeditableSelect();
-					statusCfg = $.extend(statusCfg, {
-						data: JSON.stringify(config.statuses),
-						callback: refreshIterationInfo
-					});
-
-					executionStatusEditable.editable(statusUrl, statusCfg);
 				}
 
 				// ****** tabs configuration *******

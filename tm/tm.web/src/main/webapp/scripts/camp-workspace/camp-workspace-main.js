@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer' , 
+define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer' ,
          'app/ws/squashtm.toggleworkspace',
          'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
 		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu) {
@@ -34,15 +34,20 @@ define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squa
 			function initTabbedPane() {
 				$("#tabbed-pane").tabs();
 			}
-			
+
 			function initMilestoneMenu(){
 				if (mstoneManager.isEnabled()){
 					mstoneTreeMenu.init();
 				}
 			}
-			
+			function resizeLeftPanel(){
+				$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
+				var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
+				$("#contextual-content").css('left',pos+"px");
+			}
 
 			function init(settings) {
+				resizeLeftPanel();
 				initResizer();
 				initTabbedPane();
 				initMilestoneMenu();

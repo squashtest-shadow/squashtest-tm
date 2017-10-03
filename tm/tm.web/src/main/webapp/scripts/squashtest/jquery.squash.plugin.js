@@ -85,6 +85,9 @@ var squashtm = squashtm || {};
 		},
 		'synchronized' : function(a){
 			return $(a).attr('synchronized') === 'true';
+		},
+		'req-version-modifiable' : function (a) {
+			return $(a).attr('req-version-modifiable') === 'true';
 		}
 	});
 
@@ -115,7 +118,7 @@ var squashtm = squashtm || {};
 
 	};
 
-	
+
 	$.fn.visible = function() {
 	    return this.css('visibility', 'visible');
 	};
@@ -123,8 +126,8 @@ var squashtm = squashtm || {};
 	$.fn.invisible = function() {
 	    return this.css('visibility', 'hidden');
 	};
-	
-	
+
+
 	/*
 	 * thanks to
 	 * http://stackoverflow.com/questions/2360655/jquery-event-handlers-always-execute-in-order-they-were-bound-any-way-around-t
@@ -141,13 +144,13 @@ var squashtm = squashtm || {};
 		});
 	};
 
-	
+
 
 	/* defines functions in the jQuery namespace */
 	$.extend({
 		/**
 		 * Opens a "popup" window containing the result of a POST. Plain window.open() can only GET
-		 * 
+		 *
 		 * @param url
 		 *            the url to POST
 		 * @param data
@@ -176,20 +179,20 @@ var squashtm = squashtm || {};
 	});
 
 
-	
+
 	$.extend({
-		
+
 		/*
 		 * inhibits navigation to previous page when pressing backspace, as requested in issue
 		 * https://ci.squashtest.org/mantis/view.php?id=2069
-		 * 
+		 *
 		 * Solution credited to erikkallen, at
 		 * http://stackoverflow.com/questions/1495219/how-can-i-prevent-the-backspace-key-from-navigating-back
-		 * 
+		 *
 		 * Kudos my good sir.
-		 * 
+		 *
 		 */
-		
+
 		noBackspaceNavigation : function() {
 			$(document).bind('keydown', function(event) {
 				var doPrevent = false;

@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
@@ -125,5 +124,4 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId);
 
-	ExecutionStatusReport getStatusReport(Long id);
 }

@@ -42,7 +42,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 				var $target = $(evt.target);
 				var canOpen = ! ( $target.is('a') || $target.parents('a').length > 0);
 				if (canOpen){
-					// relay to any listener that the widget will enter the editable state  
+					// relay to any listener that the widget will enter the editable state
 					$(editable).trigger('onedit.editable', { settings : settings, editable : editable, event : evt});
 				}
 				return canOpen;
@@ -74,6 +74,21 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	function stdCkeditor() {
 		var lang = translator.get('rich-edit.language.value');
 
+		//[Issue 6013]
+		CKEDITOR.on('dialogDefinition', function(ev) {
+			try {
+				var dialogName = ev.data.name;
+				var dialogDefinition = ev.data.definition;
+				if(dialogName == 'link') {
+					var informationTab = dialogDefinition.getContents('target');
+					var targetField = informationTab.get('linkTargetType');
+					targetField['default'] = '_blank';
+				}
+			} catch(exception) {
+				alert('Error ' + ev.message);
+			}
+		});
+
 		return {
 			customConfig : squashtm.app.contextRoot + '/styles/ckeditor/ckeditor-config.js',
 			lang : lang/*,
@@ -102,9 +117,10 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		if (t === undefined ||  t.length === 0) {
 			console.log("WARN Cannot destroy ckeditor for unknown target", target);
 		}
-		var ckInstance = CKEDITOR.instances[t.attr('id')];
-		if (ckInstance) {
-			ckInstance.destroy(true);
+		try {
+			CKEDITOR.instances[t.attr('id')].destroy(true);
+		} catch (e) {
+			// do nothing
 		}
 	}
 

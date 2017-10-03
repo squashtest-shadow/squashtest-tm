@@ -23,7 +23,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 	"jquery.squash", "jqueryui",
 	"jquery.squash.togglepanel", "squashtable",
 	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-	"jquery.squash.confirmdialog"], function ($, Backbone, _, StringUtil,
+	"jquery.squash.confirmdialog","jquery.squash.buttonmenu"], function ($, Backbone, _, StringUtil,
 																						TestStepVerifiedRequirementsTable) {
 	var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 	var TestStepVerifiedRequirementsPanel = Backbone.View.extend({
@@ -50,6 +50,12 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 			// to the toggle panel header.
 			// TODO change our way to make toggle panels buttons
 			// =============/toogle buttons===================
+			this.$("#remove-associated-requirements-button").buttonmenu();
+			this.$("#remove-associated-requirements-button").on('click', function () {
+				// check if current test step is associated to a requirement, if so, user can remove this requirement from test step.
+				var nbAssociatedReqToStep = $(".ui-icon-link-dark-e-w").length;
+				$("#remove-verified-requirements-from-step-button").toggleClass("ui-state-disabled", nbAssociatedReqToStep === 0);
+				});
 			this.$("#remove-verified-requirements-button").on('click',
 				function () {
 					self.table.removeSelectedRequirements();
@@ -68,31 +74,44 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		showSelectedRequirement: function () {
 			var self = this;
-
 			self.table.$el.on('click', 'tbody>tr>td.select-handle', function () {
 				var rowSelected = $(this).closest('tr');
 				var data = self.table.$el.fnGetData(rowSelected);
 				$("#requirement-version-id")[0].innerHTML = '[ID =' + data["entity-id"] + ']';
 				$("#requirement-version-versionNumber")[0].innerHTML = data["versionNumber"];
-				$("#requirement-version-status")[0].innerHTML = data["status-level"]+'-'+data["status"];
-				$("#requirement-version-criticality")[0].innerHTML = data["criticality-level"]+'-'+data["criticality"];
+				$("#requirement-version-status")[0].innerHTML = data["status-level"] + '-' + data["status"];
+				$("#requirement-version-criticality")[0].innerHTML = data["criticality-level"] + '-' + data["criticality"];
 				$("#requirement-version-category")[0].innerHTML = data["category"];
 				$("#requirement-version-category-icon")[0].className = 'sq-icon sq-icon-' + data["category-icon"];
 				$("#requirement-version-description")[0].innerHTML = data["description"];
+				localStorage.setItem("selectedRow", data["entity-index"] - 1);
 
-				localStorage.setItem("selectedRow", data["entity-index"]);
-
+				if (!rowSelected[0].classList.contains('ui-state-row-selected')){
+					$("#requirement-version-id").empty();
+					$("#requirement-version-versionNumber").empty();
+					$("#requirement-version-status").empty();
+					$("#requirement-version-criticality").empty();
+					$("#requirement-version-category").empty();
+					$("#requirement-version-category-icon")[0].className = '';
+					$("#requirement-version-description").empty();
+					localStorage.removeItem("selectedRow");
+				}
 			});
 
+			// When user toggles between adjacent steps, the description of attached
+			// requirement will be displayed by default, in case there is no attached requirement,
+			// last selected requirement will be displayed
 			var targetRequirementRows = $('.ui-icon-link-dark-e-w').closest('tr');
 			var targetSelectHandle = targetRequirementRows.find('.select-handle');
-			if (targetSelectHandle.length === 0) {
-				var previousSelectedRow = localStorage.getItem("selectedRow");
-				if(previousSelectedRow != null){
-					targetSelectHandle = $('tbody>tr').eq(previousSelectedRow-1).find('.select-handle');
-					targetSelectHandle[0].click();
+			var previousSelectedRow = localStorage.getItem("selectedRow");
+			if (previousSelectedRow != null) {
+				var target = $('tbody>tr').eq(previousSelectedRow);
+				var isLinked = target.find('.link-checkbox')[0].children[0].classList.contains('ui-icon-link-dark-e-w');
+				if (isLinked || targetSelectHandle.length === 0) {
+					targetSelectHandle = target.find('.select-handle');
 				}
-			} else {
+			}
+			if(targetSelectHandle.length !== 0){
 				targetSelectHandle[0].click();
 			}
 		}

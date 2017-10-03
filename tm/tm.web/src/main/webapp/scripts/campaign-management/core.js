@@ -37,11 +37,11 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
 		"bugtracker/bugtracker-panel", "workspace.event-bus", "squash.translator",
 		"dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair", "datepicker/datepickers-auto-pair",
-		"./test-plan-panel", "custom-field-values", "squash.configmanager", "favorite-dashboard", "underscore", 'squash.statusfactory', "page-components/general-information-panel",
+		"./test-plan-panel", "custom-field-values", "squash.configmanager", "favorite-dashboard", "underscore",
 		"jqueryui", "jquery.squash.formdialog"
 	],
 	function ($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-						dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView, _, statusfactory, general) {
+						dashboard, planning, datePickers, datePickersAuto, testplan, cufvalues, confman, favoriteView, _) {
 
 
 		function init(conf) {
@@ -73,8 +73,6 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			initBugtracker(conf);
 
 			initStatus(conf);
-
-			initExecutionStatus(conf);
 		}
 
 		// Load all the needed message properties to the cache
@@ -130,53 +128,6 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 				});
 				statusEditable.editable(url, cfg);
-			}
-		}
-
-		function initExecutionStatus(conf) {
-
-			var refreshCampaignInfo = function () {
-				$.ajax({
-					url: conf.data.campaignUrl + "/getExecutionStatus",
-					type: "get"
-				}).done(function (value) {
-
-					var executionStatusIcon = $("#campaign-execution-status-icon");
-					executionStatusIcon.html(statusfactory.getIconFor(value));
-					$("#campaign-execution-status-icon > span").css("display", "inline");
-
-					var executionStatusEditable = $("#campaign-execution-status");
-					executionStatusEditable.html(statusfactory.translate(value));
-
-					//refresh the iteration execution status in the tree
-					var executionStatusIconTree = $("#Campaign-" + conf.data.campaignId);
-					executionStatusIconTree.attr('executionstatus', value);
-				});
-				general.refresh();
-			};
-
-			squashtm.execution = squashtm.execution || {};
-			squashtm.execution.refreshCampaignInfo = refreshCampaignInfo;
-
-			var status = conf.data.campaignExecutionStatus;
-			var executionStatusIcon = $("#campaign-execution-status-icon");
-
-			executionStatusIcon.html(statusfactory.getIconFor(status));
-			$("#campaign-execution-status-icon > span").css("display", "inline");
-
-			var executionStatusEditable = $("#campaign-execution-status");
-			executionStatusEditable.html(statusfactory.translate(status));
-
-			if (conf.features.writable) {
-				executionStatusEditable.addClass('editable');
-				var statusUrl = conf.data.campaignUrl;
-				var statusCfg = confman.getJeditableSelect();
-				statusCfg = $.extend(statusCfg, {
-					data: JSON.stringify(conf.data.campaignExecutionStatusCombo),
-					callback: refreshCampaignInfo
-				});
-
-				executionStatusEditable.editable(statusUrl, statusCfg);
 			}
 		}
 

@@ -173,19 +173,26 @@ define(['jquery', 'tree', 'workspace.event-bus'], function ($, tree, eventBus) {
 			}
 		});
 
-		//when we change an itpi's status, we update the whole campaign
-		function updateCampaign(evt, data) {
-			var node = self.getTree().findNodes(data.identity);
-			/*node.parents('li[restype="campaigns"]').treeNode().refresh();*/
-
-			var parent = "li[restype=\"campaign-folders\"][resid=\"" + data.data.folderId + "\"]";
-			console.log(parent);
-			node.parents(parent).treeNode().refresh();
-
+		function updateTreeStatuses(evt) {
+			var selected = self.getTree().get_selected().treeNode();
+			var nodesToUpdate = new Set();
+			var nodeToUpdate;
+			selected.each(function () {
+				nodeToUpdate = $(this).treeNode();
+				if (this.getAttribute('restype') === "test-suites") {
+					nodeToUpdate = nodeToUpdate.getParent();
+				}
+				nodesToUpdate.add(nodeToUpdate);
+			});
+			nodesToUpdate.forEach(function(value){
+				value.refresh();
+			});
 		}
 
-		eventBus.on('iteration.execution-status-modified', updateCampaign);
-		eventBus.on('test-suite.execution-status-modified', updateCampaign);
+		eventBus.on('iteration.new-test-suite', updateTreeStatuses);
+		eventBus.on('iteration.itpi-execution-status-modified', updateTreeStatuses);
+		eventBus.on('test-suite.execution-status-modified', updateTreeStatuses);
+
 	}
 
 	/* *************************** update Events ********************* */

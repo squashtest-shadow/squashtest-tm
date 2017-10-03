@@ -32,13 +32,11 @@ import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
@@ -95,7 +93,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
-	private static final String ITERATION_COUNT_STATUS = "iteration.countStatuses";
 
 	static {
 		Map<String, String> modeDataMap = new HashMap<>(2);
@@ -456,23 +453,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		}
 
 		return result;
-	}
-
-	@Override
-	public ExecutionStatusReport getStatusReport(Long id) {
-		ExecutionStatusReport report = new ExecutionStatusReport();
-
-		Query query = entityManager.createNamedQuery(
-			ITERATION_COUNT_STATUS);
-		query.setParameter("iterationId", id);
-
-		List<Object[]> tuples = query.getResultList();
-
-		for (Object[] tuple:tuples) {
-			report.set((ExecutionStatus) tuple[0], ((Long) tuple[1]).intValue());
-		}
-
-		return report;
 	}
 
 }

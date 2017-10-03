@@ -37,13 +37,13 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 public class OslcIssue implements RemoteIssue {
 
 	//maps a fieldId to a FieldValue
-		private Map<String, FieldValue> fieldValues = new HashMap<>();
+	private Map<String, FieldValue> fieldValues = new HashMap<>();
 
-		private AdvancedProject project ;
+	private AdvancedProject project;
 
-		private String id;
+	private String id;
 
-		private String btName;
+	private String btName;
 
 	public URL getUrl() {
 		return url;
@@ -54,8 +54,8 @@ public class OslcIssue implements RemoteIssue {
 	}
 
 	private URL url;
-		//the name of the fields scheme currently used, see AdvancedProject#schemes
-		private String currentScheme;
+	//the name of the fields scheme currently used, see AdvancedProject#schemes
+	private String currentScheme;
 
 	private String selectDialog;
 
@@ -78,34 +78,33 @@ public class OslcIssue implements RemoteIssue {
 	}
 
 
+	public void setId(String key) {
+		this.id = key;
+	}
 
-		public void setId(String key){
-			this.id = key;
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public boolean hasBlankId() {
+		return id == null ||
+			id.isEmpty() ||
+			id.matches("^\\s*$");
+	}
+
+
+	@Override
+	public String getSummary() {
+		return findFieldValueName("summary");
+	}
+
+	public void setSummary(String summary) {
+		if (isFieldNotSet("summary")) {
+			addGenericFieldValue("summary", summary);
 		}
-
-		@Override
-		public String getId() {
-			return id;
-		}
-
-		@Override
-		public boolean hasBlankId(){
-			return id==null ||
-				id.isEmpty() ||
-				id.matches("^\\s*$");
-		}
-
-
-		@Override
-		public String getSummary() {
-			return findFieldValueName("summary");
-		}
-
-		public void setSummary(String summary){
-			if (isFieldNotSet("summary")){
-				addGenericFieldValue("summary", summary);
-			}
-		}
+	}
 
 	public void setAssignee(String assignee) {
 		addGenericFieldValue("assignee", assignee);
@@ -119,129 +118,134 @@ public class OslcIssue implements RemoteIssue {
 		addGenericFieldValue("priority", priority);
 	}
 
-		@Override
-		public String getDescription() {
-			return findFieldValueName("description");
+	@Override
+	public String getDescription() {
+		return findFieldValueName("description");
+	}
+
+	@Override
+	public void setDescription(String description) {
+		if (isFieldNotSet("description")) {
+			addGenericFieldValue("description", description);
 		}
+	}
 
-		@Override
-		public void setDescription(String description) {
-			if (isFieldNotSet("description")){
-				addGenericFieldValue("description", description);
-			}
+	@Override
+	public String getComment() {
+		return findFieldValueName("comment");
+	}
+
+	@Override
+	public void setComment(String comment) {
+		if (isFieldNotSet("comment")) {
+			addGenericFieldValue("comment", comment);
 		}
+	}
 
-		@Override
-		public String getComment() {
-			return findFieldValueName("comment");
+	@Override
+	public AdvancedProject getProject() {
+		return project;
+	}
+
+
+	public void setProject(AdvancedProject project) {
+		this.project = project;
+	}
+
+	@Override
+	public RemoteStatus getStatus() {
+		return fieldValues.get("status");
+	}
+
+
+	@Override
+	public RemoteUser getAssignee() {
+		RemoteUser user = fieldValues.get("assignee");
+		if (user == null) {
+			user = new RemoteFieldStub();
 		}
+		return user;
+	}
 
-		@Override
-		public void setComment(String comment) {
-			if (isFieldNotSet("comment")){
-				addGenericFieldValue("comment", comment);
-			}
+	@Override
+	public RemotePriority getPriority() {
+		RemotePriority priority = fieldValues.get("priority");
+		if (priority == null) {
+			priority = new RemoteFieldStub();
 		}
+		return priority;
+	}
 
-		@Override
-		public AdvancedProject getProject() {
-			return project;
+	@Override
+	public RemoteCategory getCategory() {
+		RemoteCategory category = fieldValues.get("category");
+		if (category == null) {
+			category = new RemoteFieldStub();
 		}
+		return category;
+	}
 
-
-		public void setProject(AdvancedProject project) {
-			this.project = project;
+	@Override
+	public RemoteVersion getVersion() {
+		RemoteVersion version = fieldValues.get("version");
+		if (version == null) {
+			version = new RemoteFieldStub();
 		}
+		return version;
+	}
 
-		@Override
-		public RemoteStatus getStatus() {
-			return fieldValues.get("status");
-		}
+	@Override
+	public void setBugtracker(String btName) {
+		this.btName = btName;
+	}
 
+	@Override
+	public String getBugtracker() {
+		return btName;
+	}
 
-		@Override
-		public RemoteUser getAssignee() {
-			RemoteUser user = fieldValues.get("assignee");
-			if(user == null){
-				user = new RemoteFieldStub();
-			}
-			return user;
-		}
+	@Override
+	public String getNewKey() {
+		return null;
+	}
 
-		@Override
-		public RemotePriority getPriority() {
-			RemotePriority priority = fieldValues.get("priority");
-			if(priority == null){
-				priority = new RemoteFieldStub();
-			}
-			return priority;
-		}
+	public void setFieldValue(String fieldName, FieldValue fieldValue) {
+		fieldValues.put(fieldName, fieldValue);
+	}
 
-		@Override
-		public RemoteCategory getCategory() {
-			RemoteCategory category =  fieldValues.get("category");
-			if(category == null){
-				category = new RemoteFieldStub();
-			}
-			return category;
-		}
+	public FieldValue getFieldValue(String fieldName) {
+		return fieldValues.get(fieldName);
+	}
 
-		@Override
-		public RemoteVersion getVersion() {
-			RemoteVersion version = fieldValues.get("version");
-			if(version == null){
-				version = new RemoteFieldStub();
-			}
-			return version;
-		}
+	public void setFieldValues(Map<String, FieldValue> fieldValues) {
+		this.fieldValues = fieldValues;
+	}
 
-		@Override
-		public void setBugtracker(String btName) {
-			this.btName = btName;
-		}
+	public Map<String, FieldValue> getFieldValues() {
+		return fieldValues;
+	}
 
-		@Override
-		public String getBugtracker() {
-			return btName;
-		}
+	public String getCurrentScheme() {
+		return currentScheme;
+	}
 
-		public void setFieldValue(String fieldName, FieldValue fieldValue){
-			fieldValues.put(fieldName, fieldValue);
-		}
+	public void setCurrentScheme(String currentScheme) {
+		this.currentScheme = currentScheme;
+	}
 
-		public FieldValue getFieldValue(String fieldName){
-			return fieldValues.get(fieldName);
-		}
+	// ********************* private stuffs ***************************
 
-		public void setFieldValues(Map<String, FieldValue> fieldValues){
-			this.fieldValues = fieldValues;
-		}
+	private boolean isFieldNotSet(String name) {
+		return fieldValues.get(name) == null;
+	}
 
-		public Map<String, FieldValue> getFieldValues(){
-			return fieldValues;
-		}
+	private String findFieldValueName(String fieldId) {
+		FieldValue value = fieldValues.get(fieldId);
+		return value != null ? value.getName() : "";
+	}
 
-		public String getCurrentScheme() {
-			return currentScheme;
-		}
-
-		public void setCurrentScheme(String currentScheme) {
-			this.currentScheme = currentScheme;
-		}
-
-		// ********************* private stuffs ***************************
-
-		private boolean isFieldNotSet(String name){
-			return fieldValues.get(name) == null;
-		}
-
-		private String findFieldValueName(String fieldId){
-			FieldValue value = fieldValues.get(fieldId);
-			return value!=null ? value.getName() : "";
-		}
-
-		private void addGenericFieldValue(String fieldName, String value){
-			FieldValue newValue = new FieldValue(fieldName, fieldName, value);
-			fieldValues.put(fieldName, newValue);
-		}
+	private void addGenericFieldValue(String fieldName, String value) {
+		FieldValue newValue = new FieldValue(fieldName, fieldName, value);
+		fieldValues.put(fieldName, newValue);
+	}
 }

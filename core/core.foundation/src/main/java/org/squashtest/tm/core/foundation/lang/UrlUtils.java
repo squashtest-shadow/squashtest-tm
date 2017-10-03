@@ -27,7 +27,7 @@ import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class UrlUtils {
 
@@ -37,10 +37,10 @@ public final class UrlUtils {
 
 	/**
 	 * Coerces the given string into a URL. When it's not coercible, throws a {@link InvalidUrlException}
-	 * 
-	 * @param url
-	 * @return
-	 * @throws InvalidUrlException
+	 *
+	 * @param url url
+	 * @return URL
+	 * @throws InvalidUrlException InvalidUrlException
 	 */
 	public static URL toUrl(String url) throws InvalidUrlException {
 		try {

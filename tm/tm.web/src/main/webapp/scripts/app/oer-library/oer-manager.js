@@ -71,9 +71,7 @@ define(["jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.s
 				if (!!window.opener) {
 					try {
 						window.opener.squashtm.execution.refresh(); // should be defined in the calling context.
-						if (window.opener.config.identity.restype === "iterations") {
-							window.opener.squashtm.execution.refreshIterationInfo();
-						} else if (window.opener.config.identity.restype === "test-suites") {
+						if (window.opener.config.identity.restype === "test-suites") {
 							window.opener.squashtm.execution.refreshTestSuiteInfo();
 						}
 					} catch (anyex) {

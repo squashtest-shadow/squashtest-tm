@@ -23,36 +23,11 @@ package org.squashtest.tm.domain.execution;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -88,12 +63,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
@@ -114,7 +84,10 @@ DenormalizedFieldHolder, BoundEntity {
 
 	public static final String NO_DATASET_USED_LABEL = "";
 	public static final String NO_DATASET_APPLICABLE_LABEL = null;
-
+	private static final String PARAM_PREFIX = "\\Q${\\E";
+	private static final String PARAM_SUFFIX = "\\Q}\\E";
+	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
+	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.SUCCESS);
@@ -242,6 +215,9 @@ DenormalizedFieldHolder, BoundEntity {
 	private List<Issue> issues = new ArrayList<>();
 
 
+	@Transient
+	private Map<String, String> dataset = new HashMap<>();
+
 	/* *********************** /issues attributes ************************ */
 
 	public List<ExecutionStep> getSteps() {
@@ -263,6 +239,7 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public Execution(TestCase testCase, Dataset dataset) {
+		fillParameterMap(dataset);
 		setReferencedTestCase(testCase);
 		populateSteps(dataset);
 		populateAttachments();
@@ -314,6 +291,7 @@ DenormalizedFieldHolder, BoundEntity {
 			}
 		}
 	}
+
 
 	/* ******************** HasExecutionStatus implementation ************** */
 
@@ -374,13 +352,72 @@ DenormalizedFieldHolder, BoundEntity {
 		// safety belt.
 
 		String pr = testCase.getPrerequisite();
-		setPrerequisite(pr == null ? "" : pr);
+		setPrerequisite(pr == null ? "" : valueParams(pr));
 
 		pr = testCase.getReference();
 		setReference(pr == null ? "" : pr);
 
 		pr = testCase.getDescription();
 		setTcdescription(pr == null ? "" : pr);
+
+	}
+
+
+	public void fillParameterMap(Dataset dataset){
+		if(dataset != null){
+			for(DatasetParamValue param : dataset.getParameterValues()){
+				String key = param.getParameter().getName();
+				String value = param.getParamValue();
+				this.dataset.put(key, value);
+			}
+		}
+	}
+
+	private String valueParams(String content){
+
+		String result = null;
+
+		if(content != null){
+
+			StringBuilder builder = new StringBuilder(content);
+
+			Pattern pattern = Pattern.compile(PARAM_PATTERN);
+			Matcher matcher = pattern.matcher(content);
+
+			// each time a replacement occurs in the stringbuilder deviates
+			// a bit further from string scanned by the matcher.
+			//
+			// Consequently the more the string is modified the more the length might be altered,
+			// which leads to inconsistencies in the position of a given substring in the original string
+			// and the modified string.
+			//
+			// Thus, the following variable keeps track
+			// of the modifications to adjust the start and end position
+			//
+			int offset = 0;
+
+			while (matcher.find()){
+				String paramName = matcher.group(1);
+
+				String paramValue = dataset.get(paramName);
+				if( paramValue == null|| paramValue.isEmpty()) {
+					paramValue = NO_PARAM;
+				}
+
+				int start = matcher.start();
+				int end = matcher.end();
+
+				builder.replace(start + offset, end + offset, paramValue);
+
+				offset += paramValue.length() - (end - start);
+
+			}
+
+			result = builder.toString();
+		}
+
+		return result;
+
 
 	}
 

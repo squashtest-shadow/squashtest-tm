@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.17.0.IT1-SNAPSHOT</version>
+    <version>1.17.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm-bom</artifactId>
@@ -137,32 +137,71 @@
         <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
         <version>${jasperreports.version}</version>
+
         <exclusions>
+          <!-- 
+        		Some dependencies of Jasperreports are a mess (not jasper reports itself 
+        		though) : itext and castor-xml. Their own dependencies must also be 
+        		managed here. 
+        	 -->
+
+          <exclusion>
+            <!-- 
+          	pulled by itext. The bouncycastle jars have changed groupid 
+          	from "bouncycastle" to "org.bouncycastle", furthermore they also
+          	changed their versioning convention from 'majorminor' to 'major.minor'.
+          	The artifact ids are however left unchanged.
+          	
+          	The itext pom states that artifacts "bcmail-jdk14", "bcprov-jdk14" and 
+          	"bctsp-jdk14", all from groupid "bouncycastle", are used. However 
+          	for some reason, Maven actually resolves "bctsp-jdk14" with groupid 
+          	"org.bouncycastle", that itself pulls the other two with the name 
+          	groupid, leading to double inclusion of those jars (no name conflict 
+          	though because the different versioning convention made their name different
+          	too). And of course they are binary equals, but at least it doesn't induce
+          	Heisenbugs when the classes are laoded.
+          	
+          	Because of that, we must manually remove "bouncycastle:bcprov-jdk14" and 
+          	"bouncycastle:bcmail-jdk14" and let "org.bouncycastle:bcstp-jdk14" pull 
+          	the other two with the same groupid.
+          	
+          	This is of course hazardous because no one really knows why 
+          	"org.bouncycastle:bctsp-jdk14" is resolved instead of 
+          	"bouncycastle:bctsp-jdk14" and that might break one day. 
+          	
+          	Maven drives me nuts.
+          	-->
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk14</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <!-- see the comment above -->
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcmail-jdk14</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <!-- 
+          		I could argue how castor-xml pulls both 
+          		stax:stax-api:1.0.1 and javax:xml:stream:stax-api:1.0-2 
+          		but since stax-api is now part of java rt since 1.6 
+          		we just remove both altogether.          	
+          	 -->
+            <groupId>*</groupId>
+            <artifactId>stax-api</artifactId>
+          </exclusion>
+
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
           </exclusion>
-          <exclusion>
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcprov-jdk14</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcmail-14</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-common</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queryparser</artifactId>
-          </exclusion>
         </exclusions>
+
       </dependency>
 
       <dependency>
@@ -190,12 +229,22 @@
       </dependency>
 
       <dependency>
+        <!-- 
+      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed. 
+      		If no bug was reported related to this library when 1.18 is release, remove this 
+      		from the bom.
+      	-->
         <groupId>org.objenesis</groupId>
         <artifactId>objenesis</artifactId>
         <version>${objenesis.version}</version>
       </dependency>
 
       <dependency>
+        <!-- 
+      		TODO : usage deprecated as of TM 1.17. The actual dependency is effectively removed. 
+      		If no bug was reported related to this library when 1.18 is release, remove this 
+      		from the bom.
+      	-->
         <groupId>org.apache.poi</groupId>
         <artifactId>ooxml-schemas</artifactId>
         <version>${ooxml-schemas.version}</version>
@@ -217,6 +266,13 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml-schemas</artifactId>
         <version>${poi.version}</version>
+        <exclusions>
+          <exclusion>
+            <!-- part of the jdk since 1.6 -->
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

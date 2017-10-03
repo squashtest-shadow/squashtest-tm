@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer', 
+define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer',
         'app/ws/squashtm.toggleworkspace',
-        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'], 
+        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
 		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu, storage) {
 
-	
+
 	function initResizer(){
 		var conf = {
 			leftSelector : "#tree-panel-left",
@@ -31,31 +31,37 @@ define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash
 		};
 		resizer.init(conf);
 	}
-	
+
 	function initTabbedPane() {
 		$("#tabbed-pane").tabs();
 	}
-	
+
 	function initMilestoneMenu(){
 		if (mstoneManager.isEnabled()){
 			mstoneTreeMenu.init();
 		}
 	}
-	
-	
+			function resizeLeftPanel(){
+				$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
+				var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
+				$("#contextual-content").css('left',pos+"px");
+			}
+
 	function init(settings){
+		resizeLeftPanel();
 		initResizer();
 		initTabbedPane();
 		initMilestoneMenu();
 		ToggleWorkspace.init(settings.toggleWS);
 		tree.initWorkspaceTree(settings.tree);
-		treemenu.init(settings.treemenu);	
+		treemenu.init(settings.treemenu);
 		popups.init();
 		actions.init();
+
 	}
-	
+
 	return {
 		init : init
 	};
-	
+
 });

@@ -45,9 +45,7 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 				type: 'DELETE',
 				dataType: 'json'
 			}).done(function (data) {
-				if (config.identity.restype==="iterations") {
-					squashtm.execution.refreshIterationInfo();
-				} else if (config.identity.restype==="test-suites") {
+				if (config.identity.restype==="test-suites") {
 					squashtm.execution.refreshTestSuiteInfo();
 				}
 				eventBus.trigger('context.content-modified', {

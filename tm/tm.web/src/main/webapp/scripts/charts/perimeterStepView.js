@@ -72,7 +72,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					case "CUSTOM":
 						this.writePerimeter(scope);
 						break;
-				
+
 					default:
 						break;
 				}
@@ -126,7 +126,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 				this.model.set("scopeType",scopeType);
 				this.updateButtonStatus(scopeType);
 				this.initPerimeter();
-							
+
 			},
 
 			updateButtonStatus : function (scopeType) {
@@ -182,7 +182,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			writePerimeter: function (name) {
 
 				var rootmsg = translator.get('wizard.perimeter.msg.custom.root');
-				var entitynames; 
+				var entitynames;
 				if (name && name !== "default") {
 					entitynames = translator.get("wizard.perimeter." + name);
 				}
@@ -208,7 +208,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + suffixmsg + "</a>";
 					$("#selected-perim").html(link);
 				}
-				
+
 
 			},
 
@@ -289,7 +289,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					self.model.set({scope: scope});
 					self.model.set({
 						projectsScope: _.uniq(_.map($("#tree").jstree('get_selected'), function (obj) {
-							return $(obj).closest("[project]").attr("project");
+							return parseInt($(obj).closest("[project]").attr("project"));
 						}))
 					});
 					self.writePerimeter(name);
@@ -322,10 +322,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 									.values()
 									.flatten()
 									.pluck("id")
-									.value(); 
+									.value();
 
-				//3. now it's simple. If the column is always in computedColumnPrototypes it's valid, else it's invalid...	
-				this.checkValidColumnPrototypeInstance(["axis","filters","measures"],validsIds);		
+				//3. now it's simple. If the column is always in computedColumnPrototypes it's valid, else it's invalid...
+				this.checkValidColumnPrototypeInstance(["axis","filters","measures"],validsIds);
 
 				//4. For the selectedAttributes and selectedCufAttribute it's a little more tricky, as all the ids are strings
 				this.checkValidColumnPrototypeId(["selectedAttributes","selectedCufAttributes"],validsIds);
@@ -340,8 +340,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					var instances = self.model.get(instanceType);
 					var filtered = _.filter(instances,function(instance) {
 						return _.contains(validsIds,instance.column.id);
-					});	
-					self.model.set(instanceType,filtered);		
+					});
+					self.model.set(instanceType,filtered);
 				});
 			},
 
@@ -354,8 +354,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					var list = self.model.get(listId);
 					var filtered = _.filter(list,function(id) {
 						return _.contains(validsStringIds,id);
-					});	
-					self.model.set(listId,filtered);	
+					});
+					self.model.set(listId,filtered);
 				});
 			},
 
@@ -369,17 +369,17 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 								.map(function(id) {return "" + id;})
 								.value();
 					});
-				
+
 				_.each(protosIdsByEntityType,function(protos,entityType) {
 					var inter = _.intersection(protos,selectedAttributes);
 					if(inter.length > 0 ){
 						selectedEntities.push(entityType);
 					}
 				});
-				
+
 			}
 
-			
+
 		});
 
 		return perimeterStepView;

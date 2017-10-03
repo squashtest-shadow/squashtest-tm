@@ -59,32 +59,15 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
-	BoundEntity, MilestoneMember, HasExecutionStatus {
+	BoundEntity, MilestoneMember {
 	private static final String ITERATION_ID = "ITERATION_ID";
 	public static final int MAX_REF_SIZE = 50;
-	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-
-	static {
-		Set<ExecutionStatus> set = new HashSet<>();
-		set.add(ExecutionStatus.SUCCESS);
-		set.add(ExecutionStatus.BLOCKED);
-		set.add(ExecutionStatus.FAILURE);
-		set.add(ExecutionStatus.RUNNING);
-		set.add(ExecutionStatus.READY);
-		set.add(ExecutionStatus.UNTESTABLE);
-		set.add(ExecutionStatus.SETTLED);
-		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
-	}
 
 	@Id
 	@Column(name = ITERATION_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "iteration_iteration_id_seq")
 	@SequenceGenerator(name = "iteration_iteration_id_seq", sequenceName = "iteration_iteration_id_seq", allocationSize = 1)
 	private Long id;
-
-	// Not Null & Column missed comparing to requirementStatus
-	@Enumerated(EnumType.STRING)
-	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
@@ -104,7 +87,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Column(name = "ITERATION_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
-	private IterationStatus status = IterationStatus.WORK_IN_PROGRESS;
+	private IterationStatus status = IterationStatus.PLANNED;
 
 	@Embedded @Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
@@ -161,20 +144,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 
 		return listExec;
-	}
-
-	@Override
-	public ExecutionStatus getExecutionStatus() {
-		return executionStatus;
-	}
-
-	public void setExecutionStatus(ExecutionStatus executionStatus) {
-		this.executionStatus = executionStatus;
-	}
-
-	@Override
-	public Set<ExecutionStatus> getLegalStatusSet() {
-		return LEGAL_EXEC_STATUS;
 	}
 
 	@Override

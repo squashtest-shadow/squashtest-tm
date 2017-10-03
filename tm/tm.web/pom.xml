@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-tm</artifactId>
-    <version>1.17.0.IT1-SNAPSHOT</version>
+    <version>1.17.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -59,10 +59,10 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
+    <!-- dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
-    </dependency>
+    </dependency -->
 
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -203,10 +203,10 @@
       <artifactId>nekohtml</artifactId>
     </dependency>
 
-    <dependency>
+    <!-- dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-    </dependency>
+    </dependency -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>

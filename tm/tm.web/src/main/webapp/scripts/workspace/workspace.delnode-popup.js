@@ -26,7 +26,7 @@
  * a permissions-rules
  *
  */
-define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
+define(['jquery', 'underscore', "workspace.event-bus", 'jquery.squash.formdialog'], function ($, _, eventBus) {
 
 	if (($.squash !== undefined) && ($.squash.delnodeDialog !== undefined)) {
 		// plugin already loaded
@@ -38,7 +38,10 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 		// ********** these options are MANDATORY **************
 		options: {
 			tree: null,
-			rules: null
+			rules: null,
+
+			// that one is a private working variable and requires no initialization
+			'ui-state-update': null
 		},
 
 		open: function () {
@@ -71,6 +74,9 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 		deletionSuccess: function (responsesArray) {
 
 			var tree = this.options.tree;
+			var uiUpdate = this.options['ui-state-update'];
+
+			uiUpdate.previous.deselect_all();
 
 			var i = 0, len = responsesArray.length;
 			for (i = 0; i < len; i++) {
@@ -82,6 +88,8 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 			}
 
 			this.close();
+
+			uiUpdate.next.select();
 		},
 
 		// expects an array of array
@@ -196,32 +204,17 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function ($, _) {
 			var nodes = this.uiDialog.data('selected-nodes');
 			var newSelection = this._findPrevNode(nodes);
 
+			//[#6937] : the tree reselects the parent node before the deleted nodes are
+			// actually deleted, which can lead to inaccurate model sometimes
+			this.options['ui-state-update'] = {
+				previous: nodes,
+				next: newSelection
+			};
 
-			/* Issue #6417: While deleting a multi-selection,
-			 * the commented line below try to select
-			 * a deleted node and creates an error. */
-			//nodes.all('deselect');
-			nodes.deselect_all();
-
-			newSelection.select();
 
 			this.setState('pleasewait');
 
 			var xhrs = this.getConfirmXhr(nodes);
-
-			var i = 0;
-			var updateCampaign = false;
-			console.log(nodes.length);
-			while (i < nodes.length && !updateCampaign) {
-				if (nodes[i].getAttribute("restype") === "iterations") {
-					updateCampaign = true;
-				}
-				i++;
-			}
-
-			if (updateCampaign) {
-				squashtm.execution.refreshCampaignInfo();
-			}
 
 			this.smartAjax(xhrs, this.deletionSuccess);
 

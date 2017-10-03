@@ -26,14 +26,14 @@ import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 
 /**
  * Assertion utilities to validate object state.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class Assert {
 
 	/**
-	 * 
+	 *
 	 */
 	private Assert() {
 		super();
@@ -41,8 +41,8 @@ public final class Assert {
 
 	/**
 	 * Checks that a given object property is not null.
-	 * 
-	 * @param property
+	 *
+	 * @param property property
 	 * @param message
 	 *            The exceptin message if assertion fails
 	 * @throws IllegalStateException
@@ -56,8 +56,8 @@ public final class Assert {
 
 	/**
 	 * Checks that a given object property is not null.
-	 * 
-	 * @param property
+	 *
+	 * @param property property
 	 * @throws IllegalStateException
 	 *             if property is null.
 	 */
@@ -67,9 +67,9 @@ public final class Assert {
 
 	/**
 	 * Checks that a String property is not blank
-	 * 
-	 * @param property
-	 * @param message
+	 *
+	 * @param property property
+	 * @param message message
 	 */
 	public static void propertyNotBlank(String property, String message) {
 		if (StringUtils.isBlank(property)) {
@@ -79,8 +79,8 @@ public final class Assert {
 	}
 
 	/**
-	 * @param parameter
-	 * @param parameterName
+	 * @param parameter parameter
+	 * @param parameterName parameterName
 	 */
 	public static void parameterNotNull(Object parameter, String parameterName) {
 		if (parameter == null) {

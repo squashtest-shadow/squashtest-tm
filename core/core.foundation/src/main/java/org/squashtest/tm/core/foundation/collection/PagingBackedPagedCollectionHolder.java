@@ -24,9 +24,9 @@ import java.util.Collection;
 
 /**
  * Implementation of a {@link PagedCollectionHolder} backed by a {@link Paging} object.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class PagingBackedPagedCollectionHolder<COLLECTION extends Collection<?>> implements PagedCollectionHolder<COLLECTION> {
 	private final Paging paging;
@@ -34,9 +34,9 @@ public class PagingBackedPagedCollectionHolder<COLLECTION extends Collection<?>>
 	private final COLLECTION items;
 
 	/**
-	 * @param paging
-	 * @param totalNumberOfItems
-	 * @param items
+	 * @param paging paging
+	 * @param totalNumberOfItems totalNumberOfItems
+	 * @param items items
 	 */
 	public PagingBackedPagedCollectionHolder(Paging paging, long totalNumberOfItems, COLLECTION items) {
 		super();

@@ -362,11 +362,12 @@ public class VerifiedRequirementsManagerController {
 			res.put("criticality",
 					internationalizationHelper.internationalize(item.getCriticality(), locale));
 			res.put("category", internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale));
-			res.put("status", item.getStatus().toString());
+			res.put("status", internationalizationHelper.internationalize(item.getStatus(), locale));
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
-			res.put("description", HTMLCleanupUtils.getBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+			res.put("short-description", HTMLCleanupUtils.getBriefText(item.getDescription(), INT_MAX_DESCRIPTION_LENGTH));
+			res.put("description", item.getDescription());
 			res.put("category-icon", item.getCategory().getIconName());
 			res.put("criticality-level", item.getCriticality().getLevel());
 			res.put("status-level", item.getStatus().getLevel());

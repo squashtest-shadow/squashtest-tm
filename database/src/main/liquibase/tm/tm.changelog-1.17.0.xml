@@ -38,27 +38,19 @@
   <changeSet id="tm-1.17.0-feature-6921" author="zyang">
   <comment>Adds a status field to campaign and iteration</comment>
   <addColumn tableName="CAMPAIGN">
-    <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
+    <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="PLANNED" >
       <constraints nullable="false"/>
     </column>
   </addColumn>
   <addColumn tableName="ITERATION">
-    <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS" >
+    <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="PLANNED" >
       <constraints nullable="false"/>
     </column>
   </addColumn>
 </changeSet>
 
   <changeSet id="tm-1.17.0-feature-6921" author="cholc">
-    <comment>Adds a execution status field to the iteration the campaign and the test suite</comment>
-    <addColumn tableName="ITERATION">
-      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
-      </column>
-    </addColumn>
-    <addColumn tableName="CAMPAIGN">
-      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
-      </column>
-    </addColumn>
+    <comment>Adds a execution status field to the test suites</comment>
     <addColumn tableName="TEST_SUITE">
       <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
       </column>

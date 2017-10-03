@@ -32,7 +32,7 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
-<%@ attribute name="tableEntries" required="false" type="java.util.List" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
+<%@ attribute name="tableEntries" required="false" type="java.lang.Object" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
 
 
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
@@ -66,7 +66,7 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 
-<c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
+<c:set var="deferLoading" value="${tableEntries.iTotalRecords}" />
 
 <script type="text/javascript">
 require( ["common"], function(){
@@ -90,18 +90,18 @@ require( ["common"], function(){
 				});
 
 				td=$(row).find("td:eq(2)");
-				var encodedSummary = $("<div/>").text(data["summary"]).html();
+				var encodedSummary = $("<div/>").text(data["issue-summary"]).html();
 				$(td).html(encodedSummary);
 
 				return row;
 			};
 
-
 			$("#issue-table").squashTable({
 					'fnRowCallback' : issueTableRowCallback,
-        			<c:if test="${not empty tableEntries}">
-        			'aaData' : ${json:serialize(tableEntries)},
+					<c:if test="${not empty tableEntries.aaData}">
+        			'aaData' : ${json:serialize(tableEntries.aaData)},
         			</c:if>
+
 					'iDeferLoading' : ${deferLoading},
 					'ajax' : {
 						url : "${dataUrl}",

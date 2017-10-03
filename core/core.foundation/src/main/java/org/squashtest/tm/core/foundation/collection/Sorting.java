@@ -22,22 +22,22 @@ package org.squashtest.tm.core.foundation.collection;
 
 /**
  * Defines sorting parameters to apply when querying for a collection.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface Sorting {
 	/**
 	 * Sorting information : which column should be sorted
-	 * 
-	 * @return
+	 *
+	 * @return String
 	 */
 	String getSortedAttribute();
 
 	/**
 	 * Sorting information : which order
-	 * 
-	 * @return
+	 *
+	 * @return String
 	 */
 	SortOrder getSortOrder();
 }

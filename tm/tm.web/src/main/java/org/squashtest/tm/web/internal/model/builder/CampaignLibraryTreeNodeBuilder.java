@@ -79,26 +79,11 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 			// other attributes
 			builtNode.addAttr("rel", "campaign");
-			builtNode.addAttr("executionStatus", campaign.getExecutionStatus().toString());
 			builtNode.addAttr("resType", "campaigns");
 			builtNode.addAttr("reference", campaign.getReference());
 			State state = campaign.hasIterations() ? State.closed : State.leaf;
 			builtNode.setState(state);
 
-			//build tooltip
-			String status = campaign.getExecutionStatus().getI18nKey();
-			Locale locale = LocaleContextHolder.getLocale();
-			String localizedStatus = internationalizationHelper.internationalize(status, locale);
-			String[] args = {localizedStatus};
-			String tooltip = internationalizationHelper.getMessage("label.tree.campaign.tooltip", args, status, locale);
-			String description = "";
-			if (!campaign.getTestPlan().isEmpty()) {
-				description = campaign.getTestPlan().get(0).getReferencedTestCase().getDescription();
-				if (description.length() > 30) {
-					description = description.substring(0, 30);
-				}
-			}
-			builtNode.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
 
 			// milestones
 			builtNode.addAttr("milestones", campaign.getMilestones().size());
@@ -128,7 +113,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			if (visited.hasContent()) {
 				builtNode.setState(State.open);
 
-				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper);
+				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService,internationalizationHelper);
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 					.expand(getExpansionCandidates())
@@ -146,7 +131,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		public void visit(CampaignFolder visited) {
 			if (visited.hasContent()) {
 
-				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService, internationalizationHelper);
+				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService,internationalizationHelper);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
 
@@ -171,6 +156,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	public CampaignLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, InternationalizationHelper internationalizationHelper) {
 		super(permissionEvaluationService);
 		this.internationalizationHelper = internationalizationHelper;
+
 	}
 
 	@Override

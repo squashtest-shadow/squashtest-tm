@@ -209,6 +209,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		throw new EmptyTestSuiteTestPlanException(this);
 	}
 
+	public TestCase getFirstPlannedTestCase() {
+		IterationTestPlanItem itpi = getFirstTestPlanItem();
+		return itpi.getReferencedTestCase();
+	}
+
 	public IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
 		for (IterationTestPlanItem item : this.getTestPlan()) {
 			if (testerLogin == null || item.isAssignedToUser(testerLogin)) {

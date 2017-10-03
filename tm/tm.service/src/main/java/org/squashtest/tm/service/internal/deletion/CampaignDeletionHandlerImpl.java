@@ -43,12 +43,9 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
-import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
@@ -90,9 +87,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	private IterationDao iterationDao;
 
 	@Inject
-	private IterationTestPlanDao iterationTestPlanDao;
-
-	@Inject
 	private TestSuiteDao suiteDao;
 
 	@Inject
@@ -114,13 +108,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
-	private CustomIterationModificationService customIterationModificationService;
-
-	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
-
-	@Inject
-	private CustomCampaignModificationService customCampaignModificationService;
 
 
 	@Override
@@ -478,9 +466,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		for (Iteration iteration : iterations) {
 			campaignToUpdate.add(iteration.getCampaign());
 		}
-		for (Campaign campaign : campaignToUpdate) {
-			customCampaignModificationService.updateExecutionStatus(campaign.getId());
-		}
 
 		return report;
 	}
@@ -513,18 +498,11 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		deleteExecSteps(execution);
 
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
-		ExecutionStatus formerITPIExecutionStatus = testPlanItem.getExecutionStatus();
 		testPlanItem.removeExecution(execution);
 		deleteAutomatedExecutionExtender(execution);
 
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		customValueService.deleteAllCustomFieldValues(execution);
-
-		//If the ITPI status changed, we update the iteration status
-		ExecutionStatus newITPIExecutionStatus = iterationTestPlanDao.findById(testPlanItem.getId()).getExecutionStatus();
-		if (!formerITPIExecutionStatus.equals(newITPIExecutionStatus)) {
-			customIterationModificationService.updateExecutionStatus(testPlanItem.getIteration().getId());
-		}
 
 		for (TestSuite testSuite : testPlanItem.getTestSuites()) {
 			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());

@@ -214,4 +214,9 @@ public class BTIssue implements RemoteIssue {
 			id.isEmpty() ||
 			id.matches("^\\s*$");
 	}
+
+	@Override
+	public String getNewKey() {
+		return null;
+	}
 }

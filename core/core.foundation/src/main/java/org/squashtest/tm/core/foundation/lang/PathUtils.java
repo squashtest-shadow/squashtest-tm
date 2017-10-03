@@ -45,7 +45,7 @@ public final class PathUtils {
 
 	private static final String SPLIT = "(?<!\\\\)/";
 
-	private static final String CORRECT_MUTLTIPLE_SLASHE = 	"(?<!\\\\)\\/+";
+	private static final String CORRECT_MUTLTIPLE_SLASHE = "(?<!\\\\)\\/+";
 
 	/**
 	 * a well formed path starts with a slash, doesn't end with a slash (we consider only test cases here so they don't
@@ -75,7 +75,7 @@ public final class PathUtils {
 	}
 
 	public static String cleanMultipleSlashes(String path) {
-		return path.replaceAll(CORRECT_MUTLTIPLE_SLASHE,"/");
+		return path.replaceAll(CORRECT_MUTLTIPLE_SLASHE, "/");
 	}
 
 	/**
@@ -128,6 +128,9 @@ public final class PathUtils {
 	/**
 	 * Will build a valid path from splits. Throw {@link IllegalArgumentException} if
 	 * names concatenation lead to an ill formed path
+	 * @param names names
+	 * @return String
+	 *
 	 */
 	public static String buildPathFromParts(String[] names) {
 		StringBuilder builder = new StringBuilder();
@@ -144,7 +147,8 @@ public final class PathUtils {
 
 	/**
 	 * Just an alias for {@link #extractName(String)}.
-	 *
+	 * @param path path
+	 * @return String
 	 */
 	public static String extractTestCaseName(String path) {
 		return extractName(path);
@@ -164,6 +168,9 @@ public final class PathUtils {
 	/**
 	 * Returns the path with a different test case name. You can't change directory that way (using "..")
 	 *
+	 * @param path path
+	 * @param name name
+	 * @return String
 	 */
 	public static String rename(String path, String name) {
 		String oldname = extractTestCaseName(path);
@@ -174,6 +181,9 @@ public final class PathUtils {
 	/**
 	 * a well formed path starts with a '/' and we remove it right away before splitting (or else a false positive empty
 	 * string would appear before it)
+	 *
+	 * @param path path
+	 * @return String[]
 	 */
 	public static String[] splitPath(String path) {
 		return path.replaceFirst("^/+", "").split(SPLIT);
@@ -205,6 +215,8 @@ public final class PathUtils {
 
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
+	 * @param pathPart pathPart
+	 * @return String
 	 */
 	public static String unescapePathPartSlashes(String pathPart) {
 		return pathPart.replaceAll("\\\\/", "/");
@@ -212,6 +224,8 @@ public final class PathUtils {
 
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
+	 * @param pathParts pathParts
+	 * @return List<String>
 	 */
 	public static List<String> unescapePathPartSlashes(List<String> pathParts) {
 		List<String> unescapedParts = new ArrayList<>();

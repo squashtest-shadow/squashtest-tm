@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
@@ -63,8 +62,7 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		given:
 		Iteration iter = Mock()
 		iter.getMilestones() >> []
-		iter.executionStatus >> ExecutionStatus.SUCCESS
-		iter.testPlans >> []
+		iter.getPlannedTestCase() >> []
 		iter.doMilestonesAllowCreation() >> Boolean.TRUE
 		iter.doMilestonesAllowEdition() >> Boolean.TRUE
 		service.findIterationsByCampaignId(10) >> [iter]

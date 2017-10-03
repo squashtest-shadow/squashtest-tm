@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'workspace.routing', 'jquery.squash.formdialog'],
-	function ($, zetree, cufValuesManager, projects, rules, routing) {
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'workspace.routing', "workspace.event-bus", 'jquery.squash.formdialog'],
+	function ($, zetree, cufValuesManager, projects, rules, routing, eventBus) {
 
 		function postNode(dialog, tree) {
 
@@ -124,7 +124,6 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 
 			dialog.on('formdialogadd-close', function () {
 				postNode(dialog, tree).then(function () {
-					squashtm.execution.refreshCampaignInfo();
 					dialog.formDialog('close');
 				});
 			});
@@ -134,7 +133,6 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 					var cnt = dialog.formDialog('option', 'itercount');
 					dialog.formDialog('option', 'itercount', (cnt + 1));
 					dialog.formDialog('cleanup');
-					squashtm.execution.refreshCampaignInfo();
 				});
 			});
 

@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 
 class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {

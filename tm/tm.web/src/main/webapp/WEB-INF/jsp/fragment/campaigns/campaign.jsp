@@ -233,14 +233,6 @@
             </div>
 
             <div class="display-table-row">
-              <label for="campaign-execution-status" class="display-table-cell"><f:message key="campaign.execution.status.combo.label"/></label>
-              <div>
-                <span id="campaign-execution-status-icon"> </span>
-                <span id="campaign-execution-status"></span>
-              </div>
-            </div>
-
-            <div class="display-table-row">
               <label for="campaign-progress-status" class="display-table-cell"><f:message key="campaign.progress_status.label" /></label>
               <span id="campaign-progress-status"><f:message key="${ statistics.status.i18nKey }" /></span>
             </div>
@@ -405,8 +397,6 @@ squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
 					initialActualStartAuto: ${campaign.actualStartAuto},
 					initialActualEndAuto: ${campaign.actualEndAuto},
           campaignStatusComboJson : ${campaignStatusComboJson},
-          campaignExecutionStatusCombo: ${json:serialize (statuses)},
-          campaignExecutionStatus: "${campaign.executionStatus}"
 				},
 				features : {
 					editable : ${writable},

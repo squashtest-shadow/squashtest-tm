@@ -27,52 +27,43 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 final class IssueOwnershipFinderUtils {
 	private IssueOwnershipFinderUtils() {
 	}
 
 	static List<String> collectRemoteIssueIds(Collection<? extends Pair<?, Issue>> pairs) {
-		List<String> remoteIssueIds = new ArrayList<>(pairs.size());
-		for (Pair<?, Issue> pair : pairs) {
-			remoteIssueIds.add(pair.right.getRemoteIssueId());
-		}
-		return remoteIssueIds;
+		return pairs.stream().map(p -> p.right.getRemoteIssueId()).collect(Collectors.toList());
 	}
 
 	static Map<String, RemoteIssue> createRemoteIssueByRemoteIdMap(List<RemoteIssue> btIssues) {
-		Map<String, RemoteIssue> remoteById = new HashMap<>(btIssues.size());
-
-		for (RemoteIssue remote : btIssues) {
-			remoteById.put(remote.getId(), remote);
-		}
-		return remoteById;
+		return btIssues.stream().collect(Collectors.toMap(RemoteIssue::getId, Function.identity()));
 	}
 
 	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(List<? extends Pair<? extends IssueDetector, Issue>> pairs, Map<String, RemoteIssue> remoteIssueByRemoteId) {
-		List<IssueOwnership<RemoteIssueDecorator>> ownerships = new ArrayList<>(pairs.size());
 
-		for (Pair<? extends IssueDetector, Issue> pair : pairs) {
-			Issue ish = pair.right;
+		return pairs.stream().map(p -> {
+			Issue ish = p.right;
 			RemoteIssue remote = remoteIssueByRemoteId.get(ish.getRemoteIssueId());
+			//update the remoteIssueId in the database
+			if (remote.getNewKey() != null) {
+				ish.setRemoteIssueId(remote.getNewKey());
+			}
+			return new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), p.left);
+		}).collect(Collectors.toList());
 
-			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
-			ownerships.add(ownership);
-		}
 
-		return ownerships;
+
 	}
 
 	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(IssueDetector holder, Collection<Issue> issues, Map<String, RemoteIssue> remoteIssueByRemoteId) {
-		List<IssueOwnership<RemoteIssueDecorator>> ownerships = new ArrayList<>(issues.size());
 
-		for (Issue issue : issues) {
+		return issues.stream().map(issue -> {
 			RemoteIssue remote = remoteIssueByRemoteId.get(issue.getRemoteIssueId());
+			return new IssueOwnership<>(new RemoteIssueDecorator(remote, issue.getId()), holder);
+		}).collect(Collectors.toList());
 
-			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, issue.getId()), holder);
-			ownerships.add(ownership);
-		}
-
-		return ownerships;
 	}
 }

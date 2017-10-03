@@ -18,44 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.foundation.lang;
+package org.squashtest.tm.domain.requirement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.Document;
+import org.hibernate.Session;
+import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.type.LongType;
+import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-/**
- * Utility methods for arrays not found in commons-lang
- *
- * @author Gregory Fouquet
- *
- */
-public final class ArrayUtils {
-
-	/**
-	 *
-	 */
-	private ArrayUtils() {
-		super();
+public class RequirementCountChildrenBridge extends SessionFieldBridge{
+	private static final int EXPECTED_LENGTH = 7;
+	private String padRawValue(Long rawValue){
+		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
 
-	/**
-	 * Returns true if the array is not null and contains at least one non blank string.
-	 *
-	 * @param array array
-	 * @return isNotBlankStringsArray
-	 */
-	public static boolean isNotBlankStringsArray(String[] array) {
-		return !isBlankStringsArray(array);
-	}
-	public static boolean isBlankStringsArray(String[] array) {
-		if (array == null) {
-			return true;
-		}
-		for (String elem : array) {
-			if (StringUtils.isNotBlank(elem)) {
-				return false;
-			}
-		}
+		Requirement r = (Requirement) value;
 
-		return true;
+		Long childCount = (Long) session.getNamedQuery("requirement.countChildren")
+									 .setReadOnly(true)
+									.setParameter("id", r.getId(), LongType.INSTANCE)
+									.uniqueResult();
+
+		luceneOptions.addFieldToDocument(name, padRawValue(childCount), document);
+
+
 	}
 }

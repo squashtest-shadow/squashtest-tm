@@ -212,12 +212,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private IterationModificationService iterationModificationService;
 	@Inject
 	private PermissionEvaluationService permissionEvaluator;
-
-	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
-
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
@@ -314,8 +312,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
-	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService,InternationalizationHelper internationalizationHelper) {
-		return new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper).setModel(iteration).setIndex(iterationIndex).build();
+	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
+		return new IterationNodeBuilder(permissionEvaluationService,internationalizationHelper).setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
@@ -387,7 +385,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createBatchedIterationTreeNode(iteration, i, pev, internationalizationHelper));
+			res.add(createBatchedIterationTreeNode(iteration, i, pev));
 		}
 
 		return res;
@@ -410,7 +408,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
 		for (Iteration iteration : newIterations) {
-			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev,internationalizationHelper));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev));
 			iterationIndex++;
 		}
 

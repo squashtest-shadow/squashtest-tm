@@ -47,9 +47,6 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 	void changeStatus(long campaignId, CampaignStatus status);
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
-	void changeExecutionStatus(long campaignId, ExecutionStatus executionStatus);
-
-	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeScheduledStartDate(long campaignId, Date scheduledStart);
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)

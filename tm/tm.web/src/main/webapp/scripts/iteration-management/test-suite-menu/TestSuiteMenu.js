@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator",
-         "jquery.squash.messagedialog", "jqueryui" ], function($, _, notification, translator) {
+define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", "workspace.event-bus",
+         "jquery.squash.messagedialog", "jqueryui" ], function($, _, notification, translator,eventBus) {
 
 	function TestSuiteMenuNewStatuses() {
 
@@ -253,12 +253,12 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 								toSend['unbound-test-suites'] = uncheckedSuiteIds;
 								toSend['test-plan-items'] = self.testPlanItemIds;
 								self.model.postBindChanged(toSend).success(function() {
-										squashtm.execution.refreshTestSuiteInfo();
 										self.menucontrol.buttonmenu('close');
 								});
 							}else{
 								self.menucontrol.buttonmenu('close');
 							}
+							eventBus.trigger('iteration.new-test-suite');
 						}
 					});
 			}, this);

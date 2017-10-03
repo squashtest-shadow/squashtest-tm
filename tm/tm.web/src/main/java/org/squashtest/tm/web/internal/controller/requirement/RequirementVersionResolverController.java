@@ -87,8 +87,8 @@ public class RequirementVersionResolverController {
  Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
 			@RequestParam("newName") String newName) {
 
-
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
+
 		requirementVersionManager.rename(version.getId(), newName);
 
 		return new  RenameModel(newName);

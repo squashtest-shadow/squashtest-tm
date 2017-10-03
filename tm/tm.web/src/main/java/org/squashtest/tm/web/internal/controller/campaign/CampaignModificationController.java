@@ -73,7 +73,6 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.web.internal.controller.campaign.CampaignStatusJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -107,9 +106,6 @@ public class CampaignModificationController {
 
 	@Inject
 	private CampaignModificationService campaignModService;
-
-	@Inject
-	private CampaignDao campaignDao;
 
 	@Inject
 	private IterationModificationService iterationModService;
@@ -290,25 +286,6 @@ public class CampaignModificationController {
 	public String changeStatus(@PathVariable long campaignId, @RequestParam(VALUE) CampaignStatus status) {
 		campaignModService.changeStatus(campaignId, status);
 		return formatStatus(status);
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-execution-status", VALUE})
-	@ResponseBody
-	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long campaignId) {
-
-		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
-
-		campaignModService.changeExecutionStatus(campaignId, executionStatus);
-		LOGGER.trace("Campaign " + campaignId + ": updated status to " + value);
-	}
-
-	@RequestMapping(value = "/getExecutionStatus", method = RequestMethod.GET)
-	 @ResponseBody
-	 public String getExecutionStatus(@PathVariable long campaignId) {
-
-		String executionStatus = campaignDao.findById(campaignId).getExecutionStatus().toString();
-		return executionStatus;
-
 	}
 
 	@ResponseBody

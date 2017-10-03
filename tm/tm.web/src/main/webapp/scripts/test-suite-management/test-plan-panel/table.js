@@ -133,7 +133,7 @@ define(
 			// Add to AssignableUsers a possible non assigned admin who did an iteration
 			var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers);
 			//Issue 6319. The use strict broke the property assigniation in ""
-			if(listWithUnassignedUsers === ""){
+			if (listWithUnassignedUsers === "") {
 				listWithUnassignedUsers = {};
 			}
 
@@ -248,6 +248,7 @@ define(
 						.find('td.assignee-combo')
 						.children().first().text(itp.assignee);
 
+					//refresh test suite status in the "informations" tab
 					squashtm.execution.refreshTestSuiteInfo();
 				},
 
@@ -452,23 +453,23 @@ define(
 
 								jqnew.find(
 									'.new-auto-exec').squashButton().on('click', function () {
-									var tpiIds = [];
-									var tpiId = $(this).data('tpi-id');
-									tpiIds.push(tpiId);
-									var url = window.squashtm.app.contextRoot + "/automated-suites/new";
-									$.ajax({
-										url: url,
-										dataType: 'json',
-										type: 'post',
-										data: {
-											testPlanItemsIds: tpiIds
-										},
-										contentType: "application/x-www-form-urlencoded;charset=UTF-8"
-									}).done(function (suite) {
-										window.squashtm.context.autosuiteOverview.start(suite);
+										var tpiIds = [];
+										var tpiId = $(this).data('tpi-id');
+										tpiIds.push(tpiId);
+										var url = window.squashtm.app.contextRoot + "/automated-suites/new";
+										$.ajax({
+											url: url,
+											dataType: 'json',
+											type: 'post',
+											data: {
+												testPlanItemsIds: tpiIds
+											},
+											contentType: "application/x-www-form-urlencoded;charset=UTF-8"
+										}).done(function (suite) {
+											window.squashtm.context.autosuiteOverview.start(suite);
+										});
+										return false;
 									});
-									return false;
-								});
 							}
 						});
 					}

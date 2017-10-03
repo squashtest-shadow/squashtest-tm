@@ -32,7 +32,7 @@
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface" %>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
 <%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
-<%@ attribute name="tableEntries" required="false" type="java.util.List" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
+<%@ attribute name="tableEntries" required="false" type="java.lang.Object" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
 <%@ attribute name="entityId" required="true" description="id of the current execution" %>
 <%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
 <%--
@@ -48,7 +48,7 @@
 
  --%>
 
-<c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
+<c:set var="deferLoading" value="${tableEntries.iTotalRecords}" />
 
 <script type="text/javascript">
 
@@ -82,7 +82,7 @@
 				"fnRowCallback" : issueTableRowCallback,
 				'iDeferLoading' : ${deferLoading},
         		<c:if test="${not empty tableEntries}">
-        		'aaData' : ${json:serialize(tableEntries)},
+        		'aaData' : ${json:serialize(tableEntries.aaData)},
         		</c:if>
 				'ajax' : {
 					url : "${dataUrl}",

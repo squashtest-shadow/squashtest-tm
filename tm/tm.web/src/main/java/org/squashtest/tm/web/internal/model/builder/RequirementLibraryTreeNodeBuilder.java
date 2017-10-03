@@ -113,6 +113,10 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 				builtNode.addAttr("synchronized", "true");
 			}
 
+			if (version.isModifiable()){
+				builtNode.addAttr("req-version-modifiable","true");
+			}
+
 		}
 
 	}

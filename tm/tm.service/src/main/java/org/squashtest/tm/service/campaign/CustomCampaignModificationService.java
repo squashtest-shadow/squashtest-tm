@@ -85,5 +85,4 @@ public interface CustomCampaignModificationService {
 	 */
 	Campaign findCampaigWithExistenceCheck(long campaignId);
 
-	void updateExecutionStatus(Long id);
 }

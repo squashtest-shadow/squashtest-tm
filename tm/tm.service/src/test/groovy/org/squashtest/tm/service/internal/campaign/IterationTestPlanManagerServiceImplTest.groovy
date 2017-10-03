@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -56,7 +55,6 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IndexationService indexationService = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
-	CustomIterationModificationService customIterationModificationService = Mock();
 
 	def setup() {
 		service.testCaseLibraryNodeDao = nodeDao
@@ -66,7 +64,6 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
 		service.activeMilestoneHolder = activeMilestoneHolder
-		service.customIterationModificationService = customIterationModificationService
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 	}
 
