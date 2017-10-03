@@ -44,7 +44,7 @@ class WorkspaceHelperServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def filterModel = workspaceHelperService.doFindFilterModel(user, [-1L, -2L, -3L])
+		def filterModel = workspaceHelperService.findFilterModel(user, [-1L, -2L, -3L])
 
 		then:
 		filterModel.id == -1
@@ -77,7 +77,7 @@ class WorkspaceHelperServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("bob", -1L, [-100L, -200L, -300L], false)
 
 		when:
-		def filterModel = workspaceHelperService.doFindFilterModel(user, [-1L, -2L, -3L])
+		def filterModel = workspaceHelperService.findFilterModel(user, [-1L, -2L, -3L])
 
 		then:
 		filterModel.id == null
