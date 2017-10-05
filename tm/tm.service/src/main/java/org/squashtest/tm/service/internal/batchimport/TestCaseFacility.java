@@ -234,17 +234,28 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
 
-		// update the test case core attributes
 
-		doUpdateTestCaseCoreAttributes(testCase, orig);
-
-		// the custom field values now
+		// update the custom field values
 
 		doUpdateCustomFields(cufValues, orig);
 
 		if (validator.areMilestoneValid(instr)) {
 			rebindMilestones(instr, orig);
 		}
+		
+
+		/*
+		 * Issue #6968 : Because renaming / changing the ref of a test case triggers an immediate reindexation 
+		 * of the related ITPIs (and the test case itself by the way). In the process the session attached to 
+		 * the persistent collection of the milestones is killed, not sure why, thus triggering the 
+		 * lazy exception.
+		 * 
+		 *  The hack to prevent this is to make sure the indexation happens last, which here can be done 
+		 *  by updating the core attributes to the last position.
+		 */
+		// update the test case core attributes last
+		
+		doUpdateTestCaseCoreAttributes(testCase, orig);
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
