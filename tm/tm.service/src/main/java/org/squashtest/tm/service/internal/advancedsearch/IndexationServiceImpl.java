@@ -211,6 +211,7 @@ public class IndexationServiceImpl implements IndexationService {
 	private <T> void batchReindex(Class<T> entity, Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 			FullTextEntityManager ftem = getFullTextSession();
+
 			ScrollableResults scroll = getScrollableResults(ftem, entity, ids);
 			doReindex(ftem, scroll);
 		}
@@ -240,10 +241,19 @@ public class IndexationServiceImpl implements IndexationService {
 
 	private FullTextEntityManager getFullTextSession() {
 		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+		
+		/*
+		  We need to change the flush mode (not sure why, it's historically there) and we'd like to restore it
+		  after indexation. So we store it, set to commit mode, then restore to whatever value it was.
+		 */
+
+		FlushModeType previous = ftem.getFlushMode();
 		ftem.setFlushMode(FlushModeType.COMMIT);
 
 		// Clear the lucene work queue to eliminate lazy init bug for batch processing.
 		clearLuceneQueue(ftem);
+		
+		ftem.setFlushMode(previous);
 
 		return ftem;
 	}
