@@ -204,4 +204,8 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
+	@Override
+	public List<Long> sortRequirementByNodeRelationship(List<Long> requirementVersionIds) {
+		return null;
+	}
 }

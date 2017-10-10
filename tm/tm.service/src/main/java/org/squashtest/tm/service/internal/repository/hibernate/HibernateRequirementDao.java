@@ -68,6 +68,25 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			+ " JOIN REQUIREMENT_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rRequirement.RLN_ID"
 			+ " where rRoot.LIBRARY_ID = :libraryId" + " )";
 
+	private static final String SQL_SORT_REQUIREMENT =
+		"select req.rln_id, req.CURRENT_VERSION_ID, rv.REFERENCE,"
+			+ " concat(ifnull(right(concat('000', f.content_order),4),''),"
+			+ " ifnull(right(concat('000', e.content_order),4),''),"
+			+ " ifnull(right(concat('000', d.content_order),4),''),"
+			+ " ifnull(right(concat('000', c.content_order),4),''),"
+			+ " ifnull(right(concat('000', b.content_order),4),''),"
+			+ " ifnull(right(concat('000', a.content_order),4),'')) ordre"
+			+ " from requirement req join requirement_version rv on req.CURRENT_VERSION_ID=rv.RES_ID"
+			+ " left join rln_relationship a on req.rln_id=a.descendant_id"
+			+ " left join rln_relationship b on a.ancestor_id=b.descendant_id"
+			+ " left join rln_relationship c on b.ancestor_id=c.descendant_id"
+			+ " left join rln_relationship d on c.ancestor_id=d.descendant_id"
+			+ " left join rln_relationship e on d.ancestor_id=e.descendant_id"
+			+ " left join rln_relationship f on e.ancestor_id=f.descendant_id,"
+			+ " requirement requirement"
+			+ " where req.RLN_ID = requirement.RLN_ID and requirement.RLN_ID in (:reqIds)"
+			+ " order by 4;";
+
 	private static final class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
 		private Collection<Long> requirementIds;
 
@@ -460,8 +479,14 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			return new ArrayList<>();
 		}
 	}
-	
-	
 
+	@Override
+	public List<Long> sortRequirementByNodeRelationship(List<Long> reqIds) {
+		Session session = currentSession();
+		SQLQuery query = session.createSQLQuery(SQL_SORT_REQUIREMENT);
+		query.setParameterList("reqIds", reqIds, LongType.INSTANCE);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();
+	}
 
 }

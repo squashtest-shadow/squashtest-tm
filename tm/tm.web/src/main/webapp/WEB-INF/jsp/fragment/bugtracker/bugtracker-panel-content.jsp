@@ -38,25 +38,25 @@
 	currently associated to the corresponding entity, and the bug report form, the dialog that will submit new ones.
 
 
-	parameters : 
+	parameters :
 		- entity : the instance of the entity we need to display current bugs and possible add new ones.
 		- entityType : a String being the REST name of that kind of resource, like in the regular workspaces.
         - bugTracker : the bugtracker
 		- interfaceDescriptor : an instance of BugTrackerInterfaceDescriptor that will provide the bug report dialog
-			with the proper labels  
+			with the proper labels
 		- panelStyle : must be either string among : 'toggle', 'fragment-tab', or null or empty
 		- bugTrackerStatus : a AuthenticationStatus that will set the initial status of that component :
 				* UNDEFINED : never happens, since the controller is not supposed to return the view in the first place,
 				* NON_AUTHENTICATED : a label will prompt the user for login,
 				* AUTHENTICATED : nothing special, the component is fully functional.
-		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
+		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context
 								(that's how the ieo-execute-execution.jsp works)
-        - tableEntries : if not null, will be used as data for table init instead of ajax call. The data must be valid datatable aaData 
-                
-                
+        - tableEntries : if not null, will be used as data for table init instead of ajax call. The data must be valid datatable aaData
+
+
     29/09/14 : that file needs refactoring too.
  --%>
- 
+
 <%-- ------------------- variables ----------------- --%>
 
 <c:set var="executable" value="${ false }" />
@@ -145,7 +145,7 @@
 		$("#issue-panel-knownissues-div").addClass("issue-panel-knownissues-notdisplayed");
 		$("#issue-panel-known-issue-table-div").removeClass("not-displayed");
 	}
-	
+
 	function loginSuccessCheckIssues() {
 		enableIssueTable();
 		refreshIssueTable();
@@ -155,20 +155,20 @@
 
 <%-- internal logic for reporting an issue. Main function : checkAndReportIssue
 	due to the asynchronous nature of ajax calls the logic depends heavily on ajax callbacks.
-	Depending on the success of a call, one of another function will be called and the logic 
+	Depending on the success of a call, one of another function will be called and the logic
 	continues there.
  --%>
 <script type="text/javascript">
-	
-<%-- basic routine : if credentials are checked, proceed to bug report. If not, first hook into 
+
+<%-- basic routine : if credentials are checked, proceed to bug report. If not, first hook into
 	set credential routine
 	--%>
 	function checkAndReportIssue(bugtrackerReportSettings) {
 
 		var btmanager = squashtm.workspace.authmanagers[${bugTracker.id}];
-		
+
 		console.log("check and report");
-		
+
 		btmanager.authenticate()
 		.done(function(){
 			console.log("calling back");
@@ -185,7 +185,7 @@
 		<c:otherwise>
 			squashtm.bugReportPopup.open( bugtrackerReportSettings );
 		</c:otherwise>
-		</c:choose>			
+		</c:choose>
 	}
 </script>
 
@@ -198,26 +198,26 @@
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "serverauth/auth-manager", "jquery.squash.formdialog" ], 
+  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "serverauth/auth-manager", "jquery.squash.formdialog" ],
       function($,_,  storage, basicwidg, eventBus, authmanagers) {
-    
-	  $(function() {    
+
+	  $(function() {
 		  var btId = ${bugTracker.id};
 
 		  var btmanager = authmanagers.get({
 			 serverId : btId,
 			 status : "${bugTrackerStatus}"
 		  })
-		  
+
 		  eventBus.onContextual('authmanager.authentication', function(){
 			  loginSuccessCheckIssues();
 		  });
-		  
+
       basicwidg.init();
       <c:if test="${executable}">
         $("#issue-report-dialog-openbutton").click(function() {
             $(this).removeClass("ui-state-focus ui-state-hover");
-            
+
             checkAndReportIssue( {
             		reportUrl:"${entityUrl}/new-issue/"
             });
@@ -225,14 +225,14 @@ require([ "common" ], function() {
       </c:if>
 
 
-      
+
       $("#issue-login-button").click(function() {
         $(this).removeClass("ui-state-focus ui-state-hover");
           btmanager.authenticate();
       });
-      
-      
-      
+
+
+
       <c:choose>
       <c:when test="${useParentContextPopup}">
         parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
@@ -246,8 +246,8 @@ require([ "common" ], function() {
         refreshIssueTable();
          });
       </c:otherwise>
-      </c:choose>     
-      
+      </c:choose>
+
     });
   });
 });
@@ -293,7 +293,7 @@ require([ "common" ], function() {
 <div id="issue-panel-knownissues-div"
 	class="${knownIssuesLabelInitCss}">
 	<span><f:message key="issue.panel.needscredentials.label" />
-	</span>			
+	</span>
 	<f:message var="loginButtonLabel" key="label.LogIn" />
 	<input type="button" class="sq-btn" id="issue-login-button"
 		value="${loginButtonLabel}" />
@@ -307,9 +307,9 @@ require([ "common" ], function() {
 		</c:when>
 		<c:when test="${entityType == 'execution'}">
 			<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-				interfaceDescriptor="${interfaceDescriptor}" executable="${ executable }" tableEntries="${tableEntries}"/>			
+				interfaceDescriptor="${interfaceDescriptor}" executable="${ executable }" tableEntries="${tableEntries}"/>
 		</c:when>
-		
+
 		<c:when
 			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'campaign-folder'}">
 			<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" tableEntries="${tableEntries}"/>
@@ -317,6 +317,9 @@ require([ "common" ], function() {
 		<c:when test="${entityType == 'test-case' }">
 			<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  tableEntries="${tableEntries}"/>
 		</c:when>
+    <c:when test="${entityType == 'requirement-version' }">
+      <is:issue-table-rv dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  tableEntries="${tableEntries}"/>
+    </c:when>
 	</c:choose>
 </div>
 
@@ -324,17 +327,17 @@ require([ "common" ], function() {
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${executable and not useParentContextPopup and not isOslc}">
 	<is:issue-add-popup id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}"  
-        bugTrackerId="${bugTracker.id}" 
-        projectId="${projectId}" 
+		interfaceDescriptor="${interfaceDescriptor}"
+        bugTrackerId="${bugTracker.id}"
+        projectId="${projectId}"
         projectNames="${projectNames}"/>
 </c:if>
 
 <c:if test="${executable and not useParentContextPopup and isOslc}">
 	<is:issue-add-popup-oslc id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}"  
-        bugTrackerId="${bugTracker.id}" 
-        projectId="${projectId}" 
+		interfaceDescriptor="${interfaceDescriptor}"
+        bugTrackerId="${bugTracker.id}"
+        projectId="${projectId}"
         projectNames="${projectNames}"/>
 </c:if>
 

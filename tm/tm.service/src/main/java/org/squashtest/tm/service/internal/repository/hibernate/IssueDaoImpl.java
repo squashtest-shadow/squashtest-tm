@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -297,6 +298,17 @@ public class IssueDaoImpl implements CustomIssueDao {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase", sorter);
 
 		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("testCase", testCase);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByRequirementVersion(RequirementVersion requirementVersion, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex.referencedTestCase in (select rvc.verifyingTestCase from RequirementVersion rv join rv.requirementVersionCoverages rvc where rv = :requirementVersion)", sorter);
+
+		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("requirementVersion", requirementVersion);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();

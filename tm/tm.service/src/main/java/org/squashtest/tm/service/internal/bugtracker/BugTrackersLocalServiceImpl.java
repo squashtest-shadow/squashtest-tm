@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -111,6 +112,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	@Inject
 	private Map<String, IssueOwnershipFinder> issueOwnershipFinderByBeanName;
+	@Inject
+	private RequirementVersionIssueFinder requirementVersionIssueFinder;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -355,6 +358,13 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(
 		Long cfId, PagingAndSorting sorter) {
 		return issueFinder("campaignFolderIssueFinder").findSorted(cfId, sorter);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#rvId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" + OR_HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion(
+		 Long rvId, String displayMode, PagingAndSorting sorter) {
+		return requirementVersionIssueFinder.findSorted(rvId, displayMode, sorter);
 	}
 
 	@Override

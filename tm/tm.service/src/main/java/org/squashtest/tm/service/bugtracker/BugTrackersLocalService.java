@@ -50,7 +50,7 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * adds a new Issue to the entity. The entity must implement IssueDetector.
-	 * 
+	 *
 	 * @param entityId
 	 *            : the id of that entity.
 	 * @param entityClass
@@ -62,9 +62,9 @@ public interface BugTrackersLocalService {
 	RemoteIssue createIssue(IssueDetector entity, RemoteIssue issue);
 
 	/**
-	 * 
+	 *
 	 * Gets the url of a remote Issue given its Id
-	 * 
+	 *
 	 * @param btIssueId
 	 *            the id of that issue
 	 * @param bugTracker
@@ -76,7 +76,7 @@ public interface BugTrackersLocalService {
 	/**
 	 * An InterfaceDescriptor contains informations relevant to the generation of a view/GUI. See the class for more
 	 * details.
-	 * 
+	 *
 	 * @param bugTracker
 	 *            the concerned BugTracker
 	 * @return an InterfaceDescriptor.
@@ -88,7 +88,7 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param stepId
 	 *            of which we need to get the issues,
 	 * @param sorter
@@ -104,12 +104,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param execId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -121,12 +121,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param iterId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -138,12 +138,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param campId
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -155,12 +155,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param testSuiteId
 	 *            for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -172,12 +172,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param testCase
 	 *            id for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -189,12 +189,12 @@ public interface BugTrackersLocalService {
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param cfId
 	 *            for which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * 
+	 *
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
@@ -202,16 +202,32 @@ public interface BugTrackersLocalService {
 			PagingAndSorting sorter);
 
 
+	/**
+	 * Given a RequirmentVersion, can return a list of linked BTIssue (not Issue) for all leaf requirements this requirement contains.<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a RequirementVersionIssueOwnership (that just pair
+	 * the informations together).
+	 *
+	 * @param rvId
+	 *            for which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 *
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of RequirementVersionIssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
+	 */
+	PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion( Long rvId, String displayMode,
+																																	 PagingAndSorting sorter);
 
 	/**
 	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
 	 * the informations together).
-	 * 
+	 *
 	 * @param testCase
 	 *            id for which we need to get the issues,
-	 * 
+	 *
 	 * @return a  non-null but possibly empty list of IssueOwnership,
 	 **/
 	List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
@@ -220,10 +236,10 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * tests if the bugtracker is ready for use
-	 * 
+	 *
 	 * @param project : the concerned Project
 	 * @return the status of the bugtracker
-	 * 
+	 *
 	 */
 	AuthenticationStatus checkBugTrackerStatus(Project project);
 
@@ -231,7 +247,7 @@ public interface BugTrackersLocalService {
 	/**
 	 * same as {@link #checkBugTrackerStatus(Project)}, using the id of the project
 	 * instead.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
@@ -240,7 +256,7 @@ public interface BugTrackersLocalService {
 	/**
 	 * says whether the user is authenticated against that bugtracker regardless
 	 * of the bindings with projects.
-	 * 
+	 *
 	 * @param bugtracker
 	 * @return
 	 */
@@ -248,7 +264,7 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side.
-	 * 
+	 *
 	 * @param username
 	 * @param password
 	 * @param bugTracker
@@ -261,7 +277,7 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
-	 * 
+	 *
 	 * @param username
 	 * @param password
 	 * @param bugtrackerId
@@ -271,20 +287,20 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * returns an instance of the remote project.
-	 * 
+	 *
 	 * @param name
 	 *            : the name of the project.
 	 * @param bugTracker
 	 *            : the concerned BugTracker
 	 * @return the project filled with users and versions if found.
 	 * @throw BugTrackerManagerException and subtypes.
-	 * 
+	 *
 	 */
 	RemoteProject findRemoteProject(String name, BugTracker bugTracker);
 
 	/**
 	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
-	 * 
+	 *
 	 * @param projectName
 	 * @param BugTracker bugTracker
 	 * @return
@@ -293,7 +309,7 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * returns a remote issue using its key
-	 * 
+	 *
 	 * @param issueKey
 	 * @param bugTracker
 	 *            : the concerned BugTracker
@@ -303,7 +319,7 @@ public interface BugTrackersLocalService {
 
 	/***
 	 * returns a list of BTIssu corresponding to the given string keys
-	 * 
+	 *
 	 * @param issueKeyList
 	 *            the remote issue key list
 	 * @param bugTracker
@@ -314,17 +330,17 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * Will attach an existing issue to the issue detector
-	 * 
+	 *
 	 * @param bugged
 	 *            : the future issue holder
 	 * @param remoteIssueKey
 	 *            : the identificator of the issue in the BT
-	 * 
+	 *
 	 */
 	void attachIssue(IssueDetector bugged, String remoteIssueKey);
 
 	/**
-	 * 
+	 *
 	 * @return the list of all bugtracker kinds available
 	 */
 	Set<String> getProviderKinds();
@@ -332,8 +348,8 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * Will detach an existing issue from an issue detector
-	 * 
-	 * 
+	 *
+	 *
 	 * @param issueId
 	 * 			: the id of the issue in Squash TM
 	 */
@@ -344,7 +360,7 @@ public interface BugTrackersLocalService {
 	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
 	 * In order to prevent possible conflicts (multiple issue may have the same id if defined on different bugtrackers)
 	 * the bugtracker name is required too.
-	 * 
+	 *
 	 * @param remoteIssueKey
 	 * @Param bugtrackerName
 	 * @param attachments
@@ -354,7 +370,7 @@ public interface BugTrackersLocalService {
 
 	/**
 	 * forwards a {@link DelegateCommand} to a connector
-	 * 
+	 *
 	 * @param command
 	 * @return
 	 */

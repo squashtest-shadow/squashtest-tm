@@ -75,15 +75,18 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
@@ -117,6 +120,8 @@ public class BugTrackerController {
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
 	@Inject
+	private RequirementVersionManagerService requirementVersionManager;
+	@Inject
 	private CampaignFinder campaignFinder;
 	@Inject
 	private IterationFinder iterationFinder;
@@ -128,7 +133,6 @@ public class BugTrackerController {
 	private TestCaseFinder testCaseFinder;
 	@Inject
 	private BugTrackerManagerService bugTrackerManagerService;
-
 	@Inject
 	private InternationalizationHelper messageSource;
 	@Inject
@@ -144,6 +148,7 @@ public class BugTrackerController {
 	static final String TEST_SUITE_TYPE = "test-suite";
 	static final String TEST_CASE_TYPE = "test-case";
 	static final String CAMPAIGN_FOLDER_TYPE = "campaign-folder";
+	static final String REQUIREMENT_VERSION_TYPE = "requirement-version";
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
 	private static final String EMPTY_BUGTRACKER_MAV = "fragment/bugtracker/bugtracker-panel-empty";
@@ -153,6 +158,7 @@ public class BugTrackerController {
 
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
+
 
 	@InitBinder
 	public void initBinder(ServletRequestDataBinder binder) throws ServletException {
@@ -402,6 +408,55 @@ public class BugTrackerController {
 		OslcIssue issue = new OslcIssue();
 		issue.setId(issueId);
 		return attachIssue(issue, entity);
+
+	}
+
+	/*
+	 * ************************************************************************************************************** *
+	 * RequirementVersion level section * *
+	 * ***********************************************************************************************************
+	 */
+
+	/**
+	 * returns the panel displaying the current bugs of that RequirementVersion and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 *
+	 * @param rvId
+	 * @return
+	 */
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/{display-mode}", method = RequestMethod.GET)
+	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, @PathVariable("display-mode") String displayMode, Locale locale,
+														  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+
+		RequirementVersion requirementVersion = requirementVersionManager.findById(rvId);
+
+		ModelAndView mav = makeIssuePanel(requirementVersion, REQUIREMENT_VERSION_TYPE, locale, panelStyle, requirementVersion.getProject());
+
+		/*
+		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
+		 * with the panel in one call)
+		 */
+		if (shouldGetTableData(mav)) {
+			DataTableModel issues = getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, displayMode,
+				new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
+		}
+
+		return mav;
+
+	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@ResponseBody
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues/{display-mode}", method = RequestMethod.GET)
+	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, @PathVariable("display-mode") String displayMode,
+															   final DataTableDrawParameters params) {
+
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
+
+		return getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, displayMode, sorter, params.getsEcho());
 
 	}
 
@@ -811,6 +866,19 @@ public class BugTrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
+	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String displayMode,PagingAndSorting paging, String sEcho) {
+
+		PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		try {
+			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForRequirmentVersion(id, displayMode, paging);
+		}
+		catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolderForRequirement(entityType, id, exception, paging);
+		}
+
+		return helper.createModelBuilderForRequirementVersion().buildDataModel(filteredCollection, sEcho);
+	}
+
 	private DataTableModel getKnownIssuesData(String entityType, Long id, PagingAndSorting paging, String sEcho) {
 
 		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
@@ -853,7 +921,6 @@ public class BugTrackerController {
 		}
 
 		return helper.createModelBuilderFor(entityType).buildDataModel(filteredCollection, sEcho);
-
 	}
 
 	private AuthenticationStatus checkStatus(long projectId) {
@@ -901,6 +968,14 @@ public class BugTrackerController {
 			return SpringPaginationUtils.toPageable(this);
 		}
 
+	}
+
+	private PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolderForRequirement(
+		String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
+		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
+			+ " failed, exception : ", cause);
+		List<RequirementVersionIssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<>();
+		return new PagingBackedPagedCollectionHolder<>(paging, 0, emptyList);
 	}
 
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
