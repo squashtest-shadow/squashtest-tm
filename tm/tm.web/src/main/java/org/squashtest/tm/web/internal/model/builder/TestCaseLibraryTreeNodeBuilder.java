@@ -20,28 +20,22 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.
@@ -94,7 +88,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			String localizedStatus = internationalizationHelper.internationalize(status, locale);
 			String localizedImportance = internationalizationHelper.internationalize(importance, locale);
 			String localizedIsReqCovered = internationalizationHelper.internationalizeYesNo(isreqcovered, locale);
-			String localizedHasSteps = internationalizationHelper.internationalize("tootltip.tree.testCase.hasSteps."+hasSteps,locale);
+			String localizedHasSteps = internationalizationHelper.internationalize("tooltip.tree.testCase.hasSteps."+hasSteps,locale);
 			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered, localizedHasSteps};
 			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
 
