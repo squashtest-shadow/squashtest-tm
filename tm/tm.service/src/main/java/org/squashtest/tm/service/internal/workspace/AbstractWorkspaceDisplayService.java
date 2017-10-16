@@ -440,7 +440,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				if (childrenClasses[i].equals("test-case-folder")) {
 					childNode.addAttr("id", "TestCaseFolder-" + childrenIds[i]);
 					childNode.addAttr("rel", "folder");
-					childNode.setState(State.closed);
+					childNode.setState(State.leaf);
 				} else {
 					boolean bool = false;
 					childNode.addAttr("id", "TestCase-" + childrenIds[i]);
@@ -490,8 +490,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			if (openedFolderIds.contains(id)) {
 				jsTreeNodeChild.setState(State.open);
 				jsTreeNodeChild.setChildren(jsTreeNodes.get(id).getChildren());
-				jsTreeNodes.remove(id);
-				buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedFolderIds);
+				if (jsTreeNodeChild.getChildren().size() != 0) {
+					buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedFolderIds);
+				}
 			}
 		}
 	}
