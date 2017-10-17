@@ -200,13 +200,20 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.from(TCS)
 			.groupBy(TCS.TEST_CASE_ID);
 
-		Table<Record9<Long, String, String, String, String, String, String, String, String>> childrenInfo = DSL
+		Table<Record> groupedTCLNR = DSL
+			.select()
+			.from(TCLN_RELATIONSHIP)
+			.groupBy(TCLN_RELATIONSHIP.ANCESTOR_ID)
+			.asTable("TCLNR2");
+
+
+		Table<Record10<Long, String, String, String, String, String, String, String, String, String>> childrenInfo = DSL
 			.select(selectLibraryId(),
 				org.jooq.impl.DSL.groupConcat(TCLC.CONTENT_ID)
 					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_ID"),
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folder")
-					.otherwise("test-case"))
+					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
+					.otherwise("test-cases"))
 					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_CLASS"),
 				org.jooq.impl.DSL.groupConcat(TCLN.NAME)
 					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_NAME"),
@@ -225,7 +232,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
 					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
 					.otherwise("true"))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED")
+					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
+				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
+					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), 0)
+					.otherwise(1))
+					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
 			)
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
@@ -235,6 +246,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.leftJoin(TC).on(TCLC.CONTENT_ID.eq(TC.TCLN_ID))
 			.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
 			.leftJoin(RVC).on(TCLC.CONTENT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
+			.leftJoin(groupedTCLNR).on(TCLC.CONTENT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
 			.where(PROJECT.PROJECT_ID.in(openedLibraryIds))
 			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
 			.groupBy(selectLibraryId())
@@ -256,7 +268,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				childrenInfo.field("CHILDREN_STATUS"),
 				childrenInfo.field("CHILDREN_NAME"),
 				childrenInfo.field("CHILDREN_HAS_STEP"),
-				childrenInfo.field("CHILDREN_IS_REQ_COVERED")
+				childrenInfo.field("CHILDREN_IS_REQ_COVERED"),
+				childrenInfo.field("CHILDREN_HAS_CONTENT")
 			)
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
@@ -297,7 +310,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					node.setState(State.open);
 					node.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
 						(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), currentUser, expandedJsTreeNodes));
+						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes));
 				}
 				return node;
 			}) // We collect the data in a LinkedHashMap to keep the positionnal order
@@ -326,6 +339,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.groupBy(TEST_CASE_STEPS.TEST_CASE_ID)
 			.asTable("TCS");
 
+		Table<Record> groupedTCLNR = DSL
+			.select()
+			.from(TCLN_RELATIONSHIP)
+			.groupBy(TCLN_RELATIONSHIP.ANCESTOR_ID)
+			.asTable("TCLNR2");
+
 		Map<Long, JsTreeNode> jsTreeNodes = DSL
 			.select(
 				TCLN.TCLN_ID.as("PARENT_FOLDER_ID"),
@@ -335,7 +354,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				org.jooq.impl.DSL.groupConcat(TCLN_CHILD.NAME)
 					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_NAME"),
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folder")
+					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
 					.otherwise("test-cases"))
 					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_CLASS"),
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.coalesce(TC.IMPORTANCE, " "))
@@ -352,7 +371,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
 					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
 					.otherwise("true"))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED")
+					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
+				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
+					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
+					.otherwise("true"))
+					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
 			)
 			.from(TCLN
 					.join(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
@@ -361,6 +384,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					.leftJoin(TC).on(TCLNR.DESCENDANT_ID.eq(TC.TCLN_ID))
 					.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
 					.leftJoin(RVC).on(TCLNR.DESCENDANT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
+					.leftJoin(groupedTCLNR).on(TCLNR.DESCENDANT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
 			)
 			.where(TCLN.TCLN_ID.in(openedFolderIds))
 			.groupBy(TCLN.TCLN_ID)
@@ -370,7 +394,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				JsTreeNode parent = buildParent((Long) r.get("PARENT_FOLDER_ID"), (String) r.get("PARENT_FOLDER_NAME"), currentUser);
 				parent.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
 					(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), currentUser, new HashMap<>()));
+					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"), currentUser, new HashMap<>()));
 				return parent;
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
@@ -406,26 +430,28 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private List<JsTreeNode> buildDirectChildren(String childrenId, String childrenName, String childrenClass, String childrenImportance,
 												 String childrenReference, String childrenStatus, String childrenHasStep,
-												 String childrenIsReqCovered, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes) {
+												 String childrenIsReqCovered, String childrenHasContent, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes) {
 		List<JsTreeNode> children = new ArrayList<>();
-		String[] childrenIds = childrenId.split(",");
-		String[] childrenNames = childrenName.split(",");
-		String[] childrenClasses = childrenClass.split(",");
-		String[] childrenImportances = childrenImportance.split(",");
-		String[] childrenReferences = childrenReference.split(",");
-		String[] childrenStatuses = childrenStatus.split(",");
-		String[] childrenHasSteps = childrenHasStep.split(",");
-		String[] childrenIsReqCovereds = childrenIsReqCovered.split(",");
+		String[] childrenIdArray = childrenId.split(",");
+		String[] childrenNameArray = childrenName.split(",");
+		String[] childrenClasseArray = childrenClass.split(",");
+		String[] childrenImportanceArray = childrenImportance.split(",");
+		String[] childrenReferenceArray = childrenReference.split(",");
+		String[] childrenStatusArray = childrenStatus.split(",");
+		String[] childrenHasStepArray = childrenHasStep.split(",");
+		String[] childrenIsReqCoveredArray = childrenIsReqCovered.split(",");
+		String[] childrenHasContentArray = childrenHasContent.split(",");
 
-		for (int i = 0; i < childrenIds.length; i++) {
-			if (expandedJsTreeNodes.containsKey(Long.parseLong(childrenIds[i]))) {
-				children.add(expandedJsTreeNodes.get(Long.parseLong(childrenIds[i])));
+		for (int i = 0; i < childrenIdArray.length; i++) {
+			Long childId = Long.parseLong(childrenIdArray[i]);
+			if (expandedJsTreeNodes.containsKey(childId)) {
+				children.add(expandedJsTreeNodes.get(childId));
 			} else {
 				JsTreeNode childNode = new JsTreeNode();
-				childNode.addAttr("resId", childrenIds[i]);
-				childNode.setTitle(childrenNames[i]);
-				childNode.addAttr("resType", childrenClasses[i]);
-				childNode.addAttr("name", childrenNames[i]);
+				childNode.addAttr("resId", childId);
+				childNode.setTitle(childrenNameArray[i]);
+				childNode.addAttr("resType", childrenClasseArray[i]);
+				childNode.addAttr("name", childrenNameArray[i]);
 
 				//permissions set to false by default except for admin which have rights by definition
 				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
@@ -437,22 +463,26 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				childNode.addAttr("milestone-creatable-deletable", "true");
 				childNode.addAttr("milestone-editable", "true");
 				childNode.addAttr("wizards", new HashSet<String>());
-				if (childrenClasses[i].equals("test-case-folder")) {
-					childNode.addAttr("id", "TestCaseFolder-" + childrenIds[i]);
+				if (childrenClasseArray[i].equals("test-case-folders")) {
+					childNode.addAttr("id", "TestCaseFolder-" + childId);
 					childNode.addAttr("rel", "folder");
-					childNode.setState(State.leaf);
+					if(Boolean.parseBoolean(childrenHasContentArray[i])){
+						childNode.setState(State.closed);
+					}else {
+						childNode.setState(State.leaf);
+					}
 				} else {
 					boolean bool = false;
-					childNode.addAttr("id", "TestCase-" + childrenIds[i]);
+					childNode.addAttr("id", "TestCase-" + childId);
 					childNode.addAttr("rel", "test-case");
-					childNode.addAttr("reference", childrenReferences[i]);
-					childNode.addAttr("importance", childrenImportances[i].toLowerCase());
-					childNode.addAttr("status", childrenStatuses[i].toLowerCase());
-					childNode.addAttr("hassteps", childrenHasSteps[i]);
-					childNode.addAttr("isreqcovered", childrenIsReqCovereds[i]);
+					childNode.addAttr("reference", childrenReferenceArray[i]);
+					childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
+					childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
+					childNode.addAttr("hassteps", childrenHasStepArray[i]);
+					childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
 					//build tooltip
-					String[] args = {getMessage("test-case.status." + childrenStatuses[i]), getMessage("test-case.importance." + childrenImportances[i]),
-						getMessage("squashtm.yesno." + childrenIsReqCovereds[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasSteps[i])};
+					String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
+						getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
 					String tooltip = getMessage("label.tree.testCase.tooltip", args);
 					childNode.addAttr("title", tooltip);
 					childNode.setState(State.leaf);
@@ -472,10 +502,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.where(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID.in(openedFolderIds))
 			.fetch(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID, Long.class);
 
-		// we will iterate over the copy and modify the original, otherwise we have a ConcurrentModificationException
-		List<JsTreeNode> jsTreeNodesCopy = new ArrayList<>();
-		jsTreeNodesCopy.addAll(jsTreeNodes.values());
-
 		for (JsTreeNode jsTreeNode : jsTreeNodes.values()) {
 			if (directLibraryChildren.contains(jsTreeNode.getAttr().get("resId"))) {
 				buildSubHierarchy(jsTreeNodes, jsTreeNode.getChildren(), openedFolderIds);
@@ -486,10 +512,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private void buildSubHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<JsTreeNode> children, List<Long> openedFolderIds) {
 		for (JsTreeNode jsTreeNodeChild : children) {
-			Long id = (Long.parseLong((String) jsTreeNodeChild.getAttr().get("resId")));
-			if (openedFolderIds.contains(id)) {
+			if (openedFolderIds.contains((Long) jsTreeNodeChild.getAttr().get("resId"))) {
 				jsTreeNodeChild.setState(State.open);
-				jsTreeNodeChild.setChildren(jsTreeNodes.get(id).getChildren());
+				jsTreeNodeChild.setChildren(jsTreeNodes.get((Long) jsTreeNodeChild.getAttr().get("resId")).getChildren());
 				if (jsTreeNodeChild.getChildren().size() != 0) {
 					buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedFolderIds);
 				}
