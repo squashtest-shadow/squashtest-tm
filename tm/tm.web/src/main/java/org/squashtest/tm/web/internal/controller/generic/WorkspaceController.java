@@ -148,7 +148,16 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser, expansionCandidates);
+
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		JsonMilestone jsMilestone = null;
+		// milestones
+		if (activeMilestoneId.isPresent()) {
+			jsMilestone =
+				milestoneModelService.findMilestoneModel(activeMilestoneId.get());
+			model.addAttribute("activeMilestone", jsMilestone);
+		}
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser, expansionCandidates, jsMilestone);
 
 
 		model.addAttribute("rootModel", rootNodes);
@@ -158,16 +167,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(projectIds, currentUser);
 
 		model.addAttribute("projects", jsProjects);
-
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-
-		// also, milestones
-		if (activeMilestoneId.isPresent()) {
-			JsonMilestone jsMilestone =
-				milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			model.addAttribute("activeMilestone", jsMilestone);
-		}
-
 		model.addAttribute("userPrefs", getWorkspaceUserPref());
 		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
 		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));

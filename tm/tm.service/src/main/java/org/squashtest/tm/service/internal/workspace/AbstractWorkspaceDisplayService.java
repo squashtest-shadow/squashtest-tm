@@ -68,15 +68,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	private InfoListModelService infoListModelService;
 
 	@Override
-	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates) {
+	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
 		List<Long> openedLibraryIds = (List<Long>) expansionCandidates.get("TestCaseLibrary");
 		List<Long> openedFolderIds = (List<Long>) expansionCandidates.get("TestCaseFolder");
 		Map<Long, JsTreeNode> expandedJsTreeNodes = new HashMap<>();
 		if (openedFolderIds != null) {
-			expandedJsTreeNodes = FindExpandedJsTreeNodes(currentUser, openedFolderIds);
+			expandedJsTreeNodes = FindExpandedJsTreeNodes(currentUser, openedFolderIds, activeMilestone);
 		}
 
-		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser, openedLibraryIds, expandedJsTreeNodes);
+		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser, openedLibraryIds, expandedJsTreeNodes, activeMilestone);
 		findWizards(readableProjectIds, jsTreeNodes);
 
 		if (currentUser.isNotAdmin()) {
@@ -177,7 +177,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	protected abstract Field<Long> getProjectLibraryColumn();
 
-	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds, Map<Long, JsTreeNode> expandedJsTreeNodes) {
+	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
 		List<Long> filteredProjectIds;
 		if (hasActiveFilter(currentUser.getUsername())) {
 			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
@@ -307,10 +307,14 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				} else if (r.get("CHILDREN_ID") == null || ((String) r.get("CHILDREN_ID")).isEmpty()) {
 					node.setState(State.closed);
 				} else {
-					node.setState(State.open);
 					node.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
 						(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes));
+						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes, activeMilestone));
+					if (node.getChildren().size() != 0) {
+						node.setState(State.open);
+					} else {
+						node.setState(State.leaf);
+					}
 				}
 				return node;
 			}) // We collect the data in a LinkedHashMap to keep the positionnal order
@@ -324,7 +328,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes;
 	}
 
-	public Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedFolderIds) {
+	public Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedFolderIds, JsonMilestone activeMilestone) {
 		//TODO Make it work for all Workspaces?
 		TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
 		TestCaseLibraryNode TCLN_CHILD = TEST_CASE_LIBRARY_NODE.as("TCLN_CHILD");
@@ -394,7 +398,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				JsTreeNode parent = buildParent((Long) r.get("PARENT_FOLDER_ID"), (String) r.get("PARENT_FOLDER_NAME"), currentUser);
 				parent.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
 					(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"), currentUser, new HashMap<>()));
+					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"), currentUser, new HashMap<>(), activeMilestone));
+				if (parent.getChildren().size() == 0) {
+					parent.setState(State.leaf);
+				}
 				return parent;
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
@@ -430,7 +437,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	private List<JsTreeNode> buildDirectChildren(String childrenId, String childrenName, String childrenClass, String childrenImportance,
 												 String childrenReference, String childrenStatus, String childrenHasStep,
-												 String childrenIsReqCovered, String childrenHasContent, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes) {
+												 String childrenIsReqCovered, String childrenHasContent, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
+
+		List<Long> testCaseIdsLinkedToActiveMilestone = findTCIdsLinkedToActiveMilestone(activeMilestone);
+
 		List<JsTreeNode> children = new ArrayList<>();
 		String[] childrenIdArray = childrenId.split(",");
 		String[] childrenNameArray = childrenName.split(",");
@@ -444,54 +454,145 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		for (int i = 0; i < childrenIdArray.length; i++) {
 			Long childId = Long.parseLong(childrenIdArray[i]);
-			if (expandedJsTreeNodes.containsKey(childId)) {
-				children.add(expandedJsTreeNodes.get(childId));
-			} else {
-				JsTreeNode childNode = new JsTreeNode();
-				childNode.addAttr("resId", childId);
-				childNode.setTitle(childrenNameArray[i]);
-				childNode.addAttr("resType", childrenClasseArray[i]);
-				childNode.addAttr("name", childrenNameArray[i]);
+			if (activeMilestone == null) { // no milestone activated
+				if (expandedJsTreeNodes.containsKey(childId)) {
+					children.add(expandedJsTreeNodes.get(childId));
+				} else {
+					JsTreeNode childNode = new JsTreeNode();
+					childNode.addAttr("resId", childId);
+					childNode.setTitle(childrenNameArray[i]);
+					childNode.addAttr("resType", childrenClasseArray[i]);
+					childNode.addAttr("name", childrenNameArray[i]);
 
-				//permissions set to false by default except for admin which have rights by definition
-				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-				for (PermissionWithMask permission : permissions) {
-					childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-				}
+					//permissions set to false by default except for admin which have rights by definition
+					EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+					for (PermissionWithMask permission : permissions) {
+						childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+					}
 
-				// milestone attributes : libraries are yes-men
-				childNode.addAttr("milestone-creatable-deletable", "true");
-				childNode.addAttr("milestone-editable", "true");
-				childNode.addAttr("wizards", new HashSet<String>());
-				if (childrenClasseArray[i].equals("test-case-folders")) {
-					childNode.addAttr("id", "TestCaseFolder-" + childId);
-					childNode.addAttr("rel", "folder");
-					if(Boolean.parseBoolean(childrenHasContentArray[i])){
-						childNode.setState(State.closed);
-					}else {
+					// milestone attributes : libraries are yes-men
+					childNode.addAttr("milestone-creatable-deletable", "true");
+					childNode.addAttr("milestone-editable", "true");
+					childNode.addAttr("wizards", new HashSet<String>());
+					if (childrenClasseArray[i].equals("test-case-folders")) {
+						childNode.addAttr("id", "TestCaseFolder-" + childId);
+						childNode.addAttr("rel", "folder");
+						if (Boolean.parseBoolean(childrenHasContentArray[i])) {
+							childNode.setState(State.closed);
+						} else {
+							childNode.setState(State.leaf);
+						}
+					} else {
+						boolean bool = false;
+						childNode.addAttr("id", "TestCase-" + childId);
+						childNode.addAttr("rel", "test-case");
+						childNode.addAttr("reference", childrenReferenceArray[i]);
+						childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
+						childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
+						childNode.addAttr("hassteps", childrenHasStepArray[i]);
+						childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
+						//build tooltip
+						String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
+							getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
+						String tooltip = getMessage("label.tree.testCase.tooltip", args);
+						childNode.addAttr("title", tooltip);
 						childNode.setState(State.leaf);
 					}
-				} else {
-					boolean bool = false;
-					childNode.addAttr("id", "TestCase-" + childId);
-					childNode.addAttr("rel", "test-case");
-					childNode.addAttr("reference", childrenReferenceArray[i]);
-					childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
-					childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
-					childNode.addAttr("hassteps", childrenHasStepArray[i]);
-					childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
-					//build tooltip
-					String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
-						getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
-					String tooltip = getMessage("label.tree.testCase.tooltip", args);
-					childNode.addAttr("title", tooltip);
-					childNode.setState(State.leaf);
+					children.add(childNode);
 				}
-				children.add(childNode);
+			} else { // milestone mode activated
+				boolean hasTestcaseActiveMilestone = hasTestcaseActiveMilestone(testCaseIdsLinkedToActiveMilestone, childId);
+				if (expandedJsTreeNodes.containsKey(childId)) {
+					children.add(expandedJsTreeNodes.get(childId));
+				} else {
+					if (childrenClasseArray[i].equals("test-case-folders")) {
+						JsTreeNode childNode = new JsTreeNode();
+						childNode.addAttr("resId", childId);
+						childNode.setTitle(childrenNameArray[i]);
+						childNode.addAttr("resType", childrenClasseArray[i]);
+						childNode.addAttr("name", childrenNameArray[i]);
+
+						//permissions set to false by default except for admin which have rights by definition
+						EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+						for (PermissionWithMask permission : permissions) {
+							childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+						}
+
+						// milestone attributes : libraries are yes-men
+						childNode.addAttr("milestone-creatable-deletable", "true");
+						childNode.addAttr("milestone-editable", "true");
+						childNode.addAttr("wizards", new HashSet<String>());
+						childNode.addAttr("id", "TestCaseFolder-" + childId);
+						childNode.addAttr("rel", "folder");
+						if (Boolean.parseBoolean(childrenHasContentArray[i])) {
+							childNode.setState(State.closed);
+						} else {
+							childNode.setState(State.leaf);
+						}
+						children.add(childNode);
+					} else {
+						if (hasTestcaseActiveMilestone) {
+							JsTreeNode childNode = new JsTreeNode();
+							childNode.addAttr("resId", childId);
+							childNode.setTitle(childrenNameArray[i]);
+							childNode.addAttr("resType", childrenClasseArray[i]);
+							childNode.addAttr("name", childrenNameArray[i]);
+
+							//permissions set to false by default except for admin which have rights by definition
+							EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+							for (PermissionWithMask permission : permissions) {
+								childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+							}
+
+							// milestone attributes : libraries are yes-men
+							childNode.addAttr("milestone-creatable-deletable", "true");
+							childNode.addAttr("milestone-editable", "true");
+							childNode.addAttr("wizards", new HashSet<String>());
+							boolean bool = false;
+							childNode.addAttr("id", "TestCase-" + childId);
+							childNode.addAttr("rel", "test-case");
+							childNode.addAttr("reference", childrenReferenceArray[i]);
+							childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
+							childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
+							childNode.addAttr("hassteps", childrenHasStepArray[i]);
+							childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
+							//build tooltip
+							String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
+								getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
+							String tooltip = getMessage("label.tree.testCase.tooltip", args);
+							childNode.addAttr("title", tooltip);
+							childNode.setState(State.leaf);
+							children.add(childNode);
+						}
+					}
+				}
 			}
 		}
-
 		return children;
+	}
+
+	private boolean hasTestcaseActiveMilestone(List<Long> testCaseIdsLinkedToActiveMilestone, Long libraryId) {
+		for (Long testCaseId : testCaseIdsLinkedToActiveMilestone) {
+			if (libraryId.equals(testCaseId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<Long> findNodesByMilestoneId(Long milestoneId) {
+		return DSL.select(MILESTONE_TEST_CASE.TEST_CASE_ID)
+			.from(MILESTONE_TEST_CASE)
+			.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(milestoneId))
+			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class);
+	}
+
+	private List<Long> findTCIdsLinkedToActiveMilestone(JsonMilestone activeMilestone) {
+		List<Long> testCaseIdsLinkedToActiveMilestone = new ArrayList<>();
+		if (activeMilestone != null) {
+			testCaseIdsLinkedToActiveMilestone = findNodesByMilestoneId(activeMilestone.getId());
+		}
+		return testCaseIdsLinkedToActiveMilestone;
 	}
 
 	private void buildHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<Long> openedFolderIds) {
@@ -508,7 +609,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			}
 		}
 	}
-
 
 	private void buildSubHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<JsTreeNode> children, List<Long> openedFolderIds) {
 		for (JsTreeNode jsTreeNodeChild : children) {
@@ -542,6 +642,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
+// When we will factorize the code
+/*	protected abstract Field<Long> getMilestoneLibraryNodeId();
+
+	protected abstract Field<Long> getMilestoneId();
+
+	protected abstract TableLike<?> getMilestoneLibraryNodeTable();*/
 
 	protected abstract String getRel();
 

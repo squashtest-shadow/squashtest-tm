@@ -23,6 +23,7 @@ package org.squashtest.tm.service.workspace;
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 import java.util.Collection;
@@ -37,7 +38,7 @@ public interface WorkspaceDisplayService {
 	 * @param expansionCandidates
 	 * @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
 	 */
-	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates);
+	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMileston);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
