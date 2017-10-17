@@ -241,47 +241,55 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		children.size() == 3
 		children.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
-		children.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
 		children.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
+		children.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
 
 		grandChildren.size() == 1
-		grandChildren.collect { it.getAttr().get("resId") } == [-13L];
-		grandChildren.collect { it.getState() }.sort() == ["leaf"]
-		grandChildren.collect { it.getTitle() }.sort() == ["test case 3"]
+		grandChildren.collect { it.getAttr().get("resId") } == [-13L]
+		grandChildren.collect { it.getTitle() } == ["test case 3"]
+		grandChildren.collect { it.getState() } == ["leaf"]
+
 	}
 
 	@DataSet("TestCaseDisplayService.sandbox.xml")
 	def "should build test Case libraries with all their children"() {
+
 		given:
+
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		and:
+
+		def expandedJsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L])
+
+		and:
+
 		def readableProjectIds = [-1L, -2L, -3L, -4L]
 
 		when:
-		def expandedNode = new JsTreeNode()
-		expandedNode.setTitle("Coucou")
-		expandedNode.setState(JsTreeNode.State.open);
-
-		Map<Long, JsTreeNode> expandedJsTreeNodes = new HashMap<>();
-		expandedJsTreeNodes.put(-5L,expandedNode)
 
 		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, [-1L], expandedJsTreeNodes)
+
 		then:
-		def JsTreeNode parentFolder = jsTreeNodes.get(-5L);
 
-		def List<JsTreeNode> children = parentFolder.getChildren();
+		jsTreeNodes.size () ==3;
+		jsTreeNodes.values().collect { it.getAttr().get("resId") }.sort() == [-20L, -3L, -1L]
+		jsTreeNodes.values().collect { it.getTitle() }.sort() == ["bar", "baz", "foo"]
+		jsTreeNodes.values().collect { it.getState() }.sort() == ["leaf", "leaf", "open"]
 
-		def List<JsTreeNode> grandChildren = children.get(1).getChildren();
+		def List<JsTreeNode> children = jsTreeNodes.get(-1L).getChildren();
 
-		children.size() == 3
-		children.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
+		children.size()==3
+		children.collect { it.getAttr().get("resId") }.sort() == [-9L, -8L, -5L]
+		children.collect { it.getTitle() }.sort() == ["folder 1", "folder 4", "folder 5"]
 		children.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
-		children.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
 
-		grandChildren.size() == 1
-		grandChildren.collect { it.getAttr().get("resId") } == [-13L];
-		grandChildren.collect { it.getState() }.sort() == ["leaf"]
-		grandChildren.collect { it.getTitle() }.sort() == ["test case 3"]
+		def List<JsTreeNode> grandChildren = children.get(0).getChildren();
+
+		grandChildren.size() == 3
+		grandChildren.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
+		grandChildren.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
+		grandChildren.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
+
 	}
 }

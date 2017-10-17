@@ -194,17 +194,17 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		TestCase TC = TEST_CASE.as("TC");
 		TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
 		RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
+		TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
 
 		Select<Record1<Long>> groupedTestCaseStep = DSL
 			.select(TCS.TEST_CASE_ID)
 			.from(TCS)
 			.groupBy(TCS.TEST_CASE_ID);
 
-		Table<Record> groupedTCLNR = DSL
-			.select()
-			.from(TCLN_RELATIONSHIP)
-			.groupBy(TCLN_RELATIONSHIP.ANCESTOR_ID)
-			.asTable("TCLNR2");
+		Select<Record1<Long>> groupedTCLNR = DSL
+			.select(TCLNR.ANCESTOR_ID)
+			.from(TCLNR)
+			.groupBy(TCLNR.ANCESTOR_ID);
 
 
 		Table<Record10<Long, String, String, String, String, String, String, String, String, String>> childrenInfo = DSL
@@ -234,10 +234,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					.otherwise("true"))
 					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
 				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), 0)
-					.otherwise(1))
+					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
+					.otherwise("true"))
 					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
-			)
+			) //TODO clean booleans
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
 			.leftJoin(TCLC).on(selectLibraryId().eq(TCLC.LIBRARY_ID))
@@ -307,14 +307,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				} else if (r.get("CHILDREN_ID") == null || ((String) r.get("CHILDREN_ID")).isEmpty()) {
 					node.setState(State.closed);
 				} else {
+					node.setState(State.open);
 					node.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
 						(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes, activeMilestone));
-					if (node.getChildren().size() != 0) {
-						node.setState(State.open);
-					} else {
-						node.setState(State.leaf);
-					}
+						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"),
+						(String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes));
 				}
 				return node;
 			}) // We collect the data in a LinkedHashMap to keep the positionnal order
