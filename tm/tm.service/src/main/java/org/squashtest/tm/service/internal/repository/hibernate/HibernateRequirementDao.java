@@ -76,14 +76,14 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			+ " ifnull(right(concat('000', c.content_order),4),''),"
 			+ " ifnull(right(concat('000', b.content_order),4),''),"
 			+ " ifnull(right(concat('000', a.content_order),4),'')) ordre"
-			+ " from requirement req join requirement_version rv on req.CURRENT_VERSION_ID=rv.RES_ID"
+			+ " from REQUIREMENT req join REQUIREMENT_VERSION rv on req.CURRENT_VERSION_ID=rv.RES_ID"
 			+ " left join rln_relationship a on req.rln_id=a.descendant_id"
 			+ " left join rln_relationship b on a.ancestor_id=b.descendant_id"
 			+ " left join rln_relationship c on b.ancestor_id=c.descendant_id"
 			+ " left join rln_relationship d on c.ancestor_id=d.descendant_id"
 			+ " left join rln_relationship e on d.ancestor_id=e.descendant_id"
 			+ " left join rln_relationship f on e.ancestor_id=f.descendant_id,"
-			+ " requirement requirement"
+			+ " REQUIREMENT requirement"
 			+ " where req.RLN_ID = requirement.RLN_ID and requirement.RLN_ID in (:reqIds)"
 			+ " order by 4;";
 
