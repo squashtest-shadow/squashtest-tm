@@ -22,39 +22,136 @@
 
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 
-
-	<changeSet id="tm-1.17.0" author="jthebault">
-		<comment>Update TM database version number</comment>
-		<update tableName="CORE_CONFIG">
-			<column name="VALUE" value="1.17.0" />
-			<where>STR_KEY = 'squashtest.tm.database.version'</where>
-		</update>
-	</changeSet>
+  <changeSet id="tm-1.17.0" author="jthebault">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.17.0"/>
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
 
   <changeSet id="tm-1.17.0-feature-6921" author="zyang">
-  <comment>Adds a status field to campaign and iteration</comment>
-  <addColumn tableName="CAMPAIGN">
-    <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="PLANNED" >
-      <constraints nullable="false"/>
-    </column>
-  </addColumn>
-  <addColumn tableName="ITERATION">
-    <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="PLANNED" >
-      <constraints nullable="false"/>
-    </column>
-  </addColumn>
-</changeSet>
+    <comment>Adds a status field to campaign and iteration</comment>
+    <addColumn tableName="CAMPAIGN">
+      <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="PLANNED">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="ITERATION">
+      <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="PLANNED">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 
   <changeSet id="tm-1.17.0-feature-6921" author="cholc">
     <comment>Adds a execution status field to the test suites</comment>
     <addColumn tableName="TEST_SUITE">
-      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY" >
+      <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY">
       </column>
     </addColumn>
+  </changeSet>
+
+
+  <changeSet id="tm-1.17.0-jira-sync-01" author="jthebault">
+    <comment>Add a remote synchronisation table in squash tm.</comment>
+    <createTable tableName="REMOTE_SYNCHRONISATION">
+
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT">
+        <constraints nullable="false"
+                     foreignKeyName="fk_remote_synchronisation__project__project_id"
+                     references="PROJECT(PROJECT_ID)" />
+      </column>
+
+      <column name="SERVER_ID" type="BIGINT">
+        <constraints nullable="false"
+                     foreignKeyName="fk_remote_synchronisation__bugtracker__bugtracker_id"
+                     references="BUGTRACKER(BUGTRACKER_ID)" />
+      </column>
+
+      <column name="REMOTE_SYNCHRONISATION_NAME" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="KIND" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="REMOTE_SELECT_TYPE" type="VARCHAR(50)"/>
+
+      <column name="REMOTE_SELECT_VALUE" type="VARCHAR(1000)"/>
+
+      <column name="DELETE_OUT_OF_SCOPE" type="BOOLEAN" defaultValueBoolean="false"
+              remarks="If true Squash TM will try to delete object out of scope.">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="LAST_SUCCESSFUL_SYNC_DATE" type="DATETIME"/>
+
+      <column name="LAST_SYNC_DATE" type="DATETIME"/>
+
+      <column name="REMOTE_SYNCHRONISATION_OPTIONS" type="CLOB"/>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.17.0-jira-sync-02" author="jthebault">
+    <comment>Add a remote folder synchronisation table in squash tm.</comment>
+    <createTable tableName="REQUIREMENT_FOLDER_SYNC_EXTENDER">
+
+      <column name="REQUIREMENT_FOLDER_SYNC_EXTENDER_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT" remarks="Only one master folder should be targeted by a given synchronisation">
+        <constraints nullable="false"
+                     foreignKeyName="fk_requirement_folder_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
+      </column>
+
+      <column name="REMOTE_FOLDER_ID" type="VARCHAR(200)">
+      </column>
+
+      <column name="REMOTE_FOLDER_STATUS" type="VARCHAR(50)">
+      </column>
+
+      <column name="REQUIREMENT_FOLDER_ID" type="BIGINT" remarks="Only one extender for any folder in Squash TM">
+        <constraints nullable="false"
+                     foreignKeyName="fk_requirement_folder_sync_extender__requirement_folder__rln_id"
+                     references="REQUIREMENT_FOLDER(RLN_ID)" unique="true" />
+      </column>
+
+      <column name="TYPE" type="VARCHAR(1)">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.17.0-jira-sync-03" author="jthebault">
+    <dropNotNullConstraint
+      columnDataType="VARCHAR"
+      columnName="REMOTE_FILTER_NAME"
+      tableName="REQUIREMENT_SYNC_EXTENDER"/>
+
+    <addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT">
+        <constraints nullable="true"
+                     foreignKeyName="fk_requirement_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
+      </column>
+    </addColumn>
+
   </changeSet>
 
 </databaseChangeLog>
