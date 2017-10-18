@@ -60,7 +60,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>())
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
@@ -78,7 +78,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>())
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
@@ -99,7 +99,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		def readableProjectIds = [-1L, -2L, -3L, -4L]
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>())
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == [-1L, -20L, -3L].sort() as Set
@@ -230,7 +230,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L])
+		def jsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L], null)
 
 		then:
 		def JsTreeNode parentFolder = jsTreeNodes.get(-5L);
@@ -260,7 +260,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		and:
 
-		def expandedJsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L])
+		def expandedJsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L], null)
 
 		and:
 
@@ -268,7 +268,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, [-1L], expandedJsTreeNodes)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, [-1L], expandedJsTreeNodes, null)
 
 		then:
 
