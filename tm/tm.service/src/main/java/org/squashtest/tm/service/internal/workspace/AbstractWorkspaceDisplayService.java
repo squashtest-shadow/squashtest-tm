@@ -22,10 +22,12 @@ package org.squashtest.tm.service.internal.workspace;
 
 
 import org.apache.commons.collections.MultiMap;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.TableLike;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
@@ -67,13 +69,18 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private InfoListModelService infoListModelService;
 
+	private static final String END_SEPARATOR_PLACEHOLDER = "=Sep=";
+	private static final String SEPARATOR_PLACEHOLDER = END_SEPARATOR_PLACEHOLDER + ",";
+
 	@Override
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
-		List<Long> openedLibraryIds = (List<Long>) expansionCandidates.get("TestCaseLibrary");
-		List<Long> openedFolderIds = (List<Long>) expansionCandidates.get("TestCaseFolder");
+
+		List<Long> openedLibraryIds = (List<Long>) expansionCandidates.get(getClassName());
+		List<Long> openedEntityIds = getOpenedEntityIds(expansionCandidates);
 		Map<Long, JsTreeNode> expandedJsTreeNodes = new HashMap<>();
-		if (openedFolderIds != null) {
-			expandedJsTreeNodes = FindExpandedJsTreeNodes(currentUser, openedFolderIds, activeMilestone);
+
+		if (openedEntityIds != null) {
+			expandedJsTreeNodes = FindExpandedJsTreeNodes(currentUser, openedEntityIds, activeMilestone);
 		}
 
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser, openedLibraryIds, expandedJsTreeNodes, activeMilestone);
@@ -85,6 +92,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		return jsTreeNodes.values();
 	}
+
+	protected abstract List<Long> getOpenedEntityIds(MultiMap expansionCandidates);
 
 	@Override
 	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
@@ -177,245 +186,18 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	protected abstract Field<Long> getProjectLibraryColumn();
 
-	public Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
-		List<Long> filteredProjectIds;
-		if (hasActiveFilter(currentUser.getUsername())) {
-			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-		} else {
-			filteredProjectIds = readableProjectIds;
-		}
+	protected  abstract Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds,
+												 Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone);
 
-		if (openedLibraryIds == null)
-			openedLibraryIds = Collections.singletonList(-1L);
+	protected abstract Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedEntityIds, JsonMilestone activeMilestone);
 
-		TestCaseLibraryContent TCLC = TEST_CASE_LIBRARY_CONTENT.as("TCLC");
-		TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
-		TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
-		TestCase TC = TEST_CASE.as("TC");
-		TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
-		RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
-		TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
-
-		Select<Record1<Long>> groupedTestCaseStep = DSL
-			.select(TCS.TEST_CASE_ID)
-			.from(TCS)
-			.groupBy(TCS.TEST_CASE_ID);
-
-		Select<Record1<Long>> groupedTCLNR = DSL
-			.select(TCLNR.ANCESTOR_ID)
-			.from(TCLNR)
-			.groupBy(TCLNR.ANCESTOR_ID);
-
-
-		Table<Record10<Long, String, String, String, String, String, String, String, String, String>> childrenInfo = DSL
-			.select(selectLibraryId(),
-				org.jooq.impl.DSL.groupConcat(TCLC.CONTENT_ID)
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_ID"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
-					.otherwise("test-cases"))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_CLASS"),
-				org.jooq.impl.DSL.groupConcat(TCLN.NAME)
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_NAME"),
-
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.coalesce(TC.IMPORTANCE, " "))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IMPORTANCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TC.REFERENCE.eq(""), " ").otherwise(org.jooq.impl.DSL.coalesce(TC.REFERENCE, " ")))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_REFERENCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.coalesce(TC.TC_STATUS, " "))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_STATUS"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(groupedTestCaseStep.field("TEST_CASE_ID").isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_STEP"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
-			) //TODO clean booleans
-			.from(getLibraryTable())
-			.join(PROJECT).using(selectLibraryId())
-			.leftJoin(TCLC).on(selectLibraryId().eq(TCLC.LIBRARY_ID))
-			.leftJoin(TCLN).on(TCLN.TCLN_ID.eq(TCLC.CONTENT_ID))
-			.leftJoin(TCF).on(TCF.TCLN_ID.eq(TCLC.CONTENT_ID))
-			.leftJoin(TC).on(TCLC.CONTENT_ID.eq(TC.TCLN_ID))
-			.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
-			.leftJoin(RVC).on(TCLC.CONTENT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
-			.leftJoin(groupedTCLNR).on(TCLC.CONTENT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
-			.where(PROJECT.PROJECT_ID.in(openedLibraryIds))
-			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.groupBy(selectLibraryId())
-			.asTable("CHILDREN_INFO");
-
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
-			.select(selectLibraryId(),
-				PROJECT.PROJECT_ID,
-				PROJECT.NAME,
-				PROJECT.LABEL,
-				org.jooq.impl.DSL.decode()
-					.when(TCLC.LIBRARY_ID.isNull(), false)
-					.otherwise(true).as("HAS_CONTENT"),
-				childrenInfo.field("CHILDREN_ID"),
-				childrenInfo.field("CHILDREN_CLASS"),
-				childrenInfo.field("CHILDREN_NAME"),
-				childrenInfo.field("CHILDREN_IMPORTANCE"),
-				childrenInfo.field("CHILDREN_REFERENCE"),
-				childrenInfo.field("CHILDREN_STATUS"),
-				childrenInfo.field("CHILDREN_NAME"),
-				childrenInfo.field("CHILDREN_HAS_STEP"),
-				childrenInfo.field("CHILDREN_IS_REQ_COVERED"),
-				childrenInfo.field("CHILDREN_HAS_CONTENT")
-			)
-			.from(getLibraryTable())
-			.join(PROJECT).using(selectLibraryId())
-			.leftJoin(TCLC).on(selectLibraryId().eq(TCLC.LIBRARY_ID))
-			.leftJoin(childrenInfo).using(selectLibraryId())
-			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.groupBy(selectLibraryId())
-			.fetch()
-			.stream()
-			.map(r -> {
-				JsTreeNode node = new JsTreeNode();
-				Long libraryId = r.get(selectLibraryId(), Long.class);
-				node.addAttr("resId", libraryId);
-				node.setTitle(r.get(PROJECT.NAME));
-				node.addAttr("resType", getResType());
-				node.addAttr("rel", getRel());
-				node.addAttr("name", getClassName());
-				node.addAttr("id", getClassName() + '-' + libraryId);
-				node.addAttr("title", r.get(PROJECT.LABEL));
-				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
-
-				//permissions set to false by default except for admin witch have rights by definition
-				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-				for (PermissionWithMask permission : permissions) {
-					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-				}
-
-				// milestone attributes : libraries are yes-men
-				node.addAttr("milestone-creatable-deletable", "true");
-				node.addAttr("milestone-editable", "true");
-				node.addAttr("wizards", new HashSet<String>());
-				if (!(boolean) r.get("HAS_CONTENT")) {
-					node.setState(State.leaf);
-				} else if (r.get("CHILDREN_ID") == null || ((String) r.get("CHILDREN_ID")).isEmpty()) {
-					node.setState(State.closed);
-				} else {
-					node.setState(State.open);
-					node.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
-						(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-						(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"),
-						(String) r.get("CHILDREN_HAS_CONTENT"),currentUser, expandedJsTreeNodes));
-				}
-				return node;
-			}) // We collect the data in a LinkedHashMap to keep the positionnal order
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
-				(u, v) -> {
-					throw new IllegalStateException(String.format("Duplicate key %s", u));
-				},
-				LinkedHashMap::new));
-
-		//TODO opened nodes and content
-		return jsTreeNodes;
-	}
-
-	public Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedFolderIds, JsonMilestone activeMilestone) {
-		//TODO Make it work for all Workspaces?
-		TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
-		TestCaseLibraryNode TCLN_CHILD = TEST_CASE_LIBRARY_NODE.as("TCLN_CHILD");
-		TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
-		TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
-		TestCase TC = TEST_CASE.as("TC");
-		RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
-
-		Table<Record> groupedTestCaseStep = DSL
-			.select()
-			.from(TEST_CASE_STEPS)
-			.groupBy(TEST_CASE_STEPS.TEST_CASE_ID)
-			.asTable("TCS");
-
-		Table<Record> groupedTCLNR = DSL
-			.select()
-			.from(TCLN_RELATIONSHIP)
-			.groupBy(TCLN_RELATIONSHIP.ANCESTOR_ID)
-			.asTable("TCLNR2");
-
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
-			.select(
-				TCLN.TCLN_ID.as("PARENT_FOLDER_ID"),
-				TCLN.NAME.as("PARENT_FOLDER_NAME"),
-				org.jooq.impl.DSL.groupConcat(TCLNR.DESCENDANT_ID)
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_ID"),
-				org.jooq.impl.DSL.groupConcat(TCLN_CHILD.NAME)
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_NAME"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
-					.otherwise("test-cases"))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_CLASS"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.coalesce(TC.IMPORTANCE, " "))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IMPORTANCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(TC.REFERENCE.eq(""), " ").otherwise(org.jooq.impl.DSL.coalesce(TC.REFERENCE, " ")))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_REFERENCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.coalesce(TC.TC_STATUS, " "))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_STATUS"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(groupedTestCaseStep.field("TEST_CASE_ID").isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_HAS_STEP"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.decode()
-					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
-					.otherwise("true"))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
-			)
-			.from(TCLN
-					.join(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
-					.join(TCLN_CHILD).on(TCLNR.DESCENDANT_ID.eq(TCLN_CHILD.TCLN_ID))
-					.leftJoin(TCF).on(TCLNR.DESCENDANT_ID.eq(TCF.TCLN_ID))
-					.leftJoin(TC).on(TCLNR.DESCENDANT_ID.eq(TC.TCLN_ID))
-					.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
-					.leftJoin(RVC).on(TCLNR.DESCENDANT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
-					.leftJoin(groupedTCLNR).on(TCLNR.DESCENDANT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
-			)
-			.where(TCLN.TCLN_ID.in(openedFolderIds))
-			.groupBy(TCLN.TCLN_ID)
-			.fetch()
-			.stream()
-			.map(r -> {
-				JsTreeNode parent = buildParent((Long) r.get("PARENT_FOLDER_ID"), (String) r.get("PARENT_FOLDER_NAME"), currentUser);
-				parent.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
-					(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"), (String) r.get("CHILDREN_HAS_CONTENT"), currentUser, new HashMap<>(), activeMilestone));
-				if (parent.getChildren().size() == 0) {
-					parent.setState(State.leaf);
-				}
-				return parent;
-			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
-
-		buildHierarchy(jsTreeNodes, openedFolderIds);
-		return jsTreeNodes;
-	}
-
-	//TODO factorise
-	private JsTreeNode buildParent(Long parentId, String parentName, UserDto currentUser) {
+	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr, UserDto currentUser) {
 		JsTreeNode node = new JsTreeNode();
-		node.addAttr("resId", parentId);
-		node.setTitle(parentName);
-		node.addAttr("resType", "test-case-folders");
-		node.addAttr("rel", "folder");
-		node.addAttr("name", parentName);
-		node.addAttr("id", "TestCaseFolder-" + parentId);
+		node.setTitle(title);
+		if (state != null) {
+			node.setState(state);
+		}
+		node.setAttr(attr);
 
 		//permissions set to false by default except for admin which have rights by definition
 		EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
@@ -427,148 +209,79 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		node.addAttr("milestone-creatable-deletable", "true");
 		node.addAttr("milestone-editable", "true");
 		node.addAttr("wizards", new HashSet<String>());
-		node.setState(State.open);
-
 		return node;
 	}
 
-	private List<JsTreeNode> buildDirectChildren(String childrenId, String childrenName, String childrenClass, String childrenImportance,
+	// TODO factorise or make it abstract
+	protected List<JsTreeNode> buildDirectChildren(String childrenId, String childrenName, String childrenClass, String childrenImportance,
 												 String childrenReference, String childrenStatus, String childrenHasStep,
 												 String childrenIsReqCovered, String childrenHasContent, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
 
 		List<Long> testCaseIdsLinkedToActiveMilestone = findTCIdsLinkedToActiveMilestone(activeMilestone);
 
 		List<JsTreeNode> children = new ArrayList<>();
-		String[] childrenIdArray = childrenId.split(",");
-		String[] childrenNameArray = childrenName.split(",");
-		String[] childrenClasseArray = childrenClass.split(",");
-		String[] childrenImportanceArray = childrenImportance.split(",");
-		String[] childrenReferenceArray = childrenReference.split(",");
-		String[] childrenStatusArray = childrenStatus.split(",");
-		String[] childrenHasStepArray = childrenHasStep.split(",");
-		String[] childrenIsReqCoveredArray = childrenIsReqCovered.split(",");
-		String[] childrenHasContentArray = childrenHasContent.split(",");
+		String[] childrenIdArray = childrenId.substring(0, childrenId.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenNameArray = childrenName.substring(0, childrenName.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenClassArray = childrenClass.substring(0, childrenClass.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenImportanceArray = childrenImportance.substring(0, childrenImportance.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenReferenceArray = childrenReference.substring(0, childrenReference.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenStatusArray = childrenStatus.substring(0, childrenStatus.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenHasStepArray = childrenHasStep.substring(0, childrenHasStep.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenIsReqCoveredArray = childrenIsReqCovered.substring(0, childrenIsReqCovered.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
+		String[] childrenHasContentArray = childrenHasContent.substring(0, childrenHasContent.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
 
 		for (int i = 0; i < childrenIdArray.length; i++) {
 			Long childId = Long.parseLong(childrenIdArray[i]);
-			if (activeMilestone == null) { // no milestone activated
+			if (passesMilestoneFilter(activeMilestone, childrenClassArray[i], testCaseIdsLinkedToActiveMilestone, childId)) {
+				// we check if we must replace the current child by an expanded JsTreeNode, otherwise we build the node
 				if (expandedJsTreeNodes.containsKey(childId)) {
 					children.add(expandedJsTreeNodes.get(childId));
 				} else {
-					JsTreeNode childNode = new JsTreeNode();
-					childNode.addAttr("resId", childId);
-					childNode.setTitle(childrenNameArray[i]);
-					childNode.addAttr("resType", childrenClasseArray[i]);
-					childNode.addAttr("name", childrenNameArray[i]);
+					Map<String, Object> attr = new HashMap<>();
+					State state;
 
-					//permissions set to false by default except for admin which have rights by definition
-					EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-					for (PermissionWithMask permission : permissions) {
-						childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-					}
+					attr.put("resId", childId);
+					attr.put("resType", childrenClassArray[i]);
+					attr.put("name", childrenNameArray[i]);
 
-					// milestone attributes : libraries are yes-men
-					childNode.addAttr("milestone-creatable-deletable", "true");
-					childNode.addAttr("milestone-editable", "true");
-					childNode.addAttr("wizards", new HashSet<String>());
-					if (childrenClasseArray[i].equals("test-case-folders")) {
-						childNode.addAttr("id", "TestCaseFolder-" + childId);
-						childNode.addAttr("rel", "folder");
+					if (childrenClassArray[i].equals("test-case-folders")) {
+						attr.put("id", "TestCaseFolder-" + childId);
+						attr.put("rel", "folder");
 						if (Boolean.parseBoolean(childrenHasContentArray[i])) {
-							childNode.setState(State.closed);
+							state = State.closed;
 						} else {
-							childNode.setState(State.leaf);
+							state = State.leaf;
 						}
 					} else {
-						boolean bool = false;
-						childNode.addAttr("id", "TestCase-" + childId);
-						childNode.addAttr("rel", "test-case");
-						childNode.addAttr("reference", childrenReferenceArray[i]);
-						childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
-						childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
-						childNode.addAttr("hassteps", childrenHasStepArray[i]);
-						childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
+						attr.put("id", "TestCase-" + childId);
+						attr.put("rel", "test-case");
+						attr.put("reference", childrenReferenceArray[i]);
+						attr.put("importance", childrenImportanceArray[i].toLowerCase());
+						attr.put("status", childrenStatusArray[i].toLowerCase());
+						attr.put("hassteps", childrenHasStepArray[i]);
+						attr.put("isreqcovered", childrenIsReqCoveredArray[i]);
+
 						//build tooltip
 						String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
 							getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
-						String tooltip = getMessage("label.tree.testCase.tooltip", args);
-						childNode.addAttr("title", tooltip);
-						childNode.setState(State.leaf);
+						attr.put("title", getMessage("label.tree.testCase.tooltip", args));
+
+						state = State.leaf;
 					}
-					children.add(childNode);
-				}
-			} else { // milestone mode activated
-				boolean hasTestcaseActiveMilestone = hasTestcaseActiveMilestone(testCaseIdsLinkedToActiveMilestone, childId);
-				if (expandedJsTreeNodes.containsKey(childId)) {
-					children.add(expandedJsTreeNodes.get(childId));
-				} else {
-					if (childrenClasseArray[i].equals("test-case-folders")) {
-						JsTreeNode childNode = new JsTreeNode();
-						childNode.addAttr("resId", childId);
-						childNode.setTitle(childrenNameArray[i]);
-						childNode.addAttr("resType", childrenClasseArray[i]);
-						childNode.addAttr("name", childrenNameArray[i]);
-
-						//permissions set to false by default except for admin which have rights by definition
-						EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-						for (PermissionWithMask permission : permissions) {
-							childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-						}
-
-						// milestone attributes : libraries are yes-men
-						childNode.addAttr("milestone-creatable-deletable", "true");
-						childNode.addAttr("milestone-editable", "true");
-						childNode.addAttr("wizards", new HashSet<String>());
-						childNode.addAttr("id", "TestCaseFolder-" + childId);
-						childNode.addAttr("rel", "folder");
-						if (Boolean.parseBoolean(childrenHasContentArray[i])) {
-							childNode.setState(State.closed);
-						} else {
-							childNode.setState(State.leaf);
-						}
-						children.add(childNode);
-					} else {
-						if (hasTestcaseActiveMilestone) {
-							JsTreeNode childNode = new JsTreeNode();
-							childNode.addAttr("resId", childId);
-							childNode.setTitle(childrenNameArray[i]);
-							childNode.addAttr("resType", childrenClasseArray[i]);
-							childNode.addAttr("name", childrenNameArray[i]);
-
-							//permissions set to false by default except for admin which have rights by definition
-							EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-							for (PermissionWithMask permission : permissions) {
-								childNode.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-							}
-
-							// milestone attributes : libraries are yes-men
-							childNode.addAttr("milestone-creatable-deletable", "true");
-							childNode.addAttr("milestone-editable", "true");
-							childNode.addAttr("wizards", new HashSet<String>());
-							boolean bool = false;
-							childNode.addAttr("id", "TestCase-" + childId);
-							childNode.addAttr("rel", "test-case");
-							childNode.addAttr("reference", childrenReferenceArray[i]);
-							childNode.addAttr("importance", childrenImportanceArray[i].toLowerCase());
-							childNode.addAttr("status", childrenStatusArray[i].toLowerCase());
-							childNode.addAttr("hassteps", childrenHasStepArray[i]);
-							childNode.addAttr("isreqcovered", childrenIsReqCoveredArray[i]);
-							//build tooltip
-							String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
-								getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
-							String tooltip = getMessage("label.tree.testCase.tooltip", args);
-							childNode.addAttr("title", tooltip);
-							childNode.setState(State.leaf);
-							children.add(childNode);
-						}
-					}
+					children.add(buildNode(childrenNameArray[i], state, attr, currentUser));
 				}
 			}
 		}
 		return children;
 	}
 
-	private boolean hasTestcaseActiveMilestone(List<Long> testCaseIdsLinkedToActiveMilestone, Long libraryId) {
+	// TODO factorise or make it abstract
+	private boolean passesMilestoneFilter(JsonMilestone activeMilestone, String childrenClass, List<Long> testCaseIdsLinkedToActiveMilestone, Long childId) {
+		return (activeMilestone == null || childrenClass.equals("test-case-folders") || testCaseHasActiveMilestone(testCaseIdsLinkedToActiveMilestone, childId));
+	}
+
+	// TODO factorise or make it abstract
+	private boolean testCaseHasActiveMilestone(List<Long> testCaseIdsLinkedToActiveMilestone, Long libraryId) {
 		for (Long testCaseId : testCaseIdsLinkedToActiveMilestone) {
 			if (libraryId.equals(testCaseId)) {
 				return true;
@@ -577,6 +290,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return false;
 	}
 
+	// TODO factorise or make it abstract
 	public List<Long> findNodesByMilestoneId(Long milestoneId) {
 		return DSL.select(MILESTONE_TEST_CASE.TEST_CASE_ID)
 			.from(MILESTONE_TEST_CASE)
@@ -584,6 +298,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class);
 	}
 
+	// TODO factorise or make it abstract
 	private List<Long> findTCIdsLinkedToActiveMilestone(JsonMilestone activeMilestone) {
 		List<Long> testCaseIdsLinkedToActiveMilestone = new ArrayList<>();
 		if (activeMilestone != null) {
@@ -592,34 +307,34 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return testCaseIdsLinkedToActiveMilestone;
 	}
 
-	private void buildHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<Long> openedFolderIds) {
+	protected void buildHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<Long> openedEntityIds) {
 		//TODO Make it work for all Workspaces
 		List<Long> directLibraryChildren = DSL
 			.select()
 			.from(TEST_CASE_LIBRARY_CONTENT)
-			.where(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID.in(openedFolderIds))
+			.where(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID.in(openedEntityIds))
 			.fetch(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID, Long.class);
 
 		for (JsTreeNode jsTreeNode : jsTreeNodes.values()) {
 			if (directLibraryChildren.contains(jsTreeNode.getAttr().get("resId"))) {
-				buildSubHierarchy(jsTreeNodes, jsTreeNode.getChildren(), openedFolderIds);
+				buildSubHierarchy(jsTreeNodes, jsTreeNode.getChildren(), openedEntityIds);
 			}
 		}
 	}
 
-	private void buildSubHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<JsTreeNode> children, List<Long> openedFolderIds) {
+	private void buildSubHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<JsTreeNode> children, List<Long> openedEntityIds) {
 		for (JsTreeNode jsTreeNodeChild : children) {
-			if (openedFolderIds.contains((Long) jsTreeNodeChild.getAttr().get("resId"))) {
+			if (openedEntityIds.contains((Long) jsTreeNodeChild.getAttr().get("resId"))) {
 				jsTreeNodeChild.setState(State.open);
 				jsTreeNodeChild.setChildren(jsTreeNodes.get((Long) jsTreeNodeChild.getAttr().get("resId")).getChildren());
 				if (jsTreeNodeChild.getChildren().size() != 0) {
-					buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedFolderIds);
+					buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedEntityIds);
 				}
 			}
 		}
 	}
 
-	private List<Long> findFilteredProjectIds(List<Long> readableProjectIds, String username) {
+	protected List<Long> findFilteredProjectIds(List<Long> readableProjectIds, String username) {
 		return DSL.select(PROJECT_FILTER_ENTRY.PROJECT_ID)
 			.from(PROJECT_FILTER)
 			.join(PROJECT_FILTER_ENTRY).on(PROJECT_FILTER.PROJECT_FILTER_ID.eq(PROJECT_FILTER_ENTRY.FILTER_ID))
@@ -627,7 +342,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.fetch(PROJECT_FILTER_ENTRY.PROJECT_ID, Long.class);
 	}
 
-	private boolean hasActiveFilter(String userName) {
+	protected boolean hasActiveFilter(String userName) {
 		//first we must filter by global filter
 		Record1<Boolean> record1 = DSL.select(PROJECT_FILTER.ACTIVATED)
 			.from(PROJECT_FILTER)
@@ -639,6 +354,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
+
+
 // When we will factorize the code
 /*	protected abstract Field<Long> getMilestoneLibraryNodeId();
 

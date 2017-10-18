@@ -35,7 +35,7 @@ public class JsTreeNode {
 	 */
 	public enum State {
 		open, closed, leaf
-	};
+	}
 
 	private JsTreeNodeData data = new JsTreeNodeData();
 
@@ -64,6 +64,10 @@ public class JsTreeNode {
 
 	public void addAttr(String key, Collection<?> values) {
 		this.attr.put(key, values);
+	}
+
+	public void setAttr(Map<String, Object> attr) {
+		this.attr = attr;
 	}
 
 	public String getState() {
