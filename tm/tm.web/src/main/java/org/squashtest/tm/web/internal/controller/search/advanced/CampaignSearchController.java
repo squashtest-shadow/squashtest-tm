@@ -21,15 +21,13 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
-import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,23 +36,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
-import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
-import org.squashtest.tm.service.project.CustomProjectFinder;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.search.advanced.tablemodels.CampaignSearchResultDataTableModelBuilder;
-import org.squashtest.tm.web.internal.helper.JsTreeHelper;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -80,18 +73,11 @@ public class CampaignSearchController extends GlobalSearchController{
 	private MilestoneMembershipFinder milestoneMembershipFinder;
 
 	@Inject
-	private CustomProjectFinder customProjectFinder;
-
-	@Inject
-	@Named("campaign.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider;
-
-	@Inject
-	private WorkspaceService<CampaignLibrary> workspaceService;
-
-	@Inject
 	@Named("campaignWorkspaceDisplayService")
 	private AbstractWorkspaceDisplayService workspaceDisplayService;
+
+	@Inject
+	protected UserAccountService userAccountService;
 
 	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
@@ -136,44 +122,24 @@ public class CampaignSearchController extends GlobalSearchController{
 
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN);
-
-		List<CampaignLibrary> libraries = workspaceService.findAllLibraries();
-
-		model.addAttribute("selectedNode", cookieValueSelect);
-		model.addAttribute("openedNode", cookieValueOpen);
-
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(cookieValueOpen);
-
-		DriveNodeBuilder<CampaignLibraryNode> nodeBuilder = driveNodeBuilderProvider.get();
+		List<Long> projectIds =campaignAdvancedSearchService.findAllReadablesId();
+		UserDto user =userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService.findAllLibraries(projectIds,user);
 
 		boolean isCampaignAvailable = true;
 
 		if (activeMilestone.isPresent()) {
-			Milestone milestone = activeMilestone.get();
-			nodeBuilder.filterByMilestone(milestone);
 
-			List<Project> projectList = customProjectFinder.findAllReadable();
-
-			List<Long> projectIds = new ArrayList<>();
-
-			for (Project project : projectList) {
-				projectIds.add(project.getId());
-			}
-
-			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(milestone.getId(),
+			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),
 				projectIds);
-
 		}
 
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<CampaignLibrary>(nodeBuilder).expand(expansionCandidates)
-			.setModel(libraries).build();
 		model.addAttribute("rootModel", rootNodes);
 
 		model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 
 		return  "campaign-search-input.html";
 	}
-
 
 
 
@@ -191,11 +157,12 @@ public class CampaignSearchController extends GlobalSearchController{
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder =
-				campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
+			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, messageSource, permissionService)
 			.buildDataModel(holder, params.getsEcho());
 	}
+
 
 
 	@Override

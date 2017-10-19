@@ -32,9 +32,9 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 		"not-deletable"			: "dialog.label.delete-node.rejected",
 		"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
 		"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
-		"milestone-denied"		: "squashtm.action.exception.milestonelocked.campaign" 
+		"milestone-denied"		: "squashtm.action.exception.milestonelocked.campaign"
 	};
-	
+
 	translator.load(messages);
 
 	function showError(messageName){
@@ -172,12 +172,18 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			}));
 
 			// *****************  search  ********************
-			
+
+			// $("#search-tree-button").on("click", function(){
+			// 	// get value of Campaign Workspace Cookie
+			// 	var cookieValueSelect = $.cookie("jstree_select");
+			// 	var cookieValueOpen = $.cookie("jstree_open");
+			// 	document.location.href = window.squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
+			// });
+
 			$("#search-tree-button").on("click", function(){
-			  // get value of Campaign Workspace Cookie
-				var cookieValueSelect = $.cookie("jstree_select");
-				var cookieValueOpen = $.cookie("jstree_open");
-				document.location.href = window.squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
+				// get value of Campaign Workspace Cookie
+
+				document.location.href = window.squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign";
 			});
 
 			// ***************** deletion ********************
@@ -200,13 +206,13 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 					wreqr.trigger("favoriteDashboard.reload");
 				}
 			}
-			
+
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
-			
+
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
 
 			//**************** favorite dashboard **************
-			
+
 			var wreqr = squashtm.app.wreqr;
 			wreqr.on("favoriteDashboard.showDefault", function () {
 				//[Issue 6476] We want to reload the page with the dashboar tab selected
@@ -220,7 +226,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				ctxcontent.unload();
 				loadFragment(tree);
 			  });
-			  
+
 			wreqr.on("favoriteDashboard.showFavorite", function () {
 				//see just above
 				var selectedIteration = tree.jstree("get_selected").filter("[restype='iterations']");
@@ -241,7 +247,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				ctxcontent.loadWith(squashtm.app.contextRoot+"/campaign-browser/dashboard-milestones");
 			});
 
-			
+
 		}
 	};
 

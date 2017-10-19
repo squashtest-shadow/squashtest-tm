@@ -44,14 +44,12 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
-import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -85,25 +83,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
-//		List<Project> readableProjects = projectFinder.findAllReadable();
-//		List<Long> projectIds = new ArrayList<>(readableProjects.size());
-//		for (Project project : readableProjects) {
-//			projectIds.add(project.getId());
-//		}
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectDao.findAllReadableIds(currentUser);
+		List<Long> readableProjectIds = gatherReadableProjectIds();
 		return projectDao.findUsersWhoCreatedRequirementVersions(readableProjectIds);
 	}
 
 	@Override
 	public List<String> findAllUsersWhoModifiedRequirementVersions() {
-//		List<Project> readableProjects = projectFinder.findAllReadable();
-//		List<Long> projectIds = new ArrayList<>(readableProjects.size());
-//		for (Project project : readableProjects) {
-//			projectIds.add(project.getId());
-//		}
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectDao.findAllReadableIds(currentUser);
+		List<Long> readableProjectIds = gatherReadableProjectIds();
 		return projectDao.findUsersWhoModifiedRequirementVersions(readableProjectIds);
 	}
 
@@ -210,7 +196,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return luceneQuery;
 	}
 
-public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
 
 		addMilestoneFilter(modelCopy);
 
@@ -238,6 +224,11 @@ public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, A
 		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
+	}
+
+	List<Long> gatherReadableProjectIds(){
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		return projectDao.findAllReadableIds(currentUser);
 	}
 
 }

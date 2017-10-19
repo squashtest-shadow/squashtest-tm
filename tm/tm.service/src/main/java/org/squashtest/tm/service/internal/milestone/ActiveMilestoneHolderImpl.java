@@ -24,11 +24,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
@@ -55,7 +52,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 		if (activeMilestoneHolder.get() == null) {
 			final Long milestoneId = activeMilestoneIdHolder.get();
 			List<JsonMilestone> visibles = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
-//						List<Milestone> visibles = milestoneFinderService.findAllVisibleToCurrentUser();
+
 			Milestone milestone = new Milestone();
 			for(JsonMilestone mile : visibles){
 				if(Long.valueOf(mile.getId()).equals(milestoneId)){
@@ -64,13 +61,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 					milestone = null;
 				}
 			}
-//			Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {
-//				@Override
-//				public boolean evaluate(Object milestone) {
-//
-//					return ((Milestone) milestone).getId().equals(milestoneId);
-//				}
-//			});
+
 			activeMilestoneHolder.set(Optional.fromNullable(milestone));
 		}
 

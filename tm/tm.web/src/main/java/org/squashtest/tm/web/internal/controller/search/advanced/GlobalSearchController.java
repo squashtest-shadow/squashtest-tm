@@ -21,8 +21,6 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -32,13 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.UserDto;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -47,7 +42,6 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInputInterfaceHelper;
 import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInputInterfaceModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 import com.google.common.base.Optional;
@@ -147,12 +141,6 @@ public abstract class GlobalSearchController {
 
 
 	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain){
-		List<JsonProject> projects = new ArrayList<JsonProject>(readableJsonProjects());
-//		Map<Long, Set<JsonMilestone>> milestones =	projects.stream().map(r->{
-//			Set<JsonMilestone> projectsmilestones= r.getMilestones();
-//			return projectsmilestones;
-//		});;
-
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		initModelForPage(model, associateResultWithType, id);
@@ -226,17 +214,7 @@ public abstract class GlobalSearchController {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(projectIds, currentUser);
-
-//		Map<String, List<CustomFieldBindingModel>> customFieldBindingList = jsProjects.stream().collect(Collectors.groupingBy(t -> JsonProject.getName(t), JsonProject::getCustomFieldBindings);
-
-//		List<Project> readableProjects = projectFinder.findAllReadable();
-//		List<JsonProject> jsonified = new ArrayList<>(readableProjects.size());
-//		for (Project p : readableProjects) {
-//			jsonified.add(jsProjectBuilder.toExtendedProject(p));
-//		}
-
-		return jsProjects;
+		return  workspaceDisplayService().findAllProjects(projectIds, currentUser);
 	}
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
 

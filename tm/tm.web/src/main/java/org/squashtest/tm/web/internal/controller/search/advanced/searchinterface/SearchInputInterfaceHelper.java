@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
@@ -41,9 +40,6 @@ public class SearchInputInterfaceHelper {
 	private static final String TEXTFIELD = "textfield";
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
-
-	@Inject
-	CustomFieldJsonConverter customFieldJsonConverter;
 
 	@Inject
 	protected InternationalizationHelper messageSource;

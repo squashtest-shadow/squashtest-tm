@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
 
 import javax.inject.Inject;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -235,6 +236,48 @@ public class CustomFieldJsonConverter {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public CustomField fromModelToBasic(CustomFieldModel value) {
+		InputType type= InputType.RICH_TEXT;
+		switch (value.getInputType().getEnumName()) {
+			case "DROPDOWN LIST":
+				type = InputType.DROPDOWN_LIST;
+				break;
+
+			case "PLAIN TEXT":
+				type = InputType.PLAIN_TEXT;
+				break;
+
+			case "NUMERIC":
+				type = InputType.NUMERIC;
+				break;
+
+			case "CHECKBOX":
+				type = InputType.CHECKBOX;
+				break;
+
+			case "DATE PICKER":
+				type = InputType.DATE_PICKER;
+				break;
+
+			case "TAG":
+				type = InputType.TAG;
+				break;
+
+			case "RICH_TEXT":
+				type = InputType.RICH_TEXT;
+		}
+		CustomField model = new CustomField(type);
+		model.setName(value.getName());
+		model.setCode(value.getCode());
+		model.setDefaultValue(value.getDefaultValue().toString());
+		model.setOptional(value.isOptional());
+		model.setLabel(value.getLabel());
+
+
+		return model;
+
+	}
 
 	// ***************** other things ******************************
 

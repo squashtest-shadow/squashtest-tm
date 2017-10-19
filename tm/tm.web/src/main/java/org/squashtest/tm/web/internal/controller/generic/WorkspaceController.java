@@ -52,7 +52,6 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
@@ -64,7 +63,6 @@ import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
@@ -144,16 +142,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-//		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-//
-//		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-//		if (activeMilestone.isPresent()) {
-//			nodeBuilder.filterByMilestone(activeMilestone.get());
-//		}
-
-//		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
-//			.setModel(libraries).build();
-
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
 		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser);
@@ -195,17 +183,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@RequestMapping(method = RequestMethod.GET, value = "/tree/{openedNodes}")
 	public
 	List<JsTreeNode> getRootModel(@PathVariable String[] openedNodes) {
-		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
+
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser);
 
 
-		MultiMap expansionCandidates = mapIdsByType(openedNodes);
-
-		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
-				.setModel(libraries).build();
-
-
-		return rootNodes;
+		return new ArrayList<JsTreeNode>(rootNodes);
 	}
 
 	/**

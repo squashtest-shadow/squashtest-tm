@@ -64,7 +64,6 @@ import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
 import com.google.common.base.Optional;
-import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 /**
@@ -99,9 +98,6 @@ public class CustomReportWorkspaceController {
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
-	private JsonProjectBuilder jsonProjectBuilder;
-
-	@Inject
 	protected ProjectFinder projectFinder;
 
 	@Inject
@@ -110,6 +106,7 @@ public class CustomReportWorkspaceController {
 	@Inject
 	@Named("customReportWorkspaceDisplayService")
 	private WorkspaceDisplayService workspaceDisplayService;
+
 
 	@Inject
 	private WorkspaceHelperService workspaceHelperService;
@@ -160,6 +157,7 @@ public class CustomReportWorkspaceController {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+
 		model.addAttribute("projects", projects);
 
 

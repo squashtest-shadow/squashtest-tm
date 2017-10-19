@@ -64,15 +64,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	protected UserAccountService userAccountService;
 
 	@Inject
-	private CustomFieldModelService customFieldModelService;
-
-	@Inject
-	private ProjectDao projectDao;
-
-	@Inject
-	protected CustomFieldModelService customFieldService;
-
-	@Inject
 	@Named("campaignWorkspaceDisplayService")
 	private AbstractWorkspaceDisplayService workspaceDisplayService;
 
@@ -292,14 +283,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 	private SearchInputFieldModel buildNatureFieldModel(Locale locale){
 
-
 		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
 				"test-case.nature.label", locale), MULTICASCADEFLAT);
-
-
-//		Collection<Project> readableProjects = projectFinder.findAllReadable();
-//
-//		Collection<InfoList> natures = new ArrayList<>(readableProjects.size());
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
@@ -307,11 +292,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		Collection<JsonInfoList> natures = new ArrayList<>(projectIds.size());
 
-
-
 		for (JsonProject p : jsProjects){
 			natures.add(p.getTestCaseNatures());
-//				getTestCaseNatures());
 		}
 
 		populateInfoListFieldModel(natureField, natures, locale);
@@ -322,13 +304,9 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 	private SearchInputFieldModel buildTypeFieldModel(Locale locale){
 
-
 		SearchInputFieldModel typeField = new SearchInputFieldModel("type", getMessageSource().internationalize(
 				"test-case.type.label", locale), MULTICASCADEFLAT);
 
-
-//		Collection<Project> readableProjects = projectFinder.findAllReadable();
-//
 		Collection<JsonInfoList> types = new ArrayList<>();
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
@@ -338,9 +316,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		for (JsonProject p : jsProjects){
 			types.add(p.getTestCaseTypes());
-//				getTestCaseTypes());
 		}
-
 		populateInfoListFieldModel(typeField, types, locale);
 
 		return typeField;

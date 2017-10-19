@@ -34,21 +34,14 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -101,8 +94,6 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 
-
-
 	public SearchInputPanelModel createRequirementAttributePanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
@@ -119,10 +110,8 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.useLocale(locale).build();
 		criticalityField.addPossibleValues(importanceOptions);
 
-
 		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale);
 		panel.addField(categoryField);
-
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
 				"requirement.status.combo.label", locale), MULTISELECT);
@@ -285,18 +274,14 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource().internationalize(
 				"requirement.category.label", locale), MULTICASCADEFLAT);
 
-	//		Collection<Project> readableProjects = projectFinder.findAllReadable();
-
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
 		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
 		List<JsonInfoList> categories = new ArrayList<>(jsProjects.size());
 
-
 		for (JsonProject p : jsProjects){
 			categories.add(p.getRequirementCategories());
 		}
-
 
 		if (!categories.isEmpty()) {
 			Collections.sort(categories, (p1, p2) -> p1.getLabel().compareTo(p2.getLabel()));

@@ -41,7 +41,6 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceIm
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -51,7 +50,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
-
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
@@ -82,7 +80,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
@@ -115,35 +113,16 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
-//		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
-
-//		List<Project> readableProjects = projectFinder.findAllReadable();
-//		List<Long> projectIds = new ArrayList<>(readableProjects.size());
-//		for (JsonProject project : jsProjects) {
-//			projectIds.add(project.getId());
-//		}
-		return findUsersWhoCanAccessProject(projectIds);
+		List<Long> finalProjectsId = new ArrayList<>();
+		workspaceDisplayService.findAllProjects(projectIds,currentUser).stream().forEach(r -> {
+				finalProjectsId.add(r.getId());
+				}
+		);
+		return findUsersWhoCanAccessProject(finalProjectsId);
 	}
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
 		List<String> list = findPartyPermissionsBeanByProject(projectIds);
-
-//		List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<>();
-//
-//		for (Long projectId : projectIds) {
-//			List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-//			List<PermissionGroup> permissionGroupModelList = new ArrayList<>();
-//
-//			findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
-//				.findPartyPermissionsBeanByProject(projectId));
-//		}
-//		for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
-//			if (partyProjectPermissionsBean.isUser()) {
-//
-//				User user = (User) partyProjectPermissionsBean.getParty();
-//				list.add(user.getLogin());
-//			}
-//		}
 		return list;
 	}
 
@@ -285,15 +264,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	public List<String> findPartyPermissionsBeanByProject(List<Long> projectIds) {
-//		List<Long> liste = DSL.select(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID).from(ACL_RESPONSIBILITY_SCOPE_ENTRY)
-//			.join(ACL_OBJECT_IDENTITY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID.eq(ACL_OBJECT_IDENTITY.ID))
-//			.where(obj)
-//			res.party_ID
-//			from acl_responsibility_scope_entry res
-//			join ACL_OBJECT_IDENTITY obj
-//			on obj.identity= res.OBJECT_IDENTITY_ID
-//			where obj.identity=14;
-//		)
 
 		List<String> list = new ArrayList<>();
 		List<String> result = DSL
@@ -309,8 +279,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.where(ACL_OBJECT_IDENTITY.IDENTITY.in(projectIds))
 			.fetch(CORE_USER.LOGIN, String.class);
 
-//			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(projectIds)).fetch(CORE_USER.LOGIN, String.class);
-
 		for(String r : result){
 			if(!list.contains(r)){
 				list.add((r));
@@ -318,7 +286,5 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		}
 		return list;
 	}
-
-
 
 }

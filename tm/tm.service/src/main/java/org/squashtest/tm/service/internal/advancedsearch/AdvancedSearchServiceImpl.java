@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import java.io.Console;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -57,13 +56,12 @@ import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -87,9 +85,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private EntityManager em;
 
 	@Inject
-	private DSLContext DSL;
-
-	@Inject
 	protected UserAccountService userAccountService;
 
 	@Inject
@@ -103,7 +98,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	private static final Integer EXPECTED_LENGTH = 7;
 
@@ -118,46 +113,17 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-//		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
-//		List<Long> usedCufIds = new ArrayList<>();
-//		projects.stream().forEach(r-> {
-//			usedCufIds.add(r.getId());
-//		});
+
 		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findAllUsedCustomFieldsByEntity(readableProjectIds,entity);
 		List<CustomFieldModel> cufList = new ArrayList<>(cufMap.values());
 
-//		DSL.select(CUSTOM_FIELD.CF_ID, CUSTOM_FIELD.INPUT_TYPE, CUSTOM_FIELD.NAME, CUSTOM_FIELD.LABEL, CUSTOM_FIELD.CODE, CUSTOM_FIELD.OPTIONAL, CUSTOM_FIELD.DEFAULT_VALUE, CUSTOM_FIELD.LARGE_DEFAULT_VALUE)
-//			.from(CUSTOM_FIELD)
-//			.join(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-//			.where(CUSTOM_FIELD.CF_ID.in(usedCufIds))
-//			.and(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(usedCufIds)).and(CUSTOM_FIELD_BINDING.BOUND_ENTITY.eq(entity.toString()))
-//			.fetch()
-//			.forEach(r -> {
-//				CustomFieldModel customField = new CustomFieldModel();
-//				};
-//				customField.setCode(r.get(CUSTOM_FIELD.CODE));
-//				customField.setLabel(r.get(CUSTOM_FIELD.LABEL));
-//				customField.setOptional(r.get(CUSTOM_FIELD.OPTIONAL));
-//				customField.setDefaultValue(r.get(CUSTOM_FIELD.DEFAULT_VALUE));
-//				customField.setName(r.get(CUSTOM_FIELD.NAME));
-//				cufMap.put(r.get(CUSTOM_FIELD.CF_ID),customField);
-//			});
 
 		return cufList;
 	}
 
-
-//		for (Project project : readableProjects) {
-//			result.addAll(customFieldBindingFinderService.findBoundCustomFields(project.getId(), entity));
-//	}
-////		return new ArrayList<>(result);
-//	}
-
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
 
 		Set<JsonMilestone> allMilestones = new HashSet<>();
-
-//		Collection<Project> projects = projectFinder.findAllReadable();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
@@ -738,6 +704,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) || (activeMilestoneMode != null && "true".equals(activeMilestoneMode.getValue()));
 
 		return enabled && hasCriteria;
+	}
+
+	public List<Long> findAllReadablesId(){
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+		return readableProjectIds;
 	}
 
 }

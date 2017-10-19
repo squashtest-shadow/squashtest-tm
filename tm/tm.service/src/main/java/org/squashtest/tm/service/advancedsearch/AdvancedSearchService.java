@@ -32,6 +32,6 @@ public interface AdvancedSearchService {
 
 	List<CustomFieldModel> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	List<JsonMilestone> findAllVisibleMilestonesToCurrentUser();
-
+	List<Long> findAllReadablesId();
 
 }

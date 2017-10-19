@@ -31,22 +31,15 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseAdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
-import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.web.internal.controller.search.advanced.GlobalSearchController;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -206,14 +199,6 @@ public abstract class SearchInterfaceDescription {
 					"search.testcase.perimeter.field.title", locale), MULTISELECTPERIMETER);
 			panel.addField(projectField);
 
-//			OptionBuilder optionBuilder = optionBuilder(locale);
-//			List<Project> projects = projectFilterService.getAllProjects();
-//			for (Project project : projects) {
-//				SearchInputPossibleValueModel projectOption = optionBuilder.label(project.getName())
-//						.optionKey(project.getId().toString()).build();
-//				projectField.addPossibleValue(projectOption);
-//			}
-
 			OptionBuilder optionBuilder = optionBuilder(locale);
 			UserDto currentUser = userAccountService.findCurrentUserDto();
 			List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
@@ -224,10 +209,6 @@ public abstract class SearchInterfaceDescription {
 					.optionKey(String.valueOf(project.getId())).build();
 				projectField.addPossibleValue(projectOption);
 			}
-
-
-
-
 
 			return panel;
 		}
@@ -266,9 +247,6 @@ public abstract class SearchInterfaceDescription {
 
 	@Inject
 	protected UserAccountService userAccountService;
-
-	@Inject
-	private CustomFieldModelService customFieldModelService;
 
 	@Inject
 	private ProjectDao projectDao;
@@ -331,14 +309,7 @@ public abstract class SearchInterfaceDescription {
 		// populate the content of these fields
 
 		List<JsonMilestone> milestones = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
-//			milestoneFinder.findAllVisibleToCurrentUser();
 		Collections.sort(milestones, (p1, p2) -> p1.getLabel().compareTo(p2.getLabel()));
-//		Collections.sort(milestones, new Comparator<Milestone>() {
-//			@Override
-//			public int compare(Milestone o1, Milestone o2) {
-//				return o1.getLabel().compareTo(o2.getLabel());
-//			}
-//		});
 
 		for (JsonMilestone milestone : milestones){
 			Integer integer = new Integer(String.valueOf(milestone.getId()));
@@ -346,7 +317,6 @@ public abstract class SearchInterfaceDescription {
 				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(integer.toString()).build());
 			}
 		}
-
 
 		List<SearchInputPossibleValueModel>  statusOptions = levelComboBuilder(new MilestoneStatus[]{
 				MilestoneStatus.IN_PROGRESS, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED
@@ -356,7 +326,6 @@ public abstract class SearchInterfaceDescription {
 		return panel;
 
 	}
-
 
 	protected final <T extends Enum<?> & Level> OptionListBuilder levelComboBuilder(T[] values) {
 		return new OptionListBuilder(delegateLevelComboBuilder(values));

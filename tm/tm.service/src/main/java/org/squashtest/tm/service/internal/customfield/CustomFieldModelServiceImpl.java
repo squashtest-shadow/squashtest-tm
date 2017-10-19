@@ -29,7 +29,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.*;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.internal.dto.*;
 import org.squashtest.tm.service.internal.workspace.StreamUtils;

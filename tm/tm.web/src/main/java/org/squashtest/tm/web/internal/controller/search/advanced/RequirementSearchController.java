@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.*;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,13 +35,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.service.internal.dto.UserDto;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;

@@ -32,20 +32,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
-import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -59,7 +55,6 @@ import java.util.*;
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
-
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -82,10 +77,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private MessageSource source;
 
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
-
 	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
 		new SortField("project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
@@ -98,29 +89,13 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases() {
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectDao.findAllReadableIds(currentUser);
-//		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
-//		projects.stream().forEach(r-> {
-//			readableProjectIds.add(r.getId());
-//		});
-//
-//		List<Long> projectIds = new ArrayList<>();
-//		for (JsonProject project : projects) {
-//			projectIds.add(project.getId());
-//		}
+		List<Long> readableProjectIds =gatherReadableProjectIds();
 		return projectDao.findUsersWhoCreatedTestCases(readableProjectIds);
 	}
 
 	@Override
 	public List<String> findAllUsersWhoModifiedTestCases() {
-//		List<Project> readableProjects = projectFinder.findAllReadable();
-//		List<Long> projectIds = new ArrayList<>(readableProjects.size());
-//		for (Project project : readableProjects) {
-//			projectIds.add(project.getId());
-//		}
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectDao.findAllReadableIds(currentUser);
+		List<Long> readableProjectIds =gatherReadableProjectIds();
 		return projectDao.findUsersWhoModifiedTestCases(readableProjectIds);
 	}
 
@@ -144,7 +119,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
 
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
-
 
 		/*
 		 * we must not include the milestone criteria yet because
@@ -328,11 +302,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	}
 
-	Collection<JsonProject> findAllReadable(){
+	private List<Long> gatherReadableProjectIds(){
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectDao.findAllReadableIds(currentUser);
-		return workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+		return projectDao.findAllReadableIds(currentUser);
 	}
-
-
 }
