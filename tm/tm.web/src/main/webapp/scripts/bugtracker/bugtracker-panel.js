@@ -164,6 +164,7 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 				if (bugtrackerMode === "Automatic" || !bugtrackerMode) {
 					// execute immediately
 					loadFn();
+					btContentDiv.show();
 				} else {
 					activateFn();
 				}
@@ -173,6 +174,7 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 					if (ui.newPanel.is(btDiv)) {
 							loadFn();
 							tab.off('tabsactivate', loadFn);
+							btContentDiv.show();
 					}
 				});
 
