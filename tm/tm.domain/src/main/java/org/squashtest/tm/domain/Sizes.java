@@ -44,4 +44,6 @@ public final  class Sizes {
 	public static final int NAME_MAX = 255;
 
 	public static final int LABEL_MAX = 255;
+
+	public static final int STATUS_MAX = 50;
 }
