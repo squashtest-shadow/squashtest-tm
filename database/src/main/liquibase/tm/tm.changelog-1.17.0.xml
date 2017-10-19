@@ -119,7 +119,7 @@
                      references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
       </column>
 
-      <column name="REMOTE_FOLDER_ID" type="VARCHAR(200)">
+      <column name="REMOTE_FOLDER_ID" type="VARCHAR(255)">
       </column>
 
       <column name="REMOTE_FOLDER_STATUS" type="VARCHAR(50)">
@@ -131,7 +131,7 @@
                      references="REQUIREMENT_FOLDER(RLN_ID)" unique="true" />
       </column>
 
-      <column name="TYPE" type="VARCHAR(1)">
+      <column name="TYPE" type="VARCHAR(30)">
         <constraints nullable="false"/>
       </column>
 
