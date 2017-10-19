@@ -27,7 +27,7 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController
 import org.squashtest.tm.web.internal.controller.requirement.RequirementWorkspaceController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseWorkspaceController;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;

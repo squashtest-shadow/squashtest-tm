@@ -63,7 +63,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.project.ProjectPluginModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 @Controller
 @RequestMapping("/administration/projects")
@@ -209,10 +209,10 @@ public class ProjectAdministrationController {
 
 			model.setIndex(loop++);
 			model.setEnabled(enabled);
-			
+
 			String url = plugin.getConfigurationPath(context);
 			url = url.startsWith("/") ? url : "/" + url;
-			
+
 			model.setConfigUrl(servContext + url);
 
 			// that should be refactored too once the API is updated

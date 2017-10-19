@@ -32,9 +32,9 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
-import org.squashtest.tm.web.internal.export.ExportPluginManager;
+import org.squashtest.tm.web.internal.plugins.manager.export.ExportPluginManager;
 import org.squashtest.tm.service.internal.dto.FilterModel;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;

@@ -23,7 +23,9 @@ package org.squashtest.tm.web.internal.wizard;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.api.workspace.WorkspaceType
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManagerImpl;
+
 import static org.squashtest.tm.api.workspace.WorkspaceType.*;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -292,8 +294,8 @@ class WorkspaceWizardManagerImplTest extends Specification {
 		return allwizzs
 	}
 
-	def registerAll(ws) {  
-		manager.wizards = ws 
+	def registerAll(ws) {
+		manager.wizards = ws
 		manager.registerWizards()
 	}
 
