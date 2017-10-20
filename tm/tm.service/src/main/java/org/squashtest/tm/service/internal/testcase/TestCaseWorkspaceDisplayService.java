@@ -21,24 +21,28 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.apache.commons.collections.MultiMap;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.TableField;
+import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("testCaseWorkspaceDisplayService")
@@ -48,14 +52,89 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Inject
 	DSLContext DSL;
 
-	private TestCaseLibraryContent TCLC = TEST_CASE_LIBRARY_CONTENT.as("TCLC");
 	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
-	private TestCaseLibraryNode TCLN_CHILD = TEST_CASE_LIBRARY_NODE.as("TCLN_CHILD");
 	private TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
 	private TestCase TC = TEST_CASE.as("TC");
 	private RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
 	private TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
 	private TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
+
+	@Override
+	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
+		Set<Long> childrenIds = new HashSet<>();
+		childrenIds.addAll(fatherChildrenLibrary.values());
+		childrenIds.addAll(fatherChildrenEntity.keySet());
+		childrenIds.addAll(fatherChildrenEntity.values());
+		return DSL
+			.select(
+				TCLN.TCLN_ID,
+				org.jooq.impl.DSL.decode()
+					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
+					.otherwise("test-cases").as("RESTYPE"),
+				TCLN.NAME,
+				TC.IMPORTANCE,
+				TC.REFERENCE,
+				TC.TC_STATUS,
+				org.jooq.impl.DSL.decode()
+					.when(TCS.TEST_CASE_ID.isNull(), "false")
+					.otherwise("true")
+					.as("HAS_STEP"),
+				org.jooq.impl.DSL.decode()
+					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
+					.otherwise("true")
+					.as("IS_REQ_COVERED"),
+				org.jooq.impl.DSL.decode()
+					.when(TCLNR.ANCESTOR_ID.isNull(), "false")
+					.otherwise("true")
+					.as("HAS_CONTENT")
+			)
+			.from(TCLN)
+			.leftJoin(TCF).on(TCLN.TCLN_ID.eq(TCF.TCLN_ID))
+			.leftJoin(TC).on(TCLN.TCLN_ID.eq(TC.TCLN_ID))
+			.leftJoin(TCS).on(TC.TCLN_ID.eq(TCS.TEST_CASE_ID))
+			.leftJoin(RVC).on(TC.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
+			.leftJoin(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
+			.where(TCLN.TCLN_ID.in(childrenIds))
+			.groupBy(TCLN.TCLN_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				if (r.get("RESTYPE").equals("test-case-folders")) {
+					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+				} else {
+					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"));
+				}
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+
+	}
+
+	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
+									 String hasStep, String isReqCovered) {
+		Map<String, Object> attr = new HashMap<>();
+
+		attr.put("resId", id);
+		attr.put("resType", restype);
+		attr.put("name", name);
+		attr.put("id", "TestCase-" + id);
+		attr.put("rel", "test-case");
+
+		attr.put("reference", reference);
+		attr.put("importance", importance.toLowerCase());
+		attr.put("status", status.toLowerCase());
+		attr.put("hassteps", hasStep);
+		attr.put("isreqcovered", isReqCovered);
+
+		//build tooltip
+		String[] args = {getMessage("test-case.status." + status), getMessage("test-case.importance." + importance),
+			getMessage("squashtm.yesno." + isReqCovered), getMessage("tooltip.tree.testCase.hasSteps." + hasStep)};
+		attr.put("title", getMessage("label.tree.testCase.tooltip", args));
+
+		return buildNode(name, State.leaf, attr);
+	}
+
+	// *************************************** send stuff to abstract workspace ***************************************
 
 	@Override
 	protected String getRel() {
@@ -70,6 +149,46 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected TableLike<?> getLibraryTable() {
 		return org.squashtest.tm.jooq.domain.tables.TestCaseLibrary.TEST_CASE_LIBRARY;
+	}
+
+	@Override
+	protected TableLike<?> getLibraryTableContent() {
+		return TEST_CASE_LIBRARY_CONTENT;
+	}
+
+	@Override
+	protected Field<Long> selectLibraryContentContentId() {
+		return TEST_CASE_LIBRARY_CONTENT.CONTENT_ID;
+	}
+
+	@Override
+	protected Field<Integer> selectLibraryContentOrder() {
+		return TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER;
+	}
+
+	@Override
+	protected Field<Long> selectLibraryContentLibraryId() {
+		return TEST_CASE_LIBRARY_CONTENT.LIBRARY_ID;
+	}
+
+	@Override
+	protected Field<Long> selectLNRelationshipAncestorId() {
+		return TCLN_RELATIONSHIP.ANCESTOR_ID;
+	}
+
+	@Override
+	protected Field<Long> selectLNRelationshipDescendantId() {
+		return TCLN_RELATIONSHIP.DESCENDANT_ID;
+	}
+
+	@Override
+	protected Field<Integer> selectLNRelationshipContentOrder() {
+		return TCLN_RELATIONSHIP.CONTENT_ORDER;
+	}
+
+	@Override
+	protected TableLike<?> getLNRelationshipTable() {
+		return TCLN_RELATIONSHIP;
 	}
 
 	@Override
@@ -88,225 +207,13 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	@Override
-	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
-		return (List<Long>) expansionCandidates.get("TestCaseFolder");
-	}
-
-	@Override
 	protected TableField<ProjectRecord, Long> getProjectLibraryColumn() {
 		return PROJECT.TCL_ID;
 	}
 
 	@Override
-	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
-		{
-			List<Long> filteredProjectIds;
-			if (hasActiveFilter(currentUser.getUsername())) {
-				filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-			} else {
-				filteredProjectIds = readableProjectIds;
-			}
-
-			if (openedLibraryIds == null)
-				openedLibraryIds = Collections.singletonList(-1L);
-
-			Select<Record1<Long>> groupedTestCaseStep = getGroupedTestCaseStep();
-			Select<Record1<Long>> groupedTCLNR = getGroupedTCLNR();
-
-			Table<Record10<Long, String, String, String, String, String, String, String, String, String>> childrenInfo = DSL
-				.select(selectLibraryId(),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(TCLC.CONTENT_ID.cast(String.class), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_ID"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-						.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
-						.otherwise("test-cases"), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_CLASS"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(TCLN.NAME, "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_NAME"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.coalesce(TC.IMPORTANCE, " "), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IMPORTANCE"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-						.when(TC.REFERENCE.eq(""), " ").otherwise(org.jooq.impl.DSL.coalesce(TC.REFERENCE, " ")), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_REFERENCE"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.coalesce(TC.TC_STATUS, " "), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_STATUS"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-						.when(groupedTestCaseStep.field("TEST_CASE_ID").isNull(), "false")
-						.otherwise("true"), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_STEP"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-						.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
-						.otherwise("true"), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
-					org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-						.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
-						.otherwise("true"), "=Sep="))
-						.orderBy(TCLC.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
-				)
-				.from(getLibraryTable())
-				.join(PROJECT).using(selectLibraryId())
-				.leftJoin(TCLC).on(selectLibraryId().eq(TCLC.LIBRARY_ID))
-				.leftJoin(TCLN).on(TCLN.TCLN_ID.eq(TCLC.CONTENT_ID))
-				.leftJoin(TCF).on(TCF.TCLN_ID.eq(TCLC.CONTENT_ID))
-				.leftJoin(TC).on(TCLC.CONTENT_ID.eq(TC.TCLN_ID))
-				.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
-				.leftJoin(RVC).on(TCLC.CONTENT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
-				.leftJoin(groupedTCLNR).on(TCLC.CONTENT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
-				.where(PROJECT.PROJECT_ID.in(openedLibraryIds))
-				.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-				.groupBy(selectLibraryId())
-				.asTable("CHILDREN_INFO");
-
-			Map<Long, JsTreeNode> jsTreeNodes = DSL
-				.select(selectLibraryId(),
-					PROJECT.PROJECT_ID,
-					PROJECT.NAME,
-					PROJECT.LABEL,
-					org.jooq.impl.DSL.decode()
-						.when(TCLC.LIBRARY_ID.isNull(), false)
-						.otherwise(true).as("HAS_CONTENT"),
-					childrenInfo.field("CHILDREN_ID"),
-					childrenInfo.field("CHILDREN_CLASS"),
-					childrenInfo.field("CHILDREN_NAME"),
-					childrenInfo.field("CHILDREN_IMPORTANCE"),
-					childrenInfo.field("CHILDREN_REFERENCE"),
-					childrenInfo.field("CHILDREN_STATUS"),
-					childrenInfo.field("CHILDREN_NAME"),
-					childrenInfo.field("CHILDREN_HAS_STEP"),
-					childrenInfo.field("CHILDREN_IS_REQ_COVERED"),
-					childrenInfo.field("CHILDREN_HAS_CONTENT")
-				)
-				.from(getLibraryTable())
-				.join(PROJECT).using(selectLibraryId())
-				.leftJoin(TCLC).on(selectLibraryId().eq(TCLC.LIBRARY_ID))
-				.leftJoin(childrenInfo).using(selectLibraryId())
-				.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-				.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-				.groupBy(selectLibraryId())
-				.fetch()
-				.stream()
-				.map(r -> {
-					Map<String, Object> attr = new HashMap<>();
-					Long libraryId = r.get(selectLibraryId(), Long.class);
-					attr.put("resId", libraryId);
-					attr.put("resType", getResType());
-					attr.put("rel", getRel());
-					attr.put("name", getClassName());
-					attr.put("id", getClassName() + '-' + libraryId);
-					attr.put("title", r.get(PROJECT.LABEL));
-					attr.put("project", r.get(PROJECT.PROJECT_ID));
-
-					JsTreeNode node = buildNode(r.get(PROJECT.NAME), null, attr, currentUser);
-
-					if (!(boolean) r.get("HAS_CONTENT")) {
-						node.setState(JsTreeNode.State.leaf);
-					} else if (r.get("CHILDREN_ID") == null || ((String) r.get("CHILDREN_ID")).isEmpty()) {
-						node.setState(JsTreeNode.State.closed);
-					} else {
-						node.setState(JsTreeNode.State.open);
-						node.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
-							(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-							(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"),
-							(String) r.get("CHILDREN_HAS_CONTENT"), currentUser, expandedJsTreeNodes, activeMilestone));
-					}
-					return node;
-				}) // We collect the data in a LinkedHashMap to keep the positionnal order
-				.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
-					(u, v) -> {
-						throw new IllegalStateException(String.format("Duplicate key %s", u));
-					},
-					LinkedHashMap::new));
-
-			return jsTreeNodes;
-		}
-	}
-
-	@Override
-	protected Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedEntityIds, JsonMilestone activeMilestone) {
-
-		Select<Record1<Long>> groupedTestCaseStep = getGroupedTestCaseStep();
-		Select<Record1<Long>> groupedTCLNR = getGroupedTCLNR();
-
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
-			.select(
-				TCLN.TCLN_ID.as("PARENT_FOLDER_ID"),
-				TCLN.NAME.as("PARENT_FOLDER_NAME"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(TCLNR.DESCENDANT_ID.cast(String.class), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_ID"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(TCLN_CHILD.NAME, "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_NAME"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
-					.otherwise("test-cases"), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_CLASS"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.coalesce(TC.IMPORTANCE, " "), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IMPORTANCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-					.when(TC.REFERENCE.eq(""), " ").otherwise(org.jooq.impl.DSL.coalesce(TC.REFERENCE, " ")), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_REFERENCE"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.coalesce(TC.TC_STATUS, " "), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_STATUS"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-					.when(groupedTestCaseStep.field("TEST_CASE_ID").isNull(), "false")
-					.otherwise("true"), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_HAS_STEP"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
-					.otherwise("true"), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_IS_REQ_COVERED"),
-				org.jooq.impl.DSL.groupConcat(org.jooq.impl.DSL.concat(org.jooq.impl.DSL.decode()
-					.when(groupedTCLNR.field("ANCESTOR_ID").isNull(), "false")
-					.otherwise("true"), "=Sep="))
-					.orderBy(TCLNR.CONTENT_ORDER).as("CHILDREN_HAS_CONTENT")
-			)
-			.from(TCLN
-					.join(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
-					.join(TCLN_CHILD).on(TCLNR.DESCENDANT_ID.eq(TCLN_CHILD.TCLN_ID))
-					.leftJoin(TCF).on(TCLNR.DESCENDANT_ID.eq(TCF.TCLN_ID))
-					.leftJoin(TC).on(TCLNR.DESCENDANT_ID.eq(TC.TCLN_ID))
-					.leftJoin(groupedTestCaseStep).on(TC.TCLN_ID.eq(groupedTestCaseStep.field("TEST_CASE_ID", Long.class)))
-					.leftJoin(RVC).on(TCLNR.DESCENDANT_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
-					.leftJoin(groupedTCLNR).on(TCLNR.DESCENDANT_ID.eq(groupedTCLNR.field("ANCESTOR_ID", Long.class)))
-			)
-			.where(TCLN.TCLN_ID.in(openedEntityIds))
-			.groupBy(TCLN.TCLN_ID)
-			.fetch()
-			.stream()
-			.map(r -> {
-				Map<String, Object> attr = new HashMap<>();
-				Long folderId = (Long) r.get("PARENT_FOLDER_ID");
-				attr.put("resId", folderId);
-				attr.put("resType", "test-case-folders");
-				attr.put("rel", "folder");
-				attr.put("name", (String) r.get("PARENT_FOLDER_NAME"));
-				attr.put("id", "TestCaseFolder-" + folderId);
-				attr.put("title", (String) r.get("PARENT_FOLDER_NAME"));
-
-				JsTreeNode parent = buildNode((String) r.get("PARENT_FOLDER_NAME"), JsTreeNode.State.open, attr, currentUser);
-				parent.setChildren(buildDirectChildren((String) r.get("CHILDREN_ID"), (String) r.get("CHILDREN_NAME"),
-					(String) r.get("CHILDREN_CLASS"), (String) r.get("CHILDREN_IMPORTANCE"), (String) r.get("CHILDREN_REFERENCE"),
-					(String) r.get("CHILDREN_STATUS"), (String) r.get("CHILDREN_HAS_STEP"), (String) r.get("CHILDREN_IS_REQ_COVERED"),
-					(String) r.get("CHILDREN_HAS_CONTENT"), currentUser, new HashMap<>(), activeMilestone));
-				return parent;
-			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
-
-		buildHierarchy(jsTreeNodes, openedEntityIds);
-		return jsTreeNodes;
-	}
-
-	private Select<Record1<Long>> getGroupedTestCaseStep() {
-		return DSL
-			.select(TCS.TEST_CASE_ID)
-			.from(TCS)
-			.groupBy(TCS.TEST_CASE_ID);
-	}
-
-	private Select<Record1<Long>> getGroupedTCLNR() {
-		return DSL
-			.select(TCLNR.ANCESTOR_ID)
-			.from(TCLNR)
-			.groupBy(TCLNR.ANCESTOR_ID);
+	protected String getFolderName() {
+		return "TestCaseFolder-";
 	}
 }
 

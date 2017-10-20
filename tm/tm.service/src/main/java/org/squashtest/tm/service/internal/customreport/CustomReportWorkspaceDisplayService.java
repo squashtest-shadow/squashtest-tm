@@ -27,22 +27,14 @@ import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.service.internal.dto.PermissionWithMask;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_REPORT_LIBRARY;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 
 @Service("customReportWorkspaceDisplayService")
 @Transactional(readOnly = true)
@@ -52,66 +44,12 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	DSLContext DSL;
 
 	@Override
-	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
-		return null;
-	}
-
-	@Override
 	protected Field<Long> getProjectLibraryColumn() {
 		return PROJECT.CRL_ID;
 	}
 
 	@Override
-	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
-		List<Long> filteredProjectIds;
-		if (hasActiveFilter(currentUser.getUsername())) {
-			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-		} else {
-			filteredProjectIds = readableProjectIds;
-		}
-
-
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
-			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
-			.from(getLibraryTable())
-			.join(PROJECT).using(selectLibraryId())
-			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.fetch()
-			.stream()
-			.map(r -> {
-				JsTreeNode node = new JsTreeNode();
-				Long libraryId = r.get(selectLibraryId(), Long.class);
-				node.addAttr("resId", libraryId);
-				node.setTitle(r.get(PROJECT.NAME));
-				node.addAttr("resType", getResType());
-				node.addAttr("rel", getRel());
-				node.addAttr("name", getClassName());
-				node.addAttr("id", getClassName() + '-' + libraryId);
-				node.addAttr("title", r.get(PROJECT.LABEL));
-				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
-
-				//permissions set to false by default except for admin witch have rights by definition
-				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-				for (PermissionWithMask permission : permissions) {
-					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-				}
-
-				// milestone attributes : libraries are yes-men
-				node.addAttr("milestone-creatable-deletable", "true");
-				node.addAttr("milestone-editable", "true");
-				node.addAttr("wizards", new HashSet<String>());
-				node.setState(JsTreeNode.State.closed);
-				return node;
-			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
-
-		//TODO opened nodes and content
-		return jsTreeNodes;
-	}
-
-	@Override
-	protected Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedEntityIds, JsonMilestone activeMilestone) {
+	protected String getFolderName() {
 		return null;
 	}
 
@@ -128,6 +66,51 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Override
 	protected TableLike<?> getLibraryTable() {
 		return CUSTOM_REPORT_LIBRARY;
+	}
+
+	@Override
+	protected TableLike<?> getLibraryTableContent() {
+		return null;
+	}
+
+	@Override
+	protected Field<Long> selectLNRelationshipAncestorId() {
+		return null;
+	}
+
+	@Override
+	protected Field<Long> selectLNRelationshipDescendantId() {
+		return null;
+	}
+
+	@Override
+	protected Field<Integer> selectLNRelationshipContentOrder() {
+		return null;
+	}
+
+	@Override
+	protected TableLike<?> getLNRelationshipTable() {
+		return null;
+	}
+
+	@Override
+	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
+		return null;
+	}
+
+	@Override
+	protected Field<Long> selectLibraryContentContentId() {
+		return null;
+	}
+
+	@Override
+	protected Field<Integer> selectLibraryContentOrder() {
+		return null;
+	}
+
+	@Override
+	protected Field<Long> selectLibraryContentLibraryId() {
+		return null;
 	}
 
 	@Override

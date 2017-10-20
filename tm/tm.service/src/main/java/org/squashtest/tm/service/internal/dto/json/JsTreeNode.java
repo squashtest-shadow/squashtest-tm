@@ -86,6 +86,10 @@ public class JsTreeNode {
 		this.children = children;
 	}
 
+	public void addChild(JsTreeNode child) {
+		this.children.add(child);
+	}
+
 	public void addAnchorAttribute(String key, String value) {
 		this.data.addAttr(key, value);
 	}

@@ -36,9 +36,11 @@ public interface WorkspaceDisplayService {
 	 * @param readableProjectIds The ids of projects witch must be included
 	 * @param currentUser The {@link UserDto} representing current user and somme of it's attributes
 	 * @param expansionCandidates
-	 * @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
+	 *@param jsMilestone @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
 	 */
-	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMileston);
+	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+
+	Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone jsMilestone);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 

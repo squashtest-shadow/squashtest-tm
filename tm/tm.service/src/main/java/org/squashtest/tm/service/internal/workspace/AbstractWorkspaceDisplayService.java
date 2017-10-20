@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.workspace;
 
 
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -34,6 +35,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.PermissionWithMask;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
@@ -50,7 +52,6 @@ import static java.util.stream.Collectors.*;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMask;
-import static org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {
 
@@ -69,21 +70,13 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private InfoListModelService infoListModelService;
 
-	private static final String END_SEPARATOR_PLACEHOLDER = "=Sep=";
-	private static final String SEPARATOR_PLACEHOLDER = END_SEPARATOR_PLACEHOLDER + ",";
+	private UserDto currentUser;
 
 	@Override
-	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
+	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 
-		List<Long> openedLibraryIds = (List<Long>) expansionCandidates.get(getClassName());
-		List<Long> openedEntityIds = getOpenedEntityIds(expansionCandidates);
-		Map<Long, JsTreeNode> expandedJsTreeNodes = new HashMap<>();
 
-		if (openedEntityIds != null) {
-			expandedJsTreeNodes = FindExpandedJsTreeNodes(currentUser, openedEntityIds, activeMilestone);
-		}
-
-		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser, openedLibraryIds, expandedJsTreeNodes, activeMilestone);
+		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
 		findWizards(readableProjectIds, jsTreeNodes);
 
 		if (currentUser.isNotAdmin()) {
@@ -93,7 +86,46 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes.values();
 	}
 
-	protected abstract List<Long> getOpenedEntityIds(MultiMap expansionCandidates);
+	public Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
+		this.currentUser = currentUser;
+		Map<Long, JsTreeNode> jsTreeNodes;
+		if (!expansionCandidates.isEmpty()) {
+			MultiMap fatherChildrenLibrary = getFatherChildrenLibrary(expansionCandidates);
+			MultiMap fatherChildrenEntity = getFatherChildrenEntity(expansionCandidates);
+			Map<Long, JsTreeNode> allLibrariesChildren = getChildren(fatherChildrenLibrary, fatherChildrenEntity);
+			jsTreeNodes = doFindLibrariesExpanded(readableProjectIds);
+			buildHierarchy(jsTreeNodes, fatherChildrenLibrary, fatherChildrenEntity, allLibrariesChildren, activeMilestone);
+		} else {
+			jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
+		}
+		findWizards(readableProjectIds, jsTreeNodes);
+
+		if (currentUser.isNotAdmin()) {
+			findPermissionMap(currentUser, jsTreeNodes);
+		}
+
+		return jsTreeNodes.values();
+	}
+
+	private MultiMap getFatherChildrenLibrary(MultiMap expansionCandidates) {
+		//TODO is there a collector for apache Multimap?
+		MultiMap result = new MultiValueMap();
+		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
+		if (openedLibraries != null) {
+			DSL.select(selectLibraryContentLibraryId(),
+				selectLibraryContentContentId())
+				.from(getLibraryTableContent())
+				.where(selectLibraryContentLibraryId().in(openedLibraries))
+				.orderBy(selectLibraryContentOrder())
+				.fetch()
+				.stream()
+				.forEach(r ->
+
+						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
+				);
+		}
+		return result;
+	}
 
 	@Override
 	public Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser) {
@@ -184,14 +216,130 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		});
 	}
 
-	protected abstract Field<Long> getProjectLibraryColumn();
+	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
+		List<Long> filteredProjectIds;
+		if (hasActiveFilter(currentUser.getUsername())) {
+			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
+		} else {
+			filteredProjectIds = readableProjectIds;
+		}
 
-	protected  abstract Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser, List<Long> openedLibraryIds,
-												 Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone);
 
-	protected abstract Map<Long, JsTreeNode> FindExpandedJsTreeNodes(UserDto currentUser, List<Long> openedEntityIds, JsonMilestone activeMilestone);
+		Map<Long, JsTreeNode> jsTreeNodes = DSL
+			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
+			.from(getLibraryTable())
+			.join(PROJECT).using(selectLibraryId())
+			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
+			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.fetch()
+			.stream()
+			.map(r -> {
+				JsTreeNode node = new JsTreeNode();
+				Long libraryId = r.get(selectLibraryId(), Long.class);
+				node.addAttr("resId", libraryId);
+				node.setTitle(r.get(PROJECT.NAME));
+				node.addAttr("resType", getResType());
+				node.addAttr("rel", getRel());
+				node.addAttr("name", getClassName());
+				node.addAttr("id", getClassName() + '-' + libraryId);
+				node.addAttr("title", r.get(PROJECT.LABEL));
+				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
 
-	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr, UserDto currentUser) {
+				//permissions set to false by default except for admin witch have rights by definition
+				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+				for (PermissionWithMask permission : permissions) {
+					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+				}
+
+				// milestone attributes : libraries are yes-men
+				node.addAttr("milestone-creatable-deletable", "true");
+				node.addAttr("milestone-editable", "true");
+				node.addAttr("wizards", new HashSet<String>());
+				node.setState(JsTreeNode.State.closed);
+				return node;
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+				(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				},
+				LinkedHashMap::new));
+
+		//TODO opened nodes and content
+		return jsTreeNodes;
+	}
+
+	protected Map<Long, JsTreeNode> doFindLibrariesExpanded(List<Long> readableProjectIds) {
+		List<Long> filteredProjectIds;
+		if (hasActiveFilter(currentUser.getUsername())) {
+			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
+		} else {
+			filteredProjectIds = readableProjectIds;
+		}
+
+		Map<Long, JsTreeNode> jsTreeNodes = DSL
+			.select(
+				selectLibraryId(),
+				PROJECT.PROJECT_ID,
+				PROJECT.NAME,
+				PROJECT.LABEL,
+				org.jooq.impl.DSL.decode()
+					.when(selectLibraryContentLibraryId().isNull(), false)
+					.otherwise(true).as("HAS_CONTENT"))
+			.from(getLibraryTable())
+			.join(PROJECT).using(selectLibraryId())
+			.leftJoin(getLibraryTableContent()).on(selectLibraryId().eq(selectLibraryContentLibraryId()))
+			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
+			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.groupBy(selectLibraryId())
+			.fetch()
+			.stream()
+			.map(r -> {
+				Map<String, Object> attr = new HashMap<>();
+				State state;
+				Long libraryId = r.get(selectLibraryId(), Long.class);
+				attr.put("resId", libraryId);
+				attr.put("resType", getResType());
+				attr.put("rel", getRel());
+				attr.put("name", getClassName());
+				attr.put("id", getClassName() + '-' + libraryId);
+				attr.put("title", r.get(PROJECT.LABEL));
+				attr.put("project", r.get(PROJECT.PROJECT_ID));
+
+				if (!(boolean) r.get("HAS_CONTENT")) {
+					state = State.leaf;
+				} else {
+					state = State.closed;
+				}
+
+				return buildNode(r.get(PROJECT.NAME), state, attr);
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+				(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				},
+				LinkedHashMap::new));
+
+		return jsTreeNodes;
+	}
+
+	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent) {
+		Map<String, Object> attr = new HashMap<>();
+		State state;
+
+		attr.put("resId", id);
+		attr.put("resType", restype);
+		attr.put("name", name);
+		attr.put("id", getFolderName() + id);
+		attr.put("rel", "folder");
+		if (Boolean.parseBoolean(hasContent)) {
+			state = State.closed;
+		} else {
+			state = State.leaf;
+		}
+		return buildNode(name, state, attr);
+	}
+
+	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr) {
 		JsTreeNode node = new JsTreeNode();
 		node.setTitle(title);
 		if (state != null) {
@@ -212,72 +360,49 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return node;
 	}
 
-	// TODO factorise or make it abstract
-	protected List<JsTreeNode> buildDirectChildren(String childrenId, String childrenName, String childrenClass, String childrenImportance,
-												 String childrenReference, String childrenStatus, String childrenHasStep,
-												 String childrenIsReqCovered, String childrenHasContent, UserDto currentUser, Map<Long, JsTreeNode> expandedJsTreeNodes, JsonMilestone activeMilestone) {
+	protected void buildHierarchy(Map<Long, JsTreeNode> jsTreeNodes, MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, JsonMilestone activeMilestone) {
+		// First we iterate over the libraries and give them their children
+		boolean openedLibrary = false;
 
-		List<Long> testCaseIdsLinkedToActiveMilestone = findTCIdsLinkedToActiveMilestone(activeMilestone);
-
-		List<JsTreeNode> children = new ArrayList<>();
-		String[] childrenIdArray = childrenId.substring(0, childrenId.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenNameArray = childrenName.substring(0, childrenName.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenClassArray = childrenClass.substring(0, childrenClass.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenImportanceArray = childrenImportance.substring(0, childrenImportance.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenReferenceArray = childrenReference.substring(0, childrenReference.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenStatusArray = childrenStatus.substring(0, childrenStatus.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenHasStepArray = childrenHasStep.substring(0, childrenHasStep.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenIsReqCoveredArray = childrenIsReqCovered.substring(0, childrenIsReqCovered.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-		String[] childrenHasContentArray = childrenHasContent.substring(0, childrenHasContent.length() - END_SEPARATOR_PLACEHOLDER.length()).split(SEPARATOR_PLACEHOLDER);
-
-		for (int i = 0; i < childrenIdArray.length; i++) {
-			Long childId = Long.parseLong(childrenIdArray[i]);
-			if (passesMilestoneFilter(activeMilestone, childrenClassArray[i], testCaseIdsLinkedToActiveMilestone, childId)) {
-				// we check if we must replace the current child by an expanded JsTreeNode, otherwise we build the node
-				if (expandedJsTreeNodes.containsKey(childId)) {
-					children.add(expandedJsTreeNodes.get(childId));
-				} else {
-					Map<String, Object> attr = new HashMap<>();
-					State state;
-
-					attr.put("resId", childId);
-					attr.put("resType", childrenClassArray[i]);
-					attr.put("name", childrenNameArray[i]);
-
-					if (childrenClassArray[i].equals("test-case-folders")) {
-						attr.put("id", "TestCaseFolder-" + childId);
-						attr.put("rel", "folder");
-						if (Boolean.parseBoolean(childrenHasContentArray[i])) {
-							state = State.closed;
-						} else {
-							state = State.leaf;
-						}
-					} else {
-						attr.put("id", "TestCase-" + childId);
-						attr.put("rel", "test-case");
-						attr.put("reference", childrenReferenceArray[i]);
-						attr.put("importance", childrenImportanceArray[i].toLowerCase());
-						attr.put("status", childrenStatusArray[i].toLowerCase());
-						attr.put("hassteps", childrenHasStepArray[i]);
-						attr.put("isreqcovered", childrenIsReqCoveredArray[i]);
-
-						//build tooltip
-						String[] args = {getMessage("test-case.status." + childrenStatusArray[i]), getMessage("test-case.importance." + childrenImportanceArray[i]),
-							getMessage("squashtm.yesno." + childrenIsReqCoveredArray[i]), getMessage("tooltip.tree.testCase.hasSteps." + childrenHasStepArray[i])};
-						attr.put("title", getMessage("label.tree.testCase.tooltip", args));
-
-						state = State.leaf;
+		for (Long parentKey : (Set<Long>) fatherChildrenLibrary.keySet()) {
+			if (jsTreeNodes.containsKey(parentKey)) {
+				for (Long childKey : (ArrayList<Long>) fatherChildrenLibrary.get(parentKey)) {
+					if (passesMilestoneFilter(allChildren.get(childKey), activeMilestone)) {
+						jsTreeNodes.get(parentKey).addChild(allChildren.get(childKey));
+						openedLibrary = true;
 					}
-					children.add(buildNode(childrenNameArray[i], state, attr, currentUser));
+				}
+				if (openedLibrary) {
+					jsTreeNodes.get(parentKey).setState(State.open);
+					buildSubHierarchy(jsTreeNodes.get(parentKey).getChildren(), fatherChildrenEntity, allChildren, activeMilestone);
 				}
 			}
 		}
-		return children;
+	}
+
+	private void buildSubHierarchy(List<JsTreeNode> children, MultiMap fatherChildrenEntity, Map<Long, JsTreeNode> allChildren, JsonMilestone activeMilestone) {
+		// Then we iterate over the entities and give them their children
+		boolean openedEntity = false;
+		for (JsTreeNode jsTreeNodeChild : children) {
+			if (fatherChildrenEntity.containsKey(jsTreeNodeChild.getAttr().get("resId"))) {
+				for (Long childKey : (ArrayList<Long>) fatherChildrenEntity.get(jsTreeNodeChild.getAttr().get("resId"))) {
+					if (passesMilestoneFilter(allChildren.get(childKey), activeMilestone)) {
+						jsTreeNodeChild.addChild(allChildren.get(childKey));
+						openedEntity = true;
+					}
+				}
+				if (openedEntity) {
+					jsTreeNodeChild.setState(State.open);
+					buildSubHierarchy(jsTreeNodeChild.getChildren(), fatherChildrenEntity, allChildren, activeMilestone);
+				}
+			}
+		}
 	}
 
 	// TODO factorise or make it abstract
-	private boolean passesMilestoneFilter(JsonMilestone activeMilestone, String childrenClass, List<Long> testCaseIdsLinkedToActiveMilestone, Long childId) {
-		return (activeMilestone == null || childrenClass.equals("test-case-folders") || testCaseHasActiveMilestone(testCaseIdsLinkedToActiveMilestone, childId));
+	private boolean passesMilestoneFilter(JsTreeNode node, JsonMilestone activeMilestone) {
+		List<Long> testCaseIdsLinkedToActiveMilestone = findTCIdsLinkedToActiveMilestone(activeMilestone);
+		return (activeMilestone == null || node.getAttr().get("rel").equals("folder") || testCaseHasActiveMilestone(testCaseIdsLinkedToActiveMilestone, (Long) node.getAttr().get("resId")));
 	}
 
 	// TODO factorise or make it abstract
@@ -305,33 +430,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			testCaseIdsLinkedToActiveMilestone = findNodesByMilestoneId(activeMilestone.getId());
 		}
 		return testCaseIdsLinkedToActiveMilestone;
-	}
-
-	protected void buildHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<Long> openedEntityIds) {
-		//TODO Make it work for all Workspaces
-		List<Long> directLibraryChildren = DSL
-			.select()
-			.from(TEST_CASE_LIBRARY_CONTENT)
-			.where(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID.in(openedEntityIds))
-			.fetch(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID, Long.class);
-
-		for (JsTreeNode jsTreeNode : jsTreeNodes.values()) {
-			if (directLibraryChildren.contains(jsTreeNode.getAttr().get("resId"))) {
-				buildSubHierarchy(jsTreeNodes, jsTreeNode.getChildren(), openedEntityIds);
-			}
-		}
-	}
-
-	private void buildSubHierarchy(Map<Long, JsTreeNode> jsTreeNodes, List<JsTreeNode> children, List<Long> openedEntityIds) {
-		for (JsTreeNode jsTreeNodeChild : children) {
-			if (openedEntityIds.contains((Long) jsTreeNodeChild.getAttr().get("resId"))) {
-				jsTreeNodeChild.setState(State.open);
-				jsTreeNodeChild.setChildren(jsTreeNodes.get((Long) jsTreeNodeChild.getAttr().get("resId")).getChildren());
-				if (jsTreeNodeChild.getChildren().size() != 0) {
-					buildSubHierarchy(jsTreeNodes, jsTreeNodeChild.getChildren(), openedEntityIds);
-				}
-			}
-		}
 	}
 
 	protected List<Long> findFilteredProjectIds(List<Long> readableProjectIds, String username) {
@@ -363,18 +461,24 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	protected abstract TableLike<?> getMilestoneLibraryNodeTable();*/
 
-	protected abstract String getRel();
-
-	protected abstract Field<Long> selectLibraryId();
-
-	protected abstract TableLike<?> getLibraryTable();
-
-	protected abstract String getClassName();
-
-	protected abstract String getLibraryClassName();
-
-	protected String getResType() {
-		return buildResourceType(getClassName());
+	protected MultiMap getFatherChildrenEntity(MultiMap expansionCandidates) {
+		MultiMap result = new MultiValueMap();
+		List<Long> openedFolder = (List<Long>) expansionCandidates.get("TestCaseFolder");
+		if (openedFolder != null)
+			DSL
+				.select(
+					selectLNRelationshipAncestorId(),
+					selectLNRelationshipDescendantId()
+				)
+				.from(getLNRelationshipTable())
+				.where(selectLNRelationshipAncestorId().in(openedFolder))
+				.orderBy(selectLNRelationshipContentOrder())
+				.fetch()
+				.stream()
+				.forEach(r ->
+						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
+				);
+		return result;
 	}
 
 	private String buildResourceType(String classSimpleName) {
@@ -398,17 +502,53 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		});
 	}
 
-	protected abstract String getLibraryPluginType();
-
-	private String getMessage(String key) {
+	protected String getMessage(String key) {
 		Locale locale = LocaleContextHolder.getLocale();
 		return messageSource.getMessage(key, null, locale);
 	}
 
-	private String getMessage(String code, Object[] args) {
+	protected String getMessage(String code, Object[] args) {
 		Locale locale = LocaleContextHolder.getLocale();
 		return messageSource.getMessage(code, args, locale);
 	}
 
+	// *************************************** get Stuff From Specific Workspace ***************************************
 
+	protected abstract TableLike<?> getLibraryTable();
+
+	protected abstract TableLike<?> getLibraryTableContent();
+
+	protected abstract Field<Long> selectLibraryContentContentId();
+
+	protected abstract Field<Integer> selectLibraryContentOrder();
+
+	protected abstract Field<Long> selectLibraryContentLibraryId();
+
+	protected abstract Field<Long> selectLibraryId();
+
+	protected abstract Field<Long> selectLNRelationshipAncestorId();
+
+	protected abstract Field<Long> selectLNRelationshipDescendantId();
+
+	protected abstract Field<Long> getProjectLibraryColumn();
+
+	protected abstract Field<Integer> selectLNRelationshipContentOrder();
+
+	protected abstract TableLike<?> getLNRelationshipTable();
+
+	protected abstract String getClassName();
+
+	protected abstract String getLibraryClassName();
+
+	protected abstract String getRel();
+
+	protected abstract String getFolderName();
+
+	protected abstract String getLibraryPluginType();
+
+	protected String getResType() {
+		return buildResourceType(getClassName());
+	}
+
+	protected abstract Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity);
 }
