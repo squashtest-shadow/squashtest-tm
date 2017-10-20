@@ -20,17 +20,23 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding;
+import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
-import java.util.Map;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
@@ -38,17 +44,85 @@ import static org.squashtest.tm.jooq.domain.Tables.*;
 @Transactional(readOnly = true)
 public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
 
-//	@Inject
-//	DSLContext DSL;
-//
-//	private RequirementLibraryContent RLC = REQUIREMENT_LIBRARY_CONTENT.as("RLC");
-//	private RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
-//	private RequirementLibraryNode RLN_CHILD = REQUIREMENT_LIBRARY_NODE.as("RLN_CHILD");
-//	private RequirementFolder RCF = REQUIREMENT_FOLDER.as("RCF");
-//	private Requirement REQ = REQUIREMENT.as("REQ");
-//	private RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
-//	private RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
-//	private Resource RES = RESOURCE.as("RES");
+	@Inject
+	DSLContext DSL;
+
+	private RequirementLibraryContent RLC = REQUIREMENT_LIBRARY_CONTENT.as("RLC");
+	private RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
+	private RequirementLibraryNode RLN_CHILD = REQUIREMENT_LIBRARY_NODE.as("RLN_CHILD");
+	private RequirementFolder RF = REQUIREMENT_FOLDER.as("RF");
+	private Requirement REQ = REQUIREMENT.as("REQ");
+	private RequirementVersion RV = REQUIREMENT_VERSION.as("RV");
+	private RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
+	private RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
+	private Resource RES = RESOURCE.as("RES");
+	MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
+
+
+	@Override
+	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
+		Set<Long> childrenIds = new HashSet<>();
+		childrenIds.addAll(fatherChildrenLibrary.values());
+		childrenIds.addAll(fatherChildrenEntity.keySet());
+		childrenIds.addAll(fatherChildrenEntity.values());
+		return DSL
+			.select(
+				RLN.RLN_ID,
+				org.jooq.impl.DSL.decode()
+					.when(RF.RLN_ID.isNotNull(), "requirement-folders")
+					.otherwise("requirements").as("RESTYPE"),
+				RES.NAME,
+				REQ.MODE,
+				RV.REFERENCE,
+				MRV.MILESTONE_ID,
+//				org.jooq.impl.DSL.decode()
+//					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
+//					.otherwise("true")
+//					.as("IS_REQ_COVERED"),
+				org.jooq.impl.DSL.decode()
+					.when(RLNR.ANCESTOR_ID.isNull(), "false")
+					.otherwise("true")
+					.as("HAS_CONTENT")
+			)
+			.from(RLN)
+			.leftJoin(RF).on(RLN.RLN_ID.eq(RF.RLN_ID))
+			.leftJoin(REQ).on(RLN.RLN_ID.eq(REQ.RLN_ID))
+			.leftJoin(RES).on(RF.RES_ID.eq(RES.RES_ID).or(REQ.CURRENT_VERSION_ID.eq(RES.RES_ID)))
+			.leftJoin(RV).on(RLN.RLN_ID.eq(RV.REQUIREMENT_ID))
+			.leftJoin(MRV).on(REQ.CURRENT_VERSION_ID.eq(MRV.REQ_VERSION_ID))
+			.leftJoin(RLNR).on(RLN.RLN_ID.eq(RLNR.ANCESTOR_ID))
+			.where(RLN.RLN_ID.in(childrenIds))
+			.groupBy(RLN.RLN_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				if (r.get("RESTYPE").equals("requirement-folders")) {
+					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+				} else {
+					return buildRequirement(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
+						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID));
+				}
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
+	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone) {
+		Map<String, Object> attr = new HashMap<>();
+
+		attr.put("resId", id);
+		attr.put("resType", restype);
+		attr.put("name", name);
+		attr.put("id", "TestCase-" + id);
+		attr.put("rel", "test-case");
+
+		attr.put("reference", reference);
+		attr.put("mode", mode);
+		attr.put("milestone", milestone);
+
+		return buildNode(name, JsTreeNode.State.leaf, attr);
+	}
+
+	// *************************************** send stuff to abstract workspace ***************************************
 
 	@Override
 	protected Field<Long> getProjectLibraryColumn() {
@@ -57,7 +131,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected String getFolderName() {
-		return null;
+		return "RequirementFolder-";
 	}
 
 //	@Override
@@ -167,27 +241,38 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected Field<Long> selectLNRelationshipAncestorId() {
-		return null;
+		return RLN_RELATIONSHIP.ANCESTOR_ID;
 	}
 
 	@Override
 	protected Field<Long> selectLNRelationshipDescendantId() {
-		return null;
+		return RLN_RELATIONSHIP.DESCENDANT_ID;
 	}
 
 	@Override
 	protected Field<Integer> selectLNRelationshipContentOrder() {
-		return null;
+		return RLN_RELATIONSHIP.CONTENT_ORDER;
 	}
 
 	@Override
 	protected TableLike<?> getLNRelationshipTable() {
-		return null;
+		return RLN_RELATIONSHIP;
 	}
 
 	@Override
-	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
-		return null;
+	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
+		List<Long> openedEntityIds = new ArrayList<>();
+		List<Long> folderId = (List<Long>) expansionCandidates.get("RequirementFolder");
+		List<Long> requirementId = (List<Long>) expansionCandidates.get("Requirement");
+
+		if (!CollectionUtils.isEmpty(folderId)) {
+			openedEntityIds.addAll(folderId);
+		}
+		if (!CollectionUtils.isEmpty(requirementId)) {
+			openedEntityIds.addAll(requirementId);
+		}
+
+		return openedEntityIds;
 	}
 
 	@Override

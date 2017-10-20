@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.workspace;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.jooq.DSLContext;
@@ -88,16 +89,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	public Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
 		this.currentUser = currentUser;
-		Map<Long, JsTreeNode> jsTreeNodes;
-		if (!expansionCandidates.isEmpty()) {
-			MultiMap fatherChildrenLibrary = getFatherChildrenLibrary(expansionCandidates);
-			MultiMap fatherChildrenEntity = getFatherChildrenEntity(expansionCandidates);
-			Map<Long, JsTreeNode> allLibrariesChildren = getChildren(fatherChildrenLibrary, fatherChildrenEntity);
-			jsTreeNodes = doFindLibrariesExpanded(readableProjectIds);
-			buildHierarchy(jsTreeNodes, fatherChildrenLibrary, fatherChildrenEntity, allLibrariesChildren, activeMilestone);
-		} else {
-			jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
-		}
+
+		MultiMap fatherChildrenLibrary = getFatherChildrenLibrary(expansionCandidates);
+		MultiMap fatherChildrenEntity = getFatherChildrenEntity(expansionCandidates);
+
+		Map<Long, JsTreeNode> allLibrariesChildren = getChildren(fatherChildrenLibrary, fatherChildrenEntity);
+		Map<Long, JsTreeNode> jsTreeNodes = doFindLibrariesExpanded(readableProjectIds);
+
+		buildHierarchy(jsTreeNodes, fatherChildrenLibrary, fatherChildrenEntity, allLibrariesChildren, activeMilestone);
+
 		findWizards(readableProjectIds, jsTreeNodes);
 
 		if (currentUser.isNotAdmin()) {
@@ -111,7 +111,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		//TODO is there a collector for apache Multimap?
 		MultiMap result = new MultiValueMap();
 		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
-		if (openedLibraries != null) {
+		if (!CollectionUtils.isEmpty(openedLibraries)) {
 			DSL.select(selectLibraryContentLibraryId(),
 				selectLibraryContentContentId())
 				.from(getLibraryTableContent())
@@ -120,8 +120,28 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				.fetch()
 				.stream()
 				.forEach(r ->
-
 						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
+				);
+		}
+		return result;
+	}
+
+	protected MultiMap getFatherChildrenEntity(MultiMap expansionCandidates) {
+		MultiMap result = new MultiValueMap();
+		List<Long> openedEntityIds = getOpenedEntityIds(expansionCandidates);
+		if (!CollectionUtils.isEmpty(openedEntityIds)) {
+			DSL
+				.select(
+					selectLNRelationshipAncestorId(),
+					selectLNRelationshipDescendantId()
+				)
+				.from(getLNRelationshipTable())
+				.where(selectLNRelationshipAncestorId().in(openedEntityIds))
+				.orderBy(selectLNRelationshipContentOrder())
+				.fetch()
+				.stream()
+				.forEach(r ->
+						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
 				);
 		}
 		return result;
@@ -453,25 +473,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 
-	protected MultiMap getFatherChildrenEntity(MultiMap expansionCandidates) {
-		MultiMap result = new MultiValueMap();
-		List<Long> openedFolder = (List<Long>) expansionCandidates.get("TestCaseFolder");
-		if (openedFolder != null)
-			DSL
-				.select(
-					selectLNRelationshipAncestorId(),
-					selectLNRelationshipDescendantId()
-				)
-				.from(getLNRelationshipTable())
-				.where(selectLNRelationshipAncestorId().in(openedFolder))
-				.orderBy(selectLNRelationshipContentOrder())
-				.fetch()
-				.stream()
-				.forEach(r ->
-						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
-				);
-		return result;
-	}
 
 	private String buildResourceType(String classSimpleName) {
 		String singleResourceType = HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
@@ -545,6 +546,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity);
 
 	protected abstract Field<Long> getMilestoneLibraryNodeId();
+	protected abstract List<Long> getOpenedEntityIds(MultiMap expansionCandidates);
 
 	protected abstract TableLike<?> getMilestoneLibraryNodeTable();
 

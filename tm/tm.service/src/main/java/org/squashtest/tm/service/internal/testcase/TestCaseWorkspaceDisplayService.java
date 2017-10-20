@@ -36,10 +36,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,6 +57,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
 
 	@Override
+	//TODO add milestones
 	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
 		Set<Long> childrenIds = new HashSet<>();
 		childrenIds.addAll(fatherChildrenLibrary.values());
@@ -230,5 +228,12 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	protected String getFolderName() {
 		return "TestCaseFolder-";
 	}
+
+	@Override
+	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
+
+		return (List<Long>) expansionCandidates.get("TestCaseFolder");
+	}
+
 }
 

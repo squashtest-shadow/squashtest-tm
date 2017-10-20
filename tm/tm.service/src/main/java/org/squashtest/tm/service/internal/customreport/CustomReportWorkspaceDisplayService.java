@@ -31,6 +31,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Map;
 
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_REPORT_LIBRARY;
@@ -95,6 +96,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 
 	@Override
 	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
+		return null;
+	}
+
+	@Override
+	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
 		return null;
 	}
 
