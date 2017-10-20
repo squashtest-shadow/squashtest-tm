@@ -145,11 +145,15 @@
       tableName="REQUIREMENT_SYNC_EXTENDER"/>
 
     <addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
+
       <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT">
         <constraints nullable="true"
                      foreignKeyName="fk_requirement_sync_extender__remote_synchronisation__remote_synchronisation_id"
                      references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
       </column>
+
+      <column name="REMOTE_LAST_UPDATED" type="DATETIME"/>
+
     </addColumn>
 
   </changeSet>
