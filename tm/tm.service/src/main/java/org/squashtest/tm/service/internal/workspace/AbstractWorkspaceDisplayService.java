@@ -415,12 +415,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return false;
 	}
 
-	// TODO factorise or make it abstract
 	public List<Long> findNodesByMilestoneId(Long milestoneId) {
-		return DSL.select(MILESTONE_TEST_CASE.TEST_CASE_ID)
-			.from(MILESTONE_TEST_CASE)
-			.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(milestoneId))
-			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class);
+		return DSL.select()
+			.from(getMilestoneLibraryNodeTable())
+			.where(getMilestoneId().eq(milestoneId))
+			.fetch(getMilestoneLibraryNodeId(), Long.class);
 	}
 
 	// TODO factorise or make it abstract
@@ -453,13 +452,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
 
-
-// When we will factorize the code
-/*	protected abstract Field<Long> getMilestoneLibraryNodeId();
-
-	protected abstract Field<Long> getMilestoneId();
-
-	protected abstract TableLike<?> getMilestoneLibraryNodeTable();*/
 
 	protected MultiMap getFatherChildrenEntity(MultiMap expansionCandidates) {
 		MultiMap result = new MultiValueMap();
@@ -551,4 +543,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 	protected abstract Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity);
+
+	protected abstract Field<Long> getMilestoneLibraryNodeId();
+
+	protected abstract TableLike<?> getMilestoneLibraryNodeTable();
+
+	protected abstract Field<Long> getMilestoneId();
 }

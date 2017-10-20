@@ -23,6 +23,7 @@ package org.squashtest.tm.service.workspace
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
@@ -53,6 +54,19 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes.values().each { it.addAttr("wizards", [] as Set) }
 		jsTreeNodes
 	}
+
+	@DataSet("TestCaseDisplayService.sandbox.xml")
+	def "should find test case ids linked to active milestone"() {
+		given:
+		Long milestoneId = -1L
+
+		when:
+		def testCaseIds = testCaseWorkspaceDisplayService.findNodesByMilestoneId(milestoneId)
+
+		then:
+		testCaseIds.collect().sort() as Set == [-11L, -12L].sort() as Set
+	}
+
 
 	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find test Case Libraries as JsTreeNode"() {

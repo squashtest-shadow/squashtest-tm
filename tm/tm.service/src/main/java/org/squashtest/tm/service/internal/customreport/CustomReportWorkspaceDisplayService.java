@@ -99,6 +99,21 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	}
 
 	@Override
+	protected Field<Long> getMilestoneLibraryNodeId() {
+		return null;
+	}
+
+	@Override
+	protected TableLike<?> getMilestoneLibraryNodeTable() {
+		return null;
+	}
+
+	@Override
+	protected Field<Long> getMilestoneId() {
+		return null;
+	}
+
+	@Override
 	protected Field<Long> selectLibraryContentContentId() {
 		return null;
 	}

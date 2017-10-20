@@ -110,6 +110,21 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	}
 
+	@Override
+	protected Field<Long> getMilestoneLibraryNodeId() {
+		return MILESTONE_TEST_CASE.TEST_CASE_ID;
+	}
+
+	@Override
+	protected TableLike<?> getMilestoneLibraryNodeTable() {
+		return MILESTONE_TEST_CASE;
+	}
+
+	@Override
+	protected Field<Long> getMilestoneId() {
+		return MILESTONE_TEST_CASE.MILESTONE_ID;
+	}
+
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
 									 String hasStep, String isReqCovered) {
 		Map<String, Object> attr = new HashMap<>();

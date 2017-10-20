@@ -99,6 +99,21 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	@Override
+	protected Field<Long> getMilestoneLibraryNodeId() {
+		return MILESTONE_CAMPAIGN.CAMPAIGN_ID;
+	}
+
+	@Override
+	protected TableLike<?> getMilestoneLibraryNodeTable() {
+		return MILESTONE_CAMPAIGN;
+	}
+
+	@Override
+	protected Field<Long> getMilestoneId() {
+		return MILESTONE_CAMPAIGN.MILESTONE_ID;
+	}
+
+	@Override
 	protected Field<Long> selectLibraryContentContentId() {
 		return CAMPAIGN_LIBRARY_CONTENT.CONTENT_ID;
 	}

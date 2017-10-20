@@ -191,6 +191,21 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	}
 
 	@Override
+	protected Field<Long> getMilestoneLibraryNodeId() {
+		return MILESTONE_REQ_VERSION.REQ_VERSION_ID;
+	}
+
+	@Override
+	protected TableLike<?> getMilestoneLibraryNodeTable() {
+		return MILESTONE_REQ_VERSION;
+	}
+
+	@Override
+	protected Field<Long> getMilestoneId() {
+		return MILESTONE_REQ_VERSION.MILESTONE_ID;
+	}
+
+	@Override
 	protected Field<Long> selectLibraryContentContentId() {
 		return REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID;
 	}

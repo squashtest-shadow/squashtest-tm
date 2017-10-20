@@ -238,7 +238,9 @@
   <MILESTONE_BINDING PROJECT_ID="-2" MILESTONE_ID="-1"/>
 
 
-
+  <MILESTONE_TEST_CASE MILESTONE_ID="-1" TEST_CASE_ID="-11"/>
+  <MILESTONE_TEST_CASE MILESTONE_ID="-1" TEST_CASE_ID="-12"/>
+  <MILESTONE_TEST_CASE MILESTONE_ID="-2" TEST_CASE_ID="-12"/>
 
   <!-- ========================= groups ================================== -->
 
