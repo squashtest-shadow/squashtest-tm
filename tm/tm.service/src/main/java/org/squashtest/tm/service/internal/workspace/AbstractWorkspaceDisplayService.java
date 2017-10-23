@@ -89,14 +89,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	public Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
 		this.currentUser = currentUser;
+		Set<Long> childrenIds = new HashSet<>();
 
-		MultiMap fatherChildrenLibrary = getFatherChildrenLibrary(expansionCandidates);
-		MultiMap fatherChildrenEntity = getFatherChildrenEntity(expansionCandidates);
+		MultiMap libraryFatherChildrenMultiMap = getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds);
+		MultiMap libraryNodeFatherChildrenMultiMap = getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
 
-		Map<Long, JsTreeNode> allLibrariesChildren = getChildren(fatherChildrenLibrary, fatherChildrenEntity);
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates);
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibrariesExpanded(readableProjectIds);
 
-		buildHierarchy(jsTreeNodes, fatherChildrenLibrary, fatherChildrenEntity, allLibrariesChildren, activeMilestone);
+		buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, activeMilestone);
 
 		findWizards(readableProjectIds, jsTreeNodes);
 
@@ -107,7 +108,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes.values();
 	}
 
-	private MultiMap getFatherChildrenLibrary(MultiMap expansionCandidates) {
+	private MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
 		//TODO is there a collector for apache Multimap?
 		MultiMap result = new MultiValueMap();
 		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
@@ -123,20 +124,21 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
 				);
 		}
+		childrenIds.addAll(result.values());
 		return result;
 	}
 
-	protected MultiMap getFatherChildrenEntity(MultiMap expansionCandidates) {
+	protected MultiMap getLibraryNodeFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
 		MultiMap result = new MultiValueMap();
-		List<Long> openedEntityIds = getOpenedEntityIds(expansionCandidates);
-		if (!CollectionUtils.isEmpty(openedEntityIds)) {
+		List<Long> openedLibraryNodeIds = getOpenedLibraryNodeIds(expansionCandidates);
+		if (!CollectionUtils.isEmpty(openedLibraryNodeIds)) {
 			DSL
 				.select(
 					selectLNRelationshipAncestorId(),
 					selectLNRelationshipDescendantId()
 				)
 				.from(getLNRelationshipTable())
-				.where(selectLNRelationshipAncestorId().in(openedEntityIds))
+				.where(selectLNRelationshipAncestorId().in(openedLibraryNodeIds))
 				.orderBy(selectLNRelationshipContentOrder())
 				.fetch()
 				.stream()
@@ -144,7 +146,26 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
 				);
 		}
+		childrenIds.addAll(result.keySet());
+		childrenIds.addAll(result.values());
 		return result;
+	}
+
+	private List<Long> getOpenedLibraryNodeIds(MultiMap expansionCandidates) {
+		List<Long> openedLibraryNodeIds = new ArrayList<>();
+
+		List<Long> folderId = (List<Long>) expansionCandidates.get(getFolderName());
+		List<Long> nodeId = (List<Long>) expansionCandidates.get(getNodeName());
+
+		if (!CollectionUtils.isEmpty(folderId)) {
+			openedLibraryNodeIds.addAll(folderId);
+		}
+		if (!CollectionUtils.isEmpty(nodeId)) {
+			openedLibraryNodeIds.addAll(nodeId);
+		}
+
+
+		return openedLibraryNodeIds;
 	}
 
 	@Override
@@ -349,7 +370,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		attr.put("resId", id);
 		attr.put("resType", restype);
 		attr.put("name", name);
-		attr.put("id", getFolderName() + id);
+		attr.put("id", getFolderName() + "-" + id);
 		attr.put("rel", "folder");
 		if (Boolean.parseBoolean(hasContent)) {
 			state = State.closed;
@@ -473,7 +494,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	}
 
 
-
 	private String buildResourceType(String classSimpleName) {
 		String singleResourceType = HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
 		return singleResourceType.replaceAll("y$", "ies");
@@ -537,16 +557,17 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	protected abstract String getFolderName();
 
+	protected abstract Object getNodeName();
+
 	protected abstract String getLibraryPluginType();
 
 	protected String getResType() {
 		return buildResourceType(getClassName());
 	}
 
-	protected abstract Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity);
+	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates);
 
 	protected abstract Field<Long> getMilestoneLibraryNodeId();
-	protected abstract List<Long> getOpenedEntityIds(MultiMap expansionCandidates);
 
 	protected abstract TableLike<?> getMilestoneLibraryNodeTable();
 

@@ -31,8 +31,8 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_REPORT_LIBRARY;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
@@ -44,6 +44,14 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Inject
 	DSLContext DSL;
 
+
+	@Override
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+		return null;
+	}
+
+	// *************************************** send stuff to abstract workspace ***************************************
+
 	@Override
 	protected Field<Long> getProjectLibraryColumn() {
 		return PROJECT.CRL_ID;
@@ -51,6 +59,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 
 	@Override
 	protected String getFolderName() {
+		return null;
+	}
+
+	@Override
+	protected Object getNodeName() {
 		return null;
 	}
 
@@ -91,16 +104,6 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 
 	@Override
 	protected TableLike<?> getLNRelationshipTable() {
-		return null;
-	}
-
-	@Override
-	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
-		return null;
-	}
-
-	@Override
-	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
 		return null;
 	}
 

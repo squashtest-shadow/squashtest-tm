@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -58,11 +57,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
 
 	@Override
-	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
-		Set<Long> childrenIds = new HashSet<>();
-		childrenIds.addAll(fatherChildrenLibrary.values());
-		childrenIds.addAll(fatherChildrenEntity.keySet());
-		childrenIds.addAll(fatherChildrenEntity.values());
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
 
 		return DSL
 			.select(
@@ -150,7 +145,12 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected String getFolderName() {
-		return "RequirementFolder-";
+		return "RequirementFolder";
+	}
+
+	@Override
+	protected String getNodeName() {
+		return "Requirement";
 	}
 
 	@Override
@@ -194,22 +194,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	}
 
 	@Override
-	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
-		List<Long> openedEntityIds = new ArrayList<>();
-		List<Long> folderId = (List<Long>) expansionCandidates.get("RequirementFolder");
-		List<Long> requirementId = (List<Long>) expansionCandidates.get("Requirement");
-
-		if (!CollectionUtils.isEmpty(folderId)) {
-			openedEntityIds.addAll(folderId);
-		}
-		if (!CollectionUtils.isEmpty(requirementId)) {
-			openedEntityIds.addAll(requirementId);
-		}
-
-		return openedEntityIds;
-	}
-
-	@Override
 	protected Field<Long> getMilestoneLibraryNodeId() {
 		return MILESTONE_REQ_VERSION.REQ_VERSION_ID;
 	}
@@ -223,6 +207,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	protected Field<Long> getMilestoneId() {
 		return MILESTONE_REQ_VERSION.MILESTONE_ID;
 	}
+
 
 	@Override
 	protected Field<Long> selectLibraryContentContentId() {

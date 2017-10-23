@@ -40,18 +40,17 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
 import java.util.Locale;
 
 @Component
@@ -85,14 +84,14 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		String tooltip = internationalizationHelper.getMessage("label.tree.testSuite.tooltip", args, status, locale);
 		String description;
 		try {
-			description = model.getFirstPlannedTestCase().getDescription();
+			description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
 			if (description.length() > 30) {
 				description = description.substring(0, 30);
 			}
 		} catch (Exception e) {
 			description = "";
 		}
-		node.addAttr("title", tooltip + "\n" + HTMLCleanupUtils.htmlToText(description));
+		node.addAttr("title", tooltip + "\n" + description);
 
 		//milestone attributes
 		node.addAttr("milestones", model.getMilestones().size());

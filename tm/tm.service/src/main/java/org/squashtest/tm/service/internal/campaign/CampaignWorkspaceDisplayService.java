@@ -20,29 +20,265 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.TableField;
 import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
+import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("campaignWorkspaceDisplayService")
 @Transactional(readOnly = true)
-public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplayService{
+public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplayService {
 
 	@Inject
 	DSLContext DSL;
+
+	private CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
+	private CampaignFolder CF = CAMPAIGN_FOLDER.as("CF");
+	private ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
+	private CampaignIteration CI = CAMPAIGN_ITERATION.as("CI");
+	private IterationTestSuite ITS = ITERATION_TEST_SUITE.as("ITS");
+	private Iteration IT = ITERATION.as("IT");
+	private TestSuite TS = TEST_SUITE.as("TS");
+	private TestSuiteTestPlanItem TSTPI = TEST_SUITE_TEST_PLAN_ITEM.as("TSTPI");
+	private IterationTestPlanItem ITPI = ITERATION_TEST_PLAN_ITEM.as("ITPI");
+	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
+
+	private MultiMap expansionCandidates;
+	private MultiMap campaignFatherChildrenMultimap = new MultiValueMap();
+	private Map<Long, JsTreeNode> campaignChildrenMap = new HashMap<>();
+	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();
+	private Map<Long, JsTreeNode> iterationChildrenMap = new HashMap<>();
+
+	@Override
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+		this.expansionCandidates = expansionCandidates;
+
+
+		getCampaignHierarchy();
+
+		return DSL
+			.select(
+				CLN.CLN_ID,
+				org.jooq.impl.DSL.decode()
+					.when(CF.CLN_ID.isNotNull(), "campaign-folders")
+					.otherwise("campaigns").as("RESTYPE"),
+				CLN.NAME,
+				org.jooq.impl.DSL.decode()
+					.when(CLNR.ANCESTOR_ID.isNotNull().or(CI.CAMPAIGN_ID.isNotNull()), "true")
+					.otherwise("false")
+					.as("HAS_CONTENT")
+			)
+			.from(CLN)
+			.leftJoin(CF).on(CLN.CLN_ID.eq(CF.CLN_ID))
+			.leftJoin(CLNR).on(CLN.CLN_ID.eq(CLNR.ANCESTOR_ID))
+			.leftJoin(CI).on(CLN.CLN_ID.eq(CI.CAMPAIGN_ID))
+			.where(CLN.CLN_ID.in(childrenIds))
+			.groupBy(CLN.CLN_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				if (r.get("RESTYPE").equals("campaign-folders")) {
+					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+				} else {
+					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+				}
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
+	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String hasContent) {
+		Map<String, Object> attr = new HashMap<>();
+		JsTreeNode.State state;
+
+		attr.put("resId", campaignId);
+		attr.put("resType", restype);
+		attr.put("name", name);
+		attr.put("id", "Campaign-" + campaignId);
+		attr.put("rel", "campaign");
+
+		JsTreeNode campaign = buildNode(name, null, attr);
+
+		// Messy but still simpler than GOT's genealogy
+		if (!Boolean.parseBoolean(hasContent)) {
+			campaign.setState(State.leaf);
+		} else if (campaignFatherChildrenMultimap.containsKey(campaignId)) {
+			campaign.setState(State.open);
+			for (Long iterationId : (ArrayList<Long>) campaignFatherChildrenMultimap.get(campaignId)) {
+				if (iterationFatherChildrenMultiMap.containsKey(iterationId)) {
+					campaignChildrenMap.get(iterationId).setState(State.open);
+					for (Long grandChildId : (ArrayList<Long>) iterationFatherChildrenMultiMap.get(iterationId)) {
+						campaignChildrenMap.get(iterationId).addChild(iterationChildrenMap.get(grandChildId));
+					}
+				}
+				campaign.addChild(campaignChildrenMap.get(iterationId));
+			}
+		} else {
+			campaign.setState(State.closed);
+		}
+		return campaign;
+	}
+
+	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent) {
+		Map<String, Object> attr = new HashMap<>();
+		JsTreeNode.State state;
+
+		attr.put("resId", id);
+		attr.put("resType", "iterations");
+		attr.put("name", name);
+		attr.put("id", "Iteration-" + id);
+		attr.put("rel", "iteration");
+		attr.put("reference", reference);
+		attr.put("iterationIndex", String.valueOf(iterationOrder + 1));
+		if (Boolean.parseBoolean(hasContent)) {
+			state = State.closed;
+		} else {
+			state = State.leaf;
+		}
+		return buildNode(name, state, attr);
+	}
+
+	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description) {
+		Map<String, Object> attr = new HashMap<>();
+		JsTreeNode.State state;
+
+		attr.put("resId", id);
+		attr.put("name", name);
+		attr.put("id", "TestSuite-" + id);
+		attr.put("executionstatus", executionStatus);
+		attr.put("resType", "test-suites");
+		attr.put("rel", "test-suite");
+		//build tooltip
+		String[] args = {getMessage("execution.execution-status." + executionStatus)};
+		String tooltip = getMessage("label.tree.testSuite.tooltip", args);
+		attr.put("title", tooltip + "\n" + removeHtml(description));
+		return buildNode(name, State.leaf, attr);
+
+	}
+
+	//Campaigns got iterations and test suites which aren't located in the campaign_library_node table.
+	// We must fetch them separately
+	private void getCampaignHierarchy() {
+		//first: iterations, get father-children relation, fetch them and add them to the campaigns
+		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign");
+		campaignChildrenMap = getCampaignChildren(campaignFatherChildrenMultimap);
+		//second test suites, get father-children relation, fetch them and add them  to  the iterations
+		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration");
+		iterationChildrenMap = getIterationChildren(iterationFatherChildrenMultiMap);
+
+	}
+
+	private MultiMap getFatherChildrenLibraryNode(String resType) {
+		MultiMap result = new MultiValueMap();
+
+		TableField<?, ?> fatherColumn;
+		TableField<?, ?> childColumn;
+		TableField<?, ?> orderColumn;
+		TableLike<?> table;
+
+		if (resType.equals("Campaign")) {
+			fatherColumn = CI.CAMPAIGN_ID;
+			childColumn = CI.ITERATION_ID;
+			orderColumn = CI.ITERATION_ORDER;
+			table = CI;
+		} else {
+			fatherColumn = ITS.ITERATION_ID;
+			childColumn = ITS.TEST_SUITE_ID;
+			orderColumn = ITS.TEST_SUITE_ID;
+			table = ITS;
+		}
+		List<Long> openedEntityIds = (List<Long>) expansionCandidates.get(resType);
+		if (!CollectionUtils.isEmpty(openedEntityIds)) {
+			DSL
+				.select(
+					fatherColumn,
+					childColumn
+				)
+				.from(table)
+				.where(fatherColumn.in(openedEntityIds))
+				.orderBy(orderColumn)
+				.fetch()
+				.stream()
+				.forEach(r ->
+						result.put(r.get(fatherColumn), r.get(childColumn))
+				);
+		}
+		return result;
+	}
+
+	private Map<Long, JsTreeNode> getCampaignChildren(MultiMap fatherChildrenEntity) {
+		return DSL
+			.select(
+				IT.ITERATION_ID,
+				IT.NAME,
+				IT.REFERENCE,
+				CI.ITERATION_ORDER,
+				org.jooq.impl.DSL.decode()
+					.when(ITS.ITERATION_ID.isNull(), "false")
+					.otherwise("true")
+					.as("HAS_CONTENT")
+			)
+			.from(IT)
+			.leftJoin(CI).on(IT.ITERATION_ID.eq(CI.ITERATION_ID))
+			.leftJoin(ITS).on(IT.ITERATION_ID.eq(ITS.ITERATION_ID))
+			.where(IT.ITERATION_ID.in(fatherChildrenEntity.values()))
+			.groupBy(IT.ITERATION_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				return buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
+					r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"));
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
+	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity) {
+		return DSL
+			.select(
+				TS.ID,
+				TS.NAME,
+				TS.EXECUTION_STATUS,
+				org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30),"").as("DESCRIPTION")
+			)
+			.from(TS)
+			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
+			.leftJoin(ITPI).on(TSTPI.TPI_ID.eq(ITPI.ITEM_TEST_PLAN_ID))
+			.leftJoin(TCLN).on(ITPI.TCLN_ID.eq(TCLN.TCLN_ID))
+			.where(TS.ID.in(fatherChildrenEntity.values()))
+			.fetch()
+			.stream()
+			.map(r -> {
+				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"));
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
+	private String removeHtml(String html) {
+		if(StringUtils.isBlank(html)){
+			return "";
+		}
+		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+	}
+
+	// *************************************** send stuff to abstract workspace ***************************************
 
 	@Override
 	protected Field<Long> getProjectLibraryColumn() {
@@ -51,7 +287,12 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected String getFolderName() {
-		return null;
+		return "CampaignFolder";
+	}
+
+	@Override
+	protected String getNodeName() {
+		return "Campaign";
 	}
 
 	@Override
@@ -76,32 +317,22 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected Field<Long> selectLNRelationshipAncestorId() {
-		return null;
+		return CLN_RELATIONSHIP.ANCESTOR_ID;
 	}
 
 	@Override
 	protected Field<Long> selectLNRelationshipDescendantId() {
-		return null;
+		return CLN_RELATIONSHIP.DESCENDANT_ID;
 	}
 
 	@Override
 	protected Field<Integer> selectLNRelationshipContentOrder() {
-		return null;
+		return CLN_RELATIONSHIP.CONTENT_ORDER;
 	}
 
 	@Override
 	protected TableLike<?> getLNRelationshipTable() {
-		return null;
-	}
-
-	@Override
-	protected Map<Long, JsTreeNode> getChildren(MultiMap fatherChildrenLibrary, MultiMap fatherChildrenEntity) {
-		return null;
-	}
-
-	@Override
-	protected List<Long> getOpenedEntityIds(MultiMap expansionCandidates) {
-		return null;
+		return CLN_RELATIONSHIP;
 	}
 
 	@Override
