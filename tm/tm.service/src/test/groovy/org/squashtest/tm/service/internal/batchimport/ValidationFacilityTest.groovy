@@ -35,6 +35,7 @@ import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.security.UserContextService
 import org.squashtest.tm.service.user.UserAccountService
 import spock.lang.Issue
 import spock.lang.Specification
@@ -51,6 +52,7 @@ class ValidationFacilityTest extends Specification {
 	EntityValidator entityValidator = Mock()
 	Model model = Mock()
 	UserAccountService userAccount = Mock()
+	UserContextService userContextService = Mock();
 	PermissionEvaluationService permissionService = Mock()
 	UserDao userDao = Mock()
 	TargetStatus status = Mock()
@@ -69,11 +71,13 @@ class ValidationFacilityTest extends Specification {
 		facility.reqFinderService = requirementFinder
 
 		facility.projectDao = projectDao
+		facility.userContextService = userContextService
 
 		model.getTestCaseCufs(_) >> Collections.emptyList()
 		model.getProjectStatus(_) >> Mock(ProjectTargetStatus)
 
 		userAccount.findCurrentUser() >> Mock(User)
+		userContextService.getUsername() >> ""
 	}
 
 	def mockAnyStatus() {
