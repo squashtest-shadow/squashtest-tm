@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -56,9 +57,6 @@ public abstract class GlobalSearchController {
 
 
 	@Inject
-	protected ProjectFinder projectFinder;
-
-	@Inject
 	protected UserAccountService userAccountService;
 
 	@Inject
@@ -72,6 +70,9 @@ public abstract class GlobalSearchController {
 
 	@Inject
 	protected ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 
 	protected static final String PROJECTS_META = "projects";
@@ -212,9 +213,9 @@ public abstract class GlobalSearchController {
 
 	private Collection<JsonProject> readableJsonProjects() {
 
+
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		return  workspaceDisplayService().findAllProjects(projectIds, currentUser);
+		return  workspaceDisplayService().findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
 	}
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
 

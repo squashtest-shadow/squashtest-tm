@@ -41,6 +41,7 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceIm
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -57,7 +58,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	CampaignAdvancedSearchService {
 
 	@Inject
-	protected ProjectManagerService projectFinder;
+	protected ProjectFinder projectFinder;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -70,9 +71,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	protected UserAccountService userAccountService;
-
-	@Inject
-	private ProjectDao projectDao;
 
 	@Inject
 	DSLContext DSL;
@@ -112,9 +110,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	public List<String> findAllAuthorizedUsersForACampaign() {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
 		List<Long> finalProjectsId = new ArrayList<>();
-		workspaceDisplayService.findAllProjects(projectIds,currentUser).stream().forEach(r -> {
+		workspaceDisplayService.findAllProjects(findAllReadablesId(),currentUser).stream().forEach(r -> {
 				finalProjectsId.add(r.getId());
 				}
 		);

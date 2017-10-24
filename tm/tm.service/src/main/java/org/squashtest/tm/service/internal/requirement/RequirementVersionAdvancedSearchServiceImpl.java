@@ -83,13 +83,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
-		List<Long> readableProjectIds = gatherReadableProjectIds();
+		List<Long> readableProjectIds = findAllReadablesId();
 		return projectDao.findUsersWhoCreatedRequirementVersions(readableProjectIds);
 	}
 
 	@Override
 	public List<String> findAllUsersWhoModifiedRequirementVersions() {
-		List<Long> readableProjectIds = gatherReadableProjectIds();
+		List<Long> readableProjectIds = findAllReadablesId();
 		return projectDao.findUsersWhoModifiedRequirementVersions(readableProjectIds);
 	}
 
@@ -224,11 +224,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
-	}
-
-	List<Long> gatherReadableProjectIds(){
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		return projectDao.findAllReadableIds(currentUser);
 	}
 
 }

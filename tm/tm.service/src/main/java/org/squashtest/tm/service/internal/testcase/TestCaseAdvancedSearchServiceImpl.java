@@ -89,13 +89,13 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases() {
-		List<Long> readableProjectIds =gatherReadableProjectIds();
+		List<Long> readableProjectIds =findAllReadablesId();
 		return projectDao.findUsersWhoCreatedTestCases(readableProjectIds);
 	}
 
 	@Override
 	public List<String> findAllUsersWhoModifiedTestCases() {
-		List<Long> readableProjectIds =gatherReadableProjectIds();
+		List<Long> readableProjectIds =findAllReadablesId();
 		return projectDao.findUsersWhoModifiedTestCases(readableProjectIds);
 	}
 
@@ -302,8 +302,4 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	}
 
-	private List<Long> gatherReadableProjectIds(){
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		return projectDao.findAllReadableIds(currentUser);
-	}
 }

@@ -32,19 +32,14 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.customfield.CustomFieldModelService;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -58,14 +53,14 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	private TestCaseAdvancedSearchService advancedSearchService;
 
 	@Inject
-	private ProjectFinder projectFinder;
-
-	@Inject
 	protected UserAccountService userAccountService;
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
 	private AbstractWorkspaceDisplayService workspaceDisplayService;
+
+	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -281,16 +276,16 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	}
 
 
+
 	private SearchInputFieldModel buildNatureFieldModel(Locale locale){
 
 		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
 				"test-case.nature.label", locale), MULTICASCADEFLAT);
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
+		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
 
-		Collection<JsonInfoList> natures = new ArrayList<>(projectIds.size());
+		Collection<JsonInfoList> natures = new ArrayList<>(campaignAdvancedSearchService.findAllReadablesId().size());
 
 		for (JsonProject p : jsProjects){
 			natures.add(p.getTestCaseNatures());
@@ -308,11 +303,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"test-case.type.label", locale), MULTICASCADEFLAT);
 
 		Collection<JsonInfoList> types = new ArrayList<>();
-
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
-
+		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
 
 		for (JsonProject p : jsProjects){
 			types.add(p.getTestCaseTypes());

@@ -62,6 +62,7 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -91,7 +92,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private CustomFieldModelService customFieldModelService;
 
 	@Inject
-	private ProjectDao projectFinder;
+	private ProjectFinder projectFinder;
 
 	@Inject
 	protected CustomFieldModelService customFieldService;
@@ -111,22 +112,17 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Override
 	public List<CustomFieldModel> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-
-		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findAllUsedCustomFieldsByEntity(readableProjectIds,entity);
+		Map<Long, CustomFieldModel> cufMap = customFieldModelService.findAllUsedCustomFieldsByEntity(findAllReadablesId(),entity);
 		List<CustomFieldModel> cufList = new ArrayList<>(cufMap.values());
-
 
 		return cufList;
 	}
 
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		Set<JsonMilestone> allMilestones = new HashSet<>();
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+		Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(findAllReadablesId(), currentUser);
 
 		for (JsonProject p : projects) {
 			allMilestones.addAll(p.getMilestones());
@@ -282,10 +278,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return Collections.emptyList();
 	}
 
-
-
-
-
 	private Query buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
@@ -296,12 +288,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-
-
 	private List<String> parseInput(String textInput) {
 		return new StrTokenizer(textInput, StrMatcher.trimMatcher(), StrMatcher.doubleQuoteMatcher()).getTokenList();
 	}
-
 
 	private Query buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
@@ -319,9 +308,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		return null;
 	}
-
-
-
 
 	private Query buildQueryForTagsCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
@@ -504,7 +490,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		for (String s : MILESTONE_SEARCH_FIELD) {
 			fields.remove(s);
 		}
-
 	}
 
 	private List<MilestoneStatus> convertStatus(List<String> values) {
@@ -661,22 +646,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		if (selectedIds == null || selectedIds.isEmpty()) {
 
 			UserDto currentUser = userAccountService.findCurrentUserDto();
-			List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-//			List<Project> ps = projectFinder.findAllReadable();
-
-			Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+			Collection<JsonProject> projects = workspaceDisplayService.findAllProjects(findAllReadablesId(), currentUser);
 			approvedIds = new ArrayList<>();
 			projects.stream().forEach(r-> {
 				approvedIds.add(String.valueOf(r.getId()));
 			});
 
-
-//			approvedIds = (List<String>) CollectionUtils.collect(ps, new Transformer() {
-//				@Override
-//				public Object transform(Object project) {
-//					return ((Identified) project).getId().toString();
-//				}
-//			});
 		}
 		// case 2 : some projects were selected
 		else {
