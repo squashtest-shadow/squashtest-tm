@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.TableField;
@@ -34,9 +35,12 @@ import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,6 +52,9 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Inject
 	DSLContext DSL;
+
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
 	private TestCaseFolder TCF = TEST_CASE_FOLDER.as("TCF");
@@ -106,8 +113,10 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	//TODO reqCovered reccursif
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
-									 String hasStep, String isReqCovered) {
+									 String hasStep, String isDirectlyReqCovered) {
 		Map<String, Object> attr = new HashMap<>();
+		Boolean isreqcovered = Boolean.parseBoolean(isDirectlyReqCovered) ||
+			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
 
 		attr.put("resId", id);
 		attr.put("resType", restype);
@@ -115,18 +124,23 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("id", "TestCase-" + id);
 		attr.put("rel", "test-case");
 
-		attr.put("reference", reference);
+
 		attr.put("importance", importance.toLowerCase());
 		attr.put("status", status.toLowerCase());
 		attr.put("hassteps", hasStep);
-		attr.put("isreqcovered", isReqCovered);
+		attr.put("isreqcovered", isreqcovered);
 
 		//build tooltip
 		String[] args = {getMessage("test-case.status." + status), getMessage("test-case.importance." + importance),
-			getMessage("squashtm.yesno." + isReqCovered), getMessage("tooltip.tree.testCase.hasSteps." + hasStep)};
+			getMessage("squashtm.yesno." + isreqcovered), getMessage("tooltip.tree.testCase.hasSteps." + hasStep)};
 		attr.put("title", getMessage("label.tree.testCase.tooltip", args));
 
-		return buildNode(name, State.leaf, attr);
+		String title = name;
+		if (!StringUtils.isEmpty(reference)) {
+			attr.put("reference", reference);
+			title = reference + " - " + title;
+		}
+		return buildNode(title, State.leaf, attr);
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************

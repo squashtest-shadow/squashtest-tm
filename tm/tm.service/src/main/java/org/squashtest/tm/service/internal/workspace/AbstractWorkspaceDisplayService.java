@@ -164,7 +164,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			openedLibraryNodeIds.addAll(nodeId);
 		}
 
-
 		return openedLibraryNodeIds;
 	}
 
@@ -254,7 +253,25 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					node.addAttr(permission.getQuality(), String.valueOf(true));
 				}
 			}
+			if (!CollectionUtils.isEmpty(node.getChildren())) {
+				givePermissions(node.getChildren(), masks);
+			}
 		});
+	}
+
+	private void givePermissions(List<JsTreeNode> children, List<Integer> masks) {
+		for (JsTreeNode child : children) {
+			for (Integer mask : masks) {
+				PermissionWithMask permission = findByMask(mask);
+				if (permission != null) {
+					child.addAttr(permission.getQuality(), String.valueOf(true));
+				}
+			}
+
+			if (!CollectionUtils.isEmpty(child.getChildren())) {
+				givePermissions(child.getChildren(), masks);
+			}
+		}
 	}
 
 	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
@@ -266,7 +283,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 
 
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
+		return DSL
 			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
@@ -286,7 +303,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				node.addAttr("title", r.get(PROJECT.LABEL));
 				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
 
-				//permissions set to false by default except for admin witch have rights by definition
+				//permissions set to false by default except for admin which have rights by definition
 				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
 				for (PermissionWithMask permission : permissions) {
 					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
@@ -296,7 +313,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				node.addAttr("milestone-creatable-deletable", "true");
 				node.addAttr("milestone-editable", "true");
 				node.addAttr("wizards", new HashSet<String>());
-				node.setState(JsTreeNode.State.closed);
+				node.setState(State.closed);
 				return node;
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
@@ -304,9 +321,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
 				},
 				LinkedHashMap::new));
-
-		//TODO opened nodes and content
-		return jsTreeNodes;
 	}
 
 	protected Map<Long, JsTreeNode> doFindLibrariesExpanded(List<Long> readableProjectIds) {
@@ -317,7 +331,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			filteredProjectIds = readableProjectIds;
 		}
 
-		Map<Long, JsTreeNode> jsTreeNodes = DSL
+		return DSL
 			.select(
 				selectLibraryId(),
 				PROJECT.PROJECT_ID,
@@ -359,8 +373,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					throw new IllegalStateException(String.format("Duplicate key %s", u));
 				},
 				LinkedHashMap::new));
-
-		return jsTreeNodes;
 	}
 
 	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent) {
@@ -510,9 +522,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.stream()
 			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()), mapping(r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID), toSet())));
 
-		pluginByLibraryId.forEach((libId, pluginIds) -> {
-			jsTreeNodes.get(libId).addAttr("wizards", pluginIds);
-		});
+		pluginByLibraryId.forEach((libId, pluginIds) -> jsTreeNodes.get(libId).addAttr("wizards", pluginIds));
 	}
 
 	protected String getMessage(String key) {

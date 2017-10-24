@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.TableLike;
@@ -108,7 +109,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 		attr.put("name", name);
 		attr.put("id", "Requirement-" + id);
 		attr.put("rel", "requirement");
-		attr.put("reference", reference);
 		if (mode.equals("SYNCHRONIZED"))
 			attr.put("synchronized", true);
 		attr.put("milestone", milestone);
@@ -120,7 +120,13 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			state = State.leaf;
 		}
 
-		return buildNode(name, state, attr);
+		String title = name;
+		if (!StringUtils.isEmpty(reference)) {
+			title = reference + " - " + title;
+			attr.put("reference", reference);
+		}
+
+		return buildNode(title, state, attr);
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToMilestone(List<Long> reqVersionIdsWithMilestone) {

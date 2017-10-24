@@ -51,6 +51,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Inject
 	DSLContext DSL;
 
+	private Campaign C = CAMPAIGN.as("C");
 	private CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
 	private CampaignFolder CF = CAMPAIGN_FOLDER.as("CF");
 	private ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
@@ -72,7 +73,6 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
 		this.expansionCandidates = expansionCandidates;
 
-
 		getCampaignHierarchy();
 
 		return DSL
@@ -82,6 +82,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.when(CF.CLN_ID.isNotNull(), "campaign-folders")
 					.otherwise("campaigns").as("RESTYPE"),
 				CLN.NAME,
+				C.REFERENCE,
 				org.jooq.impl.DSL.decode()
 					.when(CLNR.ANCESTOR_ID.isNotNull().or(CI.CAMPAIGN_ID.isNotNull()), "true")
 					.otherwise("false")
@@ -91,6 +92,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(CF).on(CLN.CLN_ID.eq(CF.CLN_ID))
 			.leftJoin(CLNR).on(CLN.CLN_ID.eq(CLNR.ANCESTOR_ID))
 			.leftJoin(CI).on(CLN.CLN_ID.eq(CI.CAMPAIGN_ID))
+			.leftJoin(C).on(CLN.CLN_ID.eq(C.CLN_ID))
 			.where(CLN.CLN_ID.in(childrenIds))
 			.groupBy(CLN.CLN_ID)
 			.fetch()
@@ -99,15 +101,14 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				if (r.get("RESTYPE").equals("campaign-folders")) {
 					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
 				} else {
-					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"));
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String hasContent) {
+	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent) {
 		Map<String, Object> attr = new HashMap<>();
-		JsTreeNode.State state;
 
 		attr.put("resId", campaignId);
 		attr.put("resType", restype);
@@ -115,7 +116,13 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("id", "Campaign-" + campaignId);
 		attr.put("rel", "campaign");
 
-		JsTreeNode campaign = buildNode(name, null, attr);
+		String title = name;
+		if (!StringUtils.isEmpty(reference)) {
+			attr.put("reference", reference);
+			title = reference + " - " + title;
+		}
+
+		JsTreeNode campaign = buildNode(title, null, attr);
 
 		// Messy but still simpler than GOT's genealogy
 		if (!Boolean.parseBoolean(hasContent)) {
@@ -146,19 +153,23 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("name", name);
 		attr.put("id", "Iteration-" + id);
 		attr.put("rel", "iteration");
-		attr.put("reference", reference);
 		attr.put("iterationIndex", String.valueOf(iterationOrder + 1));
 		if (Boolean.parseBoolean(hasContent)) {
 			state = State.closed;
 		} else {
 			state = State.leaf;
 		}
-		return buildNode(name, state, attr);
+
+		String title = name;
+		if (!StringUtils.isEmpty(reference)) {
+			title = reference + " - " + title;
+			attr.put("reference", reference);
+		}
+		return buildNode(title, state, attr);
 	}
 
 	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description) {
 		Map<String, Object> attr = new HashMap<>();
-		JsTreeNode.State state;
 
 		attr.put("resId", id);
 		attr.put("name", name);
@@ -175,7 +186,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	//Campaigns got iterations and test suites which aren't located in the campaign_library_node table.
-	// We must fetch them separately
+	// We must fetch them separately, because they might have identical ids
 	private void getCampaignHierarchy() {
 		//first: iterations, get father-children relation, fetch them and add them to the campaigns
 		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign");
@@ -243,10 +254,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.groupBy(IT.ITERATION_ID)
 			.fetch()
 			.stream()
-			.map(r -> {
-				return buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
-					r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"));
-			})
+			.map(r -> buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
+				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT")))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
@@ -256,7 +265,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				TS.ID,
 				TS.NAME,
 				TS.EXECUTION_STATUS,
-				org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30),"").as("DESCRIPTION")
+				org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30), "").as("DESCRIPTION")
 			)
 			.from(TS)
 			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
@@ -265,14 +274,12 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.where(TS.ID.in(fatherChildrenEntity.values()))
 			.fetch()
 			.stream()
-			.map(r -> {
-				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"));
-			})
+			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION")))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
 	private String removeHtml(String html) {
-		if(StringUtils.isBlank(html)){
+		if (StringUtils.isBlank(html)) {
 			return "";
 		}
 		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
