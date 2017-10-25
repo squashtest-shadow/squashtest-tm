@@ -71,6 +71,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private InfoListModelService infoListModelService;
 
+	private final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
+	protected final Integer NODE_WITHOUT_MILESTONE = 0;
+
 //	@Override
 //	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
 //
@@ -91,7 +94,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		MultiMap libraryFatherChildrenMultiMap = getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds);
 		MultiMap libraryNodeFatherChildrenMultiMap = getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
 
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
+		// milestones
+		Map<Long, List<Long>> allMilestonesForLN = findAllMilestonesForLN();
+
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN);
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
 
 		buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, activeMilestone);
@@ -363,7 +369,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					state = State.closed;
 				}
 
-				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser);
+				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE);
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
 				(u, v) -> {
@@ -386,10 +392,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		} else {
 			state = State.leaf;
 		}
-		return buildNode(name, state, attr, currentUser);
+		return buildNode(name, state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE);
 	}
 
-	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr, UserDto currentUser) {
+	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr, UserDto currentUser, Integer milestonesNumber) {
 		JsTreeNode node = new JsTreeNode();
 		node.setTitle(title);
 		if (state != null) {
@@ -402,7 +408,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		for (PermissionWithMask permission : permissions) {
 			node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
 		}
-
+		if (!NODE_WITHOUT_MILESTONES_ATTRIBUTE.equals(milestonesNumber)) { // only for nodes which have 'milestones' attr
+			node.addAttr("milestones", milestonesNumber);
+		}
 		// milestone attributes : libraries are yes-men
 		node.addAttr("milestone-creatable-deletable", "true");
 		node.addAttr("milestone-editable", "true");
@@ -533,6 +541,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	// *************************************** get Stuff From Specific Workspace ***************************************
 
+	protected abstract Map<Long, List<Long>> findAllMilestonesForLN();
+
 	protected abstract TableLike<?> getLibraryTable();
 
 	protected abstract TableLike<?> getLibraryTableContent();
@@ -571,7 +581,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return buildResourceType(getClassName());
 	}
 
-	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser);
+	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN);
 
 	protected abstract Field<Long> getMilestoneLibraryNodeId();
 

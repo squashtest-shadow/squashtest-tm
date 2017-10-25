@@ -40,6 +40,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -66,7 +67,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	//TODO add milestones
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs) {
 
 		return DSL
 			.select(
@@ -105,15 +106,16 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				if (r.get("RESTYPE").equals("test-case-folders")) {
 					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"),  currentUser);
 				} else {
+					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"),  currentUser);
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"),  currentUser, milestonesNumber);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
-									 String hasStep, String isDirectlyReqCovered, UserDto currentUser) {
+									 String hasStep, String isDirectlyReqCovered, UserDto currentUser, Integer milestonesNumber) {
 		Map<String, Object> attr = new HashMap<>();
 		Boolean isreqcovered = Boolean.parseBoolean(isDirectlyReqCovered) ||
 			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
@@ -140,7 +142,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			attr.put("reference", reference);
 			title = reference + " - " + title;
 		}
-		return buildNode(title, State.leaf, attr,  currentUser);
+		return buildNode(title, State.leaf, attr, currentUser, milestonesNumber);
+	}
+
+	private Integer getMilestonesNumberForTC(Map<Long, List<Long>> allMilestonesForTCs, Long id) {
+		return (allMilestonesForTCs.get(id) != null) ? allMilestonesForTCs.get(id).size() : NODE_WITHOUT_MILESTONE;
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************
@@ -153,6 +159,19 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected Field<Long> selectLibraryId() {
 		return TEST_CASE_LIBRARY.TCL_ID;
+	}
+
+	@Override
+	protected Map<Long, List<Long>> findAllMilestonesForLN() {
+		return DSL.select(MILESTONE_TEST_CASE.TEST_CASE_ID, MILESTONE_TEST_CASE.MILESTONE_ID)
+			.from(MILESTONE_TEST_CASE)
+			.union(
+				DSL.select(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID, MILESTONE_REQ_VERSION.MILESTONE_ID)
+					.from(REQUIREMENT_VERSION_COVERAGE)
+					.join(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+					.join(MILESTONE_REQ_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(MILESTONE_REQ_VERSION.REQ_VERSION_ID))
+			)
+			.fetchGroups(MILESTONE_TEST_CASE.TEST_CASE_ID, MILESTONE_TEST_CASE.MILESTONE_ID);
 	}
 
 	@Override

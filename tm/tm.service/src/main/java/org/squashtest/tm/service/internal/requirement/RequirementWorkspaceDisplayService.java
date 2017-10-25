@@ -62,7 +62,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs) {
 
 		return DSL
 			.select(
@@ -98,14 +98,15 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 				if (r.get("RESTYPE").equals("requirement-folders")) {
 					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
+					Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, r.get(RLN.RLN_ID));
 					return buildRequirement(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
-						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser);
+						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser, milestonesNumber);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser) {
+	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser, Integer milestonesNumber) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 		attr.put("resId", id);
@@ -115,7 +116,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 		attr.put("rel", "requirement");
 		if (mode.equals("SYNCHRONIZED"))
 			attr.put("synchronized", true);
-		attr.put("milestone", milestone);
+		/*attr.put("milestone", milestone);*/
 		attr.put("category-icon", categoryIcon);
 
 		if (Boolean.parseBoolean(hasContent)) {
@@ -130,7 +131,11 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			attr.put("reference", reference);
 		}
 
-		return buildNode(title, state, attr, currentUser);
+		return buildNode(title, state, attr, currentUser, milestonesNumber);
+	}
+
+	private Integer getMilestonesNumberForReq(Map<Long, List<Long>> allMilestonesForReqs, Long id) {
+		return (allMilestonesForReqs.get(id) != null) ? allMilestonesForReqs.get(id).size() : NODE_WITHOUT_MILESTONE;
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToMilestone(List<Long> reqVersionIdsWithMilestone) {
@@ -171,6 +176,15 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Override
 	protected Field<Long> selectLibraryId() {
 		return REQUIREMENT_LIBRARY.RL_ID;
+	}
+
+	@Override
+	protected Map<Long, List<Long>> findAllMilestonesForLN() {
+		return DSL.select()
+			.from(MILESTONE_REQ_VERSION)
+			.join(REQUIREMENT_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+			.join(REQUIREMENT).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT.RLN_ID))
+			.fetchGroups(REQUIREMENT_VERSION.REQUIREMENT_ID, MILESTONE_REQ_VERSION.MILESTONE_ID);
 	}
 
 	@Override

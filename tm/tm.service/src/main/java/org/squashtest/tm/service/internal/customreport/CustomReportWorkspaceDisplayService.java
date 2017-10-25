@@ -32,6 +32,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	DSLContext DSL;
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {
 		return null;
 	}
 
@@ -75,6 +76,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Override
 	protected Field<Long> selectLibraryId() {
 		return CUSTOM_REPORT_LIBRARY.CRL_ID;
+	}
+
+	@Override
+	protected Map<Long, List<Long>> findAllMilestonesForLN() {
+		return null;
 	}
 
 	@Override
