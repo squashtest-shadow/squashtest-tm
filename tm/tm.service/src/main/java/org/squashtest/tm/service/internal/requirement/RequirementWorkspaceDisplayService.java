@@ -30,12 +30,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,7 +62,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
 
 		return DSL
 			.select(
@@ -92,16 +96,16 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("requirement-folders")) {
-					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
 					return buildRequirement(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
-						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"));
+						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent) {
+	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 		attr.put("resId", id);
@@ -126,7 +130,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			attr.put("reference", reference);
 		}
 
-		return buildNode(title, state, attr);
+		return buildNode(title, state, attr, currentUser);
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToMilestone(List<Long> reqVersionIdsWithMilestone) {
@@ -213,7 +217,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	protected Field<Long> getMilestoneId() {
 		return MILESTONE_REQ_VERSION.MILESTONE_ID;
 	}
-
 
 	@Override
 	protected Field<Long> selectLibraryContentContentId() {

@@ -71,31 +71,28 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private InfoListModelService infoListModelService;
 
-	private UserDto currentUser;
+//	@Override
+//	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
+//
+//
+//		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
+//		findWizards(readableProjectIds, jsTreeNodes);
+//
+//		if (currentUser.isNotAdmin()) {
+//			findPermissionMap(currentUser, jsTreeNodes);
+//		}
+//
+//		return jsTreeNodes.values();
+//	}
 
-	@Override
-	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-
-
-		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
-		findWizards(readableProjectIds, jsTreeNodes);
-
-		if (currentUser.isNotAdmin()) {
-			findPermissionMap(currentUser, jsTreeNodes);
-		}
-
-		return jsTreeNodes.values();
-	}
-
-	public Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
-		this.currentUser = currentUser;
+	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
 		Set<Long> childrenIds = new HashSet<>();
 
 		MultiMap libraryFatherChildrenMultiMap = getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds);
 		MultiMap libraryNodeFatherChildrenMultiMap = getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
 
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates);
-		Map<Long, JsTreeNode> jsTreeNodes = doFindLibrariesExpanded(readableProjectIds);
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
+		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
 
 		buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, activeMilestone);
 
@@ -108,7 +105,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes.values();
 	}
 
-	private MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
+	protected MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
 		//TODO is there a collector for apache Multimap?
 		MultiMap result = new MultiValueMap();
 		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
@@ -274,56 +271,56 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 	}
 
+//	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
+//		List<Long> filteredProjectIds;
+//		if (hasActiveFilter(currentUser.getUsername())) {
+//			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
+//		} else {
+//			filteredProjectIds = readableProjectIds;
+//		}
+//
+//
+//		return DSL
+//			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
+//			.from(getLibraryTable())
+//			.join(PROJECT).using(selectLibraryId())
+//			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
+//			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+//			.fetch()
+//			.stream()
+//			.map(r -> {
+//				JsTreeNode node = new JsTreeNode();
+//				Long libraryId = r.get(selectLibraryId(), Long.class);
+//				node.addAttr("resId", libraryId);
+//				node.setTitle(r.get(PROJECT.NAME));
+//				node.addAttr("resType", getResType());
+//				node.addAttr("rel", getRel());
+//				node.addAttr("name", getClassName());
+//				node.addAttr("id", getClassName() + '-' + libraryId);
+//				node.addAttr("title", r.get(PROJECT.LABEL));
+//				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
+//
+//				//permissions set to false by default except for admin which have rights by definition
+//				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+//				for (PermissionWithMask permission : permissions) {
+//					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+//				}
+//
+//				// milestone attributes : libraries are yes-men
+//				node.addAttr("milestone-creatable-deletable", "true");
+//				node.addAttr("milestone-editable", "true");
+//				node.addAttr("wizards", new HashSet<String>());
+//				node.setState(State.closed);
+//				return node;
+//			})
+//			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+//				(u, v) -> {
+//					throw new IllegalStateException(String.format("Duplicate key %s", u));
+//				},
+//				LinkedHashMap::new));
+//	}
+
 	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-		List<Long> filteredProjectIds;
-		if (hasActiveFilter(currentUser.getUsername())) {
-			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-		} else {
-			filteredProjectIds = readableProjectIds;
-		}
-
-
-		return DSL
-			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
-			.from(getLibraryTable())
-			.join(PROJECT).using(selectLibraryId())
-			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.fetch()
-			.stream()
-			.map(r -> {
-				JsTreeNode node = new JsTreeNode();
-				Long libraryId = r.get(selectLibraryId(), Long.class);
-				node.addAttr("resId", libraryId);
-				node.setTitle(r.get(PROJECT.NAME));
-				node.addAttr("resType", getResType());
-				node.addAttr("rel", getRel());
-				node.addAttr("name", getClassName());
-				node.addAttr("id", getClassName() + '-' + libraryId);
-				node.addAttr("title", r.get(PROJECT.LABEL));
-				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
-
-				//permissions set to false by default except for admin which have rights by definition
-				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-				for (PermissionWithMask permission : permissions) {
-					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-				}
-
-				// milestone attributes : libraries are yes-men
-				node.addAttr("milestone-creatable-deletable", "true");
-				node.addAttr("milestone-editable", "true");
-				node.addAttr("wizards", new HashSet<String>());
-				node.setState(State.closed);
-				return node;
-			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
-				(u, v) -> {
-					throw new IllegalStateException(String.format("Duplicate key %s", u));
-				},
-				LinkedHashMap::new));
-	}
-
-	protected Map<Long, JsTreeNode> doFindLibrariesExpanded(List<Long> readableProjectIds) {
 		List<Long> filteredProjectIds;
 		if (hasActiveFilter(currentUser.getUsername())) {
 			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
@@ -366,7 +363,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 					state = State.closed;
 				}
 
-				return buildNode(r.get(PROJECT.NAME), state, attr);
+				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser);
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
 				(u, v) -> {
@@ -375,7 +372,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				LinkedHashMap::new));
 	}
 
-	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent) {
+	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 
@@ -389,10 +386,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		} else {
 			state = State.leaf;
 		}
-		return buildNode(name, state, attr);
+		return buildNode(name, state, attr, currentUser);
 	}
 
-	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr) {
+	protected JsTreeNode buildNode(String title, State state, Map<String, Object> attr, UserDto currentUser) {
 		JsTreeNode node = new JsTreeNode();
 		node.setTitle(title);
 		if (state != null) {
@@ -505,7 +502,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return record1.get(PROJECT_FILTER.ACTIVATED);
 	}
 
-
 	private String buildResourceType(String classSimpleName) {
 		String singleResourceType = HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
 		return singleResourceType.replaceAll("y$", "ies");
@@ -575,7 +571,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return buildResourceType(getClassName());
 	}
 
-	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates);
+	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser);
 
 	protected abstract Field<Long> getMilestoneLibraryNodeId();
 

@@ -20,10 +20,11 @@
  */
 package org.squashtest.tm.service.workspace
 
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
@@ -74,16 +75,16 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
 		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
 		where:
-		readableProjectIds   || expectedLibrariesIds 	| expectedProjectsNames | expectedLibraryFullId
-		[]                   || [] 						| [] 					| []
-		[-1L, -2L, -3L, -4L] || [-1L, -20L, -3L] 		| ["foo", "bar", "baz"] | ["TestCaseLibrary-1", "TestCaseLibrary-20", "TestCaseLibrary-3"]
+		readableProjectIds   || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                   || [] | [] | []
+		[-1L, -2L, -3L, -4L] || [-1L, -20L, -3L] | ["foo", "bar", "baz"] | ["TestCaseLibrary-1", "TestCaseLibrary-20", "TestCaseLibrary-3"]
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.xml")
@@ -92,28 +93,28 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
 		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
 		where:
-		readableProjectIds   || expectedLibrariesIds 	| expectedProjectsNames | expectedLibraryFullId
-		[]                   || [] 						| [] 					| []
-		[-1L, -2L, -3L, -4L] || [-1L, -20L] 			| ["foo", "bar"] 		| ["TestCaseLibrary-1", "TestCaseLibrary-20"]
+		readableProjectIds   || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                   || [] | [] | []
+		[-1L, -2L, -3L, -4L] || [-1L, -20L] | ["foo", "bar"] | ["TestCaseLibrary-1", "TestCaseLibrary-20"]
 	}
 
 	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find test Case Libraries as JsTreeNode with all perm for admin"() {
 		given:
 		UserDto user = new UserDto("robert", -2L, [], true)
-
+		testCaseWorkspaceDisplayService
 		and:
 		def readableProjectIds = [-1L, -2L, -3L, -4L]
 
 		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
 		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == [-1L, -20L, -3L].sort() as Set
@@ -239,71 +240,64 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseDisplayService.sandbox.xml")
-	def "should build open test Case folders with all their children"() {
-		given:
-		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
-
-		when:
-		def jsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L], null)
-
-		then:
-		def JsTreeNode parentFolder = jsTreeNodes.get(-5L);
-
-		def List<JsTreeNode> children = parentFolder.getChildren();
-
-		def List<JsTreeNode> grandChildren = children.get(1).getChildren();
-
-		children.size() == 3
-		children.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
-		children.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
-		children.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
-
-		grandChildren.size() == 1
-		grandChildren.collect { it.getAttr().get("resId") } == [-13L]
-		grandChildren.collect { it.getTitle() } == ["test case 3"]
-		grandChildren.collect { it.getState() } == ["leaf"]
-
-	}
-
-	@DataSet("TestCaseDisplayService.sandbox.xml")
 	def "should build test Case libraries with all their children"() {
 
 		given:
 
-		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
 
-		and:
+		MultiMap expansionCandidates = new MultiValueMap();
+		expansionCandidates.put("TestCaseLibrary", -1L);
+		expansionCandidates.put("TestCaseLibrary", -4L);
+		expansionCandidates.put("TestCaseFolder", -5L);
+		expansionCandidates.put("TestCaseFolder", -6L);
 
-		def expandedJsTreeNodes = testCaseWorkspaceDisplayService.FindExpandedJsTreeNodes(user, [-5L, -7L], null)
-
-		and:
+		Set<Long> childrenIds = new HashSet<>();
 
 		def readableProjectIds = [-1L, -2L, -3L, -4L]
 
 		when:
 
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, [-1L], expandedJsTreeNodes, null)
+		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
+		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
 
 		then:
 
-		jsTreeNodes.size () ==3;
+		libraryFatherChildrenMultiMap.size() == 1
+		libraryFatherChildrenMultiMap.keySet() == [-1L] as Set
+		libraryFatherChildrenMultiMap.get(-1L).sort() == [-9L, -8L, -5L]
+
+		libraryNodeFatherChildrenMultiMap.size() == 2
+		libraryNodeFatherChildrenMultiMap.keySet() == [-5L, -6L] as Set
+		libraryNodeFatherChildrenMultiMap.get(-5L).sort() == [-11L, -7L, -6L]
+
+		childrenIds.size() == 7
+		childrenIds == [-12L, -11L, -9L, -8L, -7L, -6L, -5L] as Set
+
+		libraryChildrenMap.keySet() == childrenIds as Set
+
+		jsTreeNodes.size() == 3;
 		jsTreeNodes.values().collect { it.getAttr().get("resId") }.sort() == [-20L, -3L, -1L]
 		jsTreeNodes.values().collect { it.getTitle() }.sort() == ["bar", "baz", "foo"]
 		jsTreeNodes.values().collect { it.getState() }.sort() == ["leaf", "leaf", "open"]
 
-		def List<JsTreeNode> children = jsTreeNodes.get(-1L).getChildren();
+		def List<JsTreeNode> children = jsTreeNodes.get(-1L).getChildren(); //id : -1L foo
 
-		children.size()==3
+		children.size() == 3
 		children.collect { it.getAttr().get("resId") }.sort() == [-9L, -8L, -5L]
 		children.collect { it.getTitle() }.sort() == ["folder 1", "folder 4", "folder 5"]
 		children.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
 
-		def List<JsTreeNode> grandChildren = children.get(0).getChildren();
+		def List<JsTreeNode> grandChildren = children.get(0).getChildren();  //id:-5L folder 1
 
 		grandChildren.size() == 3
 		grandChildren.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
 		grandChildren.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
 		grandChildren.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
 
+		grandChildren.get(2).getAttr().get("isreqcovered") == true
 	}
 }

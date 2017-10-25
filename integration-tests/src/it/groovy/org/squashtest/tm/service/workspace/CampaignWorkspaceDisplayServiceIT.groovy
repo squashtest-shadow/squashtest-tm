@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.service.workspace
 
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
@@ -28,7 +30,6 @@ import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayServi
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
-import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
@@ -76,7 +77,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
 
 		when:
-		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
 		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
@@ -94,7 +95,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
     	UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
 
     	when:
-    	def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+    	def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
     	then:
     	jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
@@ -115,7 +116,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		def readableProjectIds = [-14L,-15L,-16L,-19L,-21L]
 
 		when:
-		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
 		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == [-14L,-15L,-16L,-19L].sort() as Set
@@ -241,5 +242,78 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsonMilestones.collect{it.label}.sort() == ["Jalon 1","Jalon 2"]
 	}
 
+	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
+	def "should build requirement libraries with all their children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+		MultiMap expansionCandidates = new MultiValueMap();
+		expansionCandidates.put("CampaignLibrary", -14L);
+		expansionCandidates.put("CampaignFolder", -104L);
+		expansionCandidates.put("Campaign", -105L);
+		expansionCandidates.put("Iteration", -83);
+
+		Set<Long> childrenIds = new HashSet<>();
+
+		def readableProjectIds = [-14L, -15L, -16L, -19L, -21L]
+
+		when:
+
+		def libraryFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
+		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
+		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
+
+		then:
+
+		libraryFatherChildrenMultiMap.size() == 1
+		libraryFatherChildrenMultiMap.keySet() == [-14L] as Set
+		libraryFatherChildrenMultiMap.get(-14L) == [-104L]
+
+		libraryNodeFatherChildrenMultiMap.size() == 1
+		libraryNodeFatherChildrenMultiMap.keySet() == [-104L] as Set
+		libraryNodeFatherChildrenMultiMap.get(-104L) == [-105L]
+
+		childrenIds.size() == 2
+		childrenIds == [-104L, -105L] as Set
+
+		libraryChildrenMap.keySet() == childrenIds as Set
+
+		jsTreeNodes.size() == 2;
+		jsTreeNodes.values().collect { it.getAttr().get("resId") }.sort() == [-15L, -14L]
+		jsTreeNodes.values().collect { it.getTitle() }.sort() == ["Projet 1", "Test Project-1"]
+		jsTreeNodes.values().collect { it.getState() }.sort() == ["closed", "open"]
+
+		def List<JsTreeNode> libraryChildren = jsTreeNodes.get(-14L).getChildren();  //id -14 : Test Project11
+
+		libraryChildren.size() == 1
+		libraryChildren.collect { it.getAttr().get("resId") } == [-104L]
+		libraryChildren.collect {it.getTitle()}.sort() == ["Folder Test 1"]
+		libraryChildren.collect { it.getState() }.sort() == ["open"]
+
+		def List<JsTreeNode> folderChildren = libraryChildren.get(0).getChildren();  //id -104 : Folder Test 1
+
+		folderChildren.size() == 1
+		folderChildren.collect { it.getAttr().get("resId") }.sort() == [-105L]
+		folderChildren.collect {it.getTitle()}.sort() == ["Campaign Test 1"]
+		folderChildren.collect { it.getState() }.sort() == ["open"]
+
+		def List<JsTreeNode> campaignChildren = folderChildren.get(0).getChildren();  //id -105 : Campaign Test 1
+
+		campaignChildren.size() == 1
+		campaignChildren.collect { it.getAttr().get("resId") }.sort() == [-83L]
+		campaignChildren.collect {it.getTitle()}.sort() == ["Iteration - 1"]
+		campaignChildren.collect { it.getState() }.sort() == ["open"]
+
+		def List<JsTreeNode> iterationChildren = campaignChildren.get(0).getChildren();  //id -83 : Iteration - 1
+
+		iterationChildren.size() == 1
+		iterationChildren.collect { it.getAttr().get("resId") }.sort() == [-2L]
+		iterationChildren.collect {it.getTitle()}.sort() == ["Test Suite 1"]
+		iterationChildren.collect { it.getState() }.sort() == ["leaf"]
+	}
 
 }

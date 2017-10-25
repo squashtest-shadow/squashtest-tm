@@ -38,9 +38,9 @@ public interface WorkspaceDisplayService {
 	 * @param expansionCandidates
 	 *@param jsMilestone @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
 	 */
-	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+//	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
 
-	Collection<JsTreeNode> findAllLibrariesExpanded(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone jsMilestone);
+	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone jsMilestone);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 

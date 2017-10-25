@@ -21,10 +21,11 @@
 
 package org.squashtest.tm.service.workspace
 
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
@@ -53,7 +54,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	private HashMap<Long, JsTreeNode> initNoWizardJsTreeNodes() {
 		Map<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
-		jsTreeNodes.values().each {it.addAttr("wizards",[] as Set)}
+		jsTreeNodes.values().each { it.addAttr("wizards", [] as Set) }
 		jsTreeNodes
 	}
 
@@ -66,7 +67,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		def reqVersionIds = requirementWorkspaceDisplayService.findNodesByMilestoneId(milestoneId)
 
 		then:
-		reqVersionIds.collect().sort() as Set == [-266L,-265L,-272L,-270L].sort() as Set
+		reqVersionIds.collect().sort() as Set == [-266L, -265L, -272L, -270L].sort() as Set
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.milestone.xml")
@@ -78,43 +79,43 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		def reqVersionIds = requirementWorkspaceDisplayService.findReqsWithChildrenLinkedToMilestone(reqVersionIdsWithMilestone)
 
 		then:
-		reqVersionIds.collect().sort() as Set == [-14L,-13L].sort() as Set
+		reqVersionIds.collect().sort() as Set == [-14L, -13L].sort() as Set
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find Requirement Libraries as JsTreeNode"() {
 		given:
-		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
-		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
-		jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
 		where:
-		readableProjectIds 			|| expectedLibrariesIds 		| expectedProjectsNames 								| expectedLibraryFullId
-		[]							|| []							|[]														|[]
-		[-14L,-15L,-16L,-19L,-21L]	|| [-14L,-15L,-16L,-19L]		|["Test Project-1","Projet 1","Projet 2","Projet 5"]	|["RequirementLibrary-14","RequirementLibrary-15","RequirementLibrary-16","RequirementLibrary-19"]
+		readableProjectIds             || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                             || [] | [] | []
+		[-14L, -15L, -16L, -19L, -21L] || [-14L, -15L, -16L, -19L] | ["Test Project-1", "Projet 1", "Projet 2", "Projet 5"] | ["RequirementLibrary-14", "RequirementLibrary-15", "RequirementLibrary-16", "RequirementLibrary-19"]
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
 	def "should find Requirement Libraries as JsTreeNode with filter"() {
-    	given:
-    	UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+		given:
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
-    	when:
-    	def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		when:
+		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
-    	then:
-    	jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
-    	jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+		then:
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
-    	where:
-    	readableProjectIds 			|| expectedLibrariesIds | expectedProjectsNames 		| expectedLibraryFullId
-    	[]							|| []					|[]								|[]
-    	[-14L,-15L,-16L,-19L,-21L]	|| [-14L,-15L]			|["Test Project-1","Projet 1"]	|["RequirementLibrary-14","RequirementLibrary-15"]
+		where:
+		readableProjectIds             || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                             || [] | [] | []
+		[-14L, -15L, -16L, -19L, -21L] || [-14L, -15L] | ["Test Project-1", "Projet 1"] | ["RequirementLibrary-14", "RequirementLibrary-15"]
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.no.filter.xml")
@@ -123,28 +124,28 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [], true)
 
 		and:
-		def readableProjectIds = [-14L,-15L,-16L,-19L,-21L]
+		def readableProjectIds = [-14L, -15L, -16L, -19L, -21L]
 
 		when:
-		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user, new ArrayList<>(), new HashMap<>(), null)
+		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
-		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == [-14L,-15L,-16L,-19L].sort() as Set
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.READ.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.WRITE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.CREATE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.DELETE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXECUTE.getQuality()) == null} //execute is only for campaign
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.ATTACH.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.MANAGEMENT.getQuality()) == null} //management is only for projects
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == [-14L, -15L, -16L, -19L].sort() as Set
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.READ.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.WRITE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.CREATE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.DELETE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.EXECUTE.getQuality()) == null } //execute is only for campaign
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.EXPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.ATTACH.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.MANAGEMENT.getQuality()) == null } //management is only for projects
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
-	def "should find permission masks for standard user"(){
+	def "should find permission masks for standard user"() {
 		given:
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 		HashMap<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
@@ -153,7 +154,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		requirementWorkspaceDisplayService.findPermissionMap(user, jsTreeNodes)
 
 		then:
-		jsTreeNodes.keySet().sort() == [-14L,-15L,-16L,-19L].sort()
+		jsTreeNodes.keySet().sort() == [-14L, -15L, -16L, -19L].sort()
 
 		def lib15Attr = jsTreeNodes.get(-15L).getAttr()
 		lib15Attr.get(PermissionWithMask.READ.getQuality()) == String.valueOf(true)
@@ -205,32 +206,32 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
-	def "should find wizards for requirement library"(){
+	def "should find wizards for requirement library"() {
 		given:
 		def jsTreeNodes = initNoWizardJsTreeNodes()
 
 		when:
-		requirementWorkspaceDisplayService.findWizards([-14L,-15L,-16L,-19L,-21L], jsTreeNodes)
+		requirementWorkspaceDisplayService.findWizards([-14L, -15L, -16L, -19L, -21L], jsTreeNodes)
 
 		then:
 		jsTreeNodes.size() == 4
 		jsTreeNodes.get(-14L).getAttr().get("wizards") == ["RedmineReq"] as Set
-		jsTreeNodes.get(-15L).getAttr().get("wizards") == ["RedmineReq","JiraAgile","JiraForSquash"] as Set
-		jsTreeNodes.get(-16L).getAttr().get("wizards") == ["JiraReq","JiraAgile"] as Set
+		jsTreeNodes.get(-15L).getAttr().get("wizards") == ["RedmineReq", "JiraAgile", "JiraForSquash"] as Set
+		jsTreeNodes.get(-16L).getAttr().get("wizards") == ["JiraReq", "JiraAgile"] as Set
 		jsTreeNodes.get(-19L).getAttr().get("wizards") == [] as Set
 	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
-	def "should find projects models"(){
-		given :
-		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+	def "should find projects models"() {
+		given:
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsonProjects = requirementWorkspaceDisplayService.findAllProjects([-14L,-15L,-16L,-19L,-21L], user)
+		def jsonProjects = requirementWorkspaceDisplayService.findAllProjects([-14L, -15L, -16L, -19L, -21L], user)
 
 		then:
 		jsonProjects.size() == 4
-		jsonProjects.collect{it.name}.sort() == ["Projet 1","Projet 2","Projet 5","Test Project-1"]
+		jsonProjects.collect { it.name }.sort() == ["Projet 1", "Projet 2", "Projet 5", "Test Project-1"]
 
 		def jsonProject15 = jsonProjects.getAt(2)
 		jsonProject15.getId() == -15L
@@ -243,14 +244,80 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		customFieldBindings.size() == 8
 		def customFieldBindingModels = customFieldBindings.get("REQUIREMENT_VERSION")
 		customFieldBindingModels.size() == 4
-		customFieldBindingModels.collect{it.id}.sort() == [-4L,-3L,-2L,-1L]
-		customFieldBindingModels.collect{it.customField.id}.sort() == [-4L,-3L,-2L,-1L]
-		customFieldBindingModels.collect{it.customField.name}.sort() == ["Liste","Liste 2","Lot","Rich"]
+		customFieldBindingModels.collect { it.id }.sort() == [-4L, -3L, -2L, -1L]
+		customFieldBindingModels.collect { it.customField.id }.sort() == [-4L, -3L, -2L, -1L]
+		customFieldBindingModels.collect { it.customField.name }.sort() == ["Liste", "Liste 2", "Lot", "Rich"]
 
 		def jsonMilestones = jsonProject15.getMilestones()
 		jsonMilestones.size() == 2
-		jsonMilestones.collect{it.label}.sort() == ["Jalon 1","Jalon 2"]
+		jsonMilestones.collect { it.label }.sort() == ["Jalon 1", "Jalon 2"]
 	}
 
+	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
+	def "should build requirement libraries with all their children"() {
 
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+		MultiMap expansionCandidates = new MultiValueMap();
+		expansionCandidates.put("RequirementLibrary", -15L);
+		expansionCandidates.put("RequirementFolder", -256L);
+		expansionCandidates.put("Requirement", -270L);
+
+		Set<Long> childrenIds = new HashSet<>();
+
+		def readableProjectIds = [-14L, -15L, -16L, -19L, -21L]
+
+		when:
+
+		def libraryFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
+		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
+		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
+
+		then:
+
+		libraryFatherChildrenMultiMap.size() == 1
+		libraryFatherChildrenMultiMap.keySet() == [-15L] as Set
+		libraryFatherChildrenMultiMap.get(-15L).sort() == [-276L, -270L, -269L, -257L, -256L]
+
+		libraryNodeFatherChildrenMultiMap.size() == 2
+		libraryNodeFatherChildrenMultiMap.keySet().sort() == [-270L, -256L].sort()
+		libraryNodeFatherChildrenMultiMap.get(-256L).sort() == [-259L, -258L]
+
+		childrenIds.size() == 8
+		childrenIds == [-276L, -271L, -270L, -269L, -259L, -258L, -257L, -256L] as Set
+
+		libraryChildrenMap.keySet() == childrenIds as Set
+
+		jsTreeNodes.size() == 2;
+		jsTreeNodes.values().collect { it.getAttr().get("resId") }.sort() == [-15L, -14L]
+		jsTreeNodes.values().collect { it.getTitle() }.sort() == ["Projet 1", "Test Project-1"]
+		jsTreeNodes.values().collect { it.getState() }.sort() == ["closed", "open"]
+
+		def List<JsTreeNode> libraryChildren = jsTreeNodes.get(-15L).getChildren();  //id -15 : Projet 1
+
+		libraryChildren.size() == 5
+		libraryChildren.collect { it.getAttr().get("resId") }.sort() == [-276L, -270L, -269L, -257L, -256L]
+		libraryChildren.collect {
+			it.getTitle()
+		}.sort() == ["Dossier A", "Dossier B", "Exigence", "Exigence 0", "Exigence 10"]
+		libraryChildren.collect { it.getState() }.sort() == ["closed", "leaf", "leaf", "open", "open"]
+
+		def List<JsTreeNode> folderChildren = libraryChildren.get(0).getChildren();  //id -256 : Dossier A
+
+		folderChildren.size() == 2
+		folderChildren.collect { it.getAttr().get("resId") }.sort() == [-259L, -258L]
+		folderChildren.collect { it.getTitle() }.sort() == ["Dossier A2", "Dossier AA"]
+		folderChildren.collect { it.getState() }.sort() == ["closed", "leaf"]
+
+		def List<JsTreeNode> campaignChildren = libraryChildren.get(3).getChildren();  //id -270 : Exigence 10
+
+		requirementChildren.size() == 1
+		requirementChildren.collect { it.getAttr().get("resId") }.sort() == [-271L]
+		requirementChildren.collect { it.getTitle() }.sort() == ["Exigence 11"]
+		requirementChildren.collect { it.getState() }.sort() == ["closed"]
+	}
 }

@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
@@ -65,7 +66,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	//TODO add milestones
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
 
 		return DSL
 			.select(
@@ -102,18 +103,17 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("test-case-folders")) {
-					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"),  currentUser);
 				} else {
 					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"));
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"),  currentUser);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	//TODO reqCovered reccursif
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
-									 String hasStep, String isDirectlyReqCovered) {
+									 String hasStep, String isDirectlyReqCovered, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		Boolean isreqcovered = Boolean.parseBoolean(isDirectlyReqCovered) ||
 			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
@@ -140,7 +140,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			attr.put("reference", reference);
 			title = reference + " - " + title;
 		}
-		return buildNode(title, State.leaf, attr);
+		return buildNode(title, State.leaf, attr,  currentUser);
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************

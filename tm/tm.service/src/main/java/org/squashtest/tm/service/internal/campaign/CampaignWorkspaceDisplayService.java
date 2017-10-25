@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
@@ -65,15 +66,15 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private MultiMap expansionCandidates;
 	private MultiMap campaignFatherChildrenMultimap = new MultiValueMap();
-	private Map<Long, JsTreeNode> campaignChildrenMap = new HashMap<>();
 	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();
-	private Map<Long, JsTreeNode> iterationChildrenMap = new HashMap<>();
+	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
+	private Map<Long, JsTreeNode> testSuiteMap = new HashMap<>();
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
 		this.expansionCandidates = expansionCandidates;
 
-		getCampaignHierarchy();
+		getCampaignHierarchy(currentUser);
 
 		return DSL
 			.select(
@@ -99,15 +100,15 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("campaign-folders")) {
-					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"));
+					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
-					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"));
+					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"), currentUser);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent) {
+	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 
 		attr.put("resId", campaignId);
@@ -122,7 +123,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			title = reference + " - " + title;
 		}
 
-		JsTreeNode campaign = buildNode(title, null, attr);
+		JsTreeNode campaign = buildNode(title, null, attr, currentUser);
 
 		// Messy but still simpler than GOT's genealogy
 		if (!Boolean.parseBoolean(hasContent)) {
@@ -131,12 +132,12 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			campaign.setState(State.open);
 			for (Long iterationId : (ArrayList<Long>) campaignFatherChildrenMultimap.get(campaignId)) {
 				if (iterationFatherChildrenMultiMap.containsKey(iterationId)) {
-					campaignChildrenMap.get(iterationId).setState(State.open);
-					for (Long grandChildId : (ArrayList<Long>) iterationFatherChildrenMultiMap.get(iterationId)) {
-						campaignChildrenMap.get(iterationId).addChild(iterationChildrenMap.get(grandChildId));
+					iterationMap.get(iterationId).setState(State.open);
+					for (Long testSuiteId : (ArrayList<Long>) iterationFatherChildrenMultiMap.get(iterationId)) {
+						iterationMap.get(iterationId).addChild(testSuiteMap.get(testSuiteId));
 					}
 				}
-				campaign.addChild(campaignChildrenMap.get(iterationId));
+				campaign.addChild(iterationMap.get(iterationId));
 			}
 		} else {
 			campaign.setState(State.closed);
@@ -144,7 +145,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return campaign;
 	}
 
-	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent) {
+	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		JsTreeNode.State state;
 
@@ -165,10 +166,10 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			title = reference + " - " + title;
 			attr.put("reference", reference);
 		}
-		return buildNode(title, state, attr);
+		return buildNode(title, state, attr, currentUser);
 	}
 
-	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description) {
+	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 
 		attr.put("resId", id);
@@ -181,19 +182,19 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		String[] args = {getMessage("execution.execution-status." + executionStatus)};
 		String tooltip = getMessage("label.tree.testSuite.tooltip", args);
 		attr.put("title", tooltip + "\n" + removeHtml(description));
-		return buildNode(name, State.leaf, attr);
+		return buildNode(name, State.leaf, attr, currentUser);
 
 	}
 
 	//Campaigns got iterations and test suites which aren't located in the campaign_library_node table.
 	// We must fetch them separately, because they might have identical ids
-	private void getCampaignHierarchy() {
+	private void getCampaignHierarchy(UserDto currentUser) {
 		//first: iterations, get father-children relation, fetch them and add them to the campaigns
 		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign");
-		campaignChildrenMap = getCampaignChildren(campaignFatherChildrenMultimap);
+		iterationMap = getCampaignChildren(campaignFatherChildrenMultimap, currentUser);
 		//second test suites, get father-children relation, fetch them and add them  to  the iterations
 		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration");
-		iterationChildrenMap = getIterationChildren(iterationFatherChildrenMultiMap);
+		testSuiteMap = getIterationChildren(iterationFatherChildrenMultiMap, currentUser);
 
 	}
 
@@ -206,15 +207,16 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		TableLike<?> table;
 
 		if (resType.equals("Campaign")) {
+			table = CI;
 			fatherColumn = CI.CAMPAIGN_ID;
 			childColumn = CI.ITERATION_ID;
 			orderColumn = CI.ITERATION_ORDER;
-			table = CI;
 		} else {
+			table = ITS;
 			fatherColumn = ITS.ITERATION_ID;
 			childColumn = ITS.TEST_SUITE_ID;
 			orderColumn = ITS.TEST_SUITE_ID;
-			table = ITS;
+
 		}
 		List<Long> openedEntityIds = (List<Long>) expansionCandidates.get(resType);
 		if (!CollectionUtils.isEmpty(openedEntityIds)) {
@@ -235,7 +237,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return result;
 	}
 
-	private Map<Long, JsTreeNode> getCampaignChildren(MultiMap fatherChildrenEntity) {
+	private Map<Long, JsTreeNode> getCampaignChildren(MultiMap fatherChildrenEntity, UserDto currentUser) {
 		return DSL
 			.select(
 				IT.ITERATION_ID,
@@ -255,11 +257,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.fetch()
 			.stream()
 			.map(r -> buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
-				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT")))
+				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"), currentUser))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity) {
+	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity, UserDto currentUser) {
 		return DSL
 			.select(
 				TS.ID,
@@ -274,7 +276,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.where(TS.ID.in(fatherChildrenEntity.values()))
 			.fetch()
 			.stream()
-			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION")))
+			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"), currentUser))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 

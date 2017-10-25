@@ -158,7 +158,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 //		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser);
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibrariesExpanded(projectIds, currentUser,expansionCandidates,jsMilestone);
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser,expansionCandidates,jsMilestone);
 
 		model.addAttribute("rootModel", rootNodes);
 		populateModel(model, locale);

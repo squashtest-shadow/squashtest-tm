@@ -27,6 +27,7 @@ import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
@@ -44,9 +45,8 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Inject
 	DSLContext DSL;
 
-
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser) {
 		return null;
 	}
 
