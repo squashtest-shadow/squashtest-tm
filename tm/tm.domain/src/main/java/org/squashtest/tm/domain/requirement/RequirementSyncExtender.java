@@ -34,6 +34,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 
 
 /**
@@ -78,6 +79,9 @@ public class RequirementSyncExtender {
 	@Column(name = "REMOTE_REQ_URL")
 	private URL remoteUrl;
 
+	@ManyToOne
+	@JoinColumn(name = "REMOTE_SYNCHRONISATION_ID")
+	private RemoteSynchronisation remoteSynchronisation;
 
 	public RequirementSyncExtender(){
 		super();
@@ -146,6 +150,12 @@ public class RequirementSyncExtender {
 		this.remoteUrl = remoteUrl;
 	}
 
+	public RemoteSynchronisation getRemoteSynchronisation() {
+		return remoteSynchronisation;
+	}
 
+	public void setRemoteSynchronisation(RemoteSynchronisation remoteSynchronisation) {
+		this.remoteSynchronisation = remoteSynchronisation;
+	}
 }
 
