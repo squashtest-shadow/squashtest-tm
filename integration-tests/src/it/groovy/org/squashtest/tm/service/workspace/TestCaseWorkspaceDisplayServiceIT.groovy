@@ -259,10 +259,10 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		when:
 
 		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
-		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
-		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
-		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
+		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
+		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
 		then:
 

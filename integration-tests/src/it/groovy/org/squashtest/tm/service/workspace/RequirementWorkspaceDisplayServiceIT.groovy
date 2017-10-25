@@ -272,10 +272,10 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		when:
 
 		def libraryFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
-		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
-		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
-		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
+		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
+		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
 		then:
 
@@ -313,7 +313,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		folderChildren.collect { it.getTitle() }.sort() == ["Dossier A2", "Dossier AA"]
 		folderChildren.collect { it.getState() }.sort() == ["closed", "leaf"]
 
-		def List<JsTreeNode> campaignChildren = libraryChildren.get(3).getChildren();  //id -270 : Exigence 10
+		def List<JsTreeNode> requirementChildren = libraryChildren.get(3).getChildren();  //id -270 : Exigence 10
 
 		requirementChildren.size() == 1
 		requirementChildren.collect { it.getAttr().get("resId") }.sort() == [-271L]

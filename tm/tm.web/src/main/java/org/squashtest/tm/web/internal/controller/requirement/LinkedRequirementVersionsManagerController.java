@@ -32,7 +32,12 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -40,6 +45,8 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -53,7 +60,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -99,6 +105,18 @@ public class LinkedRequirementVersionsManagerController {
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private WorkspaceDisplayService requirementWorkspaceDisplayService;
+
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	protected MilestoneModelService milestoneModelService;
+
+	@Inject
+	protected ProjectFinder projectFinder;
+
 	/*
 	 * See VerifyingTestCaseManagerController.verifyingTCMapper
 	 */
@@ -142,7 +160,21 @@ public class LinkedRequirementVersionsManagerController {
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(requirementVersion, "LINK"));
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
+//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
+
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		JsonMilestone jsMilestone = null;
+		// milestones
+		if (activeMilestoneId.isPresent()) {
+			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
+			model.addAttribute("activeMilestone", jsMilestone);
+		}
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
+
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, jsMilestone);
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel linkedReqVersionsModel = buildLinkedReqVersionsModel(requirementVersionId, pas, "");

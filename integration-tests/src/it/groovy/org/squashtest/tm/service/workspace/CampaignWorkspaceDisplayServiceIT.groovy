@@ -262,10 +262,10 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		when:
 
 		def libraryFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
-		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser);
-		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser);
-		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null);
+		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
+		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
+		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
 		then:
 
