@@ -39,10 +39,7 @@ import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayServ
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -264,5 +261,9 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return MILESTONE_TEST_CASE.MILESTONE_ID;
 	}
 
+	@Override
+	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
+		return null;
+	}
 }
 

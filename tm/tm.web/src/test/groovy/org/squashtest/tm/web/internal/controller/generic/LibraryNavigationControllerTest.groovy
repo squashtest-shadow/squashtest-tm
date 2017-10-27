@@ -22,29 +22,28 @@ package org.squashtest.tm.web.internal.controller.generic
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.library.Copiable
-import org.squashtest.tm.domain.library.Folder
-import org.squashtest.tm.domain.library.Library
-import org.squashtest.tm.domain.library.LibraryNode
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor
+import org.squashtest.tm.domain.library.*
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.library.LibraryNavigationService
 import org.squashtest.tm.security.annotation.AclConstrainedObject
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
-
+import org.squashtest.tm.service.library.LibraryNavigationService
+import org.squashtest.tm.service.user.UserAccountService
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService
 import spock.lang.Specification
-
 
 class LibraryNavigationControllerTest extends Specification {
 	DummyController controller = new DummyController()
 	LibraryNavigationService<DummyLibrary, DummyFolder, DummyNode> service = Mock()
+	UserAccountService userAccountService = Mock()
+	WorkspaceDisplayService workspaceDisplayService = Mock();
 
 	def setup() {
 		controller.service = service
+		controller.userAccountService = userAccountService
+		controller.workspaceDisplayService = workspaceDisplayService
 	}
 
 	def "should add folder to root of library and return folder node model"() {
@@ -62,9 +61,8 @@ class LibraryNavigationControllerTest extends Specification {
 
 	def "should return root nodes of library"() {
 		given:
-		DummyFolder rootFolder = Mock()
-
-		service.findLibraryRootContent(10) >> [rootFolder]
+		JsTreeNode rootFolder = Mock()
+		workspaceDisplayService.getNodeContent(_, _, _) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
@@ -76,9 +74,11 @@ class LibraryNavigationControllerTest extends Specification {
 
 	def "should return content nodes of folder"() {
 		given:
-		DummyFolder content = Mock()
+		JsTreeNode content = Mock()
 
-		service.findFolderContent(10) >> [content]
+		List<JsTreeNode> rootnodes = new ArrayList<>()
+		rootnodes.add(rootnodes)
+		workspaceDisplayService.getNodeContent(_, _, _) >> rootnodes
 
 		when:
 		def res = controller.getFolderContentTreeModel(10)
@@ -105,6 +105,7 @@ class LibraryNavigationControllerTest extends Specification {
 
 class DummyController extends LibraryNavigationController<DummyLibrary, DummyFolder, DummyNode> {
 	LibraryNavigationService service
+	WorkspaceDisplayService workspaceDisplayService
 
 	LibraryNavigationService getLibraryNavigationService() {
 		service
@@ -116,102 +117,146 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 
 
 	protected JsTreeNode createJsTreeNode(DummyNode resource) {
-		return null ;
+		return null;
 	}
-
 
 
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
-			new JsTreeNode()
+		new JsTreeNode()
+	}
+
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return workspaceDisplayService
 	}
 
 }
-class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
+
+class DummyFolder extends DummyNode implements Folder<DummyNode> {
 	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
+
 	@Override
-	public List<String> getContentNames() {	return null;}
+	public List<String> getContentNames() { return null; }
+
 	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {}
+
 	@Override
 	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {}
+
 	@Override
 	public boolean isContentNameAvailable(String name) {}
+
 	List getContent() {}
+
 	Collection getOrderedContent() {}
+
 	void addContent(LibraryNode node) {}
+
 	void addContent(LibraryNode node, int position) {}
+
 	void accept(NodeContainerVisitor visitor) {}
-	void removeContent(LibraryNode node){}
+
+	void removeContent(LibraryNode node) {}
+
 	@Override
-	Copiable createCopy(){}
+	Copiable createCopy() {}
+
 	@Override
-	boolean hasContent(){return true}
+	boolean hasContent() { return true }
 }
 
 class DummyNode implements LibraryNode {
 	Long getId() {}
+
 	String getName() {}
+
 	String getDescription() {}
-	void setDescription(String description){}
+
+	void setDescription(String description) {}
+
 	void setName(String name) {}
-	void deleteMe(){}
+
+	void deleteMe() {}
+
 	Project getProject() {}
-	Library getLibrary(){}
+
+	Library getLibrary() {}
+
 	void notifyAssociatedWithProject(Project project) {}
-	Copiable createCopy() {return null}
+
+	Copiable createCopy() { return null }
+
 	void accept(NodeVisitor visitor) {}
+
 	AttachmentList getAttachmentList() {}
 }
+
 class DummyLibrary implements Library<DummyNode> {
 	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
-	public List<String> getContentNames() {	return null;}
+
+	public List<String> getContentNames() { return null; }
+
 	@Override
 	public Long getId() {
 		return null
 	}
+
 	public void addRootContent(DummyNode node) {}
+
 	public void removeRootContent(DummyNode node) {}
+
 	public boolean isContentNameAvailable(String name) {}
+
 	Set getRootContent() {}
+
 	void accept(NodeContainerVisitor visitor) {}
+
 	@Override
-	List getContent(){
+	List getContent() {
 		return null;
 	}
+
 	@Override
-	Collection getOrderedContent(){
+	Collection getOrderedContent() {
 		return null;
 	}
+
 	@Override
 	public Project getProject() {
 		return null
 	}
+
 	@Override
 	@AclConstrainedObject
-	public Library getLibrary(){
+	public Library getLibrary() {
 		return this;
 	}
+
 	void notifyAssociatedWithProject(GenericProject project) {}
 
 	@Override
-	String getClassSimpleName(){
+	String getClassSimpleName() {
 		return "DummyLibrary";
 	}
 
 	@Override
-	String getClassName(){
+	String getClassName() {
 		return "org.squashtest.tm.web.internal.controller.generic.DummyLibrary";
 	}
 
 	@Override
-	boolean hasContent(){
+	boolean hasContent() {
 		return true;
 	}
+
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
 	}
+
 	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {
 	}
+
 	@Override
 	public AttachmentList getAttachmentList() {
 		return null;
@@ -237,7 +282,7 @@ class DummyLibrary implements Library<DummyNode> {
 		return false;
 	}
 
-	public Set<TestCaseLibraryPluginBinding> getAllPluginBindings(){
+	public Set<TestCaseLibraryPluginBinding> getAllPluginBindings() {
 		return [] as Set
 	}
 

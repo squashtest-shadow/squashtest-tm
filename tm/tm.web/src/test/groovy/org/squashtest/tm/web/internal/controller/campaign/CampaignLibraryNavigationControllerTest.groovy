@@ -18,11 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.campaign;
+package org.squashtest.tm.web.internal.controller.campaign
 
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder
@@ -38,24 +40,28 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 	Provider iterationNodeBuilder = Mock()
 	Provider campaignLibraryTreeNodeBuilder = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
-
+	CampaignWorkspaceDisplayService campaignWorkspaceDisplayService = Mock();
+	UserAccountService userAccountService = Mock()
 
 	def setup() {
+		;
 		controller.campaignLibraryNavigationService = service;
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.iterationNodeBuilder = iterationNodeBuilder
 		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
-        controller.permissionEvaluator = permissionEvaluator()
+		controller.permissionEvaluator = permissionEvaluator()
 		controller.internationalizationHelper = internationalizationHelper
+		controller.workspaceDisplayService = campaignWorkspaceDisplayService
+		controller.userAccountService = userAccountService
 
-		internationalizationHelper.internationalize(_,_)>> ""
-		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
-		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
-		internationalizationHelper.getMessage(_, _, _, _)>>"message"
+		internationalizationHelper.internationalize(_, _) >> ""
+		internationalizationHelper.internationalizeYesNo(false, _) >> "non"
+		internationalizationHelper.internationalizeYesNo(true, _) >> "oui"
+		internationalizationHelper.getMessage(_, _, _, _) >> "message"
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService),internationalizationHelper)
-        campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator(),internationalizationHelper)
+		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService), internationalizationHelper)
+		campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator(), internationalizationHelper)
 	}
 
 	def "should return iteration nodes of campaign"() {
@@ -65,7 +71,7 @@ class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		iter.getPlannedTestCase() >> []
 		iter.doMilestonesAllowCreation() >> Boolean.TRUE
 		iter.doMilestonesAllowEdition() >> Boolean.TRUE
-		service.findIterationsByCampaignId(10) >> [iter]
+		campaignWorkspaceDisplayService.getCampaignNodeContent(10,_,_) >> [iter]
 
 		when:
 		def res = controller.getCampaignIterationsTreeModel(10)

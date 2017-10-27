@@ -36,10 +36,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -260,5 +257,10 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Override
 	protected String getLibraryPluginType() {
 		return RequirementLibraryPluginBinding.RL_TYPE;
+	}
+
+	@Override
+	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
+		return null;
 	}
 }

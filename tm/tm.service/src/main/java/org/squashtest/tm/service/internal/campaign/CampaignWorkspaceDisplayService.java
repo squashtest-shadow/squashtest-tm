@@ -65,7 +65,6 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private IterationTestPlanItem ITPI = ITERATION_TEST_PLAN_ITEM.as("ITPI");
 	private TestCaseLibraryNode TCLN = TEST_CASE_LIBRARY_NODE.as("TCLN");
 
-	private MultiMap expansionCandidates;
 	private MultiMap campaignFatherChildrenMultimap = new MultiValueMap();
 	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
@@ -73,9 +72,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {
-		this.expansionCandidates = expansionCandidates;
 
-		getCampaignHierarchy(currentUser);
+		getCampaignHierarchy(currentUser, expansionCandidates);
 
 		return DSL
 			.select(
@@ -110,6 +108,22 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
+
+	public Collection<JsTreeNode> getCampaignNodeContent(Long entityId, UserDto currentUser, String entityClass) {
+		Set<Long> childrenIds = new HashSet<>();
+		MultiMap expansionCandidates = new MultiValueMap();
+		expansionCandidates.put(entityClass, entityId);
+
+		MultiMap entityFatherChildrenMultimap = getFatherChildrenLibraryNode(entityClass,expansionCandidates);
+		childrenIds.remove(entityId);
+
+		Map<Long, JsTreeNode> libraryChildrenMap =
+			(entityClass.equals("Campaign") ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser));
+
+		return libraryChildrenMap.values();
+	}
+
+	// ********************************************** Utils ************************************************************
 
 	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent, UserDto currentUser, Long milestone) {
 		Map<String, Object> attr = new HashMap<>();
@@ -195,17 +209,17 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	//Campaigns got iterations and test suites which aren't located in the campaign_library_node table.
 	// We must fetch them separately, because they might have identical ids
-	private void getCampaignHierarchy(UserDto currentUser) {
+	private void getCampaignHierarchy(UserDto currentUser, MultiMap expansionCandidates) {
 		//first: iterations, get father-children relation, fetch them and add them to the campaigns
-		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign");
+		campaignFatherChildrenMultimap = getFatherChildrenLibraryNode("Campaign", expansionCandidates);
 		iterationMap = getCampaignChildren(campaignFatherChildrenMultimap, currentUser);
 		//second test suites, get father-children relation, fetch them and add them  to  the iterations
-		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration");
+		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration", expansionCandidates);
 		testSuiteMap = getIterationChildren(iterationFatherChildrenMultiMap, currentUser);
 
 	}
 
-	private MultiMap getFatherChildrenLibraryNode(String resType) {
+	private MultiMap getFatherChildrenLibraryNode(String resType, MultiMap expansionCandidates) {
 		MultiMap result = new MultiValueMap();
 
 		TableField<?, ?> fatherColumn;

@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -162,19 +161,12 @@ public class LinkedRequirementVersionsManagerController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
 //		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		JsonMilestone jsMilestone = null;
-		// milestones
-		if (activeMilestoneId.isPresent()) {
-			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			model.addAttribute("activeMilestone", jsMilestone);
-		}
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
 
-		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, jsMilestone);
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel linkedReqVersionsModel = buildLinkedReqVersionsModel(requirementVersionId, pas, "");

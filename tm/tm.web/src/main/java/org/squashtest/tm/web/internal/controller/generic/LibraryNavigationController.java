@@ -20,31 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
@@ -54,26 +38,31 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.report.service.JasperReportsService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
+import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Superclass for library navigation controllers. This controller handles : library root retrieval, folder content
  * retrieval, folder creation at any depth.
  *
- * @author Gregory Fouquet
- *
  * @param <LIBRARY>
  * @param <FOLDER>
  * @param <NODE>
+ * @author Gregory Fouquet
  */
 public abstract class LibraryNavigationController<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 	/**
@@ -93,6 +82,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@Inject
 	protected CustomReportDashboardService customReportDashboardService;
 
+	@Inject
+	protected UserAccountService userAccountService;
+
 	private static final int EOF = -1;
 
 	protected MessageSource getMessageSource() {
@@ -105,9 +97,12 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
-		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
+//		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
+//		return createJsTreeModel(nodes);
 
-		return createJsTreeModel(nodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(libraryId, currentUser, "library");
+		return new ArrayList<>(nodes);
 	}
 
 	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes) {
@@ -115,7 +110,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		for (NODE node : nodes) {
 			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node);
-			if (jsnode != null){
+			if (jsnode != null) {
 				jstreeNodes.add(jsnode);
 			}
 		}
@@ -149,12 +144,12 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
-	public final
- List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
-
-		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-
-		return createJsTreeModel(nodes);
+	public final List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
+		//List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
+		//return createJsTreeModel(nodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(folderId, currentUser, "folder");
+		return new ArrayList<>(nodes);
 	}
 
 	@ResponseBody
@@ -177,7 +172,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
 	public OperationReport confirmNodeDeletion(
-@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
+		@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
 		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
@@ -275,16 +270,16 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 * @param keepRteFormat
 	 */
 	protected void printExport(List<ExportTestCaseData> dataSource, String filename2, String jasperExportFile,
-			HttpServletResponse response, Locale locale, String string, Boolean keepRteFormat) {
+							   HttpServletResponse response, Locale locale, String string, Boolean keepRteFormat) {
 		printExport(dataSource, filename2, jasperExportFile, response, locale, string, keepRteFormat,
-				new HashMap<String, Object>());
+			new HashMap<String, Object>());
 
 	}
 
 
 	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
-			HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
-			Map<String, Object> reportParameters) {
+							   HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
+							   Map<String, Object> reportParameters) {
 		try {
 
 			if (!keepRteFormat) {
@@ -305,7 +300,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);
 			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameters,
-					exportParameter);
+				exportParameter);
 
 			// print it.
 			ServletOutputStream servletStream = response.getOutputStream();
@@ -336,6 +331,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		} while (readByte != EOF);
 
 	}
+
+
+	protected abstract WorkspaceDisplayService workspaceDisplayService();
 
 	// ************************ other utils *************************
 

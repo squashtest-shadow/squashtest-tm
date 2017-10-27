@@ -44,7 +44,6 @@ import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
@@ -111,6 +110,7 @@ public class VerifyingTestCaseManagerController {
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
+	@Named("testCaseWorkspaceDisplayService")
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
 	@Inject
@@ -148,20 +148,13 @@ public class VerifyingTestCaseManagerController {
 
 //		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		JsonMilestone jsMilestone = null;
-		// milestones
-		if (activeMilestoneId.isPresent()) {
-			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			model.addAttribute("activeMilestone", jsMilestone);
-		}
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableRequirementLibraryIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId ).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, jsMilestone);
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");

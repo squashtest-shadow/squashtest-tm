@@ -21,56 +21,58 @@
 package org.squashtest.tm.web.internal.controller.requirement
 
 import com.google.common.base.Optional
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-import org.springframework.context.MessageSource;
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.infolist.ListItemReference
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.user.UserAccountService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 
 import javax.inject.Provider
 
-class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecification {
+class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecification {
 	RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()
 	RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
 	Provider driveNodeBuilder = Mock();
 	Provider requirementLibraryTreeNodeBuilder = Mock();
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
+	UserAccountService userAccountService = Mock();
+	RequirementWorkspaceDisplayService requirementWorkspaceDisplayService = Mock()
 
 	def setup() {
 		controller.requirementLibraryNavigationService = requirementLibraryNavigationService
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.requirementLibraryTreeNodeBuilder = requirementLibraryTreeNodeBuilder
-		use (ReflectionCategory) {
+		controller.userAccountService = userAccountService
+		controller.requirementWorkspaceDisplayService = requirementWorkspaceDisplayService
+
+		use(ReflectionCategory) {
 			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
 		}
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-        requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
+		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
 	}
 
 	def "should add folder to root of library and return folder node model"() {
-			given:
-			RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-			use (ReflectionCategory) {
-				RequirementLibraryNode.set field: "id", of: folder, to: 100L
-			}
+		given:
+		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
+		use(ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: folder, to: 100L
+		}
 
-			when:
-			JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
+		when:
+		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
 
 		then:
 		1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
@@ -82,29 +84,25 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 	def "should return root nodes of library"() {
 		given:
 		RequirementFolder rootFolder = Mock()
-		rootFolder.name >> "root folder"
-		rootFolder.id >> 5
 
-		requirementLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
+		requirementWorkspaceDisplayService.getNodeContent(_,_,_) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
 
 		then:
 		res.size() == 1
-		res[0].title == rootFolder.name
-		res[0].attr['resId'] == "${rootFolder.id}"
 	}
 
 	def "should add requirement to root of library and return requirement node model"() {
 		given:
 		RequirementFormModel firstVersion = new RequirementFormModel(
-				name: "new req",
-				criticality : RequirementCriticality.MAJOR,
-				category : RequirementCategory.PERFORMANCE,
-				customFields : [:])
-		Requirement req = new Requirement(new RequirementVersion(name: "new req", category : new ListItemReference("whatever")))
-		use (ReflectionCategory) {
+			name: "new req",
+			criticality: RequirementCriticality.MAJOR,
+			category: RequirementCategory.PERFORMANCE,
+			customFields: [:])
+		Requirement req = new Requirement(new RequirementVersion(name: "new req", category: new ListItemReference("whatever")))
+		use(ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: req, to: 100L
 		}
 
@@ -124,21 +122,19 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 		content.name >> "content"
 		content.id >> 5
 
-		requirementLibraryNavigationService.findFolderContent(10) >> [content]
+		requirementWorkspaceDisplayService.getNodeContent(_,_,_) >> [content]
 
 		when:
 		def res = controller.getFolderContentTreeModel(10)
 
 		then:
 		res.size() == 1
-		res[0].title == content.name
-		res[0].attr['resId'] == "${content.id}"
 	}
 
 	def "should add folder to folder content and return folder node model"() {
 		given:
 		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use (ReflectionCategory) {
+		use(ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: folder, to: 100L
 		}
 

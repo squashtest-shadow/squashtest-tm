@@ -74,19 +74,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	private final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
 	protected final Integer NODE_WITHOUT_MILESTONE = 0;
 
-//	@Override
-//	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-//
-//
-//		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
-//		findWizards(readableProjectIds, jsTreeNodes);
-//
-//		if (currentUser.isNotAdmin()) {
-//			findPermissionMap(currentUser, jsTreeNodes);
-//		}
-//
-//		return jsTreeNodes.values();
-//	}
+	// ************************************* get Stuff to show the workspace trees *************************************
 
 	public Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, JsonMilestone activeMilestone) {
 		Set<Long> childrenIds = new HashSet<>();
@@ -111,63 +99,56 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsTreeNodes.values();
 	}
 
-	protected MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
-		//TODO is there a collector for apache Multimap?
-		MultiMap result = new MultiValueMap();
-		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
-		if (!CollectionUtils.isEmpty(openedLibraries)) {
-			DSL.select(selectLibraryContentLibraryId(),
-				selectLibraryContentContentId())
-				.from(getLibraryTableContent())
-				.where(selectLibraryContentLibraryId().in(openedLibraries))
-				.orderBy(selectLibraryContentOrder())
-				.fetch()
-				.stream()
-				.forEach(r ->
-						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
-				);
-		}
-		childrenIds.addAll(result.values());
-		return result;
-	}
-
-	protected MultiMap getLibraryNodeFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
-		MultiMap result = new MultiValueMap();
-		List<Long> openedLibraryNodeIds = getOpenedLibraryNodeIds(expansionCandidates);
-		if (!CollectionUtils.isEmpty(openedLibraryNodeIds)) {
-			DSL
-				.select(
-					selectLNRelationshipAncestorId(),
-					selectLNRelationshipDescendantId()
-				)
-				.from(getLNRelationshipTable())
-				.where(selectLNRelationshipAncestorId().in(openedLibraryNodeIds))
-				.orderBy(selectLNRelationshipContentOrder())
-				.fetch()
-				.stream()
-				.forEach(r ->
-						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
-				);
-		}
-		childrenIds.addAll(result.keySet());
-		childrenIds.addAll(result.values());
-		return result;
-	}
-
-	private List<Long> getOpenedLibraryNodeIds(MultiMap expansionCandidates) {
-		List<Long> openedLibraryNodeIds = new ArrayList<>();
-
-		List<Long> folderId = (List<Long>) expansionCandidates.get(getFolderName());
-		List<Long> nodeId = (List<Long>) expansionCandidates.get(getNodeName());
-
-		if (!CollectionUtils.isEmpty(folderId)) {
-			openedLibraryNodeIds.addAll(folderId);
-		}
-		if (!CollectionUtils.isEmpty(nodeId)) {
-			openedLibraryNodeIds.addAll(nodeId);
+	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
+		List<Long> filteredProjectIds;
+		if (hasActiveFilter(currentUser.getUsername())) {
+			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
+		} else {
+			filteredProjectIds = readableProjectIds;
 		}
 
-		return openedLibraryNodeIds;
+		return DSL
+			.select(
+				selectLibraryId(),
+				PROJECT.PROJECT_ID,
+				PROJECT.NAME,
+				PROJECT.LABEL,
+				org.jooq.impl.DSL.decode()
+					.when(selectLibraryContentLibraryId().isNull(), false)
+					.otherwise(true).as("HAS_CONTENT"))
+			.from(getLibraryTable())
+			.join(PROJECT).using(selectLibraryId())
+			.leftJoin(getLibraryTableContent()).on(selectLibraryId().eq(selectLibraryContentLibraryId()))
+			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
+			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.groupBy(selectLibraryId())
+			.fetch()
+			.stream()
+			.map(r -> {
+				Map<String, Object> attr = new HashMap<>();
+				State state;
+				Long libraryId = r.get(selectLibraryId(), Long.class);
+				attr.put("resId", libraryId);
+				attr.put("resType", getResType());
+				attr.put("rel", getRel());
+				attr.put("name", getClassName());
+				attr.put("id", getClassName() + '-' + libraryId);
+				attr.put("title", r.get(PROJECT.LABEL));
+				attr.put("project", r.get(PROJECT.PROJECT_ID));
+
+				if (!(boolean) r.get("HAS_CONTENT")) {
+					state = State.leaf;
+				} else {
+					state = State.closed;
+				}
+
+				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE);
+			})
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
+				(u, v) -> {
+					throw new IllegalStateException(String.format("Duplicate key %s", u));
+				},
+				LinkedHashMap::new));
 	}
 
 	@Override
@@ -227,6 +208,36 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				LinkedHashMap::new));
 	}
 
+	public Collection<JsTreeNode> getNodeContent(Long entityId, UserDto currentUser, String entityClass) {
+		Set<Long> childrenIds = new HashSet<>();
+		MultiMap expansionCandidates = new MultiValueMap();
+
+		switch (entityClass) {
+			case "library":
+				expansionCandidates.put(getClassName(), entityId);
+				getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				break;
+			case "folder":
+				expansionCandidates.put(getFolderName(), entityId);
+				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				break;
+			default: //used for requirements only
+				expansionCandidates.put(entityClass, entityId);
+				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				break;
+		}
+
+		childrenIds.remove(entityId);
+
+		// milestones
+		Map<Long, List<Long>> allMilestonesForLN = findAllMilestonesForLN();
+
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN);
+
+		return libraryChildrenMap.values();
+	}
+
+	// ********************************************** Utils ************************************************************
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		Set<Long> libraryIds = jsTreeNodes.keySet();
 
@@ -277,105 +288,63 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 	}
 
-//	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-//		List<Long> filteredProjectIds;
-//		if (hasActiveFilter(currentUser.getUsername())) {
-//			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-//		} else {
-//			filteredProjectIds = readableProjectIds;
-//		}
-//
-//
-//		return DSL
-//			.select(selectLibraryId(), PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.LABEL)
-//			.from(getLibraryTable())
-//			.join(PROJECT).using(selectLibraryId())
-//			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-//			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-//			.fetch()
-//			.stream()
-//			.map(r -> {
-//				JsTreeNode node = new JsTreeNode();
-//				Long libraryId = r.get(selectLibraryId(), Long.class);
-//				node.addAttr("resId", libraryId);
-//				node.setTitle(r.get(PROJECT.NAME));
-//				node.addAttr("resType", getResType());
-//				node.addAttr("rel", getRel());
-//				node.addAttr("name", getClassName());
-//				node.addAttr("id", getClassName() + '-' + libraryId);
-//				node.addAttr("title", r.get(PROJECT.LABEL));
-//				node.addAttr("project", r.get(PROJECT.PROJECT_ID));
-//
-//				//permissions set to false by default except for admin which have rights by definition
-//				EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
-//				for (PermissionWithMask permission : permissions) {
-//					node.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-//				}
-//
-//				// milestone attributes : libraries are yes-men
-//				node.addAttr("milestone-creatable-deletable", "true");
-//				node.addAttr("milestone-editable", "true");
-//				node.addAttr("wizards", new HashSet<String>());
-//				node.setState(State.closed);
-//				return node;
-//			})
-//			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
-//				(u, v) -> {
-//					throw new IllegalStateException(String.format("Duplicate key %s", u));
-//				},
-//				LinkedHashMap::new));
-//	}
+	protected MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
+		//TODO is there a collector for apache Multimap?
+		MultiMap result = new MultiValueMap();
+		List<Long> openedLibraries = (List<Long>) expansionCandidates.get(getClassName());
+		if (!CollectionUtils.isEmpty(openedLibraries)) {
+			DSL.select(selectLibraryContentLibraryId(),
+				selectLibraryContentContentId())
+				.from(getLibraryTableContent())
+				.where(selectLibraryContentLibraryId().in(openedLibraries))
+				.orderBy(selectLibraryContentOrder())
+				.fetch()
+				.stream()
+				.forEach(r ->
+						result.put(r.get(selectLibraryContentLibraryId()), r.get(selectLibraryContentContentId()))
+				);
+		}
+		childrenIds.addAll(result.values());
+		return result;
+	}
 
-	protected Map<Long, JsTreeNode> doFindLibraries(List<Long> readableProjectIds, UserDto currentUser) {
-		List<Long> filteredProjectIds;
-		if (hasActiveFilter(currentUser.getUsername())) {
-			filteredProjectIds = findFilteredProjectIds(readableProjectIds, currentUser.getUsername());
-		} else {
-			filteredProjectIds = readableProjectIds;
+	protected MultiMap getLibraryNodeFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
+		MultiMap result = new MultiValueMap();
+		List<Long> openedLibraryNodeIds = getOpenedLibraryNodeIds(expansionCandidates);
+		if (!CollectionUtils.isEmpty(openedLibraryNodeIds)) {
+			DSL
+				.select(
+					selectLNRelationshipAncestorId(),
+					selectLNRelationshipDescendantId()
+				)
+				.from(getLNRelationshipTable())
+				.where(selectLNRelationshipAncestorId().in(openedLibraryNodeIds))
+				.orderBy(selectLNRelationshipContentOrder())
+				.fetch()
+				.stream()
+				.forEach(r ->
+						result.put(r.get(selectLNRelationshipAncestorId()), r.get(selectLNRelationshipDescendantId()))
+				);
+		}
+		childrenIds.addAll(result.keySet());
+		childrenIds.addAll(result.values());
+		return result;
+	}
+
+	private List<Long> getOpenedLibraryNodeIds(MultiMap expansionCandidates) {
+		List<Long> openedLibraryNodeIds = new ArrayList<>();
+
+		List<Long> folderId = (List<Long>) expansionCandidates.get(getFolderName());
+		List<Long> nodeId = (List<Long>) expansionCandidates.get(getNodeName());
+
+		if (!CollectionUtils.isEmpty(folderId)) {
+			openedLibraryNodeIds.addAll(folderId);
+		}
+		if (!CollectionUtils.isEmpty(nodeId)) {
+			openedLibraryNodeIds.addAll(nodeId);
 		}
 
-		return DSL
-			.select(
-				selectLibraryId(),
-				PROJECT.PROJECT_ID,
-				PROJECT.NAME,
-				PROJECT.LABEL,
-				org.jooq.impl.DSL.decode()
-					.when(selectLibraryContentLibraryId().isNull(), false)
-					.otherwise(true).as("HAS_CONTENT"))
-			.from(getLibraryTable())
-			.join(PROJECT).using(selectLibraryId())
-			.leftJoin(getLibraryTableContent()).on(selectLibraryId().eq(selectLibraryContentLibraryId()))
-			.where(PROJECT.PROJECT_ID.in(filteredProjectIds))
-			.and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
-			.groupBy(selectLibraryId())
-			.fetch()
-			.stream()
-			.map(r -> {
-				Map<String, Object> attr = new HashMap<>();
-				State state;
-				Long libraryId = r.get(selectLibraryId(), Long.class);
-				attr.put("resId", libraryId);
-				attr.put("resType", getResType());
-				attr.put("rel", getRel());
-				attr.put("name", getClassName());
-				attr.put("id", getClassName() + '-' + libraryId);
-				attr.put("title", r.get(PROJECT.LABEL));
-				attr.put("project", r.get(PROJECT.PROJECT_ID));
-
-				if (!(boolean) r.get("HAS_CONTENT")) {
-					state = State.leaf;
-				} else {
-					state = State.closed;
-				}
-
-				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE);
-			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity(),
-				(u, v) -> {
-					throw new IllegalStateException(String.format("Duplicate key %s", u));
-				},
-				LinkedHashMap::new));
+		return openedLibraryNodeIds;
 	}
 
 	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent, UserDto currentUser) {

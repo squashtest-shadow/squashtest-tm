@@ -44,7 +44,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -152,23 +151,15 @@ public class TestSuiteTestPlanManagerController {
 //		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testSuite);
 
-		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
-
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		JsonMilestone jsMilestone = null;
-		// milestones
-		if (activeMilestoneId.isPresent()) {
-			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			mav.addObject("activeMilestone", jsMilestone);
-		}
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableRequirementLibraryIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, jsMilestone);
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
 
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
 		mav.addObject("baseURL", "/test-suites/" + suiteId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);

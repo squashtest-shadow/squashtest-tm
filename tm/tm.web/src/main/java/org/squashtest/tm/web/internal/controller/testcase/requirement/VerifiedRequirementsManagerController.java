@@ -39,7 +39,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
@@ -113,6 +112,7 @@ public class VerifiedRequirementsManagerController {
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
+	@Named("requirementWorkspaceDisplayService")
 	private WorkspaceDisplayService requirementWorkspaceDisplayService;
 
 	@Inject
@@ -141,20 +141,13 @@ public class VerifiedRequirementsManagerController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
 //		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		JsonMilestone jsMilestone = null;
-		// milestones
-		if (activeMilestoneId.isPresent()) {
-			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			model.addAttribute("activeMilestone", jsMilestone);
-		}
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
 			.map(RequirementLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, jsMilestone);
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
 
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);

@@ -134,23 +134,15 @@ public class CampaignTestPlanManagerController {
 
 //		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
-		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
-
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		JsonMilestone jsMilestone = null;
-		// milestones
-		if (activeMilestoneId.isPresent()) {
-			jsMilestone = milestoneModelService.findMilestoneModel(activeMilestoneId.get());
-			mav.addObject("activeMilestone", jsMilestone);
-		}
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableRequirementLibraryIds = testPlanManager.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, jsMilestone);
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
 
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		mav.addObject("milestoneConf", milestoneConf);

@@ -32,6 +32,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,5 +157,10 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Override
 	protected String getLibraryPluginType() {
 		throw new RuntimeException("No plugin library of type Custom Report exists in squash tm");
+	}
+
+	@Override
+	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
+		return null;
 	}
 }

@@ -33,10 +33,11 @@ public interface WorkspaceDisplayService {
 
 	/**
 	 * Service responsible for building the workspace rootModel as a collection of {@link JsTreeNode}. Only libraries are returned, not their content
-	 * @param readableProjectIds The ids of projects witch must be included
-	 * @param currentUser The {@link UserDto} representing current user and somme of it's attributes
+	 *
+	 * @param readableProjectIds  The ids of projects witch must be included
+	 * @param currentUser         The {@link UserDto} representing current user and somme of it's attributes
 	 * @param expansionCandidates
-	 *@param jsMilestone @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
+	 * @param jsMilestone         @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
 	 */
 //	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
 
@@ -44,4 +45,7 @@ public interface WorkspaceDisplayService {
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 
+	Collection<JsTreeNode> getNodeContent(Long folderId, UserDto currentUser, String libraryNode);
+
+	Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode);
 }
