@@ -88,15 +88,13 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private static final String FAKE_TC_ID = "-9000";
 
 	@Override
-	public List<String> findAllUsersWhoCreatedTestCases() {
-		List<Long> readableProjectIds =findAllReadablesId();
-		return projectDao.findUsersWhoCreatedTestCases(readableProjectIds);
+	public List<String> findAllUsersWhoCreatedTestCases(List<Long> idList) {
+		return projectDao.findUsersWhoCreatedTestCases(idList);
 	}
 
 	@Override
-	public List<String> findAllUsersWhoModifiedTestCases() {
-		List<Long> readableProjectIds =findAllReadablesId();
-		return projectDao.findUsersWhoModifiedTestCases(readableProjectIds);
+	public List<String> findAllUsersWhoModifiedTestCases(List<Long> idList) {
+		return projectDao.findUsersWhoModifiedTestCases(idList);
 	}
 
 

@@ -36,7 +36,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -55,10 +54,6 @@ import com.google.common.base.Optional;
 @RequestMapping("/advanced-search")
 public abstract class GlobalSearchController {
 
-
-	@Inject
-	protected UserAccountService userAccountService;
-
 	@Inject
 	private SearchInputInterfaceHelper searchInputInterfaceHelper;
 
@@ -73,7 +68,6 @@ public abstract class GlobalSearchController {
 
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
-
 
 	protected static final String PROJECTS_META = "projects";
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalSearchController.class);
@@ -97,7 +91,7 @@ public abstract class GlobalSearchController {
 	protected Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
 
 	{
-		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
+				formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
@@ -141,10 +135,8 @@ public abstract class GlobalSearchController {
 
 
 
-	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain){
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-
-		initModelForPage(model, associateResultWithType, id);
+	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain,Optional<Milestone> activeMilestone){
+		initModelForPage(model, associateResultWithType, id,activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, domain);
 
 
@@ -160,8 +152,8 @@ public abstract class GlobalSearchController {
 	}
 
 
-	protected void initResultModel(Model model, String searchModel, String associateResultWithType, Long id, String domain){
-		initModelForPage(model, associateResultWithType, id);
+	protected void initResultModel(Model model, String searchModel, String associateResultWithType, Long id, String domain,Optional<Milestone> activeMilestone){
+		initModelForPage(model, associateResultWithType, id,activeMilestone);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, domain);
 		populateMetadata(model);
@@ -192,8 +184,8 @@ public abstract class GlobalSearchController {
 
 
 
-	private void initModelForPage(Model model, String associateResultWithType, Long id) {
-		model.addAttribute("isMilestoneMode", activeMilestoneHolder.getActiveMilestone().isPresent());
+	private void initModelForPage(Model model, String associateResultWithType, Long id,Optional<Milestone> activeMilestone ) {
+		model.addAttribute("isMilestoneMode", activeMilestone.isPresent());
 		if (StringUtils.isNotBlank(associateResultWithType)) {
 			model.addAttribute("associateResult", true);
 			model.addAttribute("associateResultWithType", associateResultWithType);
@@ -214,7 +206,7 @@ public abstract class GlobalSearchController {
 	private Collection<JsonProject> readableJsonProjects() {
 
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
+		UserDto currentUser = new UserDto(null,null,null,true);
 		return  workspaceDisplayService().findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
 	}
 	protected abstract WorkspaceDisplayService workspaceDisplayService();

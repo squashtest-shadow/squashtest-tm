@@ -33,18 +33,18 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 
 public interface RequirementVersionAdvancedSearchService {
 
-	
-	
+
+
 	//Querying
-	
-	
+
+
 	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
-	
+
 	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
 
-	List<String> findAllUsersWhoCreatedRequirementVersions();
-	
-	List<String> findAllUsersWhoModifiedRequirementVersions();
-	
+	List<String> findAllUsersWhoCreatedRequirementVersions(List<Long> idList);
+
+	List<String> findAllUsersWhoModifiedRequirementVersions(List<Long> idList);
+
 
 }

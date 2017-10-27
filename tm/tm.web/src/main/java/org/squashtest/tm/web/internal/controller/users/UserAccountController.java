@@ -123,7 +123,7 @@ public class UserAccountController {
 		if (activeMilestone.isPresent()) {
 			JsonMilestone jsMilestone =
 					new JsonMilestone(
-activeMilestone.get().getId(),
+					activeMilestone.get().getId(),
 					activeMilestone.get().getLabel(), activeMilestone.get().getStatus(),
 					activeMilestone.get().getRange(), activeMilestone.get().getEndDate(),
 					activeMilestone.get().getOwner().getLogin()

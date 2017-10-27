@@ -82,15 +82,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private static final String FAKE_REQUIREMENT_VERSION_ID = "-9000";
 
 	@Override
-	public List<String> findAllUsersWhoCreatedRequirementVersions() {
-		List<Long> readableProjectIds = findAllReadablesId();
-		return projectDao.findUsersWhoCreatedRequirementVersions(readableProjectIds);
+	public List<String> findAllUsersWhoCreatedRequirementVersions(List<Long> idList) {
+		return projectDao.findUsersWhoCreatedRequirementVersions(idList);
 	}
 
 	@Override
-	public List<String> findAllUsersWhoModifiedRequirementVersions() {
-		List<Long> readableProjectIds = findAllReadablesId();
-		return projectDao.findUsersWhoModifiedRequirementVersions(readableProjectIds);
+	public List<String> findAllUsersWhoModifiedRequirementVersions(List<Long> idList) {
+		return projectDao.findUsersWhoModifiedRequirementVersions(idList);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -225,5 +223,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
 	}
+
+
 
 }

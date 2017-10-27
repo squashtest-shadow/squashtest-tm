@@ -21,17 +21,25 @@
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
@@ -59,9 +67,22 @@ public class SearchInputInterfaceHelper {
 	@Inject
 	private TestCaseAdvancedSearchService advancedSearchService;
 
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	@Named("campaignWorkspaceDisplayService")
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
+
+
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 
 		// Perimeter
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementPerimeterPanel(locale));
@@ -70,10 +91,10 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementInformationPanel(locale));
 
 		// History
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale,readableProjectIds));
 
 		// Attributes
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale,currentUser,readableProjectIds));
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
@@ -90,7 +111,7 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAssociationPanel(locale));
 
 		// CUFs
-		model.addPanel(createCUFPanel(locale, BindableEntity.REQUIREMENT_VERSION));
+		model.addPanel(createCUFPanel(locale, BindableEntity.REQUIREMENT_VERSION,readableProjectIds));
 
 		return model;
 	}
@@ -98,6 +119,9 @@ public class SearchInputInterfaceHelper {
 	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
 
 		// Perimeter
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createPerimeterPanel(locale));
@@ -106,10 +130,10 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
 		// History
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
+		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale,readableProjectIds));
 
 		// Attributes
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
+		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale,jsProjects));
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
@@ -123,7 +147,7 @@ public class SearchInputInterfaceHelper {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAssociationPanel(locale));
 
 		// CUF
-		model.addPanel(createCUFPanel(locale, BindableEntity.TEST_CASE));
+		model.addPanel(createCUFPanel(locale, BindableEntity.TEST_CASE,readableProjectIds));
 
 		return model;
 	}
@@ -131,26 +155,28 @@ public class SearchInputInterfaceHelper {
 	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 
 		// Information
 		model.addPanel(campaignSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
 		// Attributes
-		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale));
+		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale,readableProjectIds ));
 
 		// Milestones
 		if (!isMilestoneMode && featureManager.isEnabled(FeatureManager.Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
-		model.addPanel(campaignSearchInterfaceDescription.createExecutionPanel(locale));
+		model.addPanel(campaignSearchInterfaceDescription.createExecutionPanel(locale,readableProjectIds));
 
 		return model;
 	}
 
-	private SearchInputPanelModel createCUFPanel(Locale locale, BindableEntity bindableEntity) {
+	private SearchInputPanelModel createCUFPanel(Locale locale, BindableEntity bindableEntity,List<Long> readableProjectIds ) {
 
-		SearchInputPanelModel panel = getCustomFielModel(locale, bindableEntity);
+		SearchInputPanelModel panel = getCustomFielModel(locale, bindableEntity,readableProjectIds);
 		panel.setTitle(messageSource.internationalize("search.testcase.cuf.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("cuf");
@@ -159,10 +185,10 @@ public class SearchInputInterfaceHelper {
 		return panel;
 	}
 
-	private SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity) {
+	private SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity,List<Long> readableProjectIds) {
 
 		List<CustomFieldModel> customFields = advancedSearchService
-				.findAllQueryableCustomFieldsByBoundEntityType(bindableEntity);
+				.findAllQueryableCustomFieldsByBoundEntityType(bindableEntity,readableProjectIds);
 		return convertToSearchInputPanelModel(customFields, locale);
 	}
 

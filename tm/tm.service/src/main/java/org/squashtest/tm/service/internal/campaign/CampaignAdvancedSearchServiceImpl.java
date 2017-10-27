@@ -64,9 +64,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private EntityManager entityManager;
 
 	@Inject
-	private ProjectsPermissionManagementService projectsPermissionManagementService;
-
-	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
 
 	@Inject
@@ -75,14 +72,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	DSLContext DSL;
 
-
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
 	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
-
 
 	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{
 		new SortField("project.name", SortField.Type.STRING, false),
@@ -107,11 +102,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private static final String FAKE_ITPI_ID = "-9000";
 
 	@Override
-	public List<String> findAllAuthorizedUsersForACampaign() {
+	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
+		UserDto currentUser = new UserDto(null, null, null, true);
 		List<Long> finalProjectsId = new ArrayList<>();
-		workspaceDisplayService.findAllProjects(findAllReadablesId(),currentUser).stream().forEach(r -> {
+		workspaceDisplayService.findAllProjects(idList,currentUser).stream().forEach(r -> {
 				finalProjectsId.add(r.getId());
 				}
 		);

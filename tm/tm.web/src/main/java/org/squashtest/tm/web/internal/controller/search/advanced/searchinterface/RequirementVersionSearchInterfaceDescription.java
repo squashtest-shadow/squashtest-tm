@@ -94,7 +94,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 
-	public SearchInputPanelModel createRequirementAttributePanel(Locale locale) {
+	public SearchInputPanelModel createRequirementAttributePanel(Locale locale,UserDto currentUser,List<Long> readableProjectIds) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -110,7 +110,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.useLocale(locale).build();
 		criticalityField.addPossibleValues(importanceOptions);
 
-		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale);
+		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale,currentUser,readableProjectIds);
 		panel.addField(categoryField);
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
@@ -218,7 +218,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		return panel;
 	}
 
-	public SearchInputPanelModel createRequirementHistoryPanel(Locale locale) {
+	public SearchInputPanelModel createRequirementHistoryPanel(Locale locale,List<Long> readableProjectIds) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.history.panel.title", locale));
@@ -233,7 +233,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.internationalize("search.testcase.history.createdBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(createdByField);
 
-		List<String> users = advancedSearchService.findAllUsersWhoCreatedRequirementVersions();
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedRequirementVersions(readableProjectIds);
 		for (String user : users) {
 			createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
@@ -246,7 +246,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
-		users = advancedSearchService.findAllUsersWhoModifiedRequirementVersions();
+		users = advancedSearchService.findAllUsersWhoModifiedRequirementVersions(readableProjectIds);
 		for (String user : users) {
 			if (StringUtils.isBlank(user)) {
 				modifiedByField.addPossibleValue(optionBuilder.labelI18nKey("label.NeverModified").optionKey("")
@@ -268,15 +268,13 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.build();
 	}
 
-	private SearchInputFieldModel buildCategoryFieldModel(Locale locale){
+	private SearchInputFieldModel buildCategoryFieldModel(Locale locale,UserDto currentUser,List<Long> readableProjectIds){
 
 
 		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource().internationalize(
 				"requirement.category.label", locale), MULTICASCADEFLAT);
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
+		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
 		List<JsonInfoList> categories = new ArrayList<>(jsProjects.size());
 
 		for (JsonProject p : jsProjects){

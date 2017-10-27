@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
@@ -53,14 +54,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	private TestCaseAdvancedSearchService advancedSearchService;
 
 	@Inject
-	protected UserAccountService userAccountService;
-
-	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
-
-	@Inject
-	private CampaignAdvancedSearchService campaignAdvancedSearchService;
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -89,7 +84,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createAttributePanel(Locale locale) {
+	public SearchInputPanelModel createAttributePanel(Locale locale, Collection<JsonProject> jsProjects) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -108,10 +103,10 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		// **************** /natures and types ************************
 
 
-		SearchInputFieldModel natureField = buildNatureFieldModel(locale);
+		SearchInputFieldModel natureField = buildNatureFieldModel(locale,jsProjects);
 		panel.addField(natureField);
 
-		SearchInputFieldModel typeField = buildTypeFieldModel(locale);
+		SearchInputFieldModel typeField = buildTypeFieldModel(locale,jsProjects);
 		panel.addField(typeField);
 
 
@@ -230,7 +225,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createTestCaseHistoryPanel(Locale locale) {
+	public SearchInputPanelModel createTestCaseHistoryPanel(Locale locale, List<Long> idList) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.history.panel.title", locale));
@@ -245,7 +240,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("search.testcase.history.createdBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(createdByField);
 
-		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases();
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases(idList);
 		for (String user : users) {
 			createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
@@ -258,7 +253,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
-		users = advancedSearchService.findAllUsersWhoModifiedTestCases();
+		users = advancedSearchService.findAllUsersWhoModifiedTestCases(idList);
 		for (String user : users) {
 			if (StringUtils.isBlank(user)) {
 				modifiedByField.addPossibleValue(optionBuilder.labelI18nKey("label.NeverModified").optionKey("")
@@ -277,15 +272,12 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 
 
-	private SearchInputFieldModel buildNatureFieldModel(Locale locale){
+	private SearchInputFieldModel buildNatureFieldModel(Locale locale, Collection<JsonProject> jsProjects){
 
 		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
 				"test-case.nature.label", locale), MULTICASCADEFLAT);
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
-
-		Collection<JsonInfoList> natures = new ArrayList<>(campaignAdvancedSearchService.findAllReadablesId().size());
+		Collection<JsonInfoList> natures = new ArrayList<>();
 
 		for (JsonProject p : jsProjects){
 			natures.add(p.getTestCaseNatures());
@@ -297,14 +289,12 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 	}
 
-	private SearchInputFieldModel buildTypeFieldModel(Locale locale){
+	private SearchInputFieldModel buildTypeFieldModel(Locale locale,Collection<JsonProject> jsProjects ){
 
 		SearchInputFieldModel typeField = new SearchInputFieldModel("type", getMessageSource().internationalize(
 				"test-case.type.label", locale), MULTICASCADEFLAT);
 
 		Collection<JsonInfoList> types = new ArrayList<>();
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
 
 		for (JsonProject p : jsProjects){
 			types.add(p.getTestCaseTypes());

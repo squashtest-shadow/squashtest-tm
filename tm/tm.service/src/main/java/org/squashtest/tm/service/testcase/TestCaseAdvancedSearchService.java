@@ -31,19 +31,19 @@ import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
 public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
-	
+
 	//Querying
-	
+
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
-	
+
 	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
-	
+
 	List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale);
 
 	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale);
-	
-	List<String> findAllUsersWhoModifiedTestCases();
 
-	List<String> findAllUsersWhoCreatedTestCases();
-	
+	List<String> findAllUsersWhoModifiedTestCases(List<Long> idList);
+
+	List<String> findAllUsersWhoCreatedTestCases(List<Long> idList);
+
 }

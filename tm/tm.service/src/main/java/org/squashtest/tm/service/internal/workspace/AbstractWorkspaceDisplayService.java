@@ -86,6 +86,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return jsonProjects.values();
 	}
 
+	public Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds) {
+		Map<Long, JsonProject> jsonProjects = findEmptyJsonProjects(readableProjectIds);
+		return jsonProjects.values();
+	}
+
 	protected Map<Long, JsonProject> doFindAllProjects(List<Long> readableProjectIds) {
 		// As projects are objects with complex relationship we pre fetch some of the relation to avoid unnecessary joins or requests, and unnecessary conversion in DTO after fetch
 		// We do that only on collaborators witch should not be too numerous versus the number of projects
@@ -132,6 +137,23 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 			}).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
 	}
+
+	private Map<Long, JsonProject> findEmptyJsonProjects(List<Long> readableProjectIds) {
+		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+			.from(PROJECT)
+			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.orderBy(PROJECT.PROJECT_ID)
+			.stream()
+			.map(r -> {
+				Long projectId = r.get(PROJECT.PROJECT_ID);
+				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+				return jsonProject;
+
+			}).collect(Collectors.toMap(JsonProject::getId, Function.identity()));
+	}
+
+
+
 
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		Set<Long> libraryIds = jsTreeNodes.keySet();

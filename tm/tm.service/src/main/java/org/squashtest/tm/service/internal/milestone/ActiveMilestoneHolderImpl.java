@@ -31,6 +31,7 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 
 import com.google.common.base.Optional;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 
 @Component
@@ -38,6 +39,9 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	@Inject
 	private MilestoneFinderService milestoneFinderService;
+
+	@Inject
+	MilestoneModelService milestoneModelService;
 
 	private final ThreadLocal<Optional<Milestone>> activeMilestoneHolder = new ThreadLocal<>();
 

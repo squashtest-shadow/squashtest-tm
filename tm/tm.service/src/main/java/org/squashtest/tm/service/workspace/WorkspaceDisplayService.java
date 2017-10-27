@@ -39,5 +39,5 @@ public interface WorkspaceDisplayService {
 	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
-
+	Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds);
 }

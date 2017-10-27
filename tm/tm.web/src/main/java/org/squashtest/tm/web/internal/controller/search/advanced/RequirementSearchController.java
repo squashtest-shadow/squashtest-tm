@@ -25,6 +25,7 @@ import java.util.*;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -90,8 +92,8 @@ public class RequirementSearchController extends GlobalSearchController {
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-
-		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT,activeMilestone);
 		return "requirement-search-result.html";
 	}
 
@@ -101,8 +103,8 @@ public class RequirementSearchController extends GlobalSearchController {
 										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-
-		initModel(model, associateResultWithType, id, locale, REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		initModel(model, associateResultWithType, id, locale, REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}
 

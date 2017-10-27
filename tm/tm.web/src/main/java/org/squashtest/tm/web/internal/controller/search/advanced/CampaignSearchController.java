@@ -97,8 +97,8 @@ public class CampaignSearchController extends GlobalSearchController{
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-
-		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN,activeMilestone);
 		return "campaign-search-result.html";
 
 	}
@@ -121,7 +121,7 @@ public class CampaignSearchController extends GlobalSearchController{
 											@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, CAMPAIGN);
+		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
 		List<Long> projectIds =campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user =userAccountService.findCurrentUserDto();
 		Collection<JsTreeNode> rootNodes = workspaceDisplayService.findAllLibraries(projectIds,user);

@@ -68,8 +68,8 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 	}
 
 	public Map<Long, CustomFieldModel> findAllUsedCustomFieldsByEntity(List<Long> projectIds,BindableEntity entity) {
-		List<Long> usedCufIds = findUsedCustomFieldIds(projectIds);
-		return findCufMapByEntityType(usedCufIds,entity);
+//		List<Long> usedCufIds = findUsedCustomFieldIds(projectIds);
+		return findCufMapByEntityType(projectIds,entity);
 	}
 
 	private Map<Long, CustomFieldModel> findUsedCustomFields(List<Long> projectIds) {
@@ -86,7 +86,7 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 			.from(CUSTOM_FIELD)
 			.leftJoin(CUSTOM_FIELD_OPTION).using(CUSTOM_FIELD.CF_ID)
 			.join(CUSTOM_FIELD_BINDING).on(CUSTOM_FIELD.CF_ID.eq(CUSTOM_FIELD_BINDING.CF_ID))
-			.where(CUSTOM_FIELD.CF_ID.in(usedCufIds))
+			.where(CUSTOM_FIELD_BINDING.BOUND_PROJECT_ID.in(usedCufIds))
 			.and(CUSTOM_FIELD_BINDING.BOUND_ENTITY.eq(entity.toString()))
 			.fetch()
 			.forEach(r -> {

@@ -31,7 +31,7 @@ import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
 public interface CampaignAdvancedSearchService extends AdvancedSearchService {
 
-	List<String> findAllAuthorizedUsersForACampaign();
+	List<String> findAllAuthorizedUsersForACampaign(List<Long> idList);
 
 	PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
 			PagingAndMultiSorting paging, Locale locale);

@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
@@ -202,7 +203,7 @@ public abstract class SearchInterfaceDescription {
 			OptionBuilder optionBuilder = optionBuilder(locale);
 			UserDto currentUser = userAccountService.findCurrentUserDto();
 			List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
-			Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(projectIds, currentUser);
+			Collection<JsonProject> jsProjects = workspaceDisplayService.findAllEmptyProjects(projectIds);
 
 			for (JsonProject project : jsProjects) {
 				SearchInputPossibleValueModel projectOption = optionBuilder.label(project.getName())
@@ -256,7 +257,7 @@ public abstract class SearchInterfaceDescription {
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	/**
 	 *

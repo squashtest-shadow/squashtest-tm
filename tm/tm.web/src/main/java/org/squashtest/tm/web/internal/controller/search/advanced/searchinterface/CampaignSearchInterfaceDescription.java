@@ -64,7 +64,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createAttributePanel(Locale locale) {
+	public SearchInputPanelModel createAttributePanel(Locale locale, List<Long> idList) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -91,7 +91,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		/* TODO : Get all assignmentable users */
 		OptionBuilder optionBuilder = optionBuilder(locale);
 
-		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign();
+		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(idList);
 		for (String user : users) {
 			assignmentField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
@@ -100,7 +100,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 	}
 
 
-	public SearchInputPanelModel createExecutionPanel(Locale locale) {
+	public SearchInputPanelModel createExecutionPanel(Locale locale,List<Long> idList) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.execution.label", locale));
@@ -122,7 +122,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("lastExecutedBy",
 				getMessageSource().internationalize("search.execution.executedby.label", locale), MULTIAUTOCOMPLETE);
-		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign();
+		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(idList);
 		for (String user : users) {
 			authorizedUsersField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}

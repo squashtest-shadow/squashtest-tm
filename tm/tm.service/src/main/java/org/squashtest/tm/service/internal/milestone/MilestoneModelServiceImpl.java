@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.jooq.*;
 import org.jooq.exception.DataTypeException;
 import org.jooq.exception.MappingException;
@@ -34,6 +35,7 @@ import org.squashtest.tm.service.milestone.MilestoneModelService;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -122,4 +124,69 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 
 		return milestoneByProjectId;
 	}
+
+	protected List<Long> findAllUsedMilestoneIdsByOne(List<Long> partyIds) {
+		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
+			.from(MILESTONE_BINDING)
+			.where(MILESTONE_BINDING.PROJECT_ID.in(partyIds))
+			.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
+	}
+
+	protected Map<Long, JsonMilestone> findAllJsonMilestonesByUser(List<Long> partyIds) {
+		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
+			, CORE_USER.LOGIN)
+			.from(MILESTONE)
+				.join(CORE_USER).on(MILESTONE.USER_ID.eq(CORE_USER.PARTY_ID))
+				.join(MILESTONE_BINDING).on(MILESTONE_BINDING.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
+				.join(ACL_OBJECT_IDENTITY).on(MILESTONE_BINDING.PROJECT_ID.eq(ACL_OBJECT_IDENTITY.IDENTITY))
+				.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+				.join(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(partyIds)
+				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
+			.fetch()
+			.stream()
+			.map(r -> {
+				String mRangeKey = r.get(MILESTONE.M_RANGE);
+				MilestoneRange milestoneRange = EnumUtils.getEnum(MilestoneRange.class, mRangeKey);
+
+				String mStatusKey = r.get(MILESTONE.STATUS);
+				MilestoneStatus milestoneStatus = EnumUtils.getEnum(MilestoneStatus.class, mStatusKey);
+
+				return new JsonMilestone(r.get(MILESTONE.MILESTONE_ID), r.get(MILESTONE.LABEL), milestoneStatus, milestoneRange, r.get(MILESTONE.END_DATE), r.get(CORE_USER.LOGIN));
+			})
+			.collect(Collectors.toMap(JsonMilestone::getId, Function.identity()));
+	}
+
+	public Map<Long, JsonMilestone> findAllJsonMilestonesByAdmin(List<Long> partyIds) {
+		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
+			, CORE_USER.LOGIN)
+			.from(MILESTONE)
+			.join(CORE_USER).on(MILESTONE.USER_ID.eq(CORE_USER.PARTY_ID))
+			.join(MILESTONE_BINDING).on(MILESTONE_BINDING.MILESTONE_ID.eq(MILESTONE.MILESTONE_ID))
+			.join(PROJECT).on(MILESTONE_BINDING.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+			.where(PROJECT.PROJECT_TYPE.eq("P"))
+			.fetch()
+			.stream()
+			.map(r -> {
+				String mRangeKey = r.get(MILESTONE.M_RANGE);
+				MilestoneRange milestoneRange = EnumUtils.getEnum(MilestoneRange.class, mRangeKey);
+
+				String mStatusKey = r.get(MILESTONE.STATUS);
+				MilestoneStatus milestoneStatus = EnumUtils.getEnum(MilestoneStatus.class, mStatusKey);
+
+				return new JsonMilestone(r.get(MILESTONE.MILESTONE_ID), r.get(MILESTONE.LABEL), milestoneStatus, milestoneRange, r.get(MILESTONE.END_DATE), r.get(CORE_USER.LOGIN));
+			})
+			.collect(Collectors.toMap(JsonMilestone::getId, Function.identity()));
+	}
+
+
+
+
+
+
+
+
+
+
+
 }
