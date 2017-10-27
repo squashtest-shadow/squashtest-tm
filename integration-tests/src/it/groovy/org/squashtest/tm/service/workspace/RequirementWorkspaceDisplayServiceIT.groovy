@@ -273,7 +273,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		def libraryFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
 		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, new HashMap<Long, List<Long>>())
 		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
 		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
@@ -319,5 +319,67 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		requirementChildren.collect { it.getAttr().get("resId") }.sort() == [-271L]
 		requirementChildren.collect { it.getTitle() }.sort() == ["Exigence 11"]
 		requirementChildren.collect { it.getState() }.sort() == ["closed"]
+	}
+
+	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
+	def "should get a requirement library children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-15L, currentUser, "library")
+
+		then:
+
+		nodes.size() == 5
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-276L, -270L, -269L, -257L, -256L]
+		nodes.collect {
+			it.getTitle()
+		}.sort() == ["Dossier A", "Dossier B", "Exigence", "Exigence 0", "Exigence 10"]
+		nodes.collect { it.getState() }.sort() == ["closed", "closed", "closed", "leaf", "leaf"]
+	}
+
+	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
+	def "should get a requirement folder children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-256L, currentUser, "folder")
+
+		then:
+
+		nodes.size() == 2
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-259L, -258L]
+		nodes.collect { it.getTitle() }.sort() == ["Dossier A2", "Dossier AA"]
+		nodes.collect { it.getState() }.sort() == ["closed", "leaf"]
+	}
+
+	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
+	def "should get requirement children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-270L, currentUser, "Requirement")
+
+		then:
+
+		nodes.size() == 1
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-271L]
+		nodes.collect { it.getTitle() }.sort() == ["Exigence 11"]
+		nodes.collect { it.getState() }.sort() == ["closed"]
 	}
 }

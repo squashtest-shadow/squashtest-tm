@@ -260,7 +260,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
 		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser,new HashMap<Long, List<Long>>())
 		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
 		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
@@ -299,5 +299,45 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		grandChildren.collect { it.getState() }.sort() == ["closed", "leaf", "open"]
 
 		grandChildren.get(2).getAttr().get("isreqcovered") == true
+	}
+
+	@DataSet("TestCaseDisplayService.sandbox.xml")
+	def "should get a test Case library children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-1L,currentUser,"library")
+
+		then:
+
+		nodes.size() == 3;
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-9L, -8L, -5L]
+		nodes.collect { it.getTitle() }.sort() == ["folder 1", "folder 4", "folder 5"]
+		nodes.collect { it.getState() }.sort() == ["closed", "closed", "leaf"]
+	}
+
+	@DataSet("TestCaseDisplayService.sandbox.xml")
+	def "should get a test Case folder children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-5L,currentUser,"folder")
+
+		then:
+
+		nodes.size() == 3
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-11L, -7L, -6L]
+		nodes.collect { it.getTitle() }.sort() == ["folder 2", "folder 3", "test case 1"]
+		nodes.collect { it.getState() }.sort() == ["closed", "closed", "leaf"]
 	}
 }

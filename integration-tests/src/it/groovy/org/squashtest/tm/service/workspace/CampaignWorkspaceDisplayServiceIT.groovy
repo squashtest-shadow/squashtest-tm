@@ -54,7 +54,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	private HashMap<Long, JsTreeNode> initNoWizardJsTreeNodes() {
 		Map<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
-		jsTreeNodes.values().each {it.addAttr("wizards",[] as Set)}
+		jsTreeNodes.values().each { it.addAttr("wizards", [] as Set) }
 		jsTreeNodes
 	}
 
@@ -74,37 +74,37 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find Campaign Libraries as JsTreeNode"() {
 		given:
-		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
 		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
-		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
-		jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
 		where:
-		readableProjectIds 			|| expectedLibrariesIds 		| expectedProjectsNames 								| expectedLibraryFullId
-		[]							|| []							|[]														|[]
-		[-14L,-15L,-16L,-19L,-21L]	|| [-14L,-15L,-16L,-19L]		|["Test Project-1","Projet 1","Projet 2","Projet 5"]	|["RequirementLibrary-14","RequirementLibrary-15","RequirementLibrary-16","RequirementLibrary-19"]
+		readableProjectIds             || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                             || [] | [] | []
+		[-14L, -15L, -16L, -19L, -21L] || [-14L, -15L, -16L, -19L] | ["Test Project-1", "Projet 1", "Projet 2", "Projet 5"] | ["RequirementLibrary-14", "RequirementLibrary-15", "RequirementLibrary-16", "RequirementLibrary-19"]
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
 	def "should find Campaign Libraries as JsTreeNode with filter"() {
-    	given:
-    	UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+		given:
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
-    	when:
-    	def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
+		when:
+		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
-    	then:
-    	jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == expectedLibrariesIds.sort() as Set
-    	jsTreeNodes.values().collect{it -> it.getTitle()}.sort() as Set == expectedProjectsNames.sort() as Set
+		then:
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == expectedLibrariesIds.sort() as Set
+		jsTreeNodes.values().collect { it -> it.getTitle() }.sort() as Set == expectedProjectsNames.sort() as Set
 
-    	where:
-    	readableProjectIds 			|| expectedLibrariesIds | expectedProjectsNames 		| expectedLibraryFullId
-    	[]							|| []					|[]								|[]
-    	[-14L,-15L,-16L,-19L,-21L]	|| [-14L,-15L]			|["Test Project-1","Projet 1"]	|["RequirementLibrary-14","RequirementLibrary-15"]
+		where:
+		readableProjectIds             || expectedLibrariesIds | expectedProjectsNames | expectedLibraryFullId
+		[]                             || [] | [] | []
+		[-14L, -15L, -16L, -19L, -21L] || [-14L, -15L] | ["Test Project-1", "Projet 1"] | ["RequirementLibrary-14", "RequirementLibrary-15"]
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.no.filter.xml")
@@ -113,28 +113,28 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		UserDto user = new UserDto("robert", -2L, [], true)
 
 		and:
-		def readableProjectIds = [-14L,-15L,-16L,-19L,-21L]
+		def readableProjectIds = [-14L, -15L, -16L, -19L, -21L]
 
 		when:
 		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, user)
 
 		then:
-		jsTreeNodes.values().collect{it -> it.getAttr().get("resId")}.sort() as Set == [-14L,-15L,-16L,-19L].sort() as Set
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.READ.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.WRITE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.CREATE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.DELETE.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXECUTE.getQuality()) == null} //execute is only for campaign
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.EXPORT.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.ATTACH.getQuality()) == String.valueOf(true)}
-		jsTreeNodes.values().collect{it -> it.getAttr().get(PermissionWithMask.MANAGEMENT.getQuality()) == null} //management is only for projects
+		jsTreeNodes.values().collect { it -> it.getAttr().get("resId") }.sort() as Set == [-14L, -15L, -16L, -19L].sort() as Set
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.READ.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.WRITE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.CREATE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.DELETE.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.EXECUTE.getQuality()) == null } //execute is only for campaign
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.IMPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.EXPORT.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.LINK.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.ATTACH.getQuality()) == String.valueOf(true) }
+		jsTreeNodes.values().collect { it -> it.getAttr().get(PermissionWithMask.MANAGEMENT.getQuality()) == null } //management is only for projects
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
-	def "should find permission masks for standard user"(){
+	def "should find permission masks for standard user"() {
 		given:
 		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 		HashMap<Long, JsTreeNode> jsTreeNodes = initEmptyJsTreeNodes()
@@ -143,7 +143,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		campaignWorkspaceDisplayService.findPermissionMap(user, jsTreeNodes)
 
 		then:
-		jsTreeNodes.keySet().sort() == [-14L,-15L,-16L,-19L].sort()
+		jsTreeNodes.keySet().sort() == [-14L, -15L, -16L, -19L].sort()
 
 		def lib15Attr = jsTreeNodes.get(-15L).getAttr()
 		lib15Attr.get(PermissionWithMask.READ.getQuality()) == String.valueOf(true)
@@ -195,32 +195,32 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
-	def "should find wizards for campaign library"(){
+	def "should find wizards for campaign library"() {
 		given:
 		def jsTreeNodes = initNoWizardJsTreeNodes()
 
 		when:
-		campaignWorkspaceDisplayService.findWizards([-14L,-15L,-16L,-19L,-21L], jsTreeNodes)
+		campaignWorkspaceDisplayService.findWizards([-14L, -15L, -16L, -19L, -21L], jsTreeNodes)
 
 		then:
 		jsTreeNodes.size() == 4
 		jsTreeNodes.get(-14L).getAttr().get("wizards") == ["RedmineReq"] as Set
-		jsTreeNodes.get(-15L).getAttr().get("wizards") == ["RedmineReq","JiraForSquash"] as Set
+		jsTreeNodes.get(-15L).getAttr().get("wizards") == ["RedmineReq", "JiraForSquash"] as Set
 		jsTreeNodes.get(-16L).getAttr().get("wizards") == ["JiraReq"] as Set
 		jsTreeNodes.get(-19L).getAttr().get("wizards") == [] as Set
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
-	def "should find projects models"(){
-		given :
-		UserDto user = new UserDto("robert", -2L, [-100L,-300L], false)
+	def "should find projects models"() {
+		given:
+		UserDto user = new UserDto("robert", -2L, [-100L, -300L], false)
 
 		when:
-		def jsonProjects = campaignWorkspaceDisplayService.findAllProjects([-14L,-15L,-16L,-19L,-21L], user)
+		def jsonProjects = campaignWorkspaceDisplayService.findAllProjects([-14L, -15L, -16L, -19L, -21L], user)
 
 		then:
 		jsonProjects.size() == 4
-		jsonProjects.collect{it.name}.sort() == ["Projet 1","Projet 2","Projet 5","Test Project-1"]
+		jsonProjects.collect { it.name }.sort() == ["Projet 1", "Projet 2", "Projet 5", "Test Project-1"]
 
 		def jsonProject15 = jsonProjects.getAt(2)
 		jsonProject15.getId() == -15L
@@ -233,13 +233,13 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		customFieldBindings.size() == 8
 		def customFieldBindingModels = customFieldBindings.get("CAMPAIGN")
 		customFieldBindingModels.size() == 3
-		customFieldBindingModels.collect{it.id}.sort() == [-3L,-2L,-1L]
-		customFieldBindingModels.collect{it.customField.id}.sort() == [-3L,-2L,-1L]
-		customFieldBindingModels.collect{it.customField.name}.sort() == ["Liste","Liste 2","Lot"]
+		customFieldBindingModels.collect { it.id }.sort() == [-3L, -2L, -1L]
+		customFieldBindingModels.collect { it.customField.id }.sort() == [-3L, -2L, -1L]
+		customFieldBindingModels.collect { it.customField.name }.sort() == ["Liste", "Liste 2", "Lot"]
 
 		def jsonMilestones = jsonProject15.getMilestones()
 		jsonMilestones.size() == 2
-		jsonMilestones.collect{it.label}.sort() == ["Jalon 1","Jalon 2"]
+		jsonMilestones.collect { it.label }.sort() == ["Jalon 1", "Jalon 2"]
 	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
@@ -263,7 +263,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		def libraryFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
 		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser)
+		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, null)
 		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
 		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
 
@@ -291,29 +291,109 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		libraryChildren.size() == 1
 		libraryChildren.collect { it.getAttr().get("resId") } == [-104L]
-		libraryChildren.collect {it.getTitle()}.sort() == ["Folder Test 1"]
+		libraryChildren.collect { it.getTitle() }.sort() == ["Folder Test 1"]
 		libraryChildren.collect { it.getState() }.sort() == ["open"]
 
 		def List<JsTreeNode> folderChildren = libraryChildren.get(0).getChildren();  //id -104 : Folder Test 1
 
 		folderChildren.size() == 1
 		folderChildren.collect { it.getAttr().get("resId") }.sort() == [-105L]
-		folderChildren.collect {it.getTitle()}.sort() == ["Campaign Test 1"]
+		folderChildren.collect { it.getTitle() }.sort() == ["Campaign Test 1"]
 		folderChildren.collect { it.getState() }.sort() == ["open"]
 
 		def List<JsTreeNode> campaignChildren = folderChildren.get(0).getChildren();  //id -105 : Campaign Test 1
 
 		campaignChildren.size() == 1
 		campaignChildren.collect { it.getAttr().get("resId") }.sort() == [-83L]
-		campaignChildren.collect {it.getTitle()}.sort() == ["Iteration - 1"]
+		campaignChildren.collect { it.getTitle() }.sort() == ["Iteration - 1"]
 		campaignChildren.collect { it.getState() }.sort() == ["open"]
 
 		def List<JsTreeNode> iterationChildren = campaignChildren.get(0).getChildren();  //id -83 : Iteration - 1
 
 		iterationChildren.size() == 1
 		iterationChildren.collect { it.getAttr().get("resId") }.sort() == [-2L]
-		iterationChildren.collect {it.getTitle()}.sort() == ["Test Suite 1"]
+		iterationChildren.collect { it.getTitle() }.sort() == ["Test Suite 1"]
 		iterationChildren.collect { it.getState() }.sort() == ["leaf"]
+	}
+
+	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
+	def "should get a campaign library children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = campaignWorkspaceDisplayService.getNodeContent(-14L, currentUser, "library")
+
+		then:
+
+		nodes.size() == 1
+		nodes.collect { it.getAttr().get("resId") } == [-104L]
+		nodes.collect { it.getTitle() }.sort() == ["Folder Test 1"]
+		nodes.collect { it.getState() }.sort() == ["closed"]
+	}
+
+	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
+	def "should get a campaign folder children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = campaignWorkspaceDisplayService.getNodeContent(-104, currentUser, "folder")
+
+		then:
+
+		nodes.size() == 1
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-105L]
+		nodes.collect { it.getTitle() }.sort() == ["Campaign Test 1"]
+		nodes.collect { it.getState() }.sort() == ["closed"]
+	}
+
+	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
+	def "should get campaign children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = campaignWorkspaceDisplayService.getCampaignNodeContent(-105L, currentUser, "Campaign")
+
+		then:
+
+		nodes.size() == 1
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-83L]
+		nodes.collect { it.getTitle() }.sort() == ["Iteration - 1"]
+		nodes.collect { it.getState() }.sort() == ["closed"]
+	}
+
+	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
+	def "should get iteration children"() {
+
+		given:
+
+		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
+
+
+		when:
+
+		def nodes = campaignWorkspaceDisplayService.getCampaignNodeContent(-83L, currentUser, "Iteration")
+
+		then:
+
+		nodes.size() == 1
+		nodes.collect { it.getAttr().get("resId") }.sort() == [-2L]
+		nodes.collect { it.getTitle() }.sort() == ["Test Suite 1"]
+		nodes.collect { it.getState() }.sort() == ["leaf"]
 	}
 
 }
