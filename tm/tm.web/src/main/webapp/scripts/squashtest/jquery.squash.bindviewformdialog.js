@@ -62,6 +62,8 @@
  * data-objet -> Class of the @RequestBody Object in spring MVC controller. Used by tm.notification to show error message.
  *              Ignore this attribute on fields who don't require server side validation.
  *
+ * data-default-value -> Allow to set model with an initial value for this input. Use it for select box or other input that require a value to be set without any user action.
+ *
  * ==================================
  *
  * Using this module :
@@ -85,6 +87,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 	var BindViewFormDialog = BindView.extend({
 		initialize : function(){
 			this._construct();
+			this._initDefaultValues();
 			_.bindAll(this, 'onConfirmSuccess','onConfirmSuccessAndResetDialog');
 		},
 
@@ -101,7 +104,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		},
 
 		//BindViewFormDialog come with a default backbone model
-		//Override with a custom Backbone.Model if required but don't chnage the variable name !
+		//Override with a custom Backbone.Model if required but don't change the variable name !
 		model : new Backbone.Model(),
 
 		//events for buttons.
@@ -135,7 +138,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		//If only different behavior in view after request success is needed, override onConfirmSuccess and onConfirmAndResetPopupSuccess.
 		callConfirm : function(){
 			//hacking the ckeditor witch is unbindable in bind view
-			//TO DO case of popup with several rich editor inside
+			//TODO case of popup with several rich editor inside
 			this.updateModelFromCKEditor();
 			this.model.save(null,{
 				success : this.onConfirmSuccess
@@ -172,7 +175,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
     _construct : function(){
       var template = this.compileFormDialog();
       //dirty because a backbone view shouldn't manipulate element outside of it's scope.
-      //jq dialog...
+      //but with the (in)famous jquery UI dialog, witch make your HTML tags fly all over the DOM, we have no choice...
       $("body").append(template);
       this.tplSelector = this.$el.selector;
       this._elOnDialog();
@@ -187,6 +190,15 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 
 		_elOnTemplate : function(){
 			this.setElement(this.tplSelector);
+		},
+
+		_initDefaultValues : function () {
+			var that = this;
+			var inputsWithDefaultValues = this.$el.find("[data-prop][data-default-value]").each(function (index,input) {
+				var attName = $(input).attr("data-prop");
+				var defaultValue = $(input).attr("data-default-value")
+				that.model.set(attName, defaultValue)
+			})
 		}
 
 	});
