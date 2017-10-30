@@ -20,18 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Query;
-
-import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkDao;
+
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jlor on 19/05/2017.
@@ -78,6 +76,17 @@ public class RequirementVersionLinkDaoImpl extends HibernateEntityDao<Requiremen
 		entityManager.persist(symmetricalRequirementVersionLink);
 
 		return requirementVersionLink;
+	}
+
+	@Override
+	public void addLinks(List<RequirementVersionLink> requirementVersionLinks) {
+		persist(requirementVersionLinks);
+
+		List<RequirementVersionLink> symmetricalLinks = new ArrayList<>();
+		for(RequirementVersionLink link : requirementVersionLinks) {
+			symmetricalLinks.add(link.createSymmetricalRequirementVersionLink());
+		}
+		persist(symmetricalLinks);
 	}
 
 	@Override

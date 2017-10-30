@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -80,6 +81,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private PermissionEvaluationService permissionService;
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
+	@Inject
+	private RequirementVersionLinkDao requirementVersionLinkDao;
 
 
 	@PersistenceContext
@@ -196,6 +199,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
+		copyRequirementVersionLinks(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		//copy custom fields and requirement-version coverages for older versions
 		for (Entry<RequirementVersion, RequirementVersion> previousVersionCopyBySource : previousVersionsCopiesBySources
 			.entrySet()) {
@@ -204,6 +208,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			RequirementVersion copyVersion = previousVersionCopyBySource.getValue();
 			//copy cufs and coverages for entities
 			copyRequirementVersionCoverages(sourceVersion, copyVersion);
+			copyRequirementVersionLinks(sourceVersion, copyVersion);
 			copyCustomFields(sourceVersion, copyVersion);
 
 		}
@@ -355,6 +360,12 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		List<RequirementVersionCoverage> copies = sourceVersion.createRequirementVersionCoveragesForCopy(copyVersion);
 		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
+	}
+
+	private void copyRequirementVersionLinks(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
+		List<RequirementVersionLink> copies = sourceVersion.createRequirementVersionLinksForCopy(copyVersion);
+		//indexRequirementVersionLinkCopies(copies);
+		requirementVersionLinkDao.addLinks(copies);
 	}
 
 	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
