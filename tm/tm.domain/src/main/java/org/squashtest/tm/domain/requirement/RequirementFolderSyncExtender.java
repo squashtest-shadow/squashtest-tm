@@ -31,9 +31,9 @@ import javax.validation.constraints.Size;
 public class RequirementFolderSyncExtender {
 
 	@Id
-	@Column(name = "REQUIREMENT_FOLDER_SYNC_EXTENDER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_folder_sync_extender_requirement_folder_sync_extender_id")
-	@SequenceGenerator(name = "requirement_folder_sync_extender_requirement_folder_sync_extender_id", sequenceName = "requirement_folder_sync_extender_requirement_folder_sync_extender_id", allocationSize = 1)
+	@Column(name = "RF_SYNC_EXTENDER_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_folder_sync_extender_rf_sync_extender_id_seq")
+	@SequenceGenerator(name = "requirement_folder_sync_extender_rf_sync_extender_id_seq", sequenceName = "requirement_folder_sync_extender_rf_sync_extender_id_seq", allocationSize = 1)
 	private Long id;
 
 	@Column(name = "REMOTE_FOLDER_ID")

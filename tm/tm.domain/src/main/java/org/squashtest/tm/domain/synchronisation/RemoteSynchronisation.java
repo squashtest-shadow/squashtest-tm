@@ -74,11 +74,11 @@ public class RemoteSynchronisation {
 	@Type(type = "org.hibernate.type.TextType")
 	private String options;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SERVER_ID")
 	private BugTracker server;
 

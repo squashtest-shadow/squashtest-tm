@@ -108,7 +108,7 @@
     <comment>Add a remote folder synchronisation table in squash tm.</comment>
     <createTable tableName="REQUIREMENT_FOLDER_SYNC_EXTENDER">
 
-      <column name="REQUIREMENT_FOLDER_SYNC_EXTENDER_ID" type="BIGINT"
+      <column name="RF_SYNC_EXTENDER_ID" type="BIGINT"
               autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
