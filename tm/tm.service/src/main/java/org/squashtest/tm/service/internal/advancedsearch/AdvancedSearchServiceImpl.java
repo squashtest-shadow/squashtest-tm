@@ -123,8 +123,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
 		List<JsonMilestone> collection = new ArrayList<>();
 
-		List<Long> list = findAllReadablesId();
-			milestoneModelService.findMilestoneByProject(list).values().stream().forEach(r-> {
+//		UserDto currentUser = userAccountService.findCurrentUserDto();
+//		if (currentUser.isAdmin()) {
+//			return milestoneModelService.findAllJsonMilestonesByAdmin();
+//		} else {
+//			return milestoneModelService.findAllJsonMilestonesByUser(currentUser.getPartyIds());
+//		}
+
+		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
 			ListIterator<JsonMilestone> iterator = r.listIterator();
 			while (iterator.hasNext()) {
 				collection.add(iterator.next());

@@ -117,4 +117,7 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 			return findAllProjectIds(userDto.getPartyIds());
 		}
 	}
+
+
+
 }
