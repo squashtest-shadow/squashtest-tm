@@ -177,6 +177,7 @@
 	 @NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
 	// Synchronized requirements
 	@NamedQuery(name = "RequirementSyncExtender.retrieveByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteReqId = :id and req.project.id = :pId"),
+	@NamedQuery(name = "RequirementSyncExtender.retrieveByRemoteKeyAndSyncId", query = "select sync from RequirementSyncExtender sync join fetch sync.remoteSynchronisation remoteSynchronisation where sync.remoteReqId = :id and remoteSynchronisation.id = :remoteSynchronisationId"),
 	@NamedQuery(name = "RequirementSyncExtender.retrieveAllByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteReqId in (:ids) and req.project.id = :pId"),
 	@NamedQuery(name = "RequirementSyncExtender.retrieveAllByRemoteProjectsAndFilter", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteProjectId = :remotePId and sync.remoteFilterName = :filter and req.project.id = :pId"),
 	@NamedQuery(name = "RequirementSyncExtender.retrieveAllByServer", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.server.id = :serverId"),
