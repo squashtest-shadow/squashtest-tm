@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -126,6 +127,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 
 	@Override
 	protected Field<Long> getMilestoneId() {
+		return null;
+	}
+
+	@Override
+	protected HibernateEntityDao hibernateFolderDao() {
 		return null;
 	}
 

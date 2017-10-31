@@ -35,6 +35,8 @@ import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseFolderDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
@@ -51,6 +53,9 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Inject
 	DSLContext DSL;
+
+	@Inject
+	HibernateTestCaseFolderDao hibernateTestCaseFolderDao;
 
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
@@ -101,11 +106,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("test-case-folders")) {
-					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"),  currentUser);
+					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
 					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"),  currentUser, milestonesNumber);
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
@@ -259,6 +264,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected Field<Long> getMilestoneId() {
 		return MILESTONE_TEST_CASE.MILESTONE_ID;
+	}
+
+	@Override
+	protected HibernateEntityDao hibernateFolderDao() {
+		return hibernateTestCaseFolderDao;
 	}
 
 	@Override

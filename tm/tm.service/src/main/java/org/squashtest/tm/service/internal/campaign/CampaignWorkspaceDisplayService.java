@@ -36,6 +36,10 @@ import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateIterationDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -51,6 +55,15 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Inject
 	DSLContext DSL;
+
+	@Inject
+	HibernateCampaignFolderDao hibernateCampaignFolderDao;
+
+	@Inject
+	HibernateCampaignDao hibernateCampaignDao;
+
+	@Inject
+	HibernateIterationDao hibernateIterationDao;
 
 	private Campaign C = CAMPAIGN.as("C");
 	private CampaignLibraryNode CLN = CAMPAIGN_LIBRARY_NODE.as("CLN");
@@ -113,12 +126,19 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		Set<Long> childrenIds = new HashSet<>();
 		MultiMap expansionCandidates = new MultiValueMap();
 		expansionCandidates.put(entityClass, entityId);
+		Long libraryId;
 
-		MultiMap entityFatherChildrenMultimap = getFatherChildrenLibraryNode(entityClass,expansionCandidates);
+		MultiMap entityFatherChildrenMultimap = getFatherChildrenLibraryNode(entityClass, expansionCandidates);
 		childrenIds.remove(entityId);
 
 		Map<Long, JsTreeNode> libraryChildrenMap =
 			(entityClass.equals("Campaign") ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser));
+
+		libraryId = entityClass.equals("Campaign") ? hibernateCampaignDao.findById(entityId).getLibrary().getId() : hibernateIterationDao.findById(entityId).getCampaignLibrary().getId();
+
+		if (currentUser.isNotAdmin()) {
+			findNodeChildrenPermissionMap(currentUser, libraryChildrenMap, libraryId);
+		}
 
 		return libraryChildrenMap.values();
 	}
@@ -394,6 +414,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected Field<Long> getMilestoneId() {
 		return MILESTONE_CAMPAIGN.MILESTONE_ID;
+	}
+
+	@Override
+	protected HibernateEntityDao hibernateFolderDao() {
+		return hibernateCampaignFolderDao;
 	}
 
 	@Override

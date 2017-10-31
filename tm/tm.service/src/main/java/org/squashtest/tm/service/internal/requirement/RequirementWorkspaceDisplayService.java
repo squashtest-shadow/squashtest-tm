@@ -33,6 +33,8 @@ import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementFolderDao;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
@@ -48,6 +50,9 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Inject
 	DSLContext DSL;
+
+	@Inject
+	HibernateRequirementFolderDao hibernateRequirementFolderDao ;
 
 	private RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
 	private RequirementFolder RF = REQUIREMENT_FOLDER.as("RF");
@@ -227,6 +232,11 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Override
 	protected Field<Long> getMilestoneId() {
 		return MILESTONE_REQ_VERSION.MILESTONE_ID;
+	}
+
+	@Override
+	protected HibernateEntityDao hibernateFolderDao() {
+		return hibernateRequirementFolderDao;
 	}
 
 	@Override

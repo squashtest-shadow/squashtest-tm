@@ -30,6 +30,7 @@ import org.jooq.Record1;
 import org.jooq.TableLike;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
@@ -41,6 +42,8 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateEntityDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementDao;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
@@ -70,6 +73,9 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 	@Inject
 	private InfoListModelService infoListModelService;
+
+	@Inject
+	private HibernateRequirementDao hibernateRequirementDao;
 
 	private final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
 	protected final Integer NODE_WITHOUT_MILESTONE = 0;
@@ -211,19 +217,23 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	public Collection<JsTreeNode> getNodeContent(Long entityId, UserDto currentUser, String entityClass) {
 		Set<Long> childrenIds = new HashSet<>();
 		MultiMap expansionCandidates = new MultiValueMap();
+		Long libraryId;
 
 		switch (entityClass) {
 			case "library":
 				expansionCandidates.put(getClassName(), entityId);
 				getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				libraryId = entityId;
 				break;
 			case "folder":
 				expansionCandidates.put(getFolderName(), entityId);
 				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				libraryId = ((ProjectResource) hibernateFolderDao().findById(entityId)).getLibrary().getId();
 				break;
 			default: //used for requirements only
 				expansionCandidates.put(entityClass, entityId);
 				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds);
+				libraryId = ((ProjectResource) hibernateRequirementDao.findById(entityId)).getLibrary().getId();
 				break;
 		}
 
@@ -234,10 +244,33 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN);
 
+		if (currentUser.isNotAdmin()) {
+			findNodeChildrenPermissionMap(currentUser, libraryChildrenMap, libraryId);
+		}
+
 		return libraryChildrenMap.values();
 	}
 
+
 	// ********************************************** Utils ************************************************************
+
+	protected void findNodeChildrenPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> libraryChildrenMap, Long libraryId) {
+		List<Integer> masks = DSL
+			.selectDistinct(ACL_GROUP_PERMISSION.PERMISSION_MASK)
+			.from(getLibraryTable())
+			.join(PROJECT).on(getProjectLibraryColumn().eq(selectLibraryId()))
+			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.IDENTITY.eq(selectLibraryId()))
+			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
+			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq(getLibraryClassName())))
+			.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(currentUser.getPartyIds())).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE)).and(getProjectLibraryColumn().in(libraryId))
+			.fetch(ACL_GROUP_PERMISSION.PERMISSION_MASK, Integer.class);
+
+		for (JsTreeNode node : libraryChildrenMap.values()) {
+			givePermissions(node, masks);
+		}
+	}
+
 	public void findPermissionMap(UserDto currentUser, Map<Long, JsTreeNode> jsTreeNodes) {
 		Set<Long> libraryIds = jsTreeNodes.keySet();
 
@@ -260,32 +293,24 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				)
 			)).forEach((Long nodeId, List<Integer> masks) -> {
 			JsTreeNode node = jsTreeNodes.get(nodeId);
-
-			for (Integer mask : masks) {
-				PermissionWithMask permission = findByMask(mask);
-				if (permission != null) {
-					node.addAttr(permission.getQuality(), String.valueOf(true));
-				}
-			}
-			if (!CollectionUtils.isEmpty(node.getChildren())) {
-				givePermissions(node.getChildren(), masks);
-			}
+			givePermissions(node, masks);
 		});
 	}
 
-	private void givePermissions(List<JsTreeNode> children, List<Integer> masks) {
-		for (JsTreeNode child : children) {
-			for (Integer mask : masks) {
-				PermissionWithMask permission = findByMask(mask);
-				if (permission != null) {
-					child.addAttr(permission.getQuality(), String.valueOf(true));
-				}
-			}
-
-			if (!CollectionUtils.isEmpty(child.getChildren())) {
-				givePermissions(child.getChildren(), masks);
+	private void givePermissions(JsTreeNode node, List<Integer> masks) {
+		for (Integer mask : masks) {
+			PermissionWithMask permission = findByMask(mask);
+			if (permission != null) {
+				node.addAttr(permission.getQuality(), String.valueOf(true));
 			}
 		}
+
+		if (!CollectionUtils.isEmpty(node.getChildren())) {
+			for (JsTreeNode child : node.getChildren()) {
+				givePermissions(child, masks);
+			}
+		}
+
 	}
 
 	protected MultiMap getLibraryFatherChildrenMultiMap(MultiMap expansionCandidates, Set<Long> childrenIds) {
@@ -557,4 +582,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract TableLike<?> getMilestoneLibraryNodeTable();
 
 	protected abstract Field<Long> getMilestoneId();
+
+	protected abstract HibernateEntityDao hibernateFolderDao();
 }
