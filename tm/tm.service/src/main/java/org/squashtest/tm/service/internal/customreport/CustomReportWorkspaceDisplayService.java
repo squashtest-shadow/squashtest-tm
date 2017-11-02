@@ -136,6 +136,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	}
 
 	@Override
+	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
+		return null;
+	}
+
+	@Override
 	protected Field<Long> selectLibraryContentContentId() {
 		return null;
 	}

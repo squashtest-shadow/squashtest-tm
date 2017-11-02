@@ -154,7 +154,7 @@ public class VerifyingTestCaseManagerController {
 		List<Long> linkableRequirementLibraryIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId ).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");

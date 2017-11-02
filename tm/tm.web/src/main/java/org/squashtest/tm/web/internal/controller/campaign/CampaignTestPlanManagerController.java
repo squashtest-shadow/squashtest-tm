@@ -140,7 +140,7 @@ public class CampaignTestPlanManagerController {
 		List<Long> linkableRequirementLibraryIds = testPlanManager.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
@@ -254,7 +254,7 @@ public class CampaignTestPlanManagerController {
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 *
-	 * @param iterationId
+	 * @param campaignId
 	 * @return
 	 */
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/order", method = RequestMethod.POST)

@@ -147,7 +147,7 @@ public class VerifiedRequirementsManagerController {
 		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
 			.map(RequirementLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
 
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);

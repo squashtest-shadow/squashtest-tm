@@ -217,8 +217,9 @@ public class RequirementLibraryNavigationController extends
 		@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 //			List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
 //			return createChildrenRequirementsModel(requirements);
+		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(requirementId, currentUser, "Requirement");
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(requirementId, currentUser, "Requirement", activeMilestoneId);
 		return new ArrayList<>(nodes);
 	}
 

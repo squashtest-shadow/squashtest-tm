@@ -157,7 +157,7 @@ public class TestSuiteTestPlanManagerController {
 		List<Long> linkableRequirementLibraryIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
 
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone());
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);

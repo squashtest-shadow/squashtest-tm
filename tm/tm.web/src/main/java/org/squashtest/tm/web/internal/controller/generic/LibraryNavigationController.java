@@ -41,6 +41,7 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -85,6 +86,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@Inject
 	protected UserAccountService userAccountService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	private static final int EOF = -1;
 
 	protected MessageSource getMessageSource() {
@@ -99,9 +103,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 //		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
 //		return createJsTreeModel(nodes);
-
+		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(libraryId, currentUser, "library");
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(libraryId, currentUser, "library", activeMilestoneId);
 		return new ArrayList<>(nodes);
 	}
 
@@ -147,8 +151,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	public final List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
 		//List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
 		//return createJsTreeModel(nodes);
+		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
 		UserDto currentUser = userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(folderId, currentUser, "folder");
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(folderId, currentUser, "folder", activeMilestoneId);
 		return new ArrayList<>(nodes);
 	}
 

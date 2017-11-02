@@ -101,7 +101,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(RVC).on(TC.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.leftJoin(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
 			.where(TCLN.TCLN_ID.in(childrenIds))
-			.groupBy(TCLN.TCLN_ID)
+			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -144,7 +144,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			attr.put("reference", reference);
 			title = reference + " - " + title;
 		}
-		return buildNode(title, State.leaf, attr, currentUser, milestonesNumber);
+		return buildNode(title, State.leaf, attr, currentUser, milestonesNumber, "true");
 	}
 
 	private Integer getMilestonesNumberForTC(Map<Long, List<Long>> allMilestonesForTCs, Long id) {
@@ -269,6 +269,15 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected HibernateEntityDao hibernateFolderDao() {
 		return hibernateTestCaseFolderDao;
+	}
+
+	@Override
+	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
+		return new HashSet<>(DSL.select(MILESTONE_TEST_CASE.TEST_CASE_ID)
+			.from(MILESTONE_TEST_CASE)
+			.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(activeMilestoneId))
+			.union(DSL.select(TEST_CASE_FOLDER.TCLN_ID).from(TEST_CASE_FOLDER))
+			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class));
 	}
 
 	@Override

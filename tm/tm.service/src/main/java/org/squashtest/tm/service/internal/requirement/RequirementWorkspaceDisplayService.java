@@ -93,7 +93,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.leftJoin(RLNR).on(RLN.RLN_ID.eq(RLNR.ANCESTOR_ID))
 			.leftJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
 			.where(RLN.RLN_ID.in(childrenIds))
-			.groupBy(RLN.RLN_ID)
+			.groupBy(RLN.RLN_ID, RF.RLN_ID, RES.NAME, REQ.MODE, RV.REFERENCE, MRV.MILESTONE_ID, RLNR.ANCESTOR_ID, ILI.ICON_NAME)
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -133,7 +133,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			attr.put("reference", reference);
 		}
 
-		return buildNode(title, state, attr, currentUser, milestonesNumber);
+		return buildNode(title, state, attr, currentUser, milestonesNumber, "true");
 	}
 
 	private Integer getMilestonesNumberForReq(Map<Long, List<Long>> allMilestonesForReqs, Long id) {
@@ -237,6 +237,17 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Override
 	protected HibernateEntityDao hibernateFolderDao() {
 		return hibernateRequirementFolderDao;
+	}
+
+	@Override
+	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
+		return new HashSet<>(DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID)
+			.from(MILESTONE_REQ_VERSION)
+			.leftJoin(REQUIREMENT_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+			.leftJoin(REQUIREMENT).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT.RLN_ID))
+			.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
+			.union(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER))
+			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class));
 	}
 
 	@Override

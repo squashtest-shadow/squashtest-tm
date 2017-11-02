@@ -71,6 +71,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private ClnRelationship CLNR = CLN_RELATIONSHIP.as("CLNR");
 	private CampaignIteration CI = CAMPAIGN_ITERATION.as("CI");
 	private MilestoneCampaign MC = MILESTONE_CAMPAIGN.as("MC");
+	private Milestone M = MILESTONE.as("M");
 	private IterationTestSuite ITS = ITERATION_TEST_SUITE.as("ITS");
 	private Iteration IT = ITERATION.as("IT");
 	private TestSuite TS = TEST_SUITE.as("TS");
@@ -82,6 +83,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private MultiMap iterationFatherChildrenMultiMap = new MultiValueMap();
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
 	private Map<Long, JsTreeNode> testSuiteMap = new HashMap<>();
+
+	private static final String MILESTONE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+	private static final String MILESTONE_STATUS_FINISHED = "FINISHED";
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {
@@ -100,7 +104,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.when(CLNR.ANCESTOR_ID.isNotNull().or(CI.CAMPAIGN_ID.isNotNull()), "true")
 					.otherwise("false")
 					.as("HAS_CONTENT"),
-				MC.MILESTONE_ID
+				MC.MILESTONE_ID,
+				org.jooq.impl.DSL.decode()
+					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
+					.otherwise("false")
+					.as("IS_MILESTONE_MODIFIABLE")
 			)
 			.from(CLN)
 			.leftJoin(CF).on(CLN.CLN_ID.eq(CF.CLN_ID))
@@ -108,15 +116,16 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(CI).on(CLN.CLN_ID.eq(CI.CAMPAIGN_ID))
 			.leftJoin(C).on(CLN.CLN_ID.eq(C.CLN_ID))
 			.leftJoin(MC).on(CLN.CLN_ID.eq(MC.CAMPAIGN_ID))
+			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(CLN.CLN_ID.in(childrenIds))
-			.groupBy(CLN.CLN_ID)
+			.groupBy(CLN.CLN_ID, CF.CLN_ID, CLN.NAME, C.REFERENCE, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("campaign-folders")) {
 					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
-					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID));
+					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE"));
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
@@ -145,7 +154,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	// ********************************************** Utils ************************************************************
 
-	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent, UserDto currentUser, Long milestone) {
+	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
 		attr.put("resId", campaignId);
@@ -161,7 +170,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		}
 		Integer milestonesNumber = getMilestoneNumber(milestone);
 
-		JsTreeNode campaign = buildNode(title, null, attr, currentUser, milestonesNumber);
+		JsTreeNode campaign = buildNode(title, null, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 
 		// Messy but still simpler than GOT's genealogy
 		if (!Boolean.parseBoolean(hasContent)) {
@@ -183,7 +192,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return campaign;
 	}
 
-	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent, UserDto currentUser, Long milestone) {
+	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		JsTreeNode.State state;
 
@@ -206,10 +215,10 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		}
 		Integer milestonesNumber = getMilestoneNumber(milestone);
 
-		return buildNode(title, state, attr, currentUser, milestonesNumber);
+		return buildNode(title, state, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 	}
 
-	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description, UserDto currentUser, Long milestone) {
+	private JsTreeNode buildTestSuite(Long id, String name, String executionStatus, String description, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
 		attr.put("resId", id);
@@ -223,7 +232,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		String tooltip = getMessage("label.tree.testSuite.tooltip", args);
 		attr.put("title", tooltip + "\n" + removeHtml(description));
 		Integer milestonesNumber = getMilestoneNumber(milestone);
-		return buildNode(name, State.leaf, attr, currentUser, milestonesNumber);
+		return buildNode(name, State.leaf, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 
 	}
 
@@ -289,18 +298,23 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.when(ITS.ITERATION_ID.isNull(), "false")
 					.otherwise("true")
 					.as("HAS_CONTENT"),
-				MC.MILESTONE_ID
+				MC.MILESTONE_ID,
+				org.jooq.impl.DSL.decode()
+					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
+					.otherwise("false")
+					.as("IS_MILESTONE_MODIFIABLE")
 			)
 			.from(IT)
 			.leftJoin(CI).on(IT.ITERATION_ID.eq(CI.ITERATION_ID))
 			.leftJoin(MC).on(CI.CAMPAIGN_ID.eq(MC.CAMPAIGN_ID))
+			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.leftJoin(ITS).on(IT.ITERATION_ID.eq(ITS.ITERATION_ID))
 			.where(IT.ITERATION_ID.in(fatherChildrenEntity.values()))
-			.groupBy(IT.ITERATION_ID)
+			.groupBy(IT.ITERATION_ID, CI.ITERATION_ORDER, ITS.ITERATION_ID, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
 			.map(r -> buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
-				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID)))
+				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE")))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
@@ -311,7 +325,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				TS.NAME,
 				TS.EXECUTION_STATUS,
 				org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30), "").as("DESCRIPTION"),
-				MC.MILESTONE_ID
+				MC.MILESTONE_ID,
+				org.jooq.impl.DSL.decode()
+					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
+					.otherwise("false")
+					.as("IS_MILESTONE_MODIFIABLE")
 			)
 			.from(TS)
 			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
@@ -320,11 +338,12 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(ITS).on(TS.ID.eq(ITS.TEST_SUITE_ID))
 			.leftJoin(CI).on(ITS.ITERATION_ID.eq(CI.ITERATION_ID))
 			.leftJoin(MC).on(CI.CAMPAIGN_ID.eq(MC.CAMPAIGN_ID))
+			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TS.ID.in(fatherChildrenEntity.values()))
-			.groupBy(TS.ID)
+			.groupBy(TS.ID, TCLN.DESCRIPTION, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
-			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"), currentUser, r.get(MC.MILESTONE_ID)))
+			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE")))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
@@ -419,6 +438,15 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected HibernateEntityDao hibernateFolderDao() {
 		return hibernateCampaignFolderDao;
+	}
+
+	@Override
+	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
+		return new HashSet<>(DSL.select(MILESTONE_CAMPAIGN.CAMPAIGN_ID)
+			.from(MILESTONE_CAMPAIGN)
+			.where(MILESTONE_CAMPAIGN.MILESTONE_ID.eq(activeMilestoneId))
+			.union(DSL.select(CAMPAIGN_FOLDER.CLN_ID).from(CAMPAIGN_FOLDER))
+			.fetch(MILESTONE_CAMPAIGN.CAMPAIGN_ID, Long.class));
 	}
 
 	@Override
