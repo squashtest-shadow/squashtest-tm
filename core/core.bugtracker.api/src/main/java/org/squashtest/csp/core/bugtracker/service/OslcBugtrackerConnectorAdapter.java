@@ -42,7 +42,7 @@ public class OslcBugtrackerConnectorAdapter extends AbstractInternalConnectorAda
 		super();
 		this.connector = connector;
 	}
-
+	@Override
 	public BugtrackerConnectorBase getConnector(){
 		return connector;
 	}

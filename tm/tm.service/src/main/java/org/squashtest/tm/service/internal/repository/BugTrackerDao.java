@@ -40,6 +40,7 @@ public interface BugTrackerDao extends JpaRepository<BugTracker, Long> {
 	/**
 	 * @return a page of bugtrackers according to the filter
 	 */
+	@Override
 	Page<BugTracker> findAll(Pageable pageable);
 
 

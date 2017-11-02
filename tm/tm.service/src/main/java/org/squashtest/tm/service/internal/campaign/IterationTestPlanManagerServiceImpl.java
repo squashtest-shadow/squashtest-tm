@@ -243,6 +243,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@Override
 	public void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId) {
 		List<IterationTestPlanItem> itpis = findTestPlanItems(iterationTestPlanIds);
 
