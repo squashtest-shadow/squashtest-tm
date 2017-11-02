@@ -57,4 +57,27 @@
     </addColumn>
   </changeSet>
 
+  <!--changeset id="tm-1.17.0-feature-sqtm-167" author="bsiri">
+
+    <comments>
+      Adding the ability to use application-level credentials that allows Squash interact with a bugtracker on its own
+      (ie instead of requiring the current user to authenticate).
+    </comments>
+
+    <createTable tableName="APPLICATION_LEVEL_CREDENTIALS">
+
+      <column name="CREDENTIAL_ID" type="BIGINT" remarks="primary key">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="NAME" type="VARCHAR(30)" remarks="a symbolic name for the credentials"/>
+
+      <column name="" type="VARCHAR(255)"
+
+      <column name="SALT" type="BINARY(8)" remarks="salt used for the encryption of this instance of credentials"/>
+
+    </createTable>
+
+  </changeset-->
+
 </databaseChangeLog>
