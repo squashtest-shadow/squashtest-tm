@@ -53,10 +53,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	@Inject
 	private TestCaseAdvancedSearchService advancedSearchService;
 
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private CampaignWorkspaceDisplayService workspaceDisplayService;
-
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.generalinfos.panel.title", locale));
@@ -164,12 +160,12 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createPerimeterPanel(Locale locale) {
-		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build();
+	public SearchInputPanelModel createPerimeterPanel(Locale locale,Collection<JsonProject> jsProjects) {
+		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build(jsProjects);
 	}
 
-	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
-		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("requirement.project.id").build();
+	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale,Collection<JsonProject> jsProjects) {
+		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("requirement.project.id").build(jsProjects);
 	}
 
 	public SearchInputPanelModel createContentPanel(Locale locale) {
@@ -253,8 +249,8 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
-		users = advancedSearchService.findAllUsersWhoModifiedTestCases(idList);
-		for (String user : users) {
+		List<String> users2 = advancedSearchService.findAllUsersWhoModifiedTestCases(idList);
+		for (String user : users2) {
 			if (StringUtils.isBlank(user)) {
 				modifiedByField.addPossibleValue(optionBuilder.labelI18nKey("label.NeverModified").optionKey("")
 						.build());
@@ -304,7 +300,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		return typeField;
 
 	}
-
 
 	// get ready to puke !
 	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<JsonInfoList> infoLists, Locale locale){

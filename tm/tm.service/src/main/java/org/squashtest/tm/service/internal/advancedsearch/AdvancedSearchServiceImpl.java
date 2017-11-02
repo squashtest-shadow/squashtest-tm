@@ -45,7 +45,6 @@ import org.hibernate.search.query.dsl.RangeMatchingContext;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -61,8 +60,6 @@ import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayServi
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -100,6 +97,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	MilestoneModelService milestoneModelService;
 
 	@Inject
+	DSLContext DSL;
+
+	@Inject
 	@Named("campaignWorkspaceDisplayService")
 	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
@@ -121,23 +121,23 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
-		List<JsonMilestone> collection = new ArrayList<>();
 
-//		UserDto currentUser = userAccountService.findCurrentUserDto();
-//		if (currentUser.isAdmin()) {
-//			return milestoneModelService.findAllJsonMilestonesByAdmin();
-//		} else {
-//			return milestoneModelService.findAllJsonMilestonesByUser(currentUser.getPartyIds());
-//		}
 
-		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
-			ListIterator<JsonMilestone> iterator = r.listIterator();
-			while (iterator.hasNext()) {
-				collection.add(iterator.next());
-			}
-
-		});
-				return collection;
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		if (currentUser.isAdmin()) {
+			return new ArrayList<>(milestoneModelService.findAllJsonMilestonesByAdmin().values());
+		} else {
+			return new ArrayList<>( milestoneModelService.findAllJsonMilestonesByUser(currentUser.getPartyIds()).values());
+		}
+//		List<JsonMilestone> collection = new ArrayList<>();
+//		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
+//			ListIterator<JsonMilestone> iterator = r.listIterator();
+//			while (iterator.hasNext()) {
+//				collection.add(iterator.next());
+//			}
+//
+//		});
+//				return collection;
 	}
 
 	private String padRawValue(Integer rawValue) {
@@ -261,8 +261,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		return mainQuery;
 	}
-
-
 
 	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchSingleFieldModel model = (AdvancedSearchSingleFieldModel) fieldModel;
@@ -693,5 +691,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
 		return readableProjectIds;
 	}
+
+
 
 }

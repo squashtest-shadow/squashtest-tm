@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.search.advanced;
 import java.util.*;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,9 +35,12 @@ import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInputInterfaceHelper;
@@ -49,7 +53,6 @@ import com.google.common.base.Optional;
 /**
  * Created by jsimon on 04/05/2016.
  */
-
 
 @RequestMapping("/advanced-search")
 public abstract class GlobalSearchController {
@@ -68,6 +71,16 @@ public abstract class GlobalSearchController {
 
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
+
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	@Named("campaignWorkspaceDisplayService")
+	private CampaignWorkspaceDisplayService workspaceDisplayService;
+
+	@Inject
+	private ProjectFinder projectFinder;
 
 	protected static final String PROJECTS_META = "projects";
 	protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalSearchController.class);
@@ -94,9 +107,13 @@ public abstract class GlobalSearchController {
 				formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				UserDto currentUser = userAccountService.findCurrentUserDto();
+				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
-						isMilestoneMode);
-				populateMetadata(model);
+						isMilestoneMode, currentUser,readableProjectIds,jsProjects);
+				populateMetadata(model,jsProjects);
 				return model;
 			}
 		});
@@ -104,9 +121,13 @@ public abstract class GlobalSearchController {
 		formModelBuilder.put(TESTCASE_VIA_REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				UserDto currentUser = userAccountService.findCurrentUserDto();
+				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getRequirementSearchInputInterfaceModel(locale,
-					isMilestoneMode);
-				populateMetadata(model);
+					isMilestoneMode,currentUser,readableProjectIds,jsProjects);
+				populateMetadata(model,jsProjects);
 				return model;
 			}
 		});
@@ -114,9 +135,12 @@ public abstract class GlobalSearchController {
 		formModelBuilder.put(CAMPAIGN, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				UserDto currentUser = userAccountService.findCurrentUserDto();
+				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getCampaignSearchInputInterfaceModel(locale,
-						isMilestoneMode);
-				populateMetadata(model);
+						isMilestoneMode,currentUser,readableProjectIds,jsProjects);
+				populateMetadata(model,jsProjects);
 				return model;
 			}
 		});
@@ -124,21 +148,22 @@ public abstract class GlobalSearchController {
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				UserDto currentUser = userAccountService.findCurrentUserDto();
+				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+
 				SearchInputInterfaceModel model = searchInputInterfaceHelper
-						.getRequirementSearchInputInterfaceModel(locale, isMilestoneMode);
-				populateMetadata(model);
+						.getRequirementSearchInputInterfaceModel(locale, isMilestoneMode,currentUser,readableProjectIds,jsProjects);
+				populateMetadata(model,jsProjects);
 				return model;
 			}
 		});
 	}
 
 
-
-
 	protected void initModel(Model model, String associateResultWithType, Long id, Locale locale, String domain,Optional<Milestone> activeMilestone){
 		initModelForPage(model, associateResultWithType, id,activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, domain);
-
 
 		FormModelBuilder builder = formModelBuilder.get(domain);
 		if (builder != null) {
@@ -182,8 +207,6 @@ public abstract class GlobalSearchController {
 		return associateResultWithType != null;
 	}
 
-
-
 	private void initModelForPage(Model model, String associateResultWithType, Long id,Optional<Milestone> activeMilestone ) {
 		model.addAttribute("isMilestoneMode", activeMilestone.isPresent());
 		if (StringUtils.isNotBlank(associateResultWithType)) {
@@ -199,12 +222,11 @@ public abstract class GlobalSearchController {
 		model.addAttribute("projects", readableJsonProjects());
 	}
 
-	private void populateMetadata(SearchInputInterfaceModel model) {
-		model.addMetadata(PROJECTS_META, readableJsonProjects());
+	private void populateMetadata(SearchInputInterfaceModel model,Collection<JsonProject> jsProjects) {
+		model.addMetadata(PROJECTS_META, jsProjects);
 	}
 
 	private Collection<JsonProject> readableJsonProjects() {
-
 
 		UserDto currentUser = new UserDto(null,null,null,true);
 		return  workspaceDisplayService().findAllProjects(campaignAdvancedSearchService.findAllReadablesId(), currentUser);
@@ -212,6 +234,4 @@ public abstract class GlobalSearchController {
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
 
 }
-
-
 

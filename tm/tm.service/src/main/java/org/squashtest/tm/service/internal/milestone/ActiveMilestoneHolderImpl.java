@@ -55,6 +55,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 		if (activeMilestoneHolder.get() == null) {
 			final Long milestoneId = activeMilestoneIdHolder.get();
+
 			List<JsonMilestone> visibles = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
 
 			Milestone milestone = new Milestone();
@@ -65,10 +66,8 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 					milestone = null;
 				}
 			}
-
 			activeMilestoneHolder.set(Optional.fromNullable(milestone));
 		}
-
 		return activeMilestoneHolder.get();
 	}
 

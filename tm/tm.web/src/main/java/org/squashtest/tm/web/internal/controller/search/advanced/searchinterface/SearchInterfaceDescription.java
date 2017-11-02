@@ -186,7 +186,7 @@ public abstract class SearchInterfaceDescription {
 			return this;
 		}
 
-		public SearchInputPanelModel build() {
+		public SearchInputPanelModel build(Collection<JsonProject> jsProjects) {
 
 			SearchInputPanelModel panel = new SearchInputPanelModel();
 			panel.setTitle(messageSource.internationalize("search.testcase.perimeter.field.title", locale));
@@ -201,9 +201,6 @@ public abstract class SearchInterfaceDescription {
 			panel.addField(projectField);
 
 			OptionBuilder optionBuilder = optionBuilder(locale);
-			UserDto currentUser = userAccountService.findCurrentUserDto();
-			List<Long> projectIds = projectDao.findAllReadableIds(currentUser);
-			Collection<JsonProject> jsProjects = workspaceDisplayService.findAllEmptyProjects(projectIds);
 
 			for (JsonProject project : jsProjects) {
 				SearchInputPossibleValueModel projectOption = optionBuilder.label(project.getName())

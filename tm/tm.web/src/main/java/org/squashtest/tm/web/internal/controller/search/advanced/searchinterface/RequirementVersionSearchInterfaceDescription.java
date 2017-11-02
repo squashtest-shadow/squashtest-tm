@@ -94,7 +94,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 
-	public SearchInputPanelModel createRequirementAttributePanel(Locale locale,UserDto currentUser,List<Long> readableProjectIds) {
+	public SearchInputPanelModel createRequirementAttributePanel(Locale locale,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -110,7 +110,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.useLocale(locale).build();
 		criticalityField.addPossibleValues(importanceOptions);
 
-		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale,currentUser,readableProjectIds);
+		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale,currentUser,readableProjectIds,jsProjects);
 		panel.addField(categoryField);
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
@@ -263,18 +263,17 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		return panel;
 	}
 
-	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
+	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale,Collection<JsonProject> jsProjects) {
 		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter-blue").htmlId("requirement.project.id")
-				.build();
+				.build(jsProjects);
 	}
 
-	private SearchInputFieldModel buildCategoryFieldModel(Locale locale,UserDto currentUser,List<Long> readableProjectIds){
+	private SearchInputFieldModel buildCategoryFieldModel(Locale locale,UserDto currentUser,List<Long> readableProjectIds,Collection<JsonProject> jsProjects){
 
 
 		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource().internationalize(
 				"requirement.category.label", locale), MULTICASCADEFLAT);
 
-		Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
 		List<JsonInfoList> categories = new ArrayList<>(jsProjects.size());
 
 		for (JsonProject p : jsProjects){

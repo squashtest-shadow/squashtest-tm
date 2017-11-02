@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +31,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {
@@ -64,7 +66,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createAttributePanel(Locale locale, List<Long> idList) {
+	public SearchInputPanelModel createAttributePanel(Locale locale, List<String> users) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
@@ -91,7 +93,6 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		/* TODO : Get all assignmentable users */
 		OptionBuilder optionBuilder = optionBuilder(locale);
 
-		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(idList);
 		for (String user : users) {
 			assignmentField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
@@ -100,7 +101,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 	}
 
 
-	public SearchInputPanelModel createExecutionPanel(Locale locale,List<Long> idList) {
+	public SearchInputPanelModel createExecutionPanel(Locale locale,List<String> users) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.execution.label", locale));
@@ -122,8 +123,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("lastExecutedBy",
 				getMessageSource().internationalize("search.execution.executedby.label", locale), MULTIAUTOCOMPLETE);
-		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign(idList);
-		for (String user : users) {
+			for (String user : users) {
 			authorizedUsersField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
 
@@ -153,8 +153,8 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createPerimeterPanel(Locale locale) {
-		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build();
+	public SearchInputPanelModel createPerimeterPanel(Locale locale,Collection<JsonProject> jsProjects) {
+		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build(jsProjects);
 	}
 
 }
