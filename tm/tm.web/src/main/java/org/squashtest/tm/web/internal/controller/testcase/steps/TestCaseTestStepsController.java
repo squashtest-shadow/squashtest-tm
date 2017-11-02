@@ -103,7 +103,7 @@ public class TestCaseTestStepsController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
 	@RequestMapping(value = "/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
 
 		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -140,8 +140,7 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
-			Locale locale) {
+	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params) {
 
 		LOGGER.trace("TestCaseModificationController: getStepsTableModel called ");
 

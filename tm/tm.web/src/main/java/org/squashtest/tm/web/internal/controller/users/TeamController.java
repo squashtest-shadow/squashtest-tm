@@ -74,13 +74,13 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * @author mpagnon
- * 
+ *
  */
 @Controller
 @RequestMapping("/administration/teams")
 public class TeamController extends PartyControllerSupport {
 	/**
-	 * 
+	 *
 	 */
 	private static final String TEAM_ID = "teamId";
 
@@ -112,7 +112,7 @@ public class TeamController extends PartyControllerSupport {
 
 	/**
 	 * Creates a new Team
-	 * 
+	 *
 	 * @param team
 	 *            : the given {@link Team} filled with a name and a description
 	 */
@@ -126,7 +126,7 @@ public class TeamController extends PartyControllerSupport {
 
 	/**
 	 * Return the DataTableModel to display the table of all teams.
-	 * 
+	 *
 	 * @param params
 	 *            the {@link DataTableDrawParameters} for the teams table
 	 * @return the {@link DataTableModel} with organized {@link Team} infos.
@@ -145,7 +145,7 @@ public class TeamController extends PartyControllerSupport {
 
 	/**
 	 * Will delete the given team along with it's permissions. will not delete it's associated users
-	 * 
+	 *
 	 * @param teamId
 	 */
 	@RequestMapping(value = TEAM_ID_URL, method = RequestMethod.DELETE)
@@ -156,7 +156,7 @@ public class TeamController extends PartyControllerSupport {
 
 	/**
 	 * Will return a view for the team of the given id
-	 * 
+	 *
 	 * @param teamId
 	 */
 	@RequestMapping(value = TEAM_ID_URL, method = RequestMethod.GET)
@@ -171,7 +171,7 @@ public class TeamController extends PartyControllerSupport {
 		List<?> userModel = createMembersTableModel(teamId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
 
-		List<PermissionGroupModel> pgm = getPermissionGroupModels(teamId);
+		List<PermissionGroupModel> pgm = getPermissionGroupModels();
 		List<ProjectModel> pm = getProjectModels(teamId);
 
 
