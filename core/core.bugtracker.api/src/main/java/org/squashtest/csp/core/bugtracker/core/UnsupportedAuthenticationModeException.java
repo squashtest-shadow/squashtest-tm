@@ -18,38 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.spi;
-
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-
+package org.squashtest.csp.core.bugtracker.core;
 
 /**
- * Interface for providers of BugTrackerConnector instance. A provider will create instances of connectors suitable a
- * determined kind of bug tracker. The bug tracker kind should uniquely identify the connector plugin.
  *
  * @author Gregory Fouquet
  *
  */
-public interface BugTrackerConnectorProvider {
-	/**
-	 *
-	 * @return The kind of bug tracker this provider creates connectors for.
-	 */
-	String getBugTrackerKind();
+public class UnsupportedAuthenticationModeException extends BugTrackerManagerException {
+	private static final long serialVersionUID = -1102202905127664259L;
 
-	/**
-	 *
-	 * @return A readable representation of the bug tracker kind.
-	 */
-	String getLabel();
+	private final String authMode;
 
-	/**
-	 * Creates a connector for the given bug tracker.
-	 *
-	 * @param bugTracker
-	 *            the bug tracker to connect to. should not be <code>null</code>
-	 * @return
-	 */
-	BugTrackerConnector createConnector(BugTracker bugTracker);
+	public UnsupportedAuthenticationModeException(String authMode) {
+		super("does not support authentication mode '"+authMode+"' not supported");
+		this.authMode = authMode;
+	}
 
+	public String getAuthMode() {
+		return authMode;
+	}
 }

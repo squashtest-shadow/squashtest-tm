@@ -26,37 +26,20 @@ import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.ConnectorUtils;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
-public interface OslcBugTrackerConnector {
-	/**
-	 * Must set the credentials in the connector context for remote authentication challenges
-	 * 
-	 * @param credentials
-	 */
-	void authenticate(AuthenticationCredentials credentials);
+/**
+ * Interface for bugtrackers that implements OLSC (not many of them).
+ *
+ */
+public interface OslcBugTrackerConnector extends BugtrackerConnectorBase{
 
-	/**
-	 * Must set the credentials as in {@link #authenticate(AuthenticationCredentials)} and immediately test them against
-	 * the endpoint to check their validity
-	 * 
-	 * @param credentials
-	 * @throws BugTrackerNoCredentialsException
-	 *             for null arguments
-	 * @throws BugTrackerRemoteException
-	 *             for else.
-	 */
-	void checkCredentials(AuthenticationCredentials credentials)
-			throws BugTrackerNoCredentialsException, BugTrackerRemoteException;
-
-	/**
-	 * Returns an {@link BugTrackerInterfaceDescriptor}
-	 * 
-	 * @return
-	 */
-	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
 
 	RemoteIssue createReportIssueTemplate(String projectName);
 

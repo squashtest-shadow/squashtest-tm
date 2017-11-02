@@ -18,21 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.net;
+package org.squashtest.tm.domain.thirdpartyservers;
 
-import java.io.Serializable;
 
-/**
- * Deprecated. Use {@link org.squashtest.tm.domain.thirdpartyservers.UsernamePasswordCredentials} instead.
+import java.util.Arrays;
+
+/*
+ * <p>
+ * Tech note : the use of a char[] instead of a String for passwords seems a common practice, provided that we actually
+ * wipe the char[] after use (see for instance http://www.oracle.com/technetwork/java/seccodeguide-139067.html#2-3
+ * and specifically  https://docs.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#PBEEx)
+ * </p>
  *
+ * <p>
+ * 	Currently this practice is not widely enforced throughout the application, so here this is really for show.
+ * 	However if one day the in-memory password usage is actually implemented this bit is already done.
+ * </p>
  */
-@SuppressWarnings("serial")
-@Deprecated
-public class AuthenticationCredentials implements Serializable {
+public class UsernamePasswordCredentials implements Credentials {
 	private final String username;
-	private final String password;
+	private final char[] password;
 
-	public AuthenticationCredentials(String login, String password) {
+	public UsernamePasswordCredentials(String login, char[] password) {
 		super();
 		this.username = login;
 		this.password = password;
@@ -42,8 +49,14 @@ public class AuthenticationCredentials implements Serializable {
 		return username;
 	}
 
-	public String getPassword() {
+	public char[] getPassword() {
 		return password;
 	}
 
+	/**
+	 * Should be invoked once the caller has no longer use for this credentials
+	 */
+	public void wipePassword(){
+		Arrays.fill(password, '\0');
+	}
 }

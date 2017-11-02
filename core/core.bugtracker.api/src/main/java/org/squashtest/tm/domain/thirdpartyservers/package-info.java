@@ -18,38 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.spi;
-
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-
 
 /**
- * Interface for providers of BugTrackerConnector instance. A provider will create instances of connectors suitable a
- * determined kind of bug tracker. The bug tracker kind should uniquely identify the connector plugin.
+ * <p>
+ * That package deals in a general way with other servers that Squash would interact with. Currently residing
+ * in artifact 'core.bugtracker.api' but ought to belong to 'tm.domain'.
+ * </p>
  *
- * @author Gregory Fouquet
- *
+ * <p>
+ * TODO : one day we will extract all the services, the BugTracker entity etc in tm.domain.
+ * In waiting for this glorious day I put some classes of the package org.squashtest.tm.domain.thirdpartyservers
+ * in this artifact.
+ * </p>
  */
-public interface BugTrackerConnectorProvider {
-	/**
-	 *
-	 * @return The kind of bug tracker this provider creates connectors for.
-	 */
-	String getBugTrackerKind();
-
-	/**
-	 *
-	 * @return A readable representation of the bug tracker kind.
-	 */
-	String getLabel();
-
-	/**
-	 * Creates a connector for the given bug tracker.
-	 *
-	 * @param bugTracker
-	 *            the bug tracker to connect to. should not be <code>null</code>
-	 * @return
-	 */
-	BugTrackerConnector createConnector(BugTracker bugTracker);
-
-}
+package org.squashtest.tm.domain.thirdpartyservers;

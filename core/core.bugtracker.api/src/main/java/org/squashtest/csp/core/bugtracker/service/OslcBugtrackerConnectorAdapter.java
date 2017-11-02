@@ -24,19 +24,17 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnector;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
-public class OslcBugtrackerConnectorAdapter implements InternalBugtrackerConnector {
+public class OslcBugtrackerConnectorAdapter extends AbstractInternalConnectorAdapter {
 
 	private OslcBugTrackerConnector connector;
 
@@ -45,17 +43,10 @@ public class OslcBugtrackerConnectorAdapter implements InternalBugtrackerConnect
 		this.connector = connector;
 	}
 
-	@Override
-	public void authenticate(AuthenticationCredentials credentials) {
-		connector.authenticate(credentials);
+	public BugtrackerConnectorBase getConnector(){
+		return connector;
 	}
 
-	@Override
-	public void checkCredentials(AuthenticationCredentials credentials)
-			throws BugTrackerNoCredentialsException, BugTrackerRemoteException {
-
-		connector.checkCredentials(credentials);
-	}
 
 	@Override
 	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
@@ -86,10 +77,6 @@ public class OslcBugtrackerConnectorAdapter implements InternalBugtrackerConnect
 		return connector.createReportIssueTemplate(projectName);
 	}
 
-	@Override
-	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
-		return connector.getInterfaceDescriptor();
-	}
 
 	@Override
 	public RemoteIssue findIssue(String key) {
