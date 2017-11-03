@@ -28,7 +28,7 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 
 			initialize: function (attributes, config) {
 				this.config = config;
-				this.initText(config);
+				this.initText();
 
 			},
 
@@ -36,15 +36,13 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 				"click #save": "save"
 			},
 
-			initText: function (config) {
+			initText: function () {
 
 				$("#report-description").ckeditor(function () {
 				}, confman.getStdCkeditor());
 
-				var reportDef = config.reportDef;
-
-				if (reportDef !== null & reportDef !== undefined) {
-					reportDef = JSON.parse(reportDef)
+				if (this.isModify) {
+					var reportDef = JSON.parse(this.config.reportDef);
 					$("#report-name").val(reportDef.name);
 					$("#report-description").val(reportDef.description);
 				}
@@ -58,6 +56,11 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 				return path;
 			},
 
+			isModify: function () {
+				var reportDef = this.config.reportDef;
+				return (reportDef !== null & reportDef !== undefined);
+			},
+
 			save: function () {
 				if (this.model.hasBoundary()) {
 
@@ -67,16 +70,24 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 						description: $("#report-description").val(),
 						parameters: JSON.stringify(this.model.toJSON()),
 					};
+
+					var targetUrl;
+					if (this.isModify()) {
+						targetUrl = this.config.reportUrl + "/panel/content/update/" + this.config.parentId;
+					} else {
+						targetUrl = this.config.reportUrl + "/panel/content/new-report/" + this.config.parentId;
+					}
+
 					$.ajax({
 						type: "POST",
-						url: this.config.reportUrl + "/panel/content/new-report/" + this.config.parentId,
+						url: targetUrl,
 						contentType: "application/json",
 						data: JSON.stringify(data)
 					}).done(function (id) {
 						var nodeToSelect = "CustomReportReport-" + id;
 						$.cookie("jstree_select", nodeToSelect, {path: path});
 						window.location.href = router.buildURL("custom-report-report-redirect", id);
-					})
+					});
 
 				} else {
 

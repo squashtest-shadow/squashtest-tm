@@ -35,6 +35,7 @@ import java.util.zip.GZIPInputStream;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -67,6 +68,7 @@ import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
@@ -116,6 +118,17 @@ public class ReportController {
 		return node.getId().toString();
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/panel/content/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
+	public String updateReportDefinition(@PathVariable String namespace, @RequestBody ReportDefinition definition,
+										@PathVariable("id") long id) {
+		ReportDefinition oldDef = customReportLibraryNodeService.findReportDefinitionByNodeId(id);
+		definition.setPluginNamespace(namespace);
+		definition.setOwner(userService.findCurrentUser());
+		definition.setId(oldDef.getId());
+		reportModificationService.updateDefinition(definition, oldDef);
+		return String.valueOf(id);
+	}
 
 	/**
 	 * Populates model and returns the fragment panel showing a report.

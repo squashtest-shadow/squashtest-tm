@@ -46,7 +46,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			var stored = sessionStorage[config.reportUrl + "-formerState"];
 			var reportDef = config.reportDef;
 			if(reportDef !== null & reportDef !== undefined){
-				var parmeters = JSON.parse(reportDef).parameters
+				var parmeters = JSON.parse(reportDef).parameters;
 				return  JSON.parse(parmeters);
 			}
 			if (!!stored) {
@@ -193,42 +193,17 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		});
 	}
 
-	// function getCookiePath() {
-	// 	var path = "/squash/custom-report-workspace";
-	// 	if(is.ie()||is.firefox()){
-	// 		path = path + "/";
-	// 	}
-	// 	return path;
-	// }
-
-	// function doSave() {
-	// 	var path = getCookiePath();
-	// 	var data = {
-	// 		name : $("#report-name").val(),
-	// 		description : $("#report-description").val(),
-	// 		parameters: stringModel()
-	// 	};
-	// 	$.ajax({
-	// 		type : "POST",
-	// 		url : config.reportUrl + "/panel/content/new-report/" + config.parentId,
-	// 		contentType : "application/json",
-	// 		data : JSON.stringify(data)
-	// 	}).done(function (id) {
-	// 		var nodeToSelect = "CustomReportReport-" + id;
-	// 		$.cookie("jstree_select",nodeToSelect,{path:path});
-	// 		window.location.href = router.buildURL("custom-report-report-redirect",id);
-	// 	})
-	// }
-
 	function init(settings) {
 		resetState();
 		config = $.extend(config, settings);
 
 		formModel = new FormModel();
 		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formState.restore(), config: config });
+		reportInfomationPanel = new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
+
 		initViewTabs();
 
-		if (squashtm.app.customReportWorkspaceConf != undefined) {
+		if (squashtm.app.customReportWorkspaceConf !== undefined) {
 			generateView();
 		}
 
@@ -236,10 +211,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		$("#export").click(doExport);
 
 
-		reportInfomationPanel = new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
 
-
-		// $("#save").click(doSave);
 
 	}
 

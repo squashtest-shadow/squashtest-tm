@@ -33,5 +33,6 @@ public interface ReportModificationService {
 
 	void save (ReportDefinition report);
 
+	void updateDefinition(ReportDefinition definition, ReportDefinition oldDef);
 
 }

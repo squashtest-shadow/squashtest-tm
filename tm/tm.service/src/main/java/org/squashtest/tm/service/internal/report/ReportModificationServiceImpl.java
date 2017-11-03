@@ -21,18 +21,28 @@
 package org.squashtest.tm.service.internal.report;
 
 import org.hibernate.Session;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.report.ReportModificationService;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.ReportModificationService")
 public class ReportModificationServiceImpl implements ReportModificationService{
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
 	@Override
 	public void persist(ReportDefinition newReport) {
@@ -45,8 +55,25 @@ public class ReportModificationServiceImpl implements ReportModificationService{
 	}
 
 	@Override
-	public void update(ReportDefinition report) {
+	public void update(ReportDefinition reportDef) {
+		session().saveOrUpdate(reportDef);
+	}
 
+	@Override
+	@PreAuthorize("hasPermission(#definition.id, 'org.squashtest.tm.domain.report.ReportDefinition' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public void updateDefinition(ReportDefinition definition, ReportDefinition oldDef) {
+		definition.setProject(oldDef.getProject());
+		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
+		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
+		//rename if needed without forgot to rename the node.
+		if (!definition.getName().equals(oldDef.getName())) {
+			CustomReportLibraryNode node = customReportLibraryNodeService.findNodeFromEntity(oldDef);
+			node.renameNode(definition.getName());
+		}
+		session().flush();
+		session().clear();
+		update(definition);
 	}
 
 	@Override
