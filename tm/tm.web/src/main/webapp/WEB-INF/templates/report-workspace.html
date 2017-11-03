@@ -32,19 +32,20 @@
 	<!-- rich jeditable header -->
     <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
     <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
-    <script type="text/javascript" th:inline="javascript">
+  <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
-    	var squashtm = {};
-    	squashtm.app = {
-    		locale : /*[[#{squashtm.locale}]]*/,
-    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-		reportWorkspaceConf: {
-                        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
-                        collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
-                }
-    	};
+    var squashtm = {};
+    squashtm.app = {
+      locale: /*[[#{squashtm.locale}]]*/,
+      contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      reportWorkspaceConf: {
+        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+        collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
+        pluginNamespace : /*[[${pluginNamespace}]]*/
+      }
+    };
     /* ]]> */
-    </script>
+  </script>
     <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
     <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
       src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
@@ -57,7 +58,7 @@
 	<div id="workspace">
 		<div id="workspace-title">
 			<div class="snap-left">
-				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>
+        <h2 th:text="${parentId != null} ? #{ workspace.custom-report.title } : #{ workspace.report.title }">Espace Rapport ou Espace Custom Rapport</h2>
 			</div>
 			<div class="snap-right">
  				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
@@ -76,8 +77,8 @@
                     <div class="tg-tollbar"></div>
                   </div>
                     <div class="tg-body">
-        				<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}"
-        					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
+        				<div th:each="rpt : ${reports.get(cat)}" th:id="${parentId != null ? rpt.namespace : #ids.seq('left-panel')}"
+        					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/panel' + ${parentId != null ? ('/'+ parentId) :''}}"
         					class="report-item">
         					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div>
         					<div class="report-item-text">

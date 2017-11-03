@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "squash.translator" ,
-        "workspace.tree-node-copier", "workspace.tree-event-handler","workspace.routing"], function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler,urlBuilder){
+        "workspace.tree-node-copier", "workspace.tree-event-handler","workspace.routing"], function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler, urlBuilder){
 
 
 	function showError(messageName){
@@ -131,7 +131,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 					selectedNode = selectedNode.getParent();
 				}
 				var nodeId = selectedNode.getResId();
-				url = squashtm.app.contextRoot + "report-workspace/edit-from-custom-report/" + nodeId;
+				url = urlBuilder.buildURL("report-workspace",nodeId);
 				document.location.href = url;
 			});
 

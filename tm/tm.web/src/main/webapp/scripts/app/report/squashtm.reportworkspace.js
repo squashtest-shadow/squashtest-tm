@@ -64,9 +64,16 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 			 */
 			function init(options) {
 
+
 				$("#outer-category-frame  .report-item").click(function() {
 					loadContextualReport(this);
 				});
+
+				var pluginNamespace = options.pluginNamespace;
+				if(pluginNamespace !== null & pluginNamespace !== undefined){
+					pluginNamespace = pluginNamespace.replace(/\./g, "\\.");
+					$("#"+ pluginNamespace).click();
+				}
 
 				ToggleWorkspace.init(options);
 

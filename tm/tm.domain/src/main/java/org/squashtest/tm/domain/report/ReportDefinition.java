@@ -41,8 +41,8 @@ public class ReportDefinition implements TreeEntity{
 
 	@Id
 	@Column(name = "REPORT_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "report_id_seq")
-	@SequenceGenerator(name = "report_id_seq", sequenceName = "report_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "report_definition_report_id_seq")
+	@SequenceGenerator(name = "report_definition_report_id_seq", sequenceName = "report_definition_report_id_seq", allocationSize = 1)
 	private Long id;
 
 	@NotBlank

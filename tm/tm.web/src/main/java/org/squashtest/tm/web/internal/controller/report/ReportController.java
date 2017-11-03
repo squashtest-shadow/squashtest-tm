@@ -56,6 +56,7 @@ import org.squashtest.tm.api.report.form.OptionInput;
 import org.squashtest.tm.api.report.form.RadioButtonsGroup;
 import org.squashtest.tm.api.report.form.composite.TagPickerOption;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.report.ReportDefinition;
@@ -78,7 +79,7 @@ import com.lowagie.text.pdf.codec.Base64;
  *
  */
 @Controller
-@RequestMapping("/reports/{namespace}/{index}")
+@RequestMapping("/reports/{namespace}")
 public class ReportController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
@@ -107,12 +108,11 @@ public class ReportController {
 
 	@ResponseBody
 	@RequestMapping(value = "/panel/content/new-report/{parentId}", method = RequestMethod.POST, consumes = "application/json")
-	public String saveNewReport(@PathVariable String namespace, @RequestBody ReportDefinition reportDefinition,
-								@PathVariable("parentId") long parentId) {
+	public String saveReport(@PathVariable String namespace, @RequestBody ReportDefinition reportDefinition,
+							 @PathVariable("parentId") long parentId) {
 		reportDefinition.setPluginNamespace(namespace);
 		reportDefinition.setOwner(userService.findCurrentUser());
 		CustomReportLibraryNode node = customReportLibraryNodeService.createNewNode(parentId, reportDefinition);
-		reportModificationService.save(reportDefinition);
 		return node.getId().toString();
 	}
 
@@ -122,30 +122,33 @@ public class ReportController {
 	 *
 	 * @param namespace
 	 *            namespace of the report
-	 * @param index
-	 *            0-based index of the report in its namespace
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
-	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
-		populateModelWithReport(namespace, index, model);
+	public String showReportPanel(@PathVariable String namespace, Model model) {
+		populateModel(namespace, model);
 		// XXX shouldnt these 2 lines go in populateMWR ? check if "report viewer" works as expected (see
 		// showReportViexwer)
-		model.addAttribute("projectMultiselect", projectMultiselect);
-		model.addAttribute("projectFilterModel", findProjectsModels());
+
 		return "report-panel.html";
 	}
 
-	@RequestMapping(value = "/panel/edit-from-custom-report/{parentId}", method = RequestMethod.GET)
-	public String showReportPanelFromCustomReport(@PathVariable String namespace, @PathVariable int index, Model model,
+	@RequestMapping(value = "/panel/{parentId}", method = RequestMethod.GET)
+	public String showReportPanelFromCustomReport(@PathVariable String namespace, Model model,
 												  @PathVariable("parentId") long parentId) {
-		populateModelWithReport(namespace, index, model);
+		populateModel(namespace, model);
 
-		model.addAttribute("projectMultiselect", projectMultiselect);
-		model.addAttribute("projectFilterModel", findProjectsModels());
-		model.addAttribute("fromCustomReport", true);
 		model.addAttribute("parentId", parentId);
+
+		CustomReportLibraryNode crln = customReportLibraryNodeService.findCustomReportLibraryNodeById(parentId);
+
+		if (crln.getEntityType().getTypeName().equals(CustomReportNodeType.REPORT_NAME)) {
+			ReportDefinition def = (ReportDefinition) crln.getEntity();
+			model.addAttribute("reportDef", JsonHelper.serialize(def));
+		}
+
+
 		return "report-panel.html";
 	}
 
@@ -154,8 +157,11 @@ public class ReportController {
 		return new FilterModel(projects);
 	}
 
-	private void populateModelWithReport(String namespace, int index, Model model) {
-		Report report = reportsRegistry.findReport(namespace, index);
+	private void populateModel(String namespace, Model model) {
+		model.addAttribute("projectMultiselect", projectMultiselect);
+		model.addAttribute("projectFilterModel", findProjectsModels());
+
+		Report report = reportsRegistry.findReport(namespace);
 		model.addAttribute("report", report);
 
 		// used for tag picker prefilling.
@@ -167,7 +173,6 @@ public class ReportController {
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
 	 *
 	 * @param namespace
-	 * @param index
 	 * @param viewIndex
 	 * @param format
 	 * @return
@@ -178,13 +183,13 @@ public class ReportController {
 	 */
 	@Deprecated
 	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "parameters" })
-	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace, @PathVariable int index,
+	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace,
 			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
-					throws JsonParseException, JsonMappingException, IOException {
+					throws IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
 		Map<String, Criteria> crit = new FormToCriteriaConverter().convert(form);
 
-		Report report = reportsRegistry.findReport(namespace, index);
+		Report report = reportsRegistry.findReport(namespace);
 
 		return report.buildModelAndView(viewIndex, format, crit);
 
@@ -192,11 +197,11 @@ public class ReportController {
 
 
 	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "json" })
-	public ModelAndView getReportView(@PathVariable String namespace, @PathVariable int index,
+	public ModelAndView getReportView(@PathVariable String namespace,
 			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("json") String parameters)
-					throws JsonParseException, JsonMappingException, IOException {
+					throws IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
-		Report report = reportsRegistry.findReport(namespace, index);
+		Report report = reportsRegistry.findReport(namespace);
 		List<Project> projects = projectFinder.findAllOrderedByName();
 		Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, projects).convert(form);
 
@@ -209,7 +214,6 @@ public class ReportController {
 			mav.addObject("html", model.get("html"));
 			mav.addObject("fileName", model.get("fileName"));
 			mav.addObject("namespace",namespace);
-			mav.addObject("index",index);
 			mav.addObject("viewIndx", viewIndex);
 		} else {
 			mav = report.buildModelAndView(viewIndex, format, crit);
@@ -221,9 +225,9 @@ public class ReportController {
 
 
 	@RequestMapping(value = "/views/{viewIndex}/docxtemplate", method = RequestMethod.GET)
-	public void getTemplate(@PathVariable String namespace, @PathVariable int index, @PathVariable int viewIndex, HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void getTemplate(@PathVariable String namespace, @PathVariable int viewIndex, HttpServletRequest request, HttpServletResponse response) throws Exception{
 
-		Report report = reportsRegistry.findReport(namespace, index);
+		Report report = reportsRegistry.findReport(namespace);
 		report.getViews()[viewIndex].getSpringView().render(null, request, response);
 
 	}

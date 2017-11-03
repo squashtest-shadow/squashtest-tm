@@ -198,8 +198,8 @@ define([], function(){
 		'info-list-item.delete' :			root + '/info-lists/{\\d+}/items/{\\d+}',
 		'info-list-item.exist' :			root + '/info-lists/items/code/{\\d}',
 		'info-list.bind-to-project' :		root + '/info-list-binding/project/{\\d+}/{\\w+}',
-		'docxtemplate' :					root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
-		'ie9sucks' :						root + '/reports/0/0/ie9',
+		'docxtemplate' :					root + '/reports/{\\w+}/views/{\\d+}/docxtemplate',
+		'ie9sucks' :						root + '/reports/0/ie9',
 		'milestone.synchronize' :			root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
 
 		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
@@ -243,6 +243,10 @@ define([], function(){
 		//don't forget the '/' at the end so the tree will set correctly the cookie. Else the url will be /squash/custom-report-workspace#...
 		//and the cookie path will be a nasty '/squash'
 		'custom-report-base' : root + '/custom-report-workspace/',
+
+		// report-workspace
+		'report-workspace' : root + '/report-workspace/{\\d+}',
+		'reports': root + '/reports/',
 
 		// project plugins
 		'project-plugins' :					root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}/',	// the trailing '/' is important

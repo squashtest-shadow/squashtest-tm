@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2016 Henix, henix.fr
  *
@@ -18,40 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function () {
-	"use strict";
+package org.squashtest.tm.web.internal.helper;
 
-	return {
-		generate: function () {
-			return {
-				check_move: function () {
-					return false;
-				},
-				//override pluggins to have a custom DnD for dashboards
-				"plugins": ["json_data", "ui", "types", "hotkeys", "dndCustomReport", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect', "sort"],
-				"types": {
-					"max_depth": -2, // unlimited without check
-					"max_children": -2, // unlimited w/o check
-					"valid_children": ["drive"],
-					"types": {
-						"report": {
-							"valid_children": 'none'
-						},
-						"chart": {
-							"valid_children": 'none'
-						},
-						"dashboard": {
-							"valid_children": 'none'
-						},
-						"folder": {
-							"valid_children": ["report", "chart", "dashboard", "folder"]
-						},
-						"drive": {
-							"valid_children": ["report", "chart", "dashboard", "folder"]
-						}
-					}
-				}
-			};
-		}
-	};
-});
+import java.util.List;
+import java.util.Map;
+
+public class ReportHelper {
+
+}

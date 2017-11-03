@@ -113,35 +113,30 @@
     <div class="fragment-body ui-widget">
       <span th:remove="all">'ui-widget' class above is required to get a (somewhat) uniform font size across workspaces</span>
 
-      <div th:if="${fromCustomReport}">
+      <div th:if="${parentId != null}">
         <div id="report-information-panel" class="is-contextual expand sq-tg">
-          <div class="tg-head" th:text="#{label.Information}">
-            Information
-          </div>
-
+          <div class="tg-head" th:text="#{label.Information}"> Information</div>
           <div class="tg-body cf">
 
-            <div>
-              <label for="report-name" th:text="#{label.Name}"></label>
-              <div>
-                <input id="report-name" name="name" type="text" size="50" maxlength="255" data-prop="name"
-                       data-object="reportDefinition"/>
-                <span class="error-message name-error"></span>
-              </div>
-            </div>
+            <table style="width:100%; border-spacing:0.5em; ">
+              <tr>
+                <td><label for="report-name" th:text="#{label.Name}"></label></td>
+                <td><input id="report-name" name="name" type="text" size="50" maxlength="255"
+                           data-prop="name" data-object="reportDefinition"/><span
+                  class="error-message name-error"></span></td>
+              </tr>
+              <tr>
+                <td><label style="vertical-align: middle;" for="report-description"
+                           th:text="#{label.Description}"></label></td>
+                <td><textarea class="data-column" id="report-description" data-def="isrich"></textarea></td>
+              </tr>
+            </table>
 
-            <div>
-              <label for="report-description" th:text="#{label.Description}"></label>
-              <textarea class="data-column" id="report-description" data-def="isrich"></textarea>
-            </div>
-
-            <input type="button" class="sq-btn btn-sm snap-right" id="save" value="save"
-                   th:value="#{label.save}"/>
-
-
+            <input type="button" class="sq-btn btn-sm snap-right" id="save" value="save" th:value="#{label.save}"/>
           </div>
         </div>
       </div>
+
       <div id="report-criteria-panel" class="is-contextual expand sq-tg" title="Report form" th:title="#{report.criteria.panel.title}">
         <div class="tg-head" th:text="#{report.criteria.panel.title}">
           Report form - should be in an h3 if we had not .report-criteria-panel california style sheet
@@ -306,6 +301,48 @@
           HERE</div>
         <div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">ANOTHER VIEW HERE</div>
       </div>
+
+      <div id="report-attributs" style="display: none; margin-top: 1.65em;" class="sq-tg collapse">
+        <div class="tg-head">
+          <h3>
+            <span th:text="#{label.Attributes}">Attributes</span>
+          </h3>
+        </div>
+        <div class="tg-body">
+          <div class="display-table">
+            <div class="display-table-row">
+              <label for="chart-perimeter" class="display-table-cell"> <span
+                th:text="#{chart.label.perimeter}">perimetre</span>
+              </label>
+              <div id="chart-perimeter" class="display-table-cell">
+                {{perimeterMessage}}
+              </div>
+            </div>
+            <div class="display-table-row">&nbsp;</div>
+            <div class="display-table-row">
+              <label for="chart-operation" class="display-table-cell"> <span
+                th:text="#{chart.label.operation}">operation</span>
+              </label>
+              <div id="chart-operation" class="display-table-cell">
+                {{#each entityOperation}}
+                {{> entityOperationsTpl}}
+                {{/each}}</div>
+            </div>
+            <div class="display-table-row">&nbsp;</div>
+            <div class="display-table-row">
+              <label for="chart-filter" class="display-table-cell"> <span
+                th:text="#{chart.label.filter}">filtres</span>
+              </label>
+              <div id="chart-filter" class="display-table-cell">
+                <div class="display-table">
+                  {{#each entityFilters}}
+                  {{>entityFiltersTpl}}
+                  {{/each}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- =================================================/RESULT====================================================== -->
@@ -318,9 +355,10 @@
       var squashtm = squashtm || {};
       squashtm.app = squashtm.app || {};
       squashtm.app.reportConf = {
+          reportDef : /*[[${reportDef}]]*/,
           parentId: /*[[${parentId}]]*/,
           contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash",
-          reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
+          reportUrl: /*[[ @{'/reports/' + ${report.namespace}} ]]*/ "/squash/reports",
           dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
           noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",
           okLabel: /*[[ #{label.Confirm} ]]*/ "OK",
