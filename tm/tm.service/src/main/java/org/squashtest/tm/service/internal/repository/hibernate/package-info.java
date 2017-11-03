@@ -993,7 +993,7 @@
 					"where rvl.linkType.id = :linkTypeId"),
 
 	// StoredCredentials
-	@NamedQuery(name="StoredCredentials.findByServerId", query = "select sc from StoredCredentials sc join sc.authenticatedServer as where as.id = :serverId")
+	@NamedQuery(name="StoredCredentials.findByServerId", query = "select sc from StoredCredentials sc join sc.authenticatedServer server where server.id = :serverId")
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

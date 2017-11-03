@@ -48,8 +48,8 @@ public class StoredCredentials {
 
 	@Id
 	@Column(name = "CREDENTIAL_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "persistent_credentials_cred_id_seq")
-	@SequenceGenerator(name = "test_case_library_node_tcln_id_seq", sequenceName = "persistent_credentials_cred_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "stored_credentials_cred_id_seq")
+	@SequenceGenerator(name = "stored_credentials_cred_id_seq", sequenceName = "stored_credentials_cred_id_seq", allocationSize = 1)
 	private Long id;
 
 	/**
