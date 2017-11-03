@@ -58,7 +58,7 @@
 	<span style="font-weight: bold;" id="selected-perim-msg"/>
 	<span style="font-weight: bold;color: #750021;text-decoration: underline" id="selected-perim" />
 
-	<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+	<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu">
         	<span th:text="#{wizard.perimeter.change}"/>
        </a>
 
@@ -66,11 +66,11 @@
 
             {{#each attributes.perimSelect}}
 	     <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
-	         <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+	         <a class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
             </li>
             {{/each}}
 		<li id="reset-perimeter" class="cursor-pointer ui-menu-item" role="presentation" aria-disabled="true">
-               <a th:text="#{wizard.perimeter.reset}" shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" ></a>
+               <a th:text="#{wizard.perimeter.reset}" class="ui-corner-all " tabindex="-1" role="menuitem" ></a>
           </li>
        </ul>
 </div>
