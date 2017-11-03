@@ -81,8 +81,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected static final String MILESTONE_STATUS_FINISHED = "FINISHED";
 	private static final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
 	protected static final Integer NODE_WITHOUT_MILESTONE = 0;
-	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
-	private Set<Long> nodeLinkedToMilestone = new HashSet<>();
+	protected static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
+	protected Set<Long> nodeLinkedToMilestone = new HashSet<>();
 
 	// ************************************* get Stuff to show the workspace trees *************************************
 
@@ -98,8 +98,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		// milestones
 		Map<Long, List<Long>> allMilestonesForLN = findAllMilestonesForLN();
-
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN);
+		List<Long> milestonesModifiable = getMilestonesModifiable();
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN, milestonesModifiable, activeMilestoneId);
 		Map<Long, JsTreeNode> jsTreeNodes = doFindLibraries(readableProjectIds, currentUser);
 
 		buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, activeMilestoneId);
@@ -254,8 +254,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 		// milestones
 		Map<Long, List<Long>> allMilestonesForLN = findAllMilestonesForLN();
-
-		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN);
+		List<Long> milestonesModifiable = getMilestonesModifiable();
+		Map<Long, JsTreeNode> libraryChildrenMap = getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, allMilestonesForLN, milestonesModifiable, activeMilestoneId);
 
 		if (currentUser.isNotAdmin()) {
 			findNodeChildrenPermissionMap(currentUser, libraryChildrenMap, libraryId);
@@ -501,12 +501,12 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		}
 	}
 
-	// TODO factorise or make it abstract
+/*	// TODO factorise or make it abstract
 	private boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
 		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
-	}
+	}*/
 
-	private boolean nodeHasActiveMilestone(Set<Long> nodesLinkedToMilestone, Long libraryNodeId) {
+	protected boolean nodeHasActiveMilestone(Set<Long> nodesLinkedToMilestone, Long libraryNodeId) {
 		for (Long nodeId : nodesLinkedToMilestone) {
 			if (libraryNodeId.equals(nodeId)) {
 				return true;
@@ -553,6 +553,13 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()), mapping(r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID), toSet())));
 
 		pluginByLibraryId.forEach((libId, pluginIds) -> jsTreeNodes.get(libId).addAttr("wizards", pluginIds));
+	}
+
+	private List<Long> getMilestonesModifiable() {
+		return DSL.select(MILESTONE.MILESTONE_ID)
+			.from(MILESTONE)
+			.where(MILESTONE.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(MILESTONE.STATUS.eq(MILESTONE_STATUS_FINISHED))
+			.fetch(MILESTONE.MILESTONE_ID, Long.class);
 	}
 
 	protected String getMessage(String key) {
@@ -607,7 +614,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return buildResourceType(getClassName());
 	}
 
-	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN);
+	protected abstract Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN, List<Long> milestonesModifiable, Long activeMilestoneId);
 
 	protected abstract Field<Long> getMilestoneLibraryNodeId();
 
@@ -618,4 +625,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract HibernateEntityDao hibernateFolderDao();
 
 	protected abstract Set<Long> findLNByMilestoneId(Long activeMilestoneId);
+
+	protected abstract boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId);
+
 }

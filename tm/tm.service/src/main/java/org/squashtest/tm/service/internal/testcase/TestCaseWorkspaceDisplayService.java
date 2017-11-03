@@ -71,7 +71,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	@Override
 	//TODO add milestones
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, Long activeMilestoneId) {
 
 		return DSL
 			.select(
@@ -94,11 +94,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				org.jooq.impl.DSL.decode()
 					.when(TCLNR.ANCESTOR_ID.isNull(), "false")
 					.otherwise("true")
-					.as("HAS_CONTENT"),
-				org.jooq.impl.DSL.decode()
-					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
-					.otherwise("false")
-					.as("IS_MILESTONE_MODIFIABLE")
+					.as("HAS_CONTENT")
 			)
 			.from(TCLN)
 			.leftJoin(TCF).on(TCLN.TCLN_ID.eq(TCF.TCLN_ID))
@@ -106,10 +102,8 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(TCS).on(TC.TCLN_ID.eq(TCS.TEST_CASE_ID))
 			.leftJoin(RVC).on(TC.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.leftJoin(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
-			.leftJoin(MTC).on(TCLN.TCLN_ID.eq(MTC.TEST_CASE_ID))
-			.leftJoin(M).on(MTC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TCLN.TCLN_ID.in(childrenIds))
-			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID, M.STATUS)
+			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -117,8 +111,9 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
 					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
+					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable,r.get(TCLN.TCLN_ID));
 					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber, (String) r.get("IS_MILESTONE_MODIFIABLE"));
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber, isMilestoneModifiable);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
@@ -157,6 +152,18 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Integer getMilestonesNumberForTC(Map<Long, List<Long>> allMilestonesForTCs, Long id) {
 		return (allMilestonesForTCs.get(id) != null) ? allMilestonesForTCs.get(id).size() : NODE_WITHOUT_MILESTONE;
+	}
+
+	private String isMilestoneModifiable(Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, Long id) {
+		if (allMilestonesForTCs.get(id) != null && milestonesModifiable != null) {
+			List<Long> allMilestonesForTC = allMilestonesForTCs.get(id);
+			for (Long milestone : allMilestonesForTC) {
+				if (!milestonesModifiable.contains(milestone)) {
+					return "false";
+				}
+			}
+		}
+		return "true";
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************
@@ -293,6 +300,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
 			)
 			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class));
+	}
+
+	@Override
+	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
 	}
 
 	@Override

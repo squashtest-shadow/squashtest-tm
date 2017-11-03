@@ -63,8 +63,12 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
 
+	private List<Long> reqsDontAllowClick = new ArrayList<>();
+
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId) {
+
+		reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
 
 		return DSL
 			.select(
@@ -100,15 +104,18 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 				if (r.get("RESTYPE").equals("requirement-folders")) {
 					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
 				} else {
-					Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, r.get(RLN.RLN_ID));
-					return buildRequirement(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
-						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser, milestonesNumber);
+					Long id = r.get(RLN.RLN_ID);
+					Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
+					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
+					boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
+					return buildRequirement(id, r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
+						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser, Integer milestonesNumber) {
+	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 		attr.put("resId", id);
@@ -133,23 +140,43 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			attr.put("reference", reference);
 		}
 
-		return buildNode(title, state, attr, currentUser, milestonesNumber, "true");
+		if (!NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) && isReqDontAllowClick) {
+			attr.put("milestones-dont-allow-click", "true");
+		}
+
+		return buildNode(title, state, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 	}
 
 	private Integer getMilestonesNumberForReq(Map<Long, List<Long>> allMilestonesForReqs, Long id) {
 		return (allMilestonesForReqs.get(id) != null) ? allMilestonesForReqs.get(id).size() : NODE_WITHOUT_MILESTONE;
 	}
 
-	public List<Long> findReqsWithChildrenLinkedToMilestone(List<Long> reqVersionIdsWithMilestone) {
-		List<Long> reqIdsWithMilestone = DSL.select().from(REQUIREMENT_VERSION)
-			.where(REQUIREMENT_VERSION.RES_ID.in(reqVersionIdsWithMilestone))
+	private String isMilestoneModifiable(Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long id) {
+		if (allMilestonesForReqs.get(id) != null && milestonesModifiable != null) {
+			List<Long> allMilestonesForReq = allMilestonesForReqs.get(id);
+			for (Long milestone : allMilestonesForReq) {
+				if (!milestonesModifiable.contains(milestone)) {
+					return "false";
+				}
+			}
+		}
+		return "true";
+	}
+
+	private boolean isReqDontAllowClick(List<Long> reqsDontAllowClick, Long id) {
+		return reqsDontAllowClick.size() != 0 && reqsDontAllowClick.contains(id);
+	}
+
+	public List<Long> findReqsWithChildrenLinkedToActiveMilestone(Long activeMilestoneId) {
+		List<Long> reqIdsWithActiveMilestone = DSL.select().from(REQUIREMENT_VERSION)
+			.where(REQUIREMENT_VERSION.RES_ID.in(DSL.select(MILESTONE_REQ_VERSION.REQ_VERSION_ID).from(MILESTONE_REQ_VERSION).where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))))
 			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class);
 
 		return DSL.selectDistinct()
 			.from(RLN_RELATIONSHIP_CLOSURE)
-			.where(RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID.in(reqIdsWithMilestone)
+			.where(RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID.in(reqIdsWithActiveMilestone)
 				.and(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.notIn(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER)))
-				.and(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.notIn(reqIdsWithMilestone)))
+				.and(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.notIn(reqIdsWithActiveMilestone)))
 			.fetch(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID, Long.class);
 	}
 
@@ -241,13 +268,20 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
+		List<Long> reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
 		return new HashSet<>(DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID)
 			.from(MILESTONE_REQ_VERSION)
 			.leftJoin(REQUIREMENT_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
 			.leftJoin(REQUIREMENT).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT.RLN_ID))
 			.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
 			.union(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER))
+			.union(DSL.select(REQUIREMENT.RLN_ID).from(REQUIREMENT).where(REQUIREMENT.RLN_ID.in(reqsDontAllowClick)))
 			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class));
+	}
+
+	@Override
+	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId")) || reqsDontAllowClick.contains(node.getAttr().get("resId"))));
 	}
 
 	@Override

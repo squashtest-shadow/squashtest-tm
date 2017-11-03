@@ -86,7 +86,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN, List<Long> milestonesModifiable, Long activeMilestoneId) {
 
 		getCampaignHierarchy(currentUser, expansionCandidates);
 
@@ -445,6 +445,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.where(MILESTONE_CAMPAIGN.MILESTONE_ID.eq(activeMilestoneId))
 			.union(DSL.select(CAMPAIGN_FOLDER.CLN_ID).from(CAMPAIGN_FOLDER))
 			.fetch(MILESTONE_CAMPAIGN.CAMPAIGN_ID, Long.class));
+	}
+
+	@Override
+	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
+		return (node != null && (NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId) || node.getAttr().get("rel").equals("folder") || nodeHasActiveMilestone(nodeLinkedToMilestone, (Long) node.getAttr().get("resId"))));
 	}
 
 	@Override

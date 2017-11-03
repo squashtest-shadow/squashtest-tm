@@ -49,7 +49,7 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	DSLContext DSL;
 
 	@Override
-	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {
+	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN, List<Long> milestonesModifiable, Long activeMilestoneId) {
 		return null;
 	}
 
@@ -138,6 +138,11 @@ public class CustomReportWorkspaceDisplayService extends AbstractWorkspaceDispla
 	@Override
 	protected Set<Long> findLNByMilestoneId(Long activeMilestoneId) {
 		return null;
+	}
+
+	@Override
+	protected boolean passesMilestoneFilter(JsTreeNode node, Long activeMilestoneId) {
+		return false;
 	}
 
 	@Override
