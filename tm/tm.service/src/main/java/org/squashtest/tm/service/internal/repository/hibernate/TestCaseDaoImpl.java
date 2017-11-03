@@ -494,7 +494,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	private List<Sorting> createEffectiveSorting(Sorting userSorting) {
 
-		LinkedList<Sorting> sortings = new LinkedList<Sorting>(defaultVerifiedTcSorting);
+		LinkedList<Sorting> sortings = new LinkedList<>(defaultVerifiedTcSorting);
 
 		// from that list we filter out the redundant element, considering the argument.
 		// note that the sorting order is irrelevant here.
