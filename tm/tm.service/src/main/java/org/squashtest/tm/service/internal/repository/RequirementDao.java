@@ -141,4 +141,11 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys, String projectName);
 
 	List<Long> findAllRequirementIdsFromMilestones(Collection<Long> milestoneIds);
+
+	/**
+	 * Sort requirementVersions by their position in tree
+	 */
+	List<Long> sortRequirementByNodeRelationship(List<Long> requirementVersionIds);
+
+
 }

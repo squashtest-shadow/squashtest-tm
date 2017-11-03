@@ -528,6 +528,7 @@
 	@NamedQuery(name = "Issue.countByTestSuite", query = "select count(ish) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues ish  where ts = :testSuite"),
 	@NamedQuery(name = "Issue.countByExecutionAndSteps", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
 	@NamedQuery(name = "Issue.countByTestCase", query = "select count(ish) from Execution ex join ex.issues ish join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase"),
+	@NamedQuery(name = "Issue.countByRequirementVersion", query = "select count(ish) from Execution ex join ex.issues ish where ex.referencedTestCase in (select rvc.verifyingTestCase from RequirementVersion rv join rv.requirementVersionCoverages rvc where rv = :requirementVersion)"),
 	@NamedQuery(name = "Issue.countIssuesfromExecutionSteps",
 		query = "select count(Issue) from Issue Issue where Issue.id in ( " +
 			"select isStep.id from ExecutionStep estep inner join estep.issueList ils inner join ils.issues isStep where estep.id in (:executionStepsIds) " +

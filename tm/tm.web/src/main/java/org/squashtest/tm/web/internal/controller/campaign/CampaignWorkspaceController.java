@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +27,16 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/campaign-workspace")
@@ -49,7 +46,6 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
 	@Inject
-//	@Named("squashtest.tm.service.CampaignsWorkspaceService")
 	private WorkspaceService<CampaignLibrary> workspaceService;
 
 	@Inject
@@ -58,7 +54,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
+	private WorkspaceDisplayService workspaceDisplayService;
 
 	/**
 	 *

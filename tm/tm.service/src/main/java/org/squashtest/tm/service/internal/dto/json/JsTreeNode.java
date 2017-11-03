@@ -35,7 +35,7 @@ public class JsTreeNode {
 	 */
 	public enum State {
 		open, closed, leaf
-	};
+	}
 
 	private JsTreeNodeData data = new JsTreeNodeData();
 
@@ -66,6 +66,10 @@ public class JsTreeNode {
 		this.attr.put(key, values);
 	}
 
+	public void setAttr(Map<String, Object> attr) {
+		this.attr = attr;
+	}
+
 	public String getState() {
 		return state.name();
 	}
@@ -80,6 +84,10 @@ public class JsTreeNode {
 
 	public void setChildren(List<JsTreeNode> children) {
 		this.children = children;
+	}
+
+	public void addChild(JsTreeNode child) {
+		this.children.add(child);
 	}
 
 	public void addAnchorAttribute(String key, String value) {

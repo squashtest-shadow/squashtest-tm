@@ -20,27 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
+import com.google.common.base.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.acls.domain.IdentityUnavailableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -55,10 +42,15 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -71,11 +63,17 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controller for verified requirements management page.
@@ -111,6 +109,16 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	@Named("testCaseWorkspaceDisplayService")
+	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
+
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	protected MilestoneModelService milestoneModelService;
+
 	private static final String campaign_name = "Campaign";
 	private static final String iteration_name = "Iteration";
 
@@ -135,10 +143,19 @@ public class VerifyingTestCaseManagerController {
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
-		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
+//		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableRequirementLibraryIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getId ).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
 
@@ -259,6 +276,5 @@ public class VerifyingTestCaseManagerController {
 		}
 		return iterationIds;
 	}
-
 
 }

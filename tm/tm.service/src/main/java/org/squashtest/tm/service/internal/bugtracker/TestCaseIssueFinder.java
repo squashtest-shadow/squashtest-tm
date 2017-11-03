@@ -92,7 +92,7 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	 * Finds the remote issues from potentially several bugtrackers and rebuilds a list of [Exec, Remote issue] as
 	 * IssueOwnership&lt;RemoteIshDecorator&gt; in the same order as the given [Exec, Issue] pairs
 	 */
-	private List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs) {
+	protected List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs) {
 		if (pairs.isEmpty()) {
 			return Collections.emptyList();
 		}

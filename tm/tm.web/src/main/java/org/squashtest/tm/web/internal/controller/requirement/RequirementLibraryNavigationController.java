@@ -20,16 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.base.Optional;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,26 +29,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
@@ -65,9 +49,15 @@ import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Controller which processes requests related to navigation in a {@link RequirementLibrary}.
@@ -79,7 +69,7 @@ import com.google.common.base.Optional;
 @Controller
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
-		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+	LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
 	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
 
@@ -103,12 +93,15 @@ public class RequirementLibraryNavigationController extends
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private WorkspaceDisplayService requirementWorkspaceDisplayService;
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	public JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
 															@RequestBody RequirementFormModel requirementModel)
-			throws BindException {
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
@@ -119,7 +112,7 @@ public class RequirementLibraryNavigationController extends
 		}
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
-				requirementModel.toDTO(), activeMilestoneAsList());
+			requirementModel.toDTO(), activeMilestoneAsList());
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -139,7 +132,7 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
 													   @RequestBody RequirementFormModel requirementModel)
-			throws BindException {
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
@@ -151,7 +144,7 @@ public class RequirementLibraryNavigationController extends
 
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId,
-				requirementModel.toDTO(), activeMilestoneAsList());
+			requirementModel.toDTO(), activeMilestoneAsList());
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -160,9 +153,9 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public JsTreeNode addNewRequirementToRequirementContent(
-			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
-			@RequestBody RequirementFormModel requirementModel)
-			throws BindException {
+		@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
+		@RequestBody RequirementFormModel requirementModel)
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
@@ -173,7 +166,7 @@ public class RequirementLibraryNavigationController extends
 		}
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId,
-				requirementModel.toDTO(), activeMilestoneAsList());
+			requirementModel.toDTO(), activeMilestoneAsList());
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -221,9 +214,13 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public List<JsTreeNode> getChildrenRequirementsTreeModel(
-			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
-		List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
-		return createChildrenRequirementsModel(requirements);
+		@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+//			List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
+//			return createChildrenRequirementsModel(requirements);
+		Long activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId().get();
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getNodeContent(requirementId, currentUser, "Requirement", activeMilestoneId);
+		return new ArrayList<>(nodes);
 	}
 
 	@Override
@@ -249,7 +246,7 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/exports", method = RequestMethod.GET)
 	public FileSystemResource exportRequirementExcel(@RequestParam(FILENAME) String filename,
 													 @RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
-													 @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
+													 @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response) {
 
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
@@ -262,11 +259,11 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/searchExports", method = RequestMethod.GET)
 	public FileSystemResource searchExportRequirementExcel(@RequestParam(FILENAME) String filename,
-														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
+														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response) {
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel( nodeIds, keepRteFormat, getMessageSource());
+		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel(nodeIds, keepRteFormat, getMessageSource());
 
 		return new FileSystemResource(export);
 	}
@@ -277,30 +274,29 @@ public class RequirementLibraryNavigationController extends
 	 * ********************************** private stuffs *******************************
 	 */
 
-	@SuppressWarnings("unchecked")
-	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
-
-		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
-
-
-
-		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<>(
-				applyActiveMilestoneFilter(nodeBuilder));
-
-		return listBuilder.setModel((List<RequirementLibraryNode>) requirements).build();
-	}
+//	@SuppressWarnings("unchecked")
+//	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
+//
+//		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
+//
+//
+//		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<>(
+//			applyActiveMilestoneFilter(nodeBuilder));
+//
+//		return listBuilder.setModel((List<RequirementLibraryNode>) requirements).build();
+//	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
 		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService
-				.findLinkableRequirementLibraries();
+			.findLinkableRequirementLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
 		JsTreeNodeListBuilder<RequirementLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-				driveNodeBuilder.get());
+			driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
@@ -311,18 +307,18 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {
 		LIBRARIES, NODES})
 	public RequirementStatisticsBundle getStatisticsAsJson(
-			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
+		@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
+		@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES })
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES})
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, @RequestParam(NODES) Collection<Long> nodeIds) {
 
 		RequirementStatisticsBundle stats = requirementLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 
-		model.addAttribute("statistics",stats);
+		model.addAttribute("statistics", stats);
 
 		return "fragment/requirements/requirement-dashboard";
 	}
@@ -334,7 +330,7 @@ public class RequirementLibraryNavigationController extends
 
 		// Find node ids for specific milestone
 		List<Long> nodeIds = requirementLibraryNavigationService
-				.findAllRequirementIdsInMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
+			.findAllRequirementIdsInMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
@@ -346,7 +342,7 @@ public class RequirementLibraryNavigationController extends
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
 
 
-		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
 		return "fragment/dashboard/favorite-dashboard";
 	}
@@ -358,13 +354,13 @@ public class RequirementLibraryNavigationController extends
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.REQUIREMENT);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.REQUIREMENT);
 
-		model.addAttribute("shouldShowDashboard",shouldShowDashboard);
+		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
 		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
 		model.addAttribute("milestone", activeMilestone);
 		model.addAttribute("isMilestoneDashboard", true);
 
-		if(!shouldShowDashboard || !canShowDashboard) {
+		if (!shouldShowDashboard || !canShowDashboard) {
 			// Find ids for specific milestone
 			List<Long> nodeIds = requirementLibraryNavigationService.findAllRequirementIdsInMilestone(activeMilestone);
 
@@ -377,16 +373,20 @@ public class RequirementLibraryNavigationController extends
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/validation-statistics",
-		method=RequestMethod.POST,
+	@RequestMapping(value = "/validation-statistics",
+		method = RequestMethod.POST,
 		produces = ContentTypes.APPLICATION_JSON,
-		params={"selectedIds", "criticality", "validation"})
+		params = {"selectedIds", "criticality", "validation"})
 	public Collection<Long> getValidationRequirementIds(
-			@RequestParam Collection<Long> selectedIds,
-			@RequestParam RequirementCriticality criticality,
-			@RequestParam Collection<String> validation) {
+		@RequestParam Collection<Long> selectedIds,
+		@RequestParam RequirementCriticality criticality,
+		@RequestParam Collection<String> validation) {
 
 		return requirementStatisticsService.gatherRequirementIdsFromValidation(selectedIds, criticality, validation);
 	}
 
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return requirementWorkspaceDisplayService;
+	}
 }

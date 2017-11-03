@@ -20,25 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -48,20 +30,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.Workspace;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -74,36 +46,42 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.web.internal.model.builder.*;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
  *
  * @author Gregory Fouquet
- *
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
 public class CampaignLibraryNavigationController extends
-LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+	LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
@@ -112,21 +90,20 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	/**
 	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
 	 * ie nodes which which have the same permissions
-	 * <p/>
+	 * <p>
 	 * It will only query the real PES once per permission  / role.
-	 * <p/>
+	 * <p>
 	 * Otherwise, it would create many short lived DB transaction in a single web request, which has measurable effects on performance.
-	 * <p/>
+	 * <p>
 	 * Objects of this class should be discarded immediately after creating the iterations.
 	 *
 	 * @author Gregory Fouquet
-	 * @since 1.11.6
 	 * @since 1.12.1
 	 */
 	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
 		private Boolean hasRole;
 		private Map<String, Boolean> perms = new HashMap<>();
-		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<>();
+		private Map<String[], Map<String, Boolean>> hasRolePerms = new HashMap<>();
 
 		@Override
 		public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
@@ -190,39 +167,49 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	;
-
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
 
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
+
 	@Inject
 	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
+
 	@Inject
 	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
+
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+
 	@Inject
 	private CampaignFinder campaignFinder;
+
 	@Inject
 	private ExecutionFinder executionFinder;
+
 	@Inject
 	private IterationModificationService iterationModificationService;
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluator;
+
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
+
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	@Named("campaignWorkspaceDisplayService")
+	private WorkspaceDisplayService workspaceDisplayService;
+
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
-	public
-	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
-			@RequestBody CampaignFormModel campaignForm)
-					throws BindException {
+	public JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
+														 @RequestBody CampaignFormModel campaignForm)
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
@@ -243,10 +230,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
-	public
- JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
-			@RequestBody CampaignFormModel campaignForm)
-					throws BindException {
+	public JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
+													@RequestBody CampaignFormModel campaignForm)
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
@@ -286,9 +272,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/content/new-iteration", method = RequestMethod.POST)
-	public
-	JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId, @RequestBody IterationFormModel iterationForm)
-			throws BindException {
+	public JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId, @RequestBody IterationFormModel iterationForm)
+		throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(iterationForm, "add-iteration");
 		IterationFormModelValidator validator = new IterationFormModelValidator(getMessageSource());
@@ -303,7 +288,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		boolean copyTestPlan = iterationForm.isCopyTestPlan();
 
 		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,
-				copyTestPlan, customFieldValues);
+			copyTestPlan, customFieldValues);
 
 		return createIterationTreeNode(newIteration, newIterationIndex);
 	}
@@ -313,7 +298,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
-		return new IterationNodeBuilder(permissionEvaluationService,internationalizationHelper).setModel(iteration).setIndex(iterationIndex).build();
+		return new IterationNodeBuilder(permissionEvaluationService, internationalizationHelper).setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
@@ -322,20 +307,22 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
-	public
-	List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
-		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
-		return createCampaignIterationsModel(iterations);
+	public List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
+//		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
+//		return createCampaignIterationsModel(iterations);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(campaignId, currentUser, "Campaign");
+		return new ArrayList<>(nodes);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
-	public
-	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
-
-		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
-
-		return createIterationTestSuitesModel(testSuites);
+	public List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
+//		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
+//		return createIterationTestSuitesModel(testSuites);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		Collection<JsTreeNode> nodes = workspaceDisplayService().getCampaignNodeContent(iterationId, currentUser, "Iteration");
+		return new ArrayList<>(nodes);
 	}
 
 
@@ -347,7 +334,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId) {
+						  @PathVariable("destinationId") long destinationId) {
 
 		/*
 		 * Evolution 5169.
@@ -376,32 +363,30 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 
+//	@ResponseBody
+//	private List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
+//		List<JsTreeNode> res = new ArrayList<>();
+//
+//		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
+//
+//		for (int i = 0; i < iterations.size(); i++) {
+//			Iteration iteration = iterations.get(i);
+//			res.add(createBatchedIterationTreeNode(iteration, i, pev));
+//		}
+//
+//		return res;
+//	}
+
+//	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites) {
+//		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
+//		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<>(nodeBuilder);
+//
+//		return listBuilder.setModel(suites).build();
+//
+//	}
+
 	@ResponseBody
-	private
-	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
-		List<JsTreeNode> res = new ArrayList<>();
-
-		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
-
-		for (int i = 0; i < iterations.size(); i++) {
-			Iteration iteration = iterations.get(i);
-			res.add(createBatchedIterationTreeNode(iteration, i, pev));
-		}
-
-		return res;
-	}
-
-	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites) {
-		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
-		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<>(nodeBuilder);
-
-		return listBuilder.setModel(suites).build();
-
-	}
-
-	@ResponseBody
-	private
-	List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {
+	private List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<>();
 
@@ -416,8 +401,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@ResponseBody
-	private
-	List<JsTreeNode> createCopiedTestSuitesModel(List<TestSuite> newTestSuites) {
+	private List<JsTreeNode> createCopiedTestSuitesModel(List<TestSuite> newTestSuites) {
 
 		List<JsTreeNode> res = new ArrayList<>();
 
@@ -430,26 +414,24 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
-	public
-	List<JsTreeNode> getLinkablesRootModel() {
+	public List<JsTreeNode> getLinkablesRootModel() {
 		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<CampaignLibrary> linkableLibraries) {
 		JsTreeNodeListBuilder<CampaignLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-				driveNodeBuilder.get());
+			driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
-	public
-	Messages simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
+	public Messages simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService
-				.simulateIterationDeletion(iterationIds);
+			.simulateIterationDeletion(iterationIds);
 
 		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList) {
@@ -461,16 +443,14 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationIds}", method = RequestMethod.DELETE)
-	public
-	OperationReport confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
+	public OperationReport confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
 
 		return campaignLibraryNavigationService.deleteIterations(iterationIds);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
-	public
-	Messages simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
+	public Messages simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
 		Messages messages = new Messages();
@@ -484,9 +464,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteIds}", params = {REMOVE_FROM_ITER}, method = RequestMethod.DELETE)
-	public
- OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
-			@RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
+	public OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
+												 @RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
 
 		return campaignLibraryNavigationService.deleteSuites(suiteIds, removeFromIter);
 	}
@@ -494,10 +473,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {
 		"nodeIds[]", "next-iteration-index"})
-	public
-	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			@RequestParam("next-iteration-index") int nextIterationIndex) {
+	public List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
+										   @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+										   @RequestParam("next-iteration-index") int nextIterationIndex) {
 
 		List<Iteration> iterationsList;
 		iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, nodeIds);
@@ -506,9 +484,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public
-	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("iterationId") long iterationId) {
+	public List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,
+										   @PathVariable("iterationId") long iterationId) {
 
 		List<TestSuite> testSuiteList;
 		testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(nodeIds, iterationId);
@@ -518,9 +495,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
-	public
-	FileSystemResource exportCampaign(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
+	public FileSystemResource exportCampaign(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+											 @RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
 
 		Campaign campaign = campaignFinder.findById(campaignId);
 		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);
@@ -530,7 +506,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
 		response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_" + exportType + "_"
-				+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
+			+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
 
 		File exported = exportToFile(model);
 		return new FileSystemResource(exported);
@@ -539,9 +515,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	// Export Campaign from Execution
 	@ResponseBody
 	@RequestMapping(value = "/export-campaign-by-execution/{executionId}", method = RequestMethod.GET, params = "export=csv")
-	public
-	FileSystemResource exportCampaignByExecution(@PathVariable(RequestParams.EXECUTION_ID) long executionId,
-			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
+	public FileSystemResource exportCampaignByExecution(@PathVariable(RequestParams.EXECUTION_ID) long executionId,
+														@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
 
 		Execution execution = executionFinder.findById(executionId);
 		Campaign campaign = campaignFinder.findById(execution.getCampaign().getId());
@@ -553,7 +528,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
 		response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_" + exportType + "_"
-				+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
+			+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
 
 		File exported = exportToFile(model);
 		return new FileSystemResource(exported);
@@ -563,8 +538,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public
- CampaignStatisticsBundle getStatisticsAsJson() {
+	public CampaignStatisticsBundle getStatisticsAsJson() {
 
 		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone();
 	}
@@ -575,19 +549,18 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
 
-
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);
 
-		mav.addObject("shouldShowDashboard",shouldShowDashboard);
+		mav.addObject("shouldShowDashboard", shouldShowDashboard);
 		mav.addObject("canShowDashboard", canShowDashboard);
 		mav.addObject("isMilestoneDashboard", true);
 		mav.addObject("milestone", activeMilestone.get());
 
 		//if we should't or can't show favorite custom report, we calculate stat for default dashboard
-		if(!shouldShowDashboard || !canShowDashboard) {
+		if (!shouldShowDashboard || !canShowDashboard) {
 
 			CampaignStatisticsBundle csbundle = campaignLibraryNavigationService
 				.gatherCampaignStatisticsBundleByMilestone();
@@ -604,9 +577,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return mav;
 	}
 
-	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = "printmode")
 	public ModelAndView getDashboard(Model model,
-			@RequestParam(value = "printmode", defaultValue = "false") Boolean printmode) {
+									 @RequestParam(value = "printmode", defaultValue = "false") Boolean printmode) {
 
 		ModelAndView mav = getDashboard(model);
 		mav.setViewName("page/campaign-workspace/show-campaign-milestone-dashboard");
@@ -634,7 +607,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			while (iterator.hasNext()) {
 				Row datarow = iterator.next();
 				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", "")
-						.replaceAll("\\r", "");
+					.replaceAll("\\r", "");
 				writer.write(cleanRowValue + "\n");
 			}
 
@@ -650,6 +623,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			}
 		}
 
+	}
+
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return workspaceDisplayService;
 	}
 
 }

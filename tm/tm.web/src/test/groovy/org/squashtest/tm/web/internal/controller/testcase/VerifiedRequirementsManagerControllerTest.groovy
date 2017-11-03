@@ -31,12 +31,14 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
+import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.TestStepModificationService
+import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
@@ -56,6 +58,8 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 	MilestoneUIConfigurationService milestoneConfService = Mock()
 	PermissionEvaluationService permissionService = permissionEvaluator()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
+	UserAccountService userAccountService = Mock()
+	RequirementWorkspaceDisplayService requirementWorkspaceDisplayService = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
@@ -64,12 +68,16 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		controller.requirementLibraryFinder = requirementLibraryFinder
 		controller.testStepService = testStepService;
 		controller.milestoneConfService = milestoneConfService
-		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
+		controller.userAccountService = userAccountService
+		controller.requirementWorkspaceDisplayService = requirementWorkspaceDisplayService
+		milestoneConfService.configure(_, _) >> new MilestoneFeatureConfiguration()
+		milestoneConfService.configure(_) >> new MilestoneFeatureConfiguration()
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.absent()
 
-        driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
+		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
 		controller.permissionService = permissionService;
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
@@ -89,7 +97,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		given:
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
-		and :
+		and:
 		testStepService.findById(_) >> Mock(ActionTestStep)
 
 
@@ -111,10 +119,15 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		Project project = Mock()
 		project.getId() >> 10l
 		lib.project >> project
+		lib.getId() >> 101L
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 
 		and:
 		def model = new ExtendedModelMap()
+
+		and:
+
+		requirementWorkspaceDisplayService.findAllLibraries(_, _, _, _) >> []
 
 		when:
 		def res = controller.showTestCaseManager(20L, model, [] as String[])

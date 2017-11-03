@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -42,8 +39,10 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -231,6 +230,14 @@ public final class BugTrackerControllerHelper {
 	 *
 	 ***************************************************************** */
 
+	DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> createModelBuilderForRequirementVersion() {
+
+		DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> builder;
+
+		builder = new RequirementVersionIssuesTableModel();
+
+		return builder;
+	}
 
 	/**
 	 * Factory method. Supports : all public string constant with suffix '_TYPE' declared in {@link BugTrackerController}
@@ -240,6 +247,7 @@ public final class BugTrackerControllerHelper {
 		DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> builder;
 
 		switch (entityType) {
+
 			case BugTrackerController.TEST_CASE_TYPE:
 				builder = new TestCaseIssuesTableModel();
 				break;
@@ -267,6 +275,60 @@ public final class BugTrackerControllerHelper {
 		return builder;
 	}
 
+	/**
+	 * <p>
+	 * the DataTableModel for requirement will hold the same informations than IterationIssuesTableModel (for now) :
+	 * <ul>
+	 * <li>the url of that issue,</li>
+	 * <li>the id,</li>
+	 * <li>the summary</li>,
+	 * <li>the priority,</li>
+	 * <li>the status,</li>
+	 * <li>the assignee,</li>
+	 * <li>the owning entity</li>
+	 * <li>the requirement reference</li>
+	 * </ul>
+	 * </p>
+	 */
+	private final class RequirementVersionIssuesTableModel extends DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> {
+
+		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
+
+		public RequirementVersionIssuesTableModel() {
+			nameBuilder.setMessageSource(source);
+			nameBuilder.setLocale(LocaleContextHolder.getLocale());
+		}
+
+		@Override
+		public Map<String, String> buildItemData(RequirementVersionIssueOwnership<RemoteIssueDecorator> ownership) {
+
+			Map<String, String> result = new HashMap<>();
+
+			RemoteIssue issue = ownership.getIssue();
+			RequirementVersion requirementVersion = ownership.getRequirementVersion();
+			String strUrl = service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+			String ownerName = nameBuilder.buildName(ownership.getOwner());
+			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
+			String reqRef = requirementVersion.getReference();
+			String reqId = String.valueOf(requirementVersion.getRequirement().getId());
+			String order = ownership.getNodePosition();
+
+			result.put("issue-url", strUrl);
+			result.put("issue-id", issue.getId());
+			result.put("issue-summary", issue.getSummary());
+			result.put("issue-priority", findPriority(issue));
+			result.put("issue-status", findStatus(issue));
+			result.put("issue-assignee", findAssignee(issue));
+			result.put("issue-owner", ownerName);
+			result.put("issue-owner-url", ownerPath);
+			result.put("BtProject", issue.getProject().getName());
+			result.put("requirement-reference", reqRef);
+			result.put("requirement-id", reqId);
+			result.put("order", order);
+
+			return result;
+		}
+	}
 
 	/**
 	 * <p>

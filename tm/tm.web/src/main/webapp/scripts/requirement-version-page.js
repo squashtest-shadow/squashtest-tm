@@ -4,10 +4,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 	        "custom-field-values", "squash.configmanager","jeditable.simpleJEditable", "app/ws/squashtm.notification",
 	        "workspace.routing",  "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
 	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
-	         "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
+					"bugtracker/bugtracker-panel", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 			function(module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
 					cufvalues, confman,SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
-					squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView) {
+					squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel) {
 
 		// event subscription
 			pubsub.subscribe('reload.requirement.toolbar', initToolbar);
@@ -24,9 +24,12 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 			pubsub.subscribe('reload.requirement.attachments', initAttachments);
 
+			pubsub.subscribe('reload.requirement.bugtracker', initBugtracker);
+
 			pubsub.subscribe('reload.requirement.popups', initPopups);
 
 			pubsub.subscribe('reload.requirement.complete', initFinalize);
+
 
 
 			// ********************** library *************************
@@ -548,6 +551,30 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					baseURL : config.urls.attachmentsURL,
 					aaData : config.basic.attachments
 				});
+			}
+
+			function initBugtracker() {
+				var config = module.config();
+
+				if (config.basic.hasBugtracker) {
+					var bugtrackerUrl = config.urls.btEntityUrl;
+					if ($("#tree-panel-left").length != 0) {
+						// there is tree
+						var requirementTreePref = localStorage.getItem("requirement-tree-pref");
+						if(requirementTreePref == 0){
+							bugtrackerUrl += "/alphabetical-order";
+						}	else {
+							bugtrackerUrl += "/custom-order";
+						}
+					}else {
+						// no tree
+						bugtrackerUrl += "/info";
+					}
+					bugtrackerPanel.load({
+						url: bugtrackerUrl,
+						style: "fragment-tab"
+					});
+				}
 			}
 
       function initRequirementVersionRates() {

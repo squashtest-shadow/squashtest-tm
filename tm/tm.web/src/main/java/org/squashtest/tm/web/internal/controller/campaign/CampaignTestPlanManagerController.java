@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,7 +52,12 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -92,33 +99,48 @@ public class CampaignTestPlanManagerController {
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
-
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
-	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-	.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, 	"name", 			Project.class)
-	.mapAttribute("reference", 		"reference", 		TestCase.class)
-	.mapAttribute("tc-name", 		"name", 			TestCase.class)
-	.mapAttribute("dataset.selected.name", "name", 		Dataset.class)
-	.mapAttribute("assigned-user", 	"login", 			User.class)
-	.mapAttribute("importance",		"importance", 		TestCase.class)
-	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class)
-	.map("milestone-dates", "endDate");
+	@Inject
+	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	protected MilestoneModelService milestoneModelService;
+
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+		.map("entity-index", "index(CampaignTestPlanItem)")
+		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+		.mapAttribute("reference", "reference", TestCase.class)
+		.mapAttribute("tc-name", "name", TestCase.class)
+		.mapAttribute("dataset.selected.name", "name", Dataset.class)
+		.mapAttribute("assigned-user", "login", User.class)
+		.mapAttribute("importance", "importance", TestCase.class)
+		.mapAttribute("exec-mode", "automatedTest", TestCase.class)
+		.map("milestone-dates", "endDate");
 
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long campaignId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+									@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
-		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
+//		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableRequirementLibraryIds = testPlanManager.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
@@ -131,9 +153,8 @@ public class CampaignTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "campaigns/{campaignId}/test-plan", params = RequestParams.S_ECHO_PARAM)
-	public
-	DataTableModel getTestCasesTableModel(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			final DataTableDrawParameters params, final Locale locale) {
+	public DataTableModel getTestCasesTableModel(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+												 final DataTableDrawParameters params, final Locale locale) {
 
 		DataTableMultiSorting sorter = new DataTableMultiSorting(params, testPlanMapper);
 
@@ -141,31 +162,29 @@ public class CampaignTestPlanManagerController {
 
 		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, sorter, filter);
 
-		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, 	params.getsEcho());
+		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 	}
 
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST,
 		params = TESTCASES_IDS_REQUEST_PARAM)
-	public
-	void addTestCasesToCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
-			@PathVariable long campaignId) {
+	public void addTestCasesToCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
+									   @PathVariable long campaignId) {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
-	public
-	void removeItemsFromTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			@PathVariable("testPlanIds") List<Long> itemsIds) {
+	public void removeItemsFromTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+										@PathVariable("testPlanIds") List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
 
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-			String[] openedNodes) {
-		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
+														  String[] openedNodes) {
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
 
@@ -183,9 +202,8 @@ public class CampaignTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assign-user", method = RequestMethod.POST, params = "userId")
-	public
-	void assignUserToCampaignTestPlanItem(@PathVariable long itemId, @PathVariable long campaignId,
-			@RequestParam long userId) {
+	public void assignUserToCampaignTestPlanItem(@PathVariable long itemId, @PathVariable long campaignId,
+												 @RequestParam long userId) {
 		testPlanManager.assignUserToTestPlanItem(itemId, campaignId, userId);
 	}
 
@@ -193,16 +211,16 @@ public class CampaignTestPlanManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-users", method = RequestMethod.GET)
 	public List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
-			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, final Locale locale) {
+		@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, final Locale locale) {
 
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 
 		String unassignedLabel = formatUnassigned(locale);
 		List<TestPlanAssignableUser> jsonUsers = new LinkedList<>();
 
-		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel ));
+		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel));
 
-		for (User user : usersList){
+		for (User user : usersList) {
 			jsonUsers.add(new TestPlanAssignableUser(user));
 		}
 
@@ -210,12 +228,10 @@ public class CampaignTestPlanManagerController {
 	}
 
 
-
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
-	public
-	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
-			@RequestParam("assignee") long assignee) {
+	public Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+												 @RequestParam("assignee") long assignee) {
 		testPlanManager.assignUserToTestPlanItems(testPlanIds, campaignId, assignee);
 		return assignee;
 	}
@@ -229,8 +245,7 @@ public class CampaignTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
-	public
-	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+	public Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
 		testPlanManager.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
 	}
@@ -239,18 +254,18 @@ public class CampaignTestPlanManagerController {
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 *
-	 * @param iterationId
+	 * @param campaignId
 	 * @return
 	 */
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
-	public void reorderTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, DataTableDrawParameters parameters){
+	public void reorderTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, DataTableDrawParameters parameters) {
 
 		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
 		testPlanManager.reorderTestPlan(campaignId, sorting);
 	}
 
-	private String formatUnassigned(Locale locale){
+	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
 

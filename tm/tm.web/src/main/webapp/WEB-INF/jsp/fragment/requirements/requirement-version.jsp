@@ -30,10 +30,12 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <s:url var="requirementVersionUrl" value="/requirement-versions/${requirementVersion.id}"/>
 <s:url var="requirementUrl" value="/requirements/${requirementVersion.requirement.id}"/>
 <c:url var="attachmentsUrl" value="/attach-list/${requirementVersion.attachmentList.id}/attachments" />
+<c:url var="btEntityUrl"	value="/bugtracker/requirement-version/${requirementVersion.id}"/>
 
 <c:set var="synced"            value="${requirementVersion.requirement.isSynchronized()}"/>
 
@@ -116,6 +118,7 @@ that page won't be editable if
 	            linkedRequirementVersions : ${json:serialize(linkedRequirementVersionsModel.aaData)},
 	            attachments : ${json:serialize(attachmentsModel.aaData)},
 	            audittrail : ${json:serialize(auditTrailModel.aaData)},
+              hasBugtracker : ${requirementVersion.project.bugtrackerConnected},
 	            hasCufs : ${hasCUF},
 	            requirementVersionId : ${requirementVersion.id},
 	            projectId : ${requirementVersion.requirement.project.id},
@@ -132,7 +135,8 @@ that page won't be editable if
 	          },
 	          urls : {
 	            baseURL : "${requirementVersionUrl}",
-	            attachmentsURL : "${attachmentsUrl}"
+	            attachmentsURL : "${attachmentsUrl}",
+              btEntityUrl : "${btEntityUrl}"
 	          }
 	        }
 	      }
@@ -202,17 +206,23 @@ publish('reload.requirement.toolbar');
 <%-- ----------------------------------- TABS  ----------------------------------------------%>
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
-	<ul class="tab-menu">
-		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
-        <c:if test="${milestoneConf.displayTab}">
-        <li>
-            <a href="${requirementVersionUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-        </li>
-        </c:if>
-		<li><a href="#tabs-2"><f:message key="label.Attachments" />
-		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
-		</a></li>
-	</ul>
+  <ul class="tab-menu">
+    <li><a href="#tabs-1"><f:message key="tabs.label.information"/></a></li>
+    <c:if test="${milestoneConf.displayTab}">
+      <li>
+        <a href="${requirementVersionUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
+      </li>
+    </c:if>
+    <li><a href="#tabs-2"><f:message key="label.Attachments"/>
+      <c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
+    </a></li>
+    <c:if test="${requirementVersion.project.bugtrackerConnected}">
+      <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
+        <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+      </li>
+    </c:if>
+  </ul>
 	<%-- ----------------------------------- INFO TAB  ----------------------------------------------%>
 	<div id="tabs-1">
 
@@ -395,6 +405,16 @@ publish('reload.requirement.audittrail');
 publish('reload.requirement.attachments');
 </script>
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>
+
+<%-- ----------------------- bugtracker (if present)----------------------------------------%>
+<c:if test="${requirementVersion.project.bugtrackerConnected}">
+  <script type="text/javascript">
+    publish('reload.requirement.bugtracker');
+  </script>
+  <issues:butracker-panel entity="${requirementVersion}"/>
+</c:if>
+<%-- ----------------------- /bugtracker (if present)----------------------------------------%>
+
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>
 </div>
 </csst:jq-tab>

@@ -19,25 +19,32 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.workspace;
+
+import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface WorkspaceDisplayService {
 
 	/**
 	 * Service responsible for building the workspace rootModel as a collection of {@link JsTreeNode}. Only libraries are returned, not their content
-	 * @param readableProjectIds The ids of projects witch must be included
-	 * @param currentUser The {@link UserDto} representing current user and somme of it's attributes
-	 * @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
+	 *
+	 * @param readableProjectIds  The ids of projects witch must be included
+	 * @param currentUser         The {@link UserDto} representing current user and somme of it's attributes
+	 * @param expansionCandidates
+	 * @param activeMilestoneId        @return The list of libraries as {@link JsTreeNode}, correctly initialized to be rendered by JsTree
 	 */
-	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+//	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser);
+
+	Collection<JsTreeNode> findAllLibraries(List<Long> readableProjectIds, UserDto currentUser, MultiMap expansionCandidates, Long activeMilestoneId);
 
 	Collection<JsonProject> findAllProjects(List<Long> readableProjectIds, UserDto currentUser);
 	Collection<JsonProject> findAllEmptyProjects(List<Long> readableProjectIds);
+	Collection<JsTreeNode> getNodeContent(Long folderId, UserDto currentUser, String libraryNode, Long activeMilestoneId);
+
+	Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode);
 }

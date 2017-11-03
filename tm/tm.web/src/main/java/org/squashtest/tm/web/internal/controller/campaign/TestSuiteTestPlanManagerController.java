@@ -20,26 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
+import com.google.common.base.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -55,12 +41,13 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
-import org.squashtest.tm.service.campaign.IterationFinder;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.campaign.TestSuiteModificationService;
-import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.service.campaign.*;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -69,18 +56,17 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -124,21 +110,28 @@ public class TestSuiteTestPlanManagerController {
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	protected MilestoneModelService milestoneModelService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-	.map("entity-index", "index(IterationTestPlanItem)")
-	// index is a special case which means : no sorting.
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
-	.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
-	.mapAttribute("dataset.selected.name", NAME, Dataset.class)
-	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
-	.mapAttribute("assignee-login", "login", User.class)
-	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
-	.mapAttribute("exec-mode", "automatedTest", TestCase.class)
-	.map("milestone-dates", "endDate");
+		.map("entity-index", "index(IterationTestPlanItem)")
+			// index is a special case which means : no sorting.
+		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
+		.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
+		.mapAttribute("dataset.selected.name", NAME, Dataset.class)
+		.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+		.mapAttribute("assignee-login", "login", User.class)
+		.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
+		.mapAttribute("exec-mode", "automatedTest", TestCase.class)
+		.map("milestone-dates", "endDate");
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -149,14 +142,23 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+									@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
-		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+//		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
+//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testSuite);
+
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableRequirementLibraryIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
@@ -168,7 +170,7 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
-			String[] openedNodes) {
+														  String[] openedNodes) {
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
@@ -181,23 +183,22 @@ public class TestSuiteTestPlanManagerController {
 		}
 
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-				driveNodeBuilder.get());
+			driveNodeBuilder.get());
 
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", params = RequestParams.S_ECHO_PARAM)
-	public
-	DataTableModel getTestPlanModel(@PathVariable(TEST_SUITE_ID) long suiteId, final DataTableDrawParameters params,
-			final Locale locale) {
+	public DataTableModel getTestPlanModel(@PathVariable(TEST_SUITE_ID) long suiteId, final DataTableDrawParameters params,
+										   final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
 
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
 
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService
-				.findAssignedTestPlan(suiteId, paging, filter);
+			.findAssignedTestPlan(suiteId, paging, filter);
 
 		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
@@ -206,11 +207,11 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/assignable-users", method = RequestMethod.GET)
 	@ResponseBody
 	public List<TestPlanAssignableUser> getAssignUserForTestSuite(@PathVariable(TEST_SUITE_ID) long suiteId,
-			final Locale locale) {
+																  final Locale locale) {
 
 		TestSuite testSuite = service.findById(suiteId);
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(testSuite.getIteration()
-				.getId());
+			.getId());
 
 		String unassignedLabel = formatUnassigned(locale);
 		List<TestPlanAssignableUser> jsonUsers = new LinkedList<>();
@@ -226,9 +227,8 @@ public class TestSuiteTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = {"assignee"})
-	public
-	long assignUserToCampaignTestPlanItem(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
-			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
+	public long assignUserToCampaignTestPlanItem(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+												 @PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
 	}
@@ -236,23 +236,22 @@ public class TestSuiteTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
-	public
-	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+	public Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
 		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
 	}
 
-	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING+"/position/{newIndex}", method = RequestMethod.POST)
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING + "/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
 	public void changeTestPlanIndex(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("newIndex") int newIndex,
-			@PathVariable(TESTPLAN_IDS) List<Long> itemIds) {
+									@PathVariable(TESTPLAN_IDS) List<Long> itemIds) {
 		testSuiteTestPlanManagerService.changeTestPlanPosition(suiteId, newIndex, itemIds);
 	}
 
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 *
-	 * @param iterationId
+	 * @param suiteId
 	 * @return
 	 */
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/order", method = RequestMethod.POST)
@@ -265,37 +264,32 @@ public class TestSuiteTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
-	public
-	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
-			@PathVariable(TEST_SUITE_ID) long suiteId) {
+	public void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
+										@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, suiteId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE)
-	public
-	Boolean removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
-			@PathVariable(TEST_SUITE_ID) long suiteId) {
+	public Boolean removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+														   @PathVariable(TEST_SUITE_ID) long suiteId) {
 		// check if a test plan was already executed and therefore not removed from the iteration
-		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(
-				testPlanIds, suiteId);
-		return response;
+		return testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(
+			testPlanIds, suiteId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = {"detach=true"})
-	public
-	Boolean detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
-			@PathVariable(TEST_SUITE_ID) long suiteId) {
+	public Boolean detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+											   @PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
 		return Boolean.FALSE;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = {ITEM_IDS})
-	public
-	Map<String, List<Long>> bindTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@PathVariable("suiteIds") List<Long> suitesIds) {
+	public Map<String, List<Long>> bindTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
+												@PathVariable("suiteIds") List<Long> suitesIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
 		Map<String, List<Long>> result = new HashMap<>();
@@ -306,10 +300,9 @@ public class TestSuiteTestPlanManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS,
 		BOUND_SUITE_IDS, UNBOUND_SUITE_IDS})
-	public
-	void changeboundTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds,
-			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
+	public void changeboundTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
+									@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds,
+									@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
@@ -317,9 +310,8 @@ public class TestSuiteTestPlanManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS, UNBOUND_SUITE_IDS})
-	public
-	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
+	public void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
+								@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
@@ -327,17 +319,15 @@ public class TestSuiteTestPlanManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS,
 		BOUND_SUITE_IDS})
-	public
-	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds) {
+	public void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
+							  @RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = {STATUS})
-	public
-	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
+	public JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
 		LOGGER.debug("change status test plan items to {}", status);
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		return createJsonITPI(itpis.get(0));
@@ -345,7 +335,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@PathVariable(ITEM_ID) long itemId) {
+												 @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
 
 		TestSuite testSuite = service.findById(suiteId);
@@ -375,8 +365,7 @@ public class TestSuiteTestPlanManagerController {
 	// returns the ID of the newly created execution
 	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = {"mode=manual"})
-	public
-	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
+	public String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
 		Execution newExecution = service.addExecution(itemId);
 		return newExecution.getId().toString();
@@ -384,10 +373,10 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/test-suites/{tsId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
-	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId){
+	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId) {
 		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
 		Execution exec = item.getLatestExecution();
-		return "redirect:/executions/"+exec.getId();
+		return "redirect:/executions/" + exec.getId();
 	}
 
 	private String formatUnassigned(Locale locale) {
@@ -395,18 +384,18 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 
-	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
+	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item) {
 		String name = item.isTestCaseDeleted() ? null : item.getReferencedTestCase().getName();
 		return new JsonIterationTestPlanItem(
-				item.getId(),
-				item.getExecutionStatus(),
-				name,
-				item.getLastExecutedOn(),
-				item.getLastExecutedBy(),
-				item.getUser(),
-				item.isTestCaseDeleted(),
-				item.isAutomated()
-				);
+			item.getId(),
+			item.getExecutionStatus(),
+			name,
+			item.getLastExecutedOn(),
+			item.getLastExecutedBy(),
+			item.getUser(),
+			item.isTestCaseDeleted(),
+			item.isAutomated()
+		);
 	}
 
 }

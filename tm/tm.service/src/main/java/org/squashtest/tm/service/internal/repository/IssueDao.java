@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 
@@ -129,5 +130,8 @@ public interface IssueDao extends JpaRepository<Issue, Long>, CustomIssueDao {
 
 	@Query
 	long countByTestCase(@Param("testCase") TestCase testCase);
+
+	@Query
+	long countByRequirementVersion(@Param("requirementVersion") RequirementVersion requirementVersion);
 
 }

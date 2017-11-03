@@ -21,27 +21,24 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import com.google.common.base.Optional
+import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
-
-import javax.inject.Provider
-
-import org.springframework.context.MessageSource;
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
-import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.service.user.UserAccountService
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
+
+import javax.inject.Provider
 
 class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification {
 	TestCaseLibraryNavigationController controller = new TestCaseLibraryNavigationController()
@@ -53,7 +50,8 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 	PermissionEvaluationService permissionEvaluationService = permissionEvaluator()
 	InternationalizationHelper internationalizationHelper = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
-
+	WorkspaceDisplayService testCaseWorkspaceDisplayService = Mock()
+	UserAccountService userAccountService = Mock()
 
 	def setup() {
 		controller.testCaseLibraryNavigationService = testCaseLibraryNavigationService
@@ -61,13 +59,15 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
 		controller.activeMilestoneHolder = activeMilestoneHolder
+		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
+		controller.userAccountService = userAccountService
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 
 
-		use (ReflectionCategory) {
+		use(ReflectionCategory) {
 			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
 		}
-		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
+		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_) >> false
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
 		testCaseLibraryTreeNodeBuilder.get() >> {
@@ -76,10 +76,10 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 			return builder
 		}
 
-		internationalizationHelper.internationalize(_,_)>> ""
-		internationalizationHelper.internationalizeYesNo(false, _)>>"non";
-		internationalizationHelper.internationalizeYesNo(true, _)>>"oui";
-		internationalizationHelper.getMessage(_, _, _, _)>>"message";
+		internationalizationHelper.internationalize(_, _) >> ""
+		internationalizationHelper.internationalizeYesNo(false, _) >> "non";
+		internationalizationHelper.internationalizeYesNo(true, _) >> "oui";
+		internationalizationHelper.getMessage(_, _, _, _) >> "message";
 		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 	}
 
@@ -89,21 +89,19 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		rootFolder.name >> "root folder"
 		rootFolder.id >> 5
 
-		testCaseLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
+		testCaseWorkspaceDisplayService.getNodeContent(_, _, _) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
 
 		then:
 		res.size() == 1
-		res[0].title == rootFolder.name
-		res[0].attr['resId'] == "${rootFolder.id}"
 	}
 
 	def "should create a node of leaf type"() {
 		given:
 		TestCase node = new TestCase(name: "tc")
-		use (ReflectionCategory) {
+		use(ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: node, to: 15L
 		}
 
@@ -113,6 +111,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		then:
 		res.state == State.leaf.name()
 	}
+
 	def "should create a node of closed folder type"() {
 		given:
 		TestCaseFolder node = Mock()
@@ -133,14 +132,13 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		TestCase content = Mock()
 		content.name >> "content"
 
-		testCaseLibraryNavigationService.findFolderContent(10) >> [content]
+		testCaseWorkspaceDisplayService.getNodeContent(_, _, _) >> [content]
 
 		when:
 		def res = controller.getFolderContentTreeModel(folderId)
 
 		then:
 		res.size() == 1
-		res[0].title == content.name
 	}
 
 	def "should create folder at root of library and return folder tree model"() {
@@ -168,21 +166,21 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		tc.getImportance() >> TestCaseImportance.LOW
-		tc.getSteps()>> []
+		tc.getSteps() >> []
 		tc.getRequirementVersionCoverages() >> []
 		tc.getMilestones() >> []
-		tc.getId()>>23L
-		tc.getName()>>"test case"
+		tc.getId() >> 23L
+		tc.getName() >> "test case"
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
-		tcfm.getCufs()>>customFieldValues
+		tcfm.getCufs() >> customFieldValues
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null, [])
+		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, { it.getName() == "test case" }, [:], null, [])
 		res.attr['name'] == "test case"
 	}
 
@@ -197,21 +195,21 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		tc.getImportance() >> TestCaseImportance.LOW
-		tc.getSteps()>>[]
+		tc.getSteps() >> []
 		tc.getMilestones() >> []
 		tc.getRequirementVersionCoverages() >> []
-		tc.getId()>>23L
-		tc.getName()>>"test case"
+		tc.getId() >> 23L
+		tc.getName() >> "test case"
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
-		tcfm.getCufs()>>customFieldValues
+		tcfm.getCufs() >> customFieldValues
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null, [])
+		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, { it.getName() == "test case" }, [:], null, [])
 		res.attr['name'] == "test case"
 	}
 }

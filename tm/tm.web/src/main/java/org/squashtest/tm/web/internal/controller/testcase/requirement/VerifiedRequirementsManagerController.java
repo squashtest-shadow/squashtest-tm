@@ -20,30 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
+import com.google.common.base.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -55,7 +37,10 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -64,6 +49,8 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
@@ -73,23 +60,23 @@ import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBui
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-
-import com.google.common.base.Optional;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
  * Controller for verified requirements management page.
  *
  * @author Gregory Fouquet
- *
  */
 @Controller
 public class VerifiedRequirementsManagerController {
@@ -105,12 +92,16 @@ public class VerifiedRequirementsManagerController {
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
+
 	@Inject
 	private TestStepModificationService testStepService;
+
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+
 	@Inject
 	private RequirementLibraryFinderService requirementLibraryFinder;
+
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -120,28 +111,44 @@ public class VerifiedRequirementsManagerController {
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	@Named("requirementWorkspaceDisplayService")
+	private WorkspaceDisplayService requirementWorkspaceDisplayService;
 
+	@Inject
+	protected UserAccountService userAccountService;
+
+	@Inject
+	protected MilestoneModelService milestoneModelService;
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(8)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", RequirementVersion.class)
-	.mapAttribute("project", "name", Project.class)
-	.mapAttribute("reference", "reference", RequirementVersion.class)
-	.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
-	.mapAttribute("criticality", "criticality", RequirementVersion.class)
-	.mapAttribute("category", "category", RequirementVersion.class)
-	.map("milestone-dates", "endDate");
+		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
+		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", RequirementVersion.class)
+		.mapAttribute("project", "name", Project.class)
+		.mapAttribute("reference", "reference", RequirementVersion.class)
+		.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
+		.mapAttribute("criticality", "criticality", RequirementVersion.class)
+		.mapAttribute("category", "category", RequirementVersion.class)
+		.map("milestone-dates", "endDate");
 
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+									  @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
+//		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
+			.map(RequirementLibrary::getId).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("milestoneConf", milestoneConf);
@@ -151,9 +158,9 @@ public class VerifiedRequirementsManagerController {
 
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestStepManager(
-			@PathVariable long testStepId,
-			Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+		@PathVariable long testStepId,
+		Model model,
+		@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		TestStep testStep = testStepService.findById(testStepId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
@@ -182,21 +189,20 @@ public class VerifiedRequirementsManagerController {
 		}
 
 		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
-				.expand(expansionCandidates)
-				.setModel(linkableLibraries)
-				.build();
+			.expand(expansionCandidates)
+			.setModel(linkableLibraries)
+			.build();
 
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
-	public
-	Map<String, Object> addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
- @PathVariable long testCaseId) {
+	public Map<String, Object> addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
+																 @PathVariable long testCaseId) {
 
 
 		Collection<VerifiedRequirementException> rejections =
- verifiedRequirementsManagerService
+			verifiedRequirementsManagerService
 				.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
 
 		return buildSummary(rejections);
@@ -205,13 +211,12 @@ public class VerifiedRequirementsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
-	public
-	Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
- @PathVariable long testStepId) {
+	public Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
+																 @PathVariable long testStepId) {
 
 
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
-				.addVerifiedRequirementsToTestStep(requirementsIds, testStepId);
+			.addVerifiedRequirementsToTestStep(requirementsIds, testStepId);
 
 		return buildSummary(rejections);
 
@@ -219,11 +224,10 @@ public class VerifiedRequirementsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionId}", method = RequestMethod.POST)
-	public
-	Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
-			@PathVariable long testStepId) {
+	public Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
+																@PathVariable long testStepId) {
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
-				.addVerifiedRequirementVersionToTestStep(requirementVersionId, testStepId);
+			.addVerifiedRequirementVersionToTestStep(requirementVersionId, testStepId);
 
 		return buildSummary(rejections);
 
@@ -232,7 +236,7 @@ public class VerifiedRequirementsManagerController {
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{oldVersionId}", method = RequestMethod.POST)
 	@ResponseBody
 	public int changeVersion(@PathVariable long testCaseId, @PathVariable long oldVersionId,
-			@RequestParam(VALUE) long newVersionId) {
+							 @RequestParam(VALUE) long newVersionId) {
 
 		List<Long> oldVersion = new ArrayList<>();
 		oldVersion.add(oldVersionId);
@@ -240,7 +244,7 @@ public class VerifiedRequirementsManagerController {
 		newVersion.add(newVersionId);
 
 		int newVersionNumber = verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(
-				oldVersionId, newVersionId, testCaseId);
+			oldVersionId, newVersionId, testCaseId);
 
 		return newVersionNumber;
 	}
@@ -251,45 +255,43 @@ public class VerifiedRequirementsManagerController {
 
 	@ResponseBody
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
-	public
-	void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
-			@PathVariable long testCaseId) {
+	public void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
+															  @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
-				testCaseId);
+			testCaseId);
 
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
-	public
-	void removeVerifiedRequirementVersionsFromTestStep(@PathVariable List<Long> requirementVersionsIds,
-			@PathVariable long testStepId) {
+	public void removeVerifiedRequirementVersionsFromTestStep(@PathVariable List<Long> requirementVersionsIds,
+															  @PathVariable long testStepId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep(requirementVersionsIds,
-				testStepId);
+			testStepId);
 
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", params = {
-			RequestParams.S_ECHO_PARAM, "includeCallSteps" })
+		RequestParams.S_ECHO_PARAM, "includeCallSteps"})
 	@ResponseBody
 	public DataTableModel getTestCaseWithCallStepsVerifiedRequirementsTableModel(@PathVariable long testCaseId,
-			final DataTableDrawParameters params, final Locale locale) {
+																				 final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting pas = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
-				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
+			.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
 		return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper)
-		.buildDataModel(holder, params.getsEcho());
+			.buildDataModel(holder, params.getsEcho());
 
 	}
 
 	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends
-	TestCaseVerifiedRequirementsDataTableModelHelper {
+		TestCaseVerifiedRequirementsDataTableModelHelper {
 
 		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale,
-				InternationalizationHelper internationalizationHelper) {
+																			   InternationalizationHelper internationalizationHelper) {
 			super(locale, internationalizationHelper);
 		}
 
@@ -304,48 +306,46 @@ public class VerifiedRequirementsManagerController {
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTestCaseVerifiedRequirementsTableModel(@PathVariable long testCaseId,
-			final DataTableDrawParameters params, final Locale locale) {
+																	final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting pagingAndSorting = new DataTableSorting(params,
-				verifiedRequirementVersionsMapper);
+			verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
-				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, pagingAndSorting);
+			.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, pagingAndSorting);
 
 		return new TestCaseVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(
-				holder, params.getsEcho());
+			holder, params.getsEcho());
 	}
 
 	/**
 	 * gets the table model for step's verified requirement versions.
 	 *
-	 * @param params
-	 *            : the {@link DataTableDrawParameters}
-	 * @param testStepId
-	 *            : the id of the concerned {@link TestStep}
+	 * @param params     : the {@link DataTableDrawParameters}
+	 * @param testStepId : the id of the concerned {@link TestStep}
 	 * @return a {@link DataTableModel} for the table of verified {@link RequirementVersion}
 	 */
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTestStepVerifiedRequirementTableModel(DataTableDrawParameters params,
-			@PathVariable long testStepId) {
+																   @PathVariable long testStepId) {
 		PagingAndSorting paging = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
-				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
+			.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
 
 		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
 		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase).buildDataModel(holder, params.getsEcho());
 	}
 
 	private static class VerifiedRequirementsDataTableModelHelper
-	extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
+		extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
 		private static final int INT_MAX_DESCRIPTION_LENGTH = 50;
 
 		private VerifiedRequirementsDataTableModelHelper(Locale locale,
-				InternationalizationHelper internationalizationHelper) {
+														 InternationalizationHelper internationalizationHelper) {
 			this.locale = locale;
 			this.internationalizationHelper = internationalizationHelper;
 		}
@@ -360,7 +360,7 @@ public class VerifiedRequirementsManagerController {
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality",
-					internationalizationHelper.internationalize(item.getCriticality(), locale));
+				internationalizationHelper.internationalize(item.getCriticality(), locale));
 			res.put("category", internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale));
 			res.put("status", internationalizationHelper.internationalize(item.getStatus(), locale));
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
@@ -376,10 +376,10 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private static class TestCaseVerifiedRequirementsDataTableModelHelper extends
-	VerifiedRequirementsDataTableModelHelper {
+		VerifiedRequirementsDataTableModelHelper {
 
 		private TestCaseVerifiedRequirementsDataTableModelHelper(Locale locale,
-				InternationalizationHelper internationalizationHelper) {
+																 InternationalizationHelper internationalizationHelper) {
 			super(locale, internationalizationHelper);
 		}
 
@@ -397,7 +397,7 @@ public class VerifiedRequirementsManagerController {
 				if (steps.size() == 1) {
 					ActionTestStep step = steps.iterator().next();
 					result = "<span class='verifyingStep' dataId='" + step.getId() + "'>" + (step.getIndex() + 1)
-							+ "</span>";
+						+ "</span>";
 				} else {
 					result = "&#42;";
 				}
@@ -407,12 +407,12 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends
-	VerifiedRequirementsDataTableModelHelper {
+		VerifiedRequirementsDataTableModelHelper {
 		private long stepId;
 		private TestCase testCase;
 
 		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale,
-				InternationalizationHelper internationalizationHelper, long stepId, TestCase testCase) {
+																 InternationalizationHelper internationalizationHelper, long stepId, TestCase testCase) {
 			super(locale, internationalizationHelper);
 			this.stepId = stepId;
 			this.testCase = testCase;
@@ -428,6 +428,5 @@ public class VerifiedRequirementsManagerController {
 		}
 
 	}
-
 
 }
