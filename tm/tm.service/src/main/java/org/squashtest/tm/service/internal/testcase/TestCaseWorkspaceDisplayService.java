@@ -66,6 +66,8 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private RequirementVersionCoverage RVC = REQUIREMENT_VERSION_COVERAGE.as("RVC");
 	private TestCaseSteps TCS = TEST_CASE_STEPS.as("TCS");
 	private TclnRelationship TCLNR = TCLN_RELATIONSHIP.as("TCLNR");
+	private Milestone M = MILESTONE.as("M");
+	private MilestoneTestCase MTC = MILESTONE_TEST_CASE.as("MTC");
 
 	@Override
 	//TODO add milestones
@@ -92,7 +94,11 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				org.jooq.impl.DSL.decode()
 					.when(TCLNR.ANCESTOR_ID.isNull(), "false")
 					.otherwise("true")
-					.as("HAS_CONTENT")
+					.as("HAS_CONTENT"),
+				org.jooq.impl.DSL.decode()
+					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
+					.otherwise("false")
+					.as("IS_MILESTONE_MODIFIABLE")
 			)
 			.from(TCLN)
 			.leftJoin(TCF).on(TCLN.TCLN_ID.eq(TCF.TCLN_ID))
@@ -100,8 +106,10 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(TCS).on(TC.TCLN_ID.eq(TCS.TEST_CASE_ID))
 			.leftJoin(RVC).on(TC.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.leftJoin(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
+			.leftJoin(MTC).on(TCLN.TCLN_ID.eq(MTC.TEST_CASE_ID))
+			.leftJoin(M).on(MTC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TCLN.TCLN_ID.in(childrenIds))
-			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID)
+			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID, M.STATUS)
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -110,14 +118,14 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				} else {
 					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber);
+						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber, (String) r.get("IS_MILESTONE_MODIFIABLE"));
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
-									 String hasStep, String isDirectlyReqCovered, UserDto currentUser, Integer milestonesNumber) {
+									 String hasStep, String isDirectlyReqCovered, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		Boolean isreqcovered = Boolean.parseBoolean(isDirectlyReqCovered) ||
 			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
@@ -144,7 +152,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			attr.put("reference", reference);
 			title = reference + " - " + title;
 		}
-		return buildNode(title, State.leaf, attr, currentUser, milestonesNumber, "true");
+		return buildNode(title, State.leaf, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 	}
 
 	private Integer getMilestonesNumberForTC(Map<Long, List<Long>> allMilestonesForTCs, Long id) {
@@ -277,6 +285,13 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.from(MILESTONE_TEST_CASE)
 			.where(MILESTONE_TEST_CASE.MILESTONE_ID.eq(activeMilestoneId))
 			.union(DSL.select(TEST_CASE_FOLDER.TCLN_ID).from(TEST_CASE_FOLDER))
+			.union(
+				DSL.select(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID)
+					.from(REQUIREMENT_VERSION_COVERAGE)
+					.join(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+					.join(MILESTONE_REQ_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(MILESTONE_REQ_VERSION.REQ_VERSION_ID))
+				.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
+			)
 			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class));
 	}
 

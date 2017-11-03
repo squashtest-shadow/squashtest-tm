@@ -77,6 +77,8 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	@Inject
 	private HibernateRequirementDao hibernateRequirementDao;
 
+	protected static final String MILESTONE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+	protected static final String MILESTONE_STATUS_FINISHED = "FINISHED";
 	private static final Integer NODE_WITHOUT_MILESTONES_ATTRIBUTE = -1;
 	protected static final Integer NODE_WITHOUT_MILESTONE = 0;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;

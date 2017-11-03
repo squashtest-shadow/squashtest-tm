@@ -148,8 +148,8 @@ public class IterationTestPlanManagerController {
 
 		List<Long> linkableRequirementLibraryIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
-
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);

@@ -139,8 +139,8 @@ public class CampaignTestPlanManagerController {
 
 		List<Long> linkableRequirementLibraryIds = testPlanManager.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
-
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);

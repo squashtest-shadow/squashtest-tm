@@ -84,8 +84,6 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	private Map<Long, JsTreeNode> iterationMap = new HashMap<>();
 	private Map<Long, JsTreeNode> testSuiteMap = new HashMap<>();
 
-	private static final String MILESTONE_STATUS_IN_PROGRESS = "IN_PROGRESS";
-	private static final String MILESTONE_STATUS_FINISHED = "FINISHED";
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForLN) {

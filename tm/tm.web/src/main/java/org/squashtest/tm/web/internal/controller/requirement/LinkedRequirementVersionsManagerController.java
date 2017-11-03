@@ -165,8 +165,8 @@ public class LinkedRequirementVersionsManagerController {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-
-		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, milestoneConf.getActiveMilestone().getId());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel linkedReqVersionsModel = buildLinkedReqVersionsModel(requirementVersionId, pas, "");
