@@ -28,6 +28,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
@@ -48,6 +50,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.search.advanced.tablemodels.CampaignSearchResultDataTableModelBuilder;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -74,7 +77,7 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@Inject
 	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
+	private WorkspaceDisplayService workspaceDisplayService;
 
 	@Inject
 	protected UserAccountService userAccountService;
@@ -122,9 +125,11 @@ public class CampaignSearchController extends GlobalSearchController{
 
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
-		List<Long> projectIds =campaignAdvancedSearchService.findAllReadablesId();
-		UserDto user =userAccountService.findCurrentUserDto();
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService.findAllLibraries(projectIds,user);
+		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
+		UserDto user = userAccountService.findCurrentUserDto();
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(cookieValueOpen);
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService.findAllLibraries(projectIds,user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
 

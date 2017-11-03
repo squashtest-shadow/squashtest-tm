@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.UserDto;
@@ -195,7 +194,9 @@ public class SearchInputInterfaceHelper {
 				for(CustomFieldModelFactory.CustomFieldOptionModel optionModel : singleSelectFieldModel.getOptions()){
 					CustomFieldOption customFieldModel = new CustomFieldOption(optionModel.getLabel(),optionModel.getCode());
 					if(!selectField.getOptions().contains(customFieldModel)) {
-						selectField.addOption(customFieldModel);
+						if(customFieldModel.getCode()!=null&&customFieldModel.getLabel()!=null) {
+							selectField.addOption(customFieldModel);
+						}
 					}
 				}
 				model.getFields().add(dropdownConvertToSearchInputFieldModel(selectField, locale));

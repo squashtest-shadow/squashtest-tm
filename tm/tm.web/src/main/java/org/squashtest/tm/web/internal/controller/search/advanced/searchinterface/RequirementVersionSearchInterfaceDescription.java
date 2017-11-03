@@ -41,9 +41,11 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
@@ -56,14 +58,6 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 	@Inject
 	protected UserAccountService userAccountService;
-
-	@Inject
-	private ProjectDao projectDao;
-
-
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private AbstractWorkspaceDisplayService workspaceDisplayService;
 
 
 	public SearchInputPanelModel createRequirementInformationPanel(Locale locale) {

@@ -177,7 +177,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser);
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser, expansionCandidates,activeMilestoneId.get());
 
 
 		return new ArrayList<JsTreeNode>(rootNodes);

@@ -75,9 +75,6 @@ public abstract class GlobalSearchController {
 	@Inject
 	protected UserAccountService userAccountService;
 
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	@Inject
 	private ProjectFinder projectFinder;
@@ -109,7 +106,7 @@ public abstract class GlobalSearchController {
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(readableProjectIds, currentUser);
 
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getTestCaseSearchInputInterfaceModel(locale,
 						isMilestoneMode, currentUser,readableProjectIds,jsProjects);
@@ -123,7 +120,7 @@ public abstract class GlobalSearchController {
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(readableProjectIds, currentUser);
 
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getRequirementSearchInputInterfaceModel(locale,
 					isMilestoneMode,currentUser,readableProjectIds,jsProjects);
@@ -137,7 +134,7 @@ public abstract class GlobalSearchController {
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(readableProjectIds, currentUser);
 				SearchInputInterfaceModel model = searchInputInterfaceHelper.getCampaignSearchInputInterfaceModel(locale,
 						isMilestoneMode,currentUser,readableProjectIds,jsProjects);
 				populateMetadata(model,jsProjects);
@@ -150,7 +147,7 @@ public abstract class GlobalSearchController {
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				UserDto currentUser = userAccountService.findCurrentUserDto();
 				List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
-				Collection<JsonProject> jsProjects = workspaceDisplayService.findAllProjects(readableProjectIds, currentUser);
+				Collection<JsonProject> jsProjects = workspaceDisplayService().findAllProjects(readableProjectIds, currentUser);
 
 				SearchInputInterfaceModel model = searchInputInterfaceHelper
 						.getRequirementSearchInputInterfaceModel(locale, isMilestoneMode,currentUser,readableProjectIds,jsProjects);
