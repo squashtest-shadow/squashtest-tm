@@ -57,27 +57,38 @@
     </addColumn>
   </changeSet>
 
-  <!--changeset id="tm-1.17.0-feature-sqtm-167" author="bsiri">
+  <changeSet id="tm-1.17.0-feature-sqtm-167" author="bsiri">
 
-    <comments>
+    <comment>
       Adding the ability to use application-level credentials that allows Squash interact with a bugtracker on its own
       (ie instead of requiring the current user to authenticate).
-    </comments>
+    </comment>
 
-    <createTable tableName="APPLICATION_LEVEL_CREDENTIALS">
+    <createTable tableName="STORED_CREDENTIALS">
 
-      <column name="CREDENTIAL_ID" type="BIGINT" remarks="primary key">
+      <column name="CREDENTIAL_ID" type="BIGINT" autoIncrement="true" remarks="primary key">
         <constraints primaryKey="true" nullable="false"/>
       </column>
 
-      <column name="NAME" type="VARCHAR(30)" remarks="a symbolic name for the credentials"/>
+      <column name="NAME" type="VARCHAR(30)" remarks="a symbolic name for the credentials">
+        <constraints unique="true" uniqueConstraintName="uniq_stored_credentials_name"/>
+      </column>
 
-      <column name="" type="VARCHAR(255)"
+      <column name="ENC_VERSION" type="int(3)" remarks="the version of encryption service used. Possibly the value will remain to 1 forever."/>
 
-      <column name="SALT" type="BINARY(8)" remarks="salt used for the encryption of this instance of credentials"/>
+      <column name="ENC_CREDENTIALS" type="TEXT" remarks="the credentials as an encrypted string"/>
+
+      <column name="AUTHENTICATED_SERVER" type="BIGINT" remarks="foreign key to the server to authenticate">
+        <constraints foreignKeyName="fk_stored_credentials_authenticated_server" references="BUGTRACKER(BUGTRACKER_ID)" deleteCascade="true"/>
+      </column>
 
     </createTable>
 
-  </changeset-->
+
+    <addColumn tableName="BUGTRACKER">
+      <column name="AUTH_POLICY" type="VARCHAR(30)" remarks="the policy that decides who needs to authenticate" />
+    </addColumn>
+
+  </changeSet>
 
 </databaseChangeLog>

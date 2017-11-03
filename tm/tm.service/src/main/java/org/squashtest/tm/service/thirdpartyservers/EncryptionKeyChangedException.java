@@ -18,14 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.thirdpartyservers;
+package org.squashtest.tm.service.thirdpartyservers;
 
-import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * Marker interface for the different ways the application can connect to a third party server. A BugTrackerConnector must publish
- * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthModes()}.
+ * Exception thrown when attempting to retrieve credentials that were encrypted with a different key than the current one,
+ * and this is completely undecipherable.
  *
  */
-public interface Credentials {
+public class EncryptionKeyChangedException extends ActionException {
+
+	private static final String I18N_KEY = "storedcredentials.encryptionkeychanged";
+
+	private static final String STD_ERR_MSG= "Stored credentials : it seems the encryption key changed since the credentials were encrypted. " +
+												 "The credentials cannot be read again without that key. The solutions are either 1/ restore the key " +
+												 "if the change was unintentional or 2/ reconfigure the stored credentials.";
+
+
+	public EncryptionKeyChangedException() {
+		super(STD_ERR_MSG);
+	}
+
+	@Override
+	public String getI18nKey(){
+		return I18N_KEY;
+	}
+
+
 }

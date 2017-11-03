@@ -18,30 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.appcredentials;
+package org.squashtest.tm.service.thirdpartyservers;
 
-import javax.persistence.Entity;
-
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * <p>
- * That entity represents credentials used at the application-level by Squash to connect to other third party servers,
- * and are persistent in the database.
- *</p>
- *
- * <p>
- * More exactly it is a wrapper around the actual credentials : the proper attributes
- * of a PersistentCredentials are solely metadata, the credentials themselves are stored in the encrypted part.
- *</p>
- *
- * <p>
- *     The actual credentials are one of the several implementations
- * 	of {@link ApplicationCredentials}
- * </p>
+ * Exception thrown if the administrator forgot to configure the secret for credentials encryption
  *
  */
-//@Entity
-public class PersistentCredentials {
+public class MissingEncryptionKeyException extends ActionException {
+
+	private static final String I18N_KEY = "storedcredentials.missingencryptionkey";
+
+	private static final String STD_ERR_MSG= "Stored credentials : no encryption key was set. Stored credentials will not be managed " +
+												 "until a key is supplied. Please contact your administrator and make sure that property squash.crypto.secret is configured " +
+												 "either in the configuration file or at the command line using -Dsquash.crypto.secret=*******.";
+
+
+	public MissingEncryptionKeyException() {
+		super(STD_ERR_MSG);
+	}
+
+	@Override
+	public String getI18nKey(){
+		return I18N_KEY;
+	}
 
 
 }

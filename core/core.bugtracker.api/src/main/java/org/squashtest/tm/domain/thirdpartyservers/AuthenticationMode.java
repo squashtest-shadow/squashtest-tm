@@ -21,9 +21,25 @@
 package org.squashtest.tm.domain.thirdpartyservers;
 
 /**
- * Add more when more authentication (or twisted use of authorization schemes) are supported.
+ * Add more when more authentication (or twisted use of authorization schemes) are supported. They directly relate to
+ * a reference implementation (see implementations of {@link Credentials}) and really juste serve as a shorter mnemonic
+ * than a classname.
  *
  */
 public enum AuthenticationMode {
-	USERNAME_PASSWORD;
+
+	USERNAME_PASSWORD(UsernamePasswordCredentials.class);
+
+
+
+
+	private Class<? extends Credentials> implementation;
+
+	AuthenticationMode(Class<? extends Credentials> impl){
+		this.implementation = impl;
+	}
+
+	public Class<?> referenceImplementation(){
+		return implementation;
+	}
 }

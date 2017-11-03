@@ -20,12 +20,22 @@
  */
 package org.squashtest.tm.domain.thirdpartyservers;
 
-import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
-
 /**
- * Marker interface for the different ways the application can connect to a third party server. A BugTrackerConnector must publish
- * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthModes()}.
+ * This enum says whether Squash should let the users authenticate themselves, or use one of its stored credentials, when time is come to authenticate.
+ * In that it is different from {@link AuthenticationMode}, that says which protocol should be used
+ * for the said authentication.
+ *
  *
  */
-public interface Credentials {
+public enum AuthenticationPolicy {
+	/**
+	 * Indicates that the users need to authenticate themselves.
+	 *
+	 */
+	USER,
+	/**
+	 * Indicates that the application will use one of its stored credentials.
+	 *
+	 */
+	APPL_LEVEL
 }

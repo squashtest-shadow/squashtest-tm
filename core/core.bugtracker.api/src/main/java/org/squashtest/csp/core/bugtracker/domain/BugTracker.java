@@ -23,16 +23,12 @@ package org.squashtest.csp.core.bugtracker.domain;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationPolicy;
 
 @Entity
 @Table(name = "BUGTRACKER")
@@ -67,9 +63,14 @@ public class BugTracker {
 	@Size(min = 0, max = 50)
 	private String kind;
 
+	@NotBlank
+	@Enumerated(EnumType.STRING)
+	@Column(name="AUTH_POLICY")
+	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
+
+
 	private boolean iframeFriendly;
 
-	
 
 	public BugTracker() {
 		super();
@@ -78,7 +79,7 @@ public class BugTracker {
 	private void doSetName(String name) {
 		this.name = name.trim();
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -94,7 +95,7 @@ public class BugTracker {
 	/**
 	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
 	 * in the configuration files so there is no warranty that that URL will be valid.
-	 * 
+	 *
 	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
 	 */
 	public URL getURL() {
@@ -136,12 +137,22 @@ public class BugTracker {
 		this.iframeFriendly = iframeFriendly;
 	}
 
+	public AuthenticationPolicy getAuthenticationPolicy() {
+		return authenticationPolicy;
+	}
+
+	public void setAuthenticationPolicy(AuthenticationPolicy authenticationPolicy) {
+		this.authenticationPolicy = authenticationPolicy;
+	}
+
+
 	public BugTracker getDetachedBugTracker() {
 		BugTracker detached = new BugTracker();
 		detached.url = this.url;
 		detached.kind = this.kind;
 		detached.name = this.name;
 		detached.iframeFriendly = this.iframeFriendly;
+		detached.authenticationPolicy = this.authenticationPolicy;
 		return detached;
 	}
 
@@ -153,4 +164,5 @@ public class BugTracker {
 			name = url;
 		}
 	}
+
 }

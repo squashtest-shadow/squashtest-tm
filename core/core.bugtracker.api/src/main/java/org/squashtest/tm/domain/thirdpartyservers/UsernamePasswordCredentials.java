@@ -36,8 +36,12 @@ import java.util.Arrays;
  * </p>
  */
 public class UsernamePasswordCredentials implements Credentials {
-	private final String username;
-	private final char[] password;
+	private String username;
+	private char[] password;
+
+	public UsernamePasswordCredentials() {
+
+	}
 
 	public UsernamePasswordCredentials(String login, char[] password) {
 		super();
@@ -51,6 +55,14 @@ public class UsernamePasswordCredentials implements Credentials {
 
 	public char[] getPassword() {
 		return password;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(char[] password) {
+		this.password = password;
 	}
 
 	/**
