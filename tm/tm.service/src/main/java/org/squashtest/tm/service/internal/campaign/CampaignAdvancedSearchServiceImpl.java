@@ -73,10 +73,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	DSLContext DSL;
 
 	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private CampaignWorkspaceDisplayService workspaceDisplayService;
-
-	@Inject
 	protected ProjectsPermissionManagementService permissionService;
 
 	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{

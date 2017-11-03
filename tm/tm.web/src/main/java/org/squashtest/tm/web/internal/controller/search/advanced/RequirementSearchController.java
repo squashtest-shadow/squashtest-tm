@@ -119,8 +119,6 @@ public class RequirementSearchController extends GlobalSearchController {
 	}
 
 
-
-
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
 		RequestParams.S_ECHO_PARAM })
 	@ResponseBody
@@ -130,7 +128,6 @@ public class RequirementSearchController extends GlobalSearchController {
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-
 
 		addMilestoneToSearchModel(searchModel);
 
@@ -150,7 +147,6 @@ public class RequirementSearchController extends GlobalSearchController {
 		return new RequirementSearchResultDataTableModelBuilder(locale, messageSource, permissionService,
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
-
 
 	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {
 

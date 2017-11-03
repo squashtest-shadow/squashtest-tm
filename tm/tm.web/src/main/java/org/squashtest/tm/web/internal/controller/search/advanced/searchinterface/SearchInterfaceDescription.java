@@ -244,17 +244,7 @@ public abstract class SearchInterfaceDescription {
 	private Provider<InternationalizableLabelFormatter> internationalizableLabelFormatter;
 
 	@Inject
-	protected UserAccountService userAccountService;
-
-	@Inject
-	private ProjectDao projectDao;
-
-	@Inject
 	TestCaseAdvancedSearchService advancedSearchService;
-
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private CampaignWorkspaceDisplayService workspaceDisplayService;
 
 	/**
 	 *

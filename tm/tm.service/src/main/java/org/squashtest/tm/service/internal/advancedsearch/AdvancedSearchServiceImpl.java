@@ -65,7 +65,6 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final String PROJECT_CRITERIA_NAME = "project.id";
@@ -96,13 +95,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	MilestoneModelService milestoneModelService;
 
-	@Inject
-	DSLContext DSL;
-
-	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private CampaignWorkspaceDisplayService workspaceDisplayService;
-
 	private static final Integer EXPECTED_LENGTH = 7;
 
 	private static final String FAKE_MILESTONE_ID = "-9000";
@@ -121,7 +113,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
-
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		if (currentUser.isAdmin()) {
