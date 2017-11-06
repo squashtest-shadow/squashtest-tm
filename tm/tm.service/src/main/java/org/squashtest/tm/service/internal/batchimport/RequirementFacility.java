@@ -531,6 +531,7 @@ class RequirementFacility extends EntityFacilitySupport {
 							.forTarget(instr.getTarget())
 							.withMessage(Messages.ERROR_REQ_LINK_SAME_VERSION)
 							.build());
+			LOGGER.debug(ex.getMessage(), ex);
 		}
 		catch(UnlinkableLinkedRequirementVersionException ex){
 			train.addEntry(LogEntry
@@ -538,6 +539,7 @@ class RequirementFacility extends EntityFacilitySupport {
 					.forTarget(instr.getTarget())
 					.withMessage(Messages.ERROR_REQ_LINK_NOT_LINKABLE)
 					.build());
+			LOGGER.debug(ex.getMessage(), ex);
 		}
 	}
 

@@ -164,12 +164,14 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			/*
 			 * failure on retrieval, this is an expected error case which translates to a null result.
 			 */
+			LOGGER.debug("No Result on retrieving credentials.", ex);
 			return null;
 		}
 		catch(IOException ex){
 			/*
 			 * failure on deserialization. Let's try to investigate and refine the error.
 			 */
+			LOGGER.debug(ex.getMessage(), ex);
 			throw investigateDeserializationError(strDecrypt);
 		}
 		finally{
