@@ -94,27 +94,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}
-
-		return findUsersWhoCanAccessProject(projectIds);
+		return findUsersWhoCanAccessProject(idList);
 	}
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
-		List<String> list = new ArrayList<>();
-
-		List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<>();
-
-		for (Long projectId : projectIds) {
-			findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
-				.findPartyPermissionsBeanByProject(projectId));
-		}
-
-		for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
-			if (partyProjectPermissionsBean.isUser()) {
-
-				User user = (User) partyProjectPermissionsBean.getParty();
-				list.add(user.getLogin());
-			}
-		}
+		List<String> list = findPartyPermissionsBeanByProject(projectIds);
 		return list;
 	}
 
@@ -253,6 +237,30 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			result = fieldName.replaceFirst("Campaign.", "campaign.");
 		}
 		return result;
+	}
+
+	public List<String> findPartyPermissionsBeanByProject(List<Long> projectIds) {
+
+		List<String> list = new ArrayList<>();
+		List<String> result = DSL
+			.select(CORE_USER.LOGIN)
+			.from(CORE_USER)
+			.join(CORE_PARTY).on(CORE_USER.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
+			.join(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_USER.PARTY_ID))
+			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_GROUP_MEMBER.PARTY_ID))
+			.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+			.join(ACL_GROUP_PERMISSION).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.ACL_GROUP_ID.eq(ACL_GROUP_PERMISSION.ACL_GROUP_ID))
+			.join(ACL_CLASS).on(ACL_GROUP_PERMISSION.CLASS_ID.eq(ACL_CLASS.ID).and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
+
+			.where(ACL_OBJECT_IDENTITY.IDENTITY.in(projectIds))
+			.fetch(CORE_USER.LOGIN, String.class);
+
+		for(String r : result){
+			if(!list.contains(r)){
+				list.add((r));
+			}
+		}
+		return list;
 	}
 
 }

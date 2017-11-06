@@ -105,69 +105,64 @@ public class CampaignSearchController extends GlobalSearchController{
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-
-		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN,activeMilestone);
 		return "campaign-search-result.html";
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=campaign")
 	public String showCampaignSearchPageFilledWithParams(Model model,
-			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
-			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
+														 @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+														 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale) {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showCampaignSearchPage(model, cookieValueSelect, cookieValueOpen, associateResultWithType, id, locale);
+		return showCampaignSearchPage(model, openedNodes, elementId, associateResultWithType, id, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")
-	public String showCampaignSearchPage(Model model, @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
-										 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
-											@RequestParam(required = false, defaultValue = "") String associateResultWithType,
-											@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+	public String showCampaignSearchPage(Model model, @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+										 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
+										@RequestParam(required = false, defaultValue = "") String associateResultWithType,
+										@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		initModel(model, associateResultWithType, id, locale, CAMPAIGN);
 
-		List<CampaignLibrary> libraries = workspaceService.findAllLibraries();
+		String[] nodesToOpen;
 
-		model.addAttribute("selectedNode", cookieValueSelect);
-		model.addAttribute("openedNode", cookieValueOpen);
+		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
+			nodesToOpen = openedNodes;
+			model.addAttribute("selectedNode", "");
+		} else {
+			Long nodeId = Long.valueOf(elementId);
+			nodesToOpen = getNodeParentsInWorkspace(nodeId);
+			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(nodeId));
+		}
 
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(cookieValueOpen);
+		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-		DriveNodeBuilder<CampaignLibraryNode> nodeBuilder = driveNodeBuilderProvider.get();
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
+		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
+		UserDto user = userAccountService.findCurrentUserDto();
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds,user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
 
 		if (activeMilestone.isPresent()) {
-			Milestone milestone = activeMilestone.get();
-			nodeBuilder.filterByMilestone(milestone);
 
-			List<Project> projectList = customProjectFinder.findAllReadable();
-
-			List<Long> projectIds = new ArrayList<>();
-
-			for (Project project : projectList) {
-				projectIds.add(project.getId());
-			}
-
-			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(milestone.getId(),
-				projectIds);
-
+			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),	projectIds);
 		}
 
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<CampaignLibrary>(nodeBuilder).expand(expansionCandidates)
-			.setModel(libraries).build();
 		model.addAttribute("rootModel", rootNodes);
 
 		model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 
 		return  "campaign-search-input.html";
 	}
-
 
 
 
@@ -185,7 +180,7 @@ public class CampaignSearchController extends GlobalSearchController{
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder =
-				campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
+			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, messageSource, permissionService)
 			.buildDataModel(holder, params.getsEcho());
@@ -193,4 +188,21 @@ public class CampaignSearchController extends GlobalSearchController{
 
 
 
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return workspaceDisplayService;
+	}
+
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Campaign-" + elementId;
+	}
+
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]);
+	}
+
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
+	}
 }

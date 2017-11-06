@@ -30,14 +30,18 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 
 import com.google.common.base.Optional;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 
 @Component
 public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	@Inject
 	private MilestoneFinderService milestoneFinderService;
+	@Inject
+	private TestCaseAdvancedSearchService advancedSearchService;
 
 	private final ThreadLocal<Optional<Milestone>> activeMilestoneHolder = new ThreadLocal<>();
 
@@ -57,16 +61,33 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 			});
 			activeMilestoneHolder.set(Optional.fromNullable(milestone));
 		}
-
 		return activeMilestoneHolder.get();
 	}
 
+	public Optional<Milestone> getActiveMilestoneByJson() {
+		if (activeMilestoneHolder.get() == null) {
+			final Long milestoneId = activeMilestoneIdHolder.get();
+
+			List<JsonMilestone> visibles = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
+			Milestone milestone = new Milestone();
+			for(JsonMilestone mile : visibles){
+				if(Long.valueOf(mile.getId()).equals(milestoneId)){
+					milestone = milestoneFinderService.findById(mile.getId());
+				}else{
+					milestone = null;
+				}
+			}
+			activeMilestoneHolder.set(Optional.fromNullable(milestone));
+		}
+		return activeMilestoneHolder.get();
+	}
 
 	@Override
 	public void setActiveMilestone(final Long milestoneId) {
 		// just set the id. They milestone will be fetched from database only when asked
 		activeMilestoneIdHolder.set(milestoneId);
 	}
+
 
 	@Override
 	public void clearContext() {

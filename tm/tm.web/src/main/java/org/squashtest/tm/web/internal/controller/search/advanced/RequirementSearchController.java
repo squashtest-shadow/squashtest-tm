@@ -89,8 +89,8 @@ public class RequirementSearchController extends GlobalSearchController{
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-
-		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT,activeMilestone);
 		return "requirement-search-result.html";
 	}
 
@@ -100,8 +100,8 @@ public class RequirementSearchController extends GlobalSearchController{
 										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-
-		initModel(model, associateResultWithType, id, locale, REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initModel(model, associateResultWithType, id, locale, REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}
 
@@ -116,8 +116,6 @@ public class RequirementSearchController extends GlobalSearchController{
 	}
 
 
-
-
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
 		RequestParams.S_ECHO_PARAM })
 	@ResponseBody
@@ -127,7 +125,6 @@ public class RequirementSearchController extends GlobalSearchController{
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-
 
 		addMilestoneToSearchModel(searchModel);
 
@@ -148,7 +145,6 @@ public class RequirementSearchController extends GlobalSearchController{
 			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-
 	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {
 
 		Set<Long> ids = new HashSet<>();
@@ -162,6 +158,11 @@ public class RequirementSearchController extends GlobalSearchController{
 		}
 
 		return ids;
+	}
+
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return requirementWorkspaceDisplayService;
 	}
 
 }

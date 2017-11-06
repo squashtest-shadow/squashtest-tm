@@ -663,4 +663,5 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		return enabled && hasCriteria;
 	}
+
 }

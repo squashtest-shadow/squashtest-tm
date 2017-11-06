@@ -108,8 +108,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-
-		initModel(model, associateResultWithType, id, locale, TESTCASE);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initModel(model, associateResultWithType, id, locale, TESTCASE,activeMilestone);
 		return  "test-case-search-input.html";
 	}
 
@@ -118,8 +118,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 	public String showTestCaseViaRequirementSearchPage(Model model,
 								 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 								 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
-
-		initModel(model, associateResultWithType, id, locale, TESTCASE_VIA_REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initModel(model, associateResultWithType, id, locale, TESTCASE_VIA_REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}
 
@@ -148,16 +148,16 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@RequestMapping(value = RESULTS, params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-
-		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE,activeMilestone);
 		return "test-case-search-result.html";
 	}
 
 	@RequestMapping(value = RESULTS, params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseViaRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
-
-		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE_VIA_REQUIREMENT);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		initResultModel(model,searchModel, associateResultWithType, id, TESTCASE_VIA_REQUIREMENT,activeMilestone);
 		return "test-case-search-result.html";
 	}
 
@@ -171,7 +171,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 		throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-
 
 		addMilestoneToSearchModel(searchModel);
 
@@ -245,7 +244,10 @@ public class TestCaseSearchController extends GlobalSearchController {
 		return ids;
 	}
 
-
+	@Override
+	protected WorkspaceDisplayService workspaceDisplayService() {
+		return testCaseWorkspaceDisplayService;
+	}
 
 
 
