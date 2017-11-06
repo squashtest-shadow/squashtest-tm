@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ public class BugTracker {
 	@Size(min = 0, max = 50)
 	private String kind;
 
-	@NotBlank
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name="AUTH_POLICY")
 	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
