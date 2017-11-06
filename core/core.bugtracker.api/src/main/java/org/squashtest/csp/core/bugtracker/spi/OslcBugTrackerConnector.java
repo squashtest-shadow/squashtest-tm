@@ -20,19 +20,12 @@
  */
 package org.squashtest.csp.core.bugtracker.spi;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
-
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
-import org.squashtest.csp.core.bugtracker.core.ConnectorUtils;
-import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
 /**
  * Interface for bugtrackers that implements OLSC (not many of them).

@@ -20,21 +20,12 @@
  */
 package org.squashtest.csp.core.bugtracker.spi;
 
-import java.util.List;
-import java.util.Set;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
+import org.squashtest.csp.core.bugtracker.domain.*;
 
-import org.squashtest.csp.core.bugtracker.core.*;
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
-import org.squashtest.csp.core.bugtracker.domain.Category;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.domain.User;
-import org.squashtest.csp.core.bugtracker.domain.Version;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
-import org.squashtest.tm.domain.thirdpartyservers.UsernamePasswordCredentials;
+import java.util.List;
 
 
 /**

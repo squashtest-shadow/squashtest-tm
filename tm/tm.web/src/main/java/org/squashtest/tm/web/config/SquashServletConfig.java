@@ -20,27 +20,17 @@
  */
 package org.squashtest.tm.web.config;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
-import static org.springframework.util.StringUtils.trimAllWhitespace;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.DispatcherType;
-
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.multipart.support.MultipartFilter;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.api.config.SquashPathProperties;
@@ -49,6 +39,7 @@ import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
+import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
@@ -56,9 +47,12 @@ import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
+import javax.inject.Inject;
+import javax.servlet.DispatcherType;
+import java.util.HashMap;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 /**
  * Servlet context config (mostly). Not in SquashServletInitializer because it delays the servlet context initialization for
@@ -70,11 +64,11 @@ import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 @EnableConfigurationProperties({MessagesProperties.class})
 @Configuration
 public class SquashServletConfig {
-        
+
         private static final String IMPORTER_REGEX = ".*/importer/.*";
         private static final String UPLOAD_REGEX = ".*/attachments/upload.*";
-    
-    
+
+
 	@Inject
 	private MessagesProperties messagesProperties;
 	@Inject
@@ -133,7 +127,7 @@ public class SquashServletConfig {
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}
-        
+
 
 	@Bean
 	@Role(BeanDefinition.ROLE_SUPPORT)
@@ -168,8 +162,8 @@ public class SquashServletConfig {
             final MultipartFilterExceptionAware multipartFilter = new MultipartFilterExceptionAware();
             final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(multipartFilter);
             return filterRegistrationBean;
-        }      
-        
+        }
+
 	@Bean
 	@Order(1)
 	public FilterRegistrationBean bugTrackerContextPersister() {

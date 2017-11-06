@@ -22,9 +22,6 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
