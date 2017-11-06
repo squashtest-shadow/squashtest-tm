@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import com.google.common.base.Optional;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;

@@ -31,6 +31,7 @@ import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 public interface AdvancedSearchService {
 
 	List<CustomFieldModel> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity, List<Long> readableProjectIds);
+	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	List<JsonMilestone> findAllVisibleMilestonesToCurrentUser();
 	List<Long> findAllReadablesId();
 

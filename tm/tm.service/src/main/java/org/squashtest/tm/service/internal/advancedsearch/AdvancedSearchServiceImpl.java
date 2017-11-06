@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -42,10 +41,10 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.search.query.dsl.RangeMatchingContext;
-import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -56,7 +55,6 @@ import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
@@ -64,6 +62,7 @@ import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
@@ -95,6 +94,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	MilestoneModelService milestoneModelService;
 
+	@Inject
+	private CustomFieldBindingFinderService customFieldBindingFinderService;
+
+
 	private static final Integer EXPECTED_LENGTH = 7;
 
 	private static final String FAKE_MILESTONE_ID = "-9000";
@@ -112,23 +115,30 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return cufList;
 	}
 
+	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
+
+		Set<CustomField> result = new LinkedHashSet<>();
+
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		for (Project project : readableProjects) {
+			result.addAll(customFieldBindingFinderService.findBoundCustomFields(project.getId(), entity));
+		}
+
+		return new ArrayList<>(result);
+
+	}
+
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
 
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		if (currentUser.isAdmin()) {
-			return new ArrayList<>(milestoneModelService.findAllJsonMilestonesByAdmin().values());
-		} else {
-			return new ArrayList<>( milestoneModelService.findAllJsonMilestonesByUser(currentUser.getPartyIds()).values());
-		}
-//		List<JsonMilestone> collection = new ArrayList<>();
-//		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
-//			ListIterator<JsonMilestone> iterator = r.listIterator();
-//			while (iterator.hasNext()) {
-//				collection.add(iterator.next());
-//			}
-//
-//		});
-//				return collection;
+		List<JsonMilestone> collection = new ArrayList<>();
+		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
+			ListIterator<JsonMilestone> iterator = r.listIterator();
+			while (iterator.hasNext()) {
+				collection.add(iterator.next());
+			}
+
+		});
+				return collection;
 	}
 
 	private String padRawValue(Integer rawValue) {

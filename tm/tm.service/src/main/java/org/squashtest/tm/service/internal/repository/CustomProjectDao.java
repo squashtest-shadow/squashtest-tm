@@ -51,5 +51,4 @@ public interface CustomProjectDao {
 	 */
 	List<Long> findAllProjectIds(List<Long> partyIds);
 
-	List<Long> findAllReadableIds(UserDto userDto);
 }

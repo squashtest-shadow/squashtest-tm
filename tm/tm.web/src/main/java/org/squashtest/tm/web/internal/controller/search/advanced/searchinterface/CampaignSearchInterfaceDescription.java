@@ -24,23 +24,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {
 
 	private static final String COLUMN_1 = "column1";
-
-	@Inject
-	private CampaignAdvancedSearchService campaignAdvancedSearchService;
-
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();

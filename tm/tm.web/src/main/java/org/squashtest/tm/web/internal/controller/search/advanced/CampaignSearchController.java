@@ -29,12 +29,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -42,9 +40,8 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.dto.UserDto;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -76,11 +73,14 @@ public class CampaignSearchController extends GlobalSearchController{
 	private MilestoneMembershipFinder milestoneMembershipFinder;
 
 	@Inject
-	@Named("campaignWorkspaceDisplayService")
-	private WorkspaceDisplayService workspaceDisplayService;
+	protected UserAccountService userAccountService;
 
 	@Inject
-	protected UserAccountService userAccountService;
+	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+
+	@Inject
+	@Named("campaignWorkspaceDisplayService")
+	private WorkspaceDisplayService workspaceDisplayService;
 
 	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
@@ -108,28 +108,42 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=campaign")
 	public String showCampaignSearchPageFilledWithParams(Model model,
-			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
-			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
+														 @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String[] openedNodes,
+														 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale) {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showCampaignSearchPage(model, cookieValueSelect, cookieValueOpen, associateResultWithType, id, locale);
+		return showCampaignSearchPage(model, openedNodes, elementId, associateResultWithType, id, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")
-	public String showCampaignSearchPage(Model model, @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
-										 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
-											@RequestParam(required = false, defaultValue = "") String associateResultWithType,
-											@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+	public String showCampaignSearchPage(Model model, @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String[] openedNodes,
+										 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String elementId,
+										@RequestParam(required = false, defaultValue = "") String associateResultWithType,
+										@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+
+
+		String[] nodesToOpen;
+
+		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
+			nodesToOpen = openedNodes;
+			model.addAttribute("selectedNode", "");
+		} else {
+			Long nodeId = Long.valueOf(elementId);
+			nodesToOpen = getNodeParentsInWorkspace(nodeId);
+			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(nodeId));
+		}
+
+		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
+
 
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(cookieValueOpen);
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService.findAllLibraries(projectIds,user, expansionCandidates, activeMilestoneId.get());
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds,user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
 
@@ -175,4 +189,16 @@ public class CampaignSearchController extends GlobalSearchController{
 		return workspaceDisplayService;
 	}
 
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Campaign-" + elementId;
+	}
+
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]);
+	}
+
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
+	}
 }

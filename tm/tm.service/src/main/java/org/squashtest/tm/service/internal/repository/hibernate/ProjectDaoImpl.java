@@ -109,15 +109,4 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 				.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
 			.fetch(ACL_OBJECT_IDENTITY.IDENTITY, Long.class);
 	}
-
-	public List<Long> findAllReadableIds(UserDto userDto) {
-		if (userDto.isAdmin()) {
-			return findAllProjectIds();
-		} else {
-			return findAllProjectIds(userDto.getPartyIds());
-		}
-	}
-
-
-
 }

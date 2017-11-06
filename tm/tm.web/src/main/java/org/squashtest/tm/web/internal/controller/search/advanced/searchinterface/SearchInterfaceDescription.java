@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -32,15 +31,9 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.service.customfield.CustomFieldModelService;
-import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
-import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;

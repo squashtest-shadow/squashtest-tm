@@ -26,13 +26,12 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 import com.google.common.base.Optional;
-import org.squashtest.tm.service.milestone.MilestoneModelService;
-import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 
 @Component
 public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
@@ -40,35 +39,26 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 	@Inject
 	private MilestoneFinderService milestoneFinderService;
 
-	@Inject
-	MilestoneModelService milestoneModelService;
-
 	private final ThreadLocal<Optional<Milestone>> activeMilestoneHolder = new ThreadLocal<>();
 
 	private final ThreadLocal<Long> activeMilestoneIdHolder = new ThreadLocal<>();
 
-	@Inject
-	private TestCaseAdvancedSearchService advancedSearchService;
-
 	@Override
 	public Optional<Milestone> getActiveMilestone() {
-
 		if (activeMilestoneHolder.get() == null) {
+			List<Milestone> visibles = milestoneFinderService.findAllVisibleToCurrentUser();
 			final Long milestoneId = activeMilestoneIdHolder.get();
-
-			List<JsonMilestone> visibles = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
-
-			Milestone milestone = new Milestone();
-			for(JsonMilestone mile : visibles){
-				if(Long.valueOf(mile.getId()).equals(milestoneId)){
-					milestone = milestoneFinderService.findById(mile.getId());
-				}else{
-					milestone = null;
+			Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {
+				@Override
+				public boolean evaluate(Object milestone) {
+					return ((Milestone) milestone).getId().equals(milestoneId);
 				}
-			}
+			});
 			activeMilestoneHolder.set(Optional.fromNullable(milestone));
 		}
+
 		return activeMilestoneHolder.get();
+
 	}
 
 
