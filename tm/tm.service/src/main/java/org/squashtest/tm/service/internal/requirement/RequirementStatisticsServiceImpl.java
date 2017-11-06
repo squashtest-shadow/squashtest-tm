@@ -319,7 +319,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 				hasDescription = (Integer)tuple[0] != 0;
 			} catch(ClassCastException exception) {
 				hasDescription = ((BigInteger)tuple[0]).intValue() != 0;
-				LOGGER.info("BigInteger handled.", exception.getMessage());
+				LOGGER.info("BigInteger handled.", exception);
 			}
 			count = ((BigInteger)tuple[1]).intValue();
 

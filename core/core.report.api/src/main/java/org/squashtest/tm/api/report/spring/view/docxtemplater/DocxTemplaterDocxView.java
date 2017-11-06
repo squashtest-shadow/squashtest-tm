@@ -79,7 +79,7 @@ public class DocxTemplaterDocxView extends AbstractView{
 				inputStream.close();
 				break;
 			} catch (Exception e) {
-				LOGGER.debug("file don't exist" + resource.getFilename());
+				LOGGER.debug("file don't exist" + resource.getFilename(), e);
 			}
 
 		}

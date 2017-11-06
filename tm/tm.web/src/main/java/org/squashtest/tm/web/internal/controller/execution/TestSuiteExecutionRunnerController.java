@@ -161,7 +161,7 @@ public class TestSuiteExecutionRunnerController {
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
 		}
 		catch(NoBugTrackerBindingException ex){
-			LOGGER.debug("Well, no bugtracker then. It's fine.");
+			LOGGER.debug("Well, no bugtracker then. It's fine.", ex);
 		}
 
 		return OPTIMIZED_RUNNER_MAIN;

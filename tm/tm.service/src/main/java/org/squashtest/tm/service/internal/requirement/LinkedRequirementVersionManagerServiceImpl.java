@@ -243,7 +243,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			} catch(LinkedRequirementVersionException exception) {
 				LOGGER.info("RequirementVersion " + previousVersion.getName() +
 							" could not be linked to RequirementVersion " + newVersion.getName(),
-							exception.getMessage());
+							exception);
 			}
 		}
 	}
@@ -291,7 +291,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 				verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(previousVersion.getId(),newVersion.getId(), testCaseToPostpone.getId());
 			} catch(VerifiedRequirementException exception) {
 				LOGGER.info("Could not change VerifiedRequirementVersion of VerifyingTestCase " + testCaseToPostpone.getName(),
-							exception.getMessage());
+							exception);
 			}
 		}
 

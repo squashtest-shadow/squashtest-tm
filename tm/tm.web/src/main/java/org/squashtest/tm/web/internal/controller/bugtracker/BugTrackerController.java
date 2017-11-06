@@ -769,7 +769,7 @@ public class BugTrackerController {
 				attachment.getStreamContent().close();
 			} catch (IOException ex) {
 				LOGGER.warn("issue attachments : could not close stream for " + attachment.getName()
-						+ ", this is non fatal anyway", ex.getMessage());
+						+ ", this is non fatal anyway", ex);
 			}
 		}
 

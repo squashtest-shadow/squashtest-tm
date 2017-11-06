@@ -227,7 +227,7 @@ public class ProjectAdministrationController {
 			}
 			catch(PluginValidationException damnit){
 				model.setStatus(STATUS_ERROR);
-				LOGGER.debug("Plugin validation failed for Plugin " + plugin.getName());
+				LOGGER.debug("Plugin validation failed for Plugin " + plugin.getName(), damnit);
 			}
 
 			output.add(model);

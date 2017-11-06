@@ -115,7 +115,7 @@ TestAutomationCallbackService {
 			exec.setResultURL(result);
 		} catch (InvalidUrlException ex) {
 			LOGGER.warn("Received a result url which does not math any valid url pattern : {}",
-					stateChange.getResultUrl(), ex.getMessage());
+					stateChange.getResultUrl(), ex);
 		}
 
 		execProcService.updateExecutionMetadata(exec);
