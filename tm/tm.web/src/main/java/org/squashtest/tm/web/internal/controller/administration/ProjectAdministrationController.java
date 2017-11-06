@@ -31,6 +31,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,6 +70,9 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 @Controller
 @RequestMapping("/administration/projects")
 public class ProjectAdministrationController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectAdministrationController.class);
+
 	private static final String STATUS_ERROR = "ERROR";
 	private static final String STATUS_OK = "OK";
 	/**
@@ -209,10 +214,10 @@ public class ProjectAdministrationController {
 
 			model.setIndex(loop++);
 			model.setEnabled(enabled);
-			
+
 			String url = plugin.getConfigurationPath(context);
 			url = url.startsWith("/") ? url : "/" + url;
-			
+
 			model.setConfigUrl(servContext + url);
 
 			// that should be refactored too once the API is updated
@@ -222,6 +227,7 @@ public class ProjectAdministrationController {
 			}
 			catch(PluginValidationException damnit){
 				model.setStatus(STATUS_ERROR);
+				LOGGER.debug("Plugin validation failed for Plugin " + plugin.getName());
 			}
 
 			output.add(model);

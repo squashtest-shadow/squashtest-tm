@@ -44,7 +44,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("squashtest.tm.service.testautomation.AutomatedExecutionManagerService")
 @Transactional
@@ -115,7 +115,7 @@ TestAutomationCallbackService {
 			exec.setResultURL(result);
 		} catch (InvalidUrlException ex) {
 			LOGGER.warn("Received a result url which does not math any valid url pattern : {}",
-					stateChange.getResultUrl());
+					stateChange.getResultUrl(), ex.getMessage());
 		}
 
 		execProcService.updateExecutionMetadata(exec);

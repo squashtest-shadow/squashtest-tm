@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import com.google.common.base.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -31,16 +33,19 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
+import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkTypeDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
@@ -57,6 +62,8 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional
 public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequirementVersionManagerService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LinkedRequirementVersionManagerService.class);
 
 	@Inject
 	private RequirementVersionDao reqVersionDao;
@@ -234,13 +241,17 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 					reqVerLink.getLinkType().getId(),
 					reqVerLink.getLinkDirection());
 			} catch(LinkedRequirementVersionException exception) {
-				exception.printStackTrace();
+				LOGGER.info("RequirementVersion " + previousVersion.getName() +
+							" could not be linked to RequirementVersion " + newVersion.getName(),
+							exception.getMessage());
 			}
 		}
 	}
 
 	@Override
-	public RequirementVersionLink addDetailedReqVersionLink(long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection) {
+	public RequirementVersionLink addDetailedReqVersionLink(long reqVersionId, long relatedReqVersionId, long linkTypeId, boolean linkDirection)
+		throws LinkedRequirementVersionException {
+
 		RequirementVersion reqVersion = reqVersionDao.findOne(reqVersionId);
 		RequirementVersion relatedReqVersion = reqVersionDao.findOne(relatedReqVersionId);
 
@@ -278,8 +289,9 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		for(TestCase testCaseToPostpone :verifyingTestCaseManagerService.findAllByRequirementVersion(previousVersion.getId())) {
 			try {
 				verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(previousVersion.getId(),newVersion.getId(), testCaseToPostpone.getId());
-			} catch(LinkedRequirementVersionException exception) {
-				exception.printStackTrace();
+			} catch(VerifiedRequirementException exception) {
+				LOGGER.info("Could not change VerifiedRequirementVersion of VerifyingTestCase " + testCaseToPostpone.getName(),
+							exception.getMessage());
 			}
 		}
 
