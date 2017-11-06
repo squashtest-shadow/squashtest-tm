@@ -69,13 +69,6 @@ public class StoredCredentials {
 	private String encryptedCredentials;
 
 
-	/**
-	 * A name for that credentials set.
-	 *
-	 */
-	@NotNull
-	@Size(max = 30)
-	private String name;
 
 	/**
 	 * The server for which this credentials apply
@@ -117,11 +110,4 @@ public class StoredCredentials {
 		this.authenticatedServer = authenticatedServer;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 }

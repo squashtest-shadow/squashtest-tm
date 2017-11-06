@@ -70,11 +70,7 @@
         <constraints primaryKey="true" nullable="false"/>
       </column>
 
-      <column name="NAME" type="VARCHAR(30)" remarks="a symbolic name for the credentials">
-        <constraints unique="true" uniqueConstraintName="uniq_stored_credentials_name"/>
-      </column>
-
-      <column name="ENC_VERSION" type="int(3)" remarks="the version of encryption service used. Possibly the value will remain to 1 forever."/>
+      <column name="ENC_VERSION" type="java.sql.Types.SMALLINT" remarks="the version of encryption service used. Possibly the value will remain to 1 forever."/>
 
       <column name="ENC_CREDENTIALS" type="TEXT" remarks="the credentials as an encrypted string"/>
 

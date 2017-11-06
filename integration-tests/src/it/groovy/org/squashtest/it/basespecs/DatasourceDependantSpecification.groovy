@@ -36,7 +36,7 @@ import spock.lang.Specification
 
 
 @ContextConfiguration(classes = [DatasourceSpecConfig, RepositoryConfig, JooqSpecConfig])
-@TestPropertySource(["classpath:hibernate.properties"])
+@TestPropertySource(["classpath:other_properties.properties", "classpath:hibernate.properties"])
 class DatasourceDependantSpecification extends Specification {
 
 	@PersistenceContext

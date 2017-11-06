@@ -86,7 +86,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
-	public void storeCredentials(long serverId, Credentials credentials, String credName) {
+	public void storeCredentials(long serverId, Credentials credentials) {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -114,7 +114,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")
 										 .setParameter("serverId", serverId).getSingleResult();
 
-			sc.setName(credName);
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 		}
 		// catch : the server had no credentials, so we create new ones
@@ -124,7 +123,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 			sc = new StoredCredentials();
 
 			sc.setAuthenticatedServer(bt);
-			sc.setName(credName);
 			sc.setEncryptedCredentials(outcome.getEncryptedText());
 			sc.setEncryptionVersion(outcome.getVersion());
 

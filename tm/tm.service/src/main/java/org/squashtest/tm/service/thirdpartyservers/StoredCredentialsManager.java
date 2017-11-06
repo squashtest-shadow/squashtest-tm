@@ -38,14 +38,13 @@ public interface StoredCredentialsManager {
 	boolean isSecretConfigured();
 
 	/**
-	 * Stores the given credentials for the given server, under a given name. If the server already had a stored credential,
+	 * Stores the given credentials for the given server. If the server already had a stored credential,
 	 * the previous credentials will be replaced by the new ones (so this also serves as an update operation).
 	 * @param serverId
 	 * @param credentials
-	 * @param credName
 	 * @throws MissingEncryptionKeyException if no secret key was configured
 	 */
-	void storeCredentials(long serverId, Credentials credentials, String credName);
+	void storeCredentials(long serverId, Credentials credentials);
 
 
 	/**
