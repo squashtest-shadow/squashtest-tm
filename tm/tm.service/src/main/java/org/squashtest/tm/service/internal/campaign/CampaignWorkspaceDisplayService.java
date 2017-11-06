@@ -116,7 +116,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(MC).on(CLN.CLN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(CLN.CLN_ID.in(childrenIds))
-			.groupBy(CLN.CLN_ID, CF.CLN_ID, CLN.NAME, C.REFERENCE, MC.MILESTONE_ID, M.STATUS)
+			.groupBy(CLN.CLN_ID, CF.CLN_ID, CLN.NAME, C.REFERENCE, CLNR.ANCESTOR_ID, CI.CAMPAIGN_ID, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
 			.map(r -> {
