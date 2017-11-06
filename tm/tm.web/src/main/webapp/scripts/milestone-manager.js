@@ -342,7 +342,7 @@ require(["common"], function(){
 				endDate: getPostDate($( '#clone-milestone-end-date' ).text()),
 				description: $( '#clone-milestone-description' ).val(),
 				bindToRequirements : cloneMilestoneDialog.find("input:checkbox[name='bindToRequirements']").prop("checked"),
-				bindToTestCases : cloneMilestoneDialog.find("input:checkbox[name='bindToTestCases']").prop("checked"),
+				bindToTestCases : cloneMilestoneDialog.find("input:checkbox[name='bindToTestCases']").prop("checked")
 
 			};
 		$.ajax({

@@ -35,10 +35,10 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 			throw "attempted to create an abstract BarView !";
 		},
 		getConf : function(series) {
-			
+
 			var ticks = this.getCategories(series);
 			var colors = this.getColors();
-			
+
 			return {
 				seriesColors: colors,
 				stackSeries: true,
@@ -50,9 +50,9 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 					pointLabels: {
 						show: true,
 						escapeHTML: false,
-						edgeTolerance: -20,
+						edgeTolerance: -20
 					},
-					shadow: false,
+					shadow: false
 				},
 				legend : {
 					show : false
@@ -63,7 +63,7 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 						max: 100.0,
 						tickInterval: 50,
 						tickOptions: {
-							fontSize: '14px',
+							fontSize: '14px'
 						},
 						showTicks: false
 					},
@@ -107,6 +107,7 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 					var viewId = this.$el.find('.dashboard-item-view').attr('id');
 					this.plot = $.jqplot(viewId, series, conf);
 				}
-		},
+		}
+
 	});
 });
