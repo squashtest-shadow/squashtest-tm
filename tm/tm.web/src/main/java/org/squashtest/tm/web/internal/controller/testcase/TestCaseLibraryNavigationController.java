@@ -75,9 +75,6 @@ public class TestCaseLibraryNavigationController extends
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
 	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
-
-	@Inject
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
 
 	private static final String JASPER_EXPORT_FILE = "WEB-INF/reports/test-case-export.jasper";

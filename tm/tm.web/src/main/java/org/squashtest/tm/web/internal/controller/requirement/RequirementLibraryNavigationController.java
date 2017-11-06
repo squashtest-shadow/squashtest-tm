@@ -91,9 +91,6 @@ public class RequirementLibraryNavigationController extends
 	private RequirementStatisticsService requirementStatisticsService;
 
 	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
-
-	@Inject
 	private WorkspaceDisplayService requirementWorkspaceDisplayService;
 
 	@ResponseBody

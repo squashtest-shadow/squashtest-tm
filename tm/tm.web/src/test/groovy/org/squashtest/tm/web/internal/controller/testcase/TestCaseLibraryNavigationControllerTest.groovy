@@ -62,7 +62,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
 		controller.userAccountService = userAccountService
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
-
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		use(ReflectionCategory) {
 			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
@@ -89,7 +89,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		rootFolder.name >> "root folder"
 		rootFolder.id >> 5
 
-		testCaseWorkspaceDisplayService.getNodeContent(_, _, _) >> [rootFolder]
+		testCaseWorkspaceDisplayService.getNodeContent(_, _, _, _) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
@@ -132,7 +132,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		TestCase content = Mock()
 		content.name >> "content"
 
-		testCaseWorkspaceDisplayService.getNodeContent(_, _, _) >> [content]
+		testCaseWorkspaceDisplayService.getNodeContent(_, _, _, _) >> [content]
 
 		when:
 		def res = controller.getFolderContentTreeModel(folderId)

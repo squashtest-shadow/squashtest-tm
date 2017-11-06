@@ -75,7 +75,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
-		activeMilestoneHolder.getActiveMilestoneId() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
 		controller.permissionService = permissionService;

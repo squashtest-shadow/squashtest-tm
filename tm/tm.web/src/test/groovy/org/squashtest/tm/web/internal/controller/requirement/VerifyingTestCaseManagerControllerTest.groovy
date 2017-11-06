@@ -63,7 +63,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
 
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
-		activeMilestoneHolder.getActiveMilestoneId() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		milestoneConfService.configure(_, _) >> new MilestoneFeatureConfiguration()
 		milestoneConfService.configure(_) >> new MilestoneFeatureConfiguration()

@@ -60,6 +60,7 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
 	}
@@ -85,7 +86,7 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 		given:
 		RequirementFolder rootFolder = Mock()
 
-		requirementWorkspaceDisplayService.getNodeContent(_,_,_) >> [rootFolder]
+		requirementWorkspaceDisplayService.getNodeContent(_,_,_,_) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
@@ -122,7 +123,7 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 		content.name >> "content"
 		content.id >> 5
 
-		requirementWorkspaceDisplayService.getNodeContent(_,_,_) >> [content]
+		requirementWorkspaceDisplayService.getNodeContent(_,_,_,_) >> [content]
 
 		when:
 		def res = controller.getFolderContentTreeModel(10)

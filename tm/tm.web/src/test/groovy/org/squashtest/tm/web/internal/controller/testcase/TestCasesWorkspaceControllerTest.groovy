@@ -70,7 +70,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		controller.jsonProjectBuilder = projBuilder
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
-		activeMilestoneHolder.getActiveMilestoneId() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 		provider.get() >> driveNodeBuilder
 		controller.partyPreferenceService = partyPreferenceService;
 		controller.i18nLevelEnumInfolistHelper = i18nLevelEnumInfolistHelper;

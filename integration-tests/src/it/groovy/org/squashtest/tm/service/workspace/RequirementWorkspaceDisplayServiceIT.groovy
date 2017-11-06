@@ -58,29 +58,6 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes
 	}
 
-	@DataSet("RequirementWorkspaceDisplayService.sandbox.xml")
-	def "should find req version ids linked to active milestone"() {
-		given:
-		Long milestoneId = -1L
-
-		when:
-		def reqVersionIds = requirementWorkspaceDisplayService.findNodesByMilestoneId(milestoneId)
-
-		then:
-		reqVersionIds.collect().sort() as Set == [-266L, -265L, -272L, -270L].sort() as Set
-	}
-
-	@DataSet("RequirementWorkspaceDisplayService.sandbox.milestone.xml")
-	def "should find requirement ids not linked to milestone but with children which are"() {
-		given:
-		List<Long> reqVersionIdsWithMilestone = [-125L]
-
-		when:
-		def reqVersionIds = requirementWorkspaceDisplayService.findReqsWithChildrenLinkedToMilestone(reqVersionIdsWithMilestone)
-
-		then:
-		reqVersionIds.collect().sort() as Set == [-14L, -13L].sort() as Set
-	}
 
 	@DataSet("RequirementWorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find Requirement Libraries as JsTreeNode"() {
@@ -271,11 +248,11 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def libraryFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, new HashMap<Long, List<Long>>())
+		def libraryFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryNodeFatherChildrenMultiMap = requirementWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryChildrenMap = requirementWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, new HashMap<Long, List<Long>>(), new ArrayList<Long>(), -9000L)
 		def jsTreeNodes = requirementWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
-		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
+		requirementWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, -9000L)
 
 		then:
 
@@ -331,7 +308,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = requirementWorkspaceDisplayService.getNodeContent(-15L, currentUser, "library")
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-15L, currentUser, "library", -9000L)
 
 		then:
 
@@ -353,7 +330,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = requirementWorkspaceDisplayService.getNodeContent(-256L, currentUser, "folder")
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-256L, currentUser, "folder", -9000L)
 
 		then:
 
@@ -373,7 +350,7 @@ class RequirementWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = requirementWorkspaceDisplayService.getNodeContent(-270L, currentUser, "Requirement")
+		def nodes = requirementWorkspaceDisplayService.getNodeContent(-270L, currentUser, "Requirement", -9000L)
 
 		then:
 

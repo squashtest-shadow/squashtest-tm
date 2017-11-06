@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
+import com.google.common.base.Optional
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.*
@@ -30,6 +31,7 @@ import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.security.annotation.AclConstrainedObject
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.library.LibraryNavigationService
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService
 import spock.lang.Specification
@@ -38,12 +40,16 @@ class LibraryNavigationControllerTest extends Specification {
 	DummyController controller = new DummyController()
 	LibraryNavigationService<DummyLibrary, DummyFolder, DummyNode> service = Mock()
 	UserAccountService userAccountService = Mock()
-	WorkspaceDisplayService workspaceDisplayService = Mock();
+	WorkspaceDisplayService workspaceDisplayService = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
 		controller.service = service
 		controller.userAccountService = userAccountService
 		controller.workspaceDisplayService = workspaceDisplayService
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		Optional<Long> activeMilestoneId = Optional.of(-9000L)
+		controller.activeMilestoneHolder.activeMilestoneId >> activeMilestoneId
 	}
 
 	def "should add folder to root of library and return folder node model"() {
@@ -62,7 +68,7 @@ class LibraryNavigationControllerTest extends Specification {
 	def "should return root nodes of library"() {
 		given:
 		JsTreeNode rootFolder = Mock()
-		workspaceDisplayService.getNodeContent(_, _, _) >> [rootFolder]
+		workspaceDisplayService.getNodeContent(_, _, _, _) >> [rootFolder]
 
 		when:
 		def res = controller.getRootContentTreeModel(10)
@@ -75,10 +81,9 @@ class LibraryNavigationControllerTest extends Specification {
 	def "should return content nodes of folder"() {
 		given:
 		JsTreeNode content = Mock()
-
 		List<JsTreeNode> rootnodes = new ArrayList<>()
 		rootnodes.add(rootnodes)
-		workspaceDisplayService.getNodeContent(_, _, _) >> rootnodes
+		workspaceDisplayService.getNodeContent(_, _, _, _) >> rootnodes
 
 		when:
 		def res = controller.getFolderContentTreeModel(10)

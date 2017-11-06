@@ -87,7 +87,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	protected UserAccountService userAccountService;
 
 	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
+	protected ActiveMilestoneHolder activeMilestoneHolder;
 
 	private static final int EOF = -1;
 

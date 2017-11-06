@@ -26,10 +26,18 @@ import org.apache.commons.collections.map.MultiValueMap
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.library.Library
+import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.service.internal.campaign.CampaignWorkspaceDisplayService
 import org.squashtest.tm.service.internal.dto.PermissionWithMask
 import org.squashtest.tm.service.internal.dto.UserDto
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignDao
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignFolderDao
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateIterationDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
@@ -42,6 +50,23 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	CampaignWorkspaceDisplayService campaignWorkspaceDisplayService
+
+	private HibernateCampaignFolderDao hibernateCampaignFolderDao
+
+	private HibernateCampaignDao hibernateCampaignDao
+
+	private HibernateIterationDao hibernateIterationDao
+
+
+	def setup() {
+		hibernateCampaignFolderDao = Mock()
+		hibernateCampaignDao = Mock()
+		hibernateIterationDao = Mock()
+
+		campaignWorkspaceDisplayService.hibernateCampaignFolderDao = hibernateCampaignFolderDao
+		campaignWorkspaceDisplayService.hibernateCampaignDao = hibernateCampaignDao
+		campaignWorkspaceDisplayService.hibernateIterationDao = hibernateIterationDao
+	}
 
 	private HashMap<Long, JsTreeNode> initEmptyJsTreeNodes() {
 		Map<Long, JsTreeNode> jsTreeNodes = new HashMap<>()
@@ -58,18 +83,6 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes
 	}
 
-
-	@DataSet("CampaignWorkspaceDisplayService.sandbox.xml")
-	def "should find campaign ids linked to active milestone"() {
-		given:
-		Long milestoneId = -1L
-
-		when:
-		def campaignIds = campaignWorkspaceDisplayService.findNodesByMilestoneId(milestoneId)
-
-		then:
-		campaignIds.collect().sort() as Set == [-111L, -112L].sort() as Set
-	}
 
 	@DataSet("CampaignWorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find Campaign Libraries as JsTreeNode"() {
@@ -261,11 +274,11 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def libraryFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, null)
+		def libraryFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryNodeFatherChildrenMultiMap = campaignWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryChildrenMap = campaignWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser, new HashMap<Long, List<Long>>(), new ArrayList<Long>(), -9000L)
 		def jsTreeNodes = campaignWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
-		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
+		campaignWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, -9000L)
 
 		then:
 
@@ -326,7 +339,7 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = campaignWorkspaceDisplayService.getNodeContent(-14L, currentUser, "library")
+		def nodes = campaignWorkspaceDisplayService.getNodeContent(-14L, currentUser, "library", -9000L)
 
 		then:
 
@@ -342,11 +355,15 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-
+		CampaignFolder camp = Mock()
+		Library lib = Mock()
+		lib.id >> -15L
+		camp.library >> lib
+		campaignWorkspaceDisplayService.hibernateCampaignFolderDao.findById(-104L) >> camp
 
 		when:
 
-		def nodes = campaignWorkspaceDisplayService.getNodeContent(-104, currentUser, "folder")
+		def nodes = campaignWorkspaceDisplayService.getNodeContent(-104L, currentUser, "folder", -9000L)
 
 		then:
 
@@ -362,7 +379,11 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-
+		Campaign camp = Mock()
+		Library lib = Mock()
+		lib.id >> -15L
+		camp.library >> lib
+		campaignWorkspaceDisplayService.hibernateCampaignDao.findById(-105L) >> camp
 
 		when:
 
@@ -382,7 +403,11 @@ class CampaignWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		given:
 
 		UserDto currentUser = new UserDto("robert", -2L, [-100L, -300L], false)
-
+		Iteration iter = Mock()
+		CampaignLibrary lib = Mock()
+		lib.id >> -15L
+		iter.campaignLibrary >> lib
+		campaignWorkspaceDisplayService.hibernateIterationDao.findById(-83L) >> iter
 
 		when:
 

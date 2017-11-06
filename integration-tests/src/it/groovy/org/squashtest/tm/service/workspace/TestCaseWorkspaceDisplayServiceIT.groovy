@@ -56,18 +56,6 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 		jsTreeNodes
 	}
 
-	@DataSet("TestCaseDisplayService.sandbox.xml")
-	def "should find test case ids linked to active milestone"() {
-		given:
-		Long milestoneId = -1L
-
-		when:
-		def testCaseIds = testCaseWorkspaceDisplayService.findNodesByMilestoneId(milestoneId)
-
-		then:
-		testCaseIds.collect().sort() as Set == [-11L, -12L].sort() as Set
-	}
-
 
 	@DataSet("WorkspaceDisplayService.sandbox.no.filter.xml")
 	def "should find test Case Libraries as JsTreeNode"() {
@@ -258,11 +246,11 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds)
-		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser,new HashMap<Long, List<Long>>())
+		def libraryFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryNodeFatherChildrenMultiMap = testCaseWorkspaceDisplayService.getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, new HashSet<Long>(), -9000L)
+		def libraryChildrenMap = testCaseWorkspaceDisplayService.getLibraryChildrenMap(childrenIds, expansionCandidates, currentUser,new HashMap<Long, List<Long>>(), new ArrayList<Long>(), -9000L)
 		def jsTreeNodes = testCaseWorkspaceDisplayService.doFindLibraries(readableProjectIds, currentUser)
-		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, null)
+		testCaseWorkspaceDisplayService.buildHierarchy(jsTreeNodes, libraryFatherChildrenMultiMap, libraryNodeFatherChildrenMultiMap, libraryChildrenMap, -9000L)
 
 		then:
 
@@ -311,7 +299,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-1L,currentUser,"library")
+		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-1L, currentUser, "library", -9000L)
 
 		then:
 
@@ -331,7 +319,7 @@ class TestCaseWorkspaceDisplayServiceIT extends DbunitServiceSpecification {
 
 		when:
 
-		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-5L,currentUser,"folder")
+		def nodes = testCaseWorkspaceDisplayService.getNodeContent(-5L, currentUser, "folder", -9000L)
 
 		then:
 
