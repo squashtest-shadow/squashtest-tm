@@ -57,13 +57,14 @@ class RowImpl implements Row {
 				String escaped = "";
 			} else {
 				String escaped = value.replaceAll(strSeparator, ";");
-			/* Issue #6509:
-			 * Inserting quotation mark around each cell value
-			 * so one can put semicolons in cells values. */
+				/* Issue #6509:
+				 * Inserting quotation mark around each cell value
+				 * so one can put semicolons in cells values. */
 				builder.append("\"")
 					.append(escaped)
 					.append("\"")
 					.append(separator);
+			}
 			}
 		}
 

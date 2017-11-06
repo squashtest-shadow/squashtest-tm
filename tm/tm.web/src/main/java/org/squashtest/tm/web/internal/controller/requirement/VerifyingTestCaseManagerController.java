@@ -257,6 +257,7 @@ public class VerifyingTestCaseManagerController {
  					stat.setCorruptedPerimeter(true);
  				}
 			} catch (IdentityUnavailableException e) {
+				LOGGER.debug("Unavailable Identity", e);
 				stat.setCorruptedPerimeter(true);
 			}
 		}

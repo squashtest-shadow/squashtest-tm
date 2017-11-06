@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil',  'squash.translator', 
+define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil',  'squash.translator',
          "app/ws/squashtm.notification", "jquery.squash.confirmdialog", 'squashtable',	'jqueryui', 'jquery.squash.formdialog' ],
          function($, Backbone, _, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil, translator, notification) {
 	"use strict";
@@ -33,7 +33,7 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			var self = this;
 
 			_.bindAll(this, "removeTestAutomationServer", "setConfirmRemoveDialogState", "showDeleteTestAutomationServerDialog");
-			
+
 			// DOM initialized table
 			this.table = this.$("table");
 			this.table.squashTable(squashtm.datatable.defaults, {
@@ -44,10 +44,10 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			});
 			this.configureRemoveTASDialog();
 
-			
+
 			this.configureRemoveTASPanel();
-			
-			
+
+
 		},
 
 		events : {
@@ -55,12 +55,12 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			"click #delete-test-automation-server" : "showDeleteTestAutomationServerDialog"
 		},
 
-		
-		
-		
-		
+
+
+
+
 		// ******** delete dialog init ***********
-		
+
 		configureRemoveTASPanel :  function(event) {
 			var tableCf = $("#test-automation-server-table").squashTable();
 			var self = this;
@@ -71,17 +71,17 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 				var urlDelete = squashtm.app.contextRoot + "test-automation-servers/" + removedIds;
 							$.ajax({
 								type : 'DELETE',
-								url : urlDelete ,
+								url : urlDelete
 							}).done(function(){
 								deleteDialog.formDialog('close');
-								tableCf.refresh();	
-								}); 
+								tableCf.refresh();
+								});
 					});
-			
+
 			this.configureRemoveTASPanel = deleteDialog;
-			
+
 		},
-		
+
 		showDeleteTestAutomationServerDialog :  function(event) {
 			var self = this, showButton = event.target;
 			var table = $("#test-automation-server-table").squashTable();
@@ -107,7 +107,7 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 						notification.showError(translator.get('testautomation.exceptions.no-selection'));
 				}
 			},
-			
+
 		showNewTestAutomationServerDialog : function(event) {
 			var self = this, showButton = event.target;
 
@@ -173,9 +173,9 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 						self.configureRemoveTASPanel.formDialog('setState','case3');
 					}
 				});
-			
+
 		},
-		
+
 		removeTestAutomationServer : function(event) {
 			var self = this,
 				table = this.table;
@@ -198,7 +198,8 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 					squashtm.notification.handleGenericResponseError(wtf);
 				}
 			});
-		},
+		}
+
 	});
 	return NewTestAutomationServersTableView;
 });

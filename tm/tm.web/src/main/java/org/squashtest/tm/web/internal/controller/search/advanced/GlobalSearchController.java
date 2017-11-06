@@ -186,7 +186,7 @@ public abstract class GlobalSearchController {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
 		// mode
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
 
 		if (activeMilestone.isPresent()) {
 			AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();

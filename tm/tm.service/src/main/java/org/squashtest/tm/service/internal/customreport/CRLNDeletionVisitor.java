@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.deletion.OperationReport;
 
 /**
@@ -33,10 +34,10 @@ import org.squashtest.tm.service.deletion.OperationReport;
  * @author jthebault
  */
 public class CRLNDeletionVisitor implements TreeEntityVisitor{
-	
+
 	private OperationReport operationReport;
 	private CustomReportLibraryNode customReportLibraryNode;
-	
+
 	public CRLNDeletionVisitor(OperationReport operationReport,CustomReportLibraryNode customReportLibraryNode) {
 		super();
 		this.operationReport = operationReport;
@@ -62,7 +63,11 @@ public class CRLNDeletionVisitor implements TreeEntityVisitor{
 	public void visit(ChartDefinition chartDefinition) {
 		addRemoved("chart");
 	}
-	
+
+	public void visit(ReportDefinition reportDefinition) {
+		addRemoved("report");
+	}
+
 	private void addRemoved(String relType){
 		operationReport.addRemoved(relType, customReportLibraryNode.getId());
 	}

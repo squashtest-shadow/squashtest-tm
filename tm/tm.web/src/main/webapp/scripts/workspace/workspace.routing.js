@@ -198,8 +198,8 @@ define([], function(){
 		'info-list-item.delete' :			root + '/info-lists/{\\d+}/items/{\\d+}',
 		'info-list-item.exist' :			root + '/info-lists/items/code/{\\d}',
 		'info-list.bind-to-project' :		root + '/info-list-binding/project/{\\d+}/{\\w+}',
-		'docxtemplate' :					root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
-		'ie9sucks' :						root + '/reports/0/0/ie9',
+		'docxtemplate' :					root + '/reports/{\\w+}/views/{\\d+}/docxtemplate',
+		'ie9sucks' :						root + '/reports/0/ie9',
 		'milestone.synchronize' :			root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
 
 		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
@@ -227,6 +227,8 @@ define([], function(){
 		'custom-report-library' :			'/custom-report-library/{\\d+}',
 		'custom-report-folder' :			'/custom-report-folder/{\\d+}',
 		'custom-report-dashboard' :			'/custom-report-dashboard/{\\d+}',
+		'custom-report-report' :				'/custom-report-report/{\\d+}',
+		'custom-report-report-redirect' :	root + '/custom-report-workspace/#custom-report-report/{\\d+}',
 		'custom-report-chart' :				'/custom-report-chart/{\\d+}',
         'custom-report-chart-redirect' :	root + '/custom-report-workspace/#custom-report-chart/{\\d+}',
 		'custom-report-library-server' :	root + '/custom-report-library',
@@ -234,12 +236,17 @@ define([], function(){
 		'custom-report-dashboard-server' :	root + '/custom-report-dashboard/{\\d+}',
         'custom-report-dashboard-favorite' :    root + '/custom-report-dashboard/favorite/{[a-z]+}/{\\d+}',
 		'custom-report-chart-server' :		root + '/custom-report-chart/{\\d+}',
+		'custom-report-report-server' :		root + '/custom-report-report/{\\d+}',
 		'custom-report-chart-binding' :		root + '/custom-report-chart-binding',
 		'custom-report-chart-binding-with-id' : root + '/custom-report-chart-binding/{\\d+}',
 		'custom-report-chart-binding-replace-chart' : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',
 		//don't forget the '/' at the end so the tree will set correctly the cookie. Else the url will be /squash/custom-report-workspace#...
 		//and the cookie path will be a nasty '/squash'
 		'custom-report-base' : root + '/custom-report-workspace/',
+
+		// report-workspace
+		'report-workspace' : root + '/report-workspace/{\\d+}',
+		'reports': root + '/reports/',
 
 		// project plugins
 		'project-plugins' :					root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}/',	// the trailing '/' is important

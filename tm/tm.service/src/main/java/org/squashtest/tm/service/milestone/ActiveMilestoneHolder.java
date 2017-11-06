@@ -26,6 +26,7 @@ import com.google.common.base.Optional;
 
 public interface ActiveMilestoneHolder {
 	Optional<Milestone> getActiveMilestone();
+	Optional<Milestone> getActiveMilestoneByJson();
 
 	void setActiveMilestone(Long milestoneId);
 

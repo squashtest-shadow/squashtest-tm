@@ -68,6 +68,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 		activeMilestoneIdHolder.set(milestoneId);
 	}
 
+
 	@Override
 	public void clearContext() {
 		activeMilestoneHolder.remove();

@@ -29,6 +29,7 @@ public class LinkTypeCodeAlreadyExistsException extends RequirementLinkTypeExcep
 
 	private static final long serialVersionUID = -1907643035129595449L;
 
+	@Override
 	public String getShortName() {
 		return "type-code-already-in-use";
 	}

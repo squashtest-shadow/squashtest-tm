@@ -108,8 +108,8 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=campaign")
 	public String showCampaignSearchPageFilledWithParams(Model model,
-														 @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String[] openedNodes,
-														 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String elementId,
+														 @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+														 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale) {
 
@@ -118,8 +118,8 @@ public class CampaignSearchController extends GlobalSearchController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")
-	public String showCampaignSearchPage(Model model, @RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String[] openedNodes,
-										 @RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String elementId,
+	public String showCampaignSearchPage(Model model, @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+										 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 										@RequestParam(required = false, defaultValue = "") String associateResultWithType,
 										@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
@@ -150,7 +150,7 @@ public class CampaignSearchController extends GlobalSearchController{
 		if (activeMilestone.isPresent()) {
 
 			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),
-				projectIds);
+			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),	projectIds);
 		}
 
 		model.addAttribute("rootModel", rootNodes);

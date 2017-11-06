@@ -44,6 +44,8 @@ public interface CustomRequirementVersionManagerService {
 
 	Requirement findRequirementById(long requirementId);
 
+	List<Requirement> findRequirementsAllByIds(List<Long> requirementIds);
+
 	/**
 	 * Increase the current version of the given requirement. Note that the argument is a requirement Id, not the id of a given version
 	 * If links inheritance was chosen, all requirement version links will be copied from the previous version.

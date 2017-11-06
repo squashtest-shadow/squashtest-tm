@@ -178,7 +178,7 @@ public class RequirementLibraryNavigationController extends
 		List<RequirementLibraryNode> tojsonList;
 		try {
 			nodeList = requirementLibraryNavigationService.copyNodesToRequirement(requirementId, nodeIds);
-			tojsonList = new ArrayList<RequirementLibraryNode>(nodeList);
+			tojsonList = new ArrayList<>(nodeList);
 		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}

@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -46,6 +39,12 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
@@ -79,10 +78,10 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	public void updateExecutionStatus(Long id) {
-		ExecutionStatusReport report = testSuiteDao.getStatusReport(id);
+	public void updateExecutionStatus(TestSuite testsuite) {
+		ExecutionStatusReport report = testSuiteDao.getStatusReport(testsuite.getId());
 		ExecutionStatus newExecutionStatus = ExecutionStatus.computeNewStatus(report);
-		testSuiteModificationService.changeExecutionStatus(id, newExecutionStatus);
+		testsuite.setExecutionStatus(newExecutionStatus);
 	}
 
 

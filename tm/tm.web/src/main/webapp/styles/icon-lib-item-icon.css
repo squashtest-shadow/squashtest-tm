@@ -25,7 +25,7 @@
 /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
 /**
-* defining the raw classes 
+* defining the raw classes
 *
 */
 
@@ -5840,5 +5840,9 @@ li[rel="chart"] > a > .jstree-icon{
 	background-image: url(../images/icon-lib/reporting_chart.png); /** sprite-ref: sprites-icons; */
 }
 
+li[rel="report"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_report.png); /** sprite-ref: sprites-icons; */
+}
 
- 
+
+

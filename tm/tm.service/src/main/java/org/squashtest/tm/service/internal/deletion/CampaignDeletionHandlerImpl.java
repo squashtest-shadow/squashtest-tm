@@ -20,42 +20,21 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
-import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
-import org.squashtest.tm.service.deletion.BoundToNotSelectedTestSuite;
-import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
-import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
-import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
-import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.deletion.*;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
@@ -65,7 +44,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import java.util.*;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
@@ -505,7 +485,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		customValueService.deleteAllCustomFieldValues(execution);
 
 		for (TestSuite testSuite : testPlanItem.getTestSuites()) {
-			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
 		deletionDao.removeEntity(execution);

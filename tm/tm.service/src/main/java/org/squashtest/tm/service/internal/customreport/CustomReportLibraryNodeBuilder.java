@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 /**
@@ -38,13 +39,13 @@ public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
 	private CustomReportLibraryNode builtNode;
 	private CustomReportLibraryNode parentNode;
 	private TreeEntity treeEntity;
-	
+
 	public CustomReportLibraryNodeBuilder(CustomReportLibraryNode parentNode,TreeEntity treeEntity) {
 		builtNode = new CustomReportLibraryNode();
 		this.treeEntity = treeEntity;
 		this.parentNode = parentNode;
 	}
-	
+
 	public CustomReportLibraryNode build(){
 		nameBuiltNode();
 		linkEntity();
@@ -52,9 +53,9 @@ public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
 		treeEntity.accept(this);
 		return builtNode;
 	}
-	
+
 	//--------------- SPECIFIC JOB TO EACH ENTITY TYPE --------------------
-	
+
 	@Override
 	public void visit(CustomReportFolder crf) {
 		linkToProject();
@@ -63,39 +64,44 @@ public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
 	@Override
 	public void visit(CustomReportLibrary crl) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(CustomReportDashboard crf) {
 		linkToProject();
-		
+
 	}
 
 	@Override
 	public void visit(ChartDefinition chartDefinition) {
 		linkToProject();
-		
+
+	}
+
+	public void visit(ReportDefinition reportDefinition) {
+		linkToProject();
+
 	}
 
 	//******************* PRIVATE STUFF *******************************//
-	
+
 	private void nameBuiltNode(){
 		builtNode.setName(treeEntity.getName());
 	}
-	
+
 	private void linkEntity(){
 		builtNode.setEntity(treeEntity);
 	}
-	
+
 	private void linkToParent(){
 		parentNode.addChild(builtNode);
 		builtNode.setLibrary(parentNode.getCustomReportLibrary());
 	}
-	
+
 	private void linkToProject(){
 		treeEntity.setProject(parentNode.getCustomReportLibrary().getProject());
 	}
 
-	
+
 }

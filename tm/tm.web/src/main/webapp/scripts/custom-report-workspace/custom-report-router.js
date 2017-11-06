@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView", "./views/dashboardView", "./views/chartView"],
-	function ($, Backbone, urlBuilder, libraryView, folderView, dashboardView, chartView) {
+define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView", "./views/dashboardView", "./views/chartView", "./views/reportView"],
+	function ($, Backbone, urlBuilder, libraryView, folderView, dashboardView, chartView, reportView) {
 		"use strict";
 
 		var LibraryModel = Backbone.Model.extend({
@@ -67,7 +67,8 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				"custom-report-library/:query": "showLibraryDetails",
 				"custom-report-folder/:query": "showFolderDetails",
 				"custom-report-dashboard/:query": "showDashboardDetails",
-				"custom-report-chart/:query": "showChartDetails"
+				"custom-report-chart/:query": "showChartDetails",
+				"custom-report-report/:query": "showReportDetails"
 			},
 
 			showLibraryDetails: function (id) {
@@ -127,6 +128,23 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 			},
 
+			showReportDetails: function (id) {
+				this.cleanContextContent();
+				var modelDef = Backbone.Model.extend({
+					defaults: {
+						id: id
+					}
+				});
+
+				var activeModel = new modelDef();
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+				this.activeView = new reportView({
+					model: activeModel,
+					acls: acls
+				});
+			},
+
 			//Only for forcing router to reload page after updates on selected node
 			//To navigate inside workspace and have a correct history please use router.navigateTo()
 			// TODO (GRF) could not find usage - to be removed ?
@@ -143,6 +161,9 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 						break;
 					case "chart":
 						this.showChartDetails(nodeId);
+						break;
+					case "report":
+						this.showReportDetails(nodeId);
 						break;
 					default:
 

@@ -92,7 +92,7 @@ public class RequirementSearchController extends GlobalSearchController {
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
 		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT,activeMilestone);
 		return "requirement-search-result.html";
 	}
@@ -103,7 +103,7 @@ public class RequirementSearchController extends GlobalSearchController {
 										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
 										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
 		initModel(model, associateResultWithType, id, locale, REQUIREMENT,activeMilestone);
 		return  "requirement-search-input.html";
 	}

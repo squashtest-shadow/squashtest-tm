@@ -19,62 +19,62 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "workspace.routing", "openxml","jszip-utils",  "FileSaver"], function(module, $, worker, DocxGen, routing,openXml){        
-	
+define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "workspace.routing", "openxml","jszip-utils",  "FileSaver"], function(module, $, worker, DocxGen, routing,openXml){
+
 	var init =  function (){
-		
+
 
 	startLoading();
 	var config = module.config();
-	
+
 	var data = config.data;
 	var html = config.html;
 	var fileName = config.fileName;
-	
-		
+
+
     loadFile=function(url,callback){
         this.JSZipUtils.getBinaryContent(url,callback);
     };
-	
+
     // need for IE9
     var inlineJszipUtilIE = function(){
- 
+
 		this.JSZipUtils._getBinaryFromXHR = function (xhr) {
-			
+
 		   	 return new Uint8Array(new VBArray(xhr.responseBody).toArray());
 		};
     };
-    
+
     // need for IE9
 	var loadForBrowserWithoutWorker = function(){
 
-		  loadFile(routing.buildURL("docxtemplate", config.namespace, config.index, config.viewIndx),function(err,content){
-		    	
-		   
+		  loadFile(routing.buildURL("docxtemplate", config.namespace, config.viewIndx),function(err,content){
+
+
 		    	doc=new DocxGen(content);
-		    
+
 		    	doc.setData(data); //set the templateVariables
 		    	doc.render(); //apply them (replace all occurences of {first_name} by Hipp, ...)
-		
-		    	
+
+
 		    	output=doc.getZip().generate({type:"base64"}); //Output the document using Data-URI
-		    	
+
 
 		    	var docx = new openXml.OpenXmlPackage(output);
 
 		    	for (var i = 0; i < html.length; i++){
-		    	
+
 		    	    var alt_chunk_id = "toto" + i;
 		    		var alt_chunk_uri = "/word/" + i + ".html";
-		    		// Add Alternative Format Import Part to document 
+		    		// Add Alternative Format Import Part to document
 		    		docx.addPart(alt_chunk_uri, "text/html", "base64", Base64.encode(html[i]));
-		    		// Add Alternative Format Import Relationship to the document 
+		    		// Add Alternative Format Import Relationship to the document
 		    		docx.mainDocumentPart().addRelationship(alt_chunk_id, openXml.relationshipTypes.alternativeFormatImport, alt_chunk_uri, "Internal");
 	    	    }
 	    		var theContent = docx.saveToBase64();
 
 	    	    var url = routing.buildURL("ie9sucks");
-	    	    var params = {"fileName":fileName, "b64":theContent};		    	
+	    	    var params = {"fileName":fileName, "b64":theContent};
 
                 var form = $('<form method="POST" action="' + url + '">');
                 $.each(params, function(k, v) {
@@ -83,58 +83,58 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
                 });
                 $('body').append(form);
                 form.submit();
-		    	
-		});   
+
+		});
 	};
-	
+
 	function startLoading(){
 		$("body").addClass("waiting-loading");
 	}
-	
+
 	function stopLoading(){
 		$("body").removeClass("waiting-loading");
 	}
 
 
  	if (window.Worker){
-	
+
 	worker.onmessage = function(event) {
 		console.log("getmsg from worker");
 		var docx = new openXml.OpenXmlPackage(event.data);
 
 	    for (var i = 0; i < html.length; i++){
-	
+
 	    var alt_chunk_id = "toto" + i;
 		var alt_chunk_uri = "/word/" + i + ".html";
-		// Add Alternative Format Import Part to document 
+		// Add Alternative Format Import Part to document
 		docx.addPart(alt_chunk_uri, "text/html", "base64", Base64.encode(html[i]));
-		// Add Alternative Format Import Relationship to the document 
+		// Add Alternative Format Import Relationship to the document
 		docx.mainDocumentPart().addRelationship(alt_chunk_id, openXml.relationshipTypes.alternativeFormatImport, alt_chunk_uri, "Internal");
 	    }
 
 
 	var theContent = docx.saveToBlob();
 	saveAs(theContent,fileName + ".docx");
-    
-  
+
+
 	stopLoading();
     };
 
-        
-        loadFile(routing.buildURL("docxtemplate", config.namespace, config.index, config.viewIndx),function(err,content){    
+
+        loadFile(routing.buildURL("docxtemplate", config.namespace, config.viewIndx),function(err,content){
         	console.log("send msg to worker");
-            worker.postMessage([content, data, html]); 	 
+            worker.postMessage([content, data, html]);
         });
-        
+
    	} else {
 		//damn IE9 specific code
    	    inlineJszipUtilIE();
    		loadForBrowserWithoutWorker();
 		stopLoading();
-	}       
 	}
-	
-    
+	}
+
+
     var Base64 = {
 
 		// private property
@@ -270,7 +270,7 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
 		}
 
     };
-	
+
 
 
     return {init : init};

@@ -78,6 +78,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 
+		this.canCreateReport = function(nodes){
+			return nodes && nodes.filter(':creatable').length===1;
+		};
+
 		this.canCreateChart = function(nodes){
 			return nodes && nodes.filter(':creatable').length===1;
 		};
@@ -237,6 +241,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 		this.buttonrules = {
 			'tree-create-button' : this.canCreateButton,
 			'new-folder-tree-button' : this.canCreateFolder,
+			'new-report-tree-button' : this.canCreateReport,
 			'new-chart-tree-button' : this.canCreateChart,
 			'new-dashboard-tree-button' : this.canCreateDashboard,
 			'copy-node-tree-button' : this.canCopy,

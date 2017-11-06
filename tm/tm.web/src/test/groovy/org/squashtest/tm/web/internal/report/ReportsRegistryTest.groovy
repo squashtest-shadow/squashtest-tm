@@ -75,12 +75,12 @@ class ReportsRegistryTest extends Specification {
 		BasicReport report = new BasicReport()
 		report.labelKey = 'foo'
 		report.category = StandardReportCategory.PREPARATION_PHASE
-		
+
 		and:
 		BasicReport otherReport = new BasicReport()
 		otherReport.labelKey = 'foofoo'
 		otherReport.category = StandardReportCategory.PREPARATION_PHASE
-		
+
 		and:
 		ReportPlugin plugin = new ReportPlugin()
 		plugin.reports = [report, otherReport]
@@ -91,13 +91,13 @@ class ReportsRegistryTest extends Specification {
 		then:
 		registry.findReports(PREPARATION_PHASE)*.labelKey == ['foo', 'foofoo']
 	}
-	
+
 	def registerReports(plugins) {
 		registry.plugins = plugins
 		registry.registerReports()
 	}
 
-		
+
 	def "should decorate reports with identifier"() {
 		given:
 		BasicReport report = new BasicReport()
@@ -112,11 +112,10 @@ class ReportsRegistryTest extends Specification {
 
 		then:
 		registry.findReports(PREPARATION_PHASE)*.namespace != null
-		registry.findReports(PREPARATION_PHASE)*.index == [0]
 	}
-	
+
 	@Ignore("Report name is no longer predictible, test should be rewritten or report name made predictible again")
-	def "should find report from its namespaxce and index"() {
+	def "should find report from its namespaxce"() {
 		given:
 		BasicReport report = new BasicReport()
 		report.labelKey = 'foo'
@@ -130,7 +129,7 @@ class ReportsRegistryTest extends Specification {
 		registerReports([plugin])
 
 		when:
-		def found = registry.findReport('bar', 0)
+		def found = registry.findReport('bar')
 
 		then:
 		found.labelKey == 'foo'

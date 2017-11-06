@@ -20,24 +20,20 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 @Scope("prototype")

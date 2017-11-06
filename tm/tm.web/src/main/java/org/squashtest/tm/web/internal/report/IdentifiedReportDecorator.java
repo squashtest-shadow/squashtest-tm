@@ -43,10 +43,10 @@ public class IdentifiedReportDecorator implements Report {
 	/**
 	 * @param report
 	 */
-	/* package */IdentifiedReportDecorator(Report report, String namespace, int index) {
+	/* package */IdentifiedReportDecorator(Report report, String namespace) {
 		super();
 		this.report = report;
-		identifier = new ReportIdentifier(namespace, index);
+		identifier = new ReportIdentifier(namespace);
 	}
 
 	/**
@@ -137,14 +137,6 @@ public class IdentifiedReportDecorator implements Report {
 	}
 
 	/**
-	 * @return
-	 * @see org.squashtest.tm.web.internal.report.ReportIdentifier#getIndex()
-	 */
-	public int getIndex() {
-		return identifier.getIndex();
-	}
-
-	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -175,8 +167,7 @@ public class IdentifiedReportDecorator implements Report {
 	 */
 	@Override
 	public String toString() {
-		return "IdentifiedReportDecorator [labelKey=" + getLabelKey() + ", namespace=" + getNamespace()
-				+ ", index=" + getIndex() + "]";
+		return "IdentifiedReportDecorator [labelKey=" + getLabelKey() + ", namespace=" + getNamespace() + "]";
 	}
 
 	public boolean isDocxTemplate(){

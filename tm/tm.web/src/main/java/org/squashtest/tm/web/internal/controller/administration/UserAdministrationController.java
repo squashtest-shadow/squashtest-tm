@@ -221,7 +221,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		List<?> permissionModel = createPermissionTableModel(userId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
 
-		List<PermissionGroupModel> pgm = getPermissionGroupModels(userId);
+		List<PermissionGroupModel> pgm = getPermissionGroupModels();
 		List<ProjectModel> pm = getProjectModels(userId);
 
 		model.addAttribute("usersGroupList", usersGroupList);

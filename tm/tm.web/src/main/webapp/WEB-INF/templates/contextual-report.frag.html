@@ -73,7 +73,7 @@
           <div class="report-item-icon report-spreadsheet-icon"></div>
           <div class="report-item-description">
             <label>
-              <b>Sample report</b> <br /> <b>(Sample type)</b>
+              <strong>Sample report</strong> <br /> <strong>(Sample type)</strong>
             </label>
             <br />
             <span>This report does this and that</span>
@@ -85,6 +85,11 @@
 
 
   <!-- ==========================================REPORT FRAGMENT============================================================== -->
+
+
+
+
+
 
   <!-- ==================================================INPUTS====================================================== -->
   <div id="contextual-content" class="no-resizable-contextual-content" th:fragment="report">
@@ -107,6 +112,30 @@
 
     <div class="fragment-body ui-widget">
       <span th:remove="all">'ui-widget' class above is required to get a (somewhat) uniform font size across workspaces</span>
+
+      <div th:if="${parentId != null}">
+        <div id="report-information-panel" class="is-contextual expand sq-tg">
+          <div class="tg-head" th:text="#{label.Information}"> Information</div>
+          <div class="tg-body cf">
+
+            <table style="width:100%; border-spacing:0.5em; ">
+              <tr>
+                <td><label for="report-name" th:text="#{label.Name}"></label></td>
+                <td><input id="report-name" name="name" type="text" size="50" maxlength="255"
+                           data-prop="name" data-object="reportDefinition"/><span
+                  class="error-message name-error"></span></td>
+              </tr>
+              <tr>
+                <td><label style="vertical-align: middle;" for="report-description"
+                           th:text="#{label.Description}"></label></td>
+                <td><textarea class="data-column" id="report-description" data-def="isrich"></textarea></td>
+              </tr>
+            </table>
+
+            <input type="button" class="sq-btn btn-sm snap-right" id="save" value="save" th:value="#{label.save}"/>
+          </div>
+        </div>
+      </div>
 
       <div id="report-criteria-panel" class="is-contextual expand sq-tg" title="Report form" th:title="#{report.criteria.panel.title}">
         <div class="tg-head" th:text="#{report.criteria.panel.title}">
@@ -272,6 +301,51 @@
           HERE</div>
         <div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">ANOTHER VIEW HERE</div>
       </div>
+
+      <div id="report-attributs" style="display: none; margin-top: 1.65em;" class="sq-tg collapse">
+        <div class="tg-head">
+          <h3>
+            <span th:text="#{label.Attributes}">Attributes</span>
+          </h3>
+        </div>
+        <div class="tg-body">
+          <div class="display-table">
+            <div class="display-table-row">
+              <label for="report-type" class="display-table-cell"> <span
+                th:text="#{label.Type}">perimetre</span>
+              </label>
+              <div id="report-type">
+                <span class="display-table-cell" style="font-weight: bold;" th:text="${report.label}"/>
+              </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="report-desc" class="display-table-cell"> <span
+                th:text="#{label.Description }">Description</span>
+              </label>
+              <div class="display-table-cell" id="report-desc"/>
+            </div>
+
+            <div class="display-table-row" th:each="attribute : ${reportAttributes}">
+              <div class="display-table-cell" th:switch="${attribute.key}">
+                <label th:case="Project" th:text="#{label.project}"/>
+                <label th:case="Requirement" th:text="#{label.requirement}"/>
+                <label th:case="Testcase" th:text="#{label.testCase}"/>
+                <label th:case="Campaign" th:text="#{label.Campaign}"/>
+                <label th:case="Iteration" th:text="#{label.iteration}"/>
+                <label th:case="Milestone" th:text="#{label.Milestone}"/>
+                <label th:case="tags" th:text="#{customField.inputType.TAG}"/>
+                <label th:case="option" th:text="#{label.option}"/>
+                <label th:case="*" th:text="${attribute.key}"/>
+              </div>
+              <div th:each="val : ${attribute.value}" >
+                <div class="display-table-cell" th:text="${val}"/>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- =================================================/RESULT====================================================== -->
@@ -284,8 +358,10 @@
       var squashtm = squashtm || {};
       squashtm.app = squashtm.app || {};
       squashtm.app.reportConf = {
+          reportDef : /*[[${reportDef}]]*/,
+          parentId: /*[[${parentId}]]*/,
           contextPath: /*[[ ${#ctx.servletContext.contextPath} ]]*/ "http://localhost:8080/squash",
-          reportUrl: /*[[ @{'/reports/' + ${report.namespace} + '/' + ${report.index}} ]]*/ "/squash/reports",
+          reportUrl: /*[[ @{'/reports/' + ${report.namespace}} ]]*/ "/squash/reports",
           dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
           noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",
           okLabel: /*[[ #{label.Confirm} ]]*/ "OK",

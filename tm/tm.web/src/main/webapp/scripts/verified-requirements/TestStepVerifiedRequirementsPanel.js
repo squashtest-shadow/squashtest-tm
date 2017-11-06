@@ -101,19 +101,27 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil",
 			// When user toggles between adjacent steps, the description of attached
 			// requirement will be displayed by default, in case there is no attached requirement,
 			// last selected requirement will be displayed
-			var targetRequirementRows = $('.ui-icon-link-dark-e-w').closest('tr');
-			var targetSelectHandle = targetRequirementRows.find('.select-handle');
-			var previousSelectedRow = localStorage.getItem("selectedRow");
-			if (previousSelectedRow != null) {
-				var target = $('tbody>tr').eq(previousSelectedRow);
-				var isLinked = target.find('.link-checkbox')[0].children[0].classList.contains('ui-icon-link-dark-e-w');
-				if (isLinked || targetSelectHandle.length === 0) {
-					targetSelectHandle = target.find('.select-handle');
+
+			var tableData = self.table.$el.fnGetData();
+
+			if(!_.isEmpty(tableData)) {
+
+				var targetRequirementRows = $('.ui-icon-link-dark-e-w').closest('tr');
+				var targetSelectHandle = targetRequirementRows.find('.select-handle');
+				var previousSelectedRow = localStorage.getItem("selectedRow");
+				if (previousSelectedRow != null) {
+					var target = $('tbody>tr').eq(previousSelectedRow);
+					var isLinked = target.find('.link-checkbox')[0].children[0].classList.contains('ui-icon-link-dark-e-w');
+					if (isLinked || targetSelectHandle.length === 0) {
+						targetSelectHandle = target.find('.select-handle');
+					}
+				}
+				if(targetSelectHandle.length !== 0){
+					targetSelectHandle[0].click();
 				}
 			}
-			if(targetSelectHandle.length !== 0){
-				targetSelectHandle[0].click();
-			}
+
+
 		}
 	});
 	return TestStepVerifiedRequirementsPanel;

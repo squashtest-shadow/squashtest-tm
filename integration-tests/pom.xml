@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.17.0.IT3-SNAPSHOT</version>
+    <version>1.17.0.IT4-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
@@ -16,7 +16,6 @@
   <properties>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
-    <jooq.sql.dialect>H2</jooq.sql.dialect>
     <database.drivername>org.h2.Driver</database.drivername>
     <database.password>sa</database.password>
     <database.schemaName>public</database.schemaName>
@@ -31,6 +30,7 @@
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
+    <jooq.sql.dialect>H2</jooq.sql.dialect>
 
     <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
@@ -376,7 +376,6 @@
       <id>mysql</id>
       <properties>
         <database.dialect>mysql</database.dialect>
-        <jooq.sql-dialect>mysql</jooq.sql-dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>${it.database.schemaName}</database.schemaName>
@@ -385,6 +384,7 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.MySQLEnhancedDialect</hibernate.dialect>
         <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
+        <jooq.sql-dialect>mysql</jooq.sql-dialect>
       </properties>
 
       <build>
@@ -427,7 +427,6 @@
       <id>postgresql</id>
       <properties>
         <database.dialect>postgresql</database.dialect>
-        <jooq.sql-dialect>postgres</jooq.sql-dialect>
         <database.drivername>org.postgresql.Driver</database.drivername>
         <database.password>${it.database.password}</database.password>
         <database.schemaName>public</database.schemaName>
@@ -436,6 +435,7 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.PostgresEnhancedDialect</hibernate.dialect>
         <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
+        <jooq.sql-dialect>postgres</jooq.sql-dialect>
       </properties>
 
       <build>

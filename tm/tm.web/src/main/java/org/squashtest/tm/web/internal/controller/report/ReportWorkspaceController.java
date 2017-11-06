@@ -25,8 +25,14 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportNodeType;
+import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
 @Controller
@@ -35,12 +41,33 @@ public class ReportWorkspaceController {
 	@Inject
 	private ReportsRegistry reportsRegistry;
 
+	@Inject
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showReportWorkspace(Model model) {
+		populateModelWithReportsRegistry(model);
+		return "report-workspace.html";
+	}
+
+	@RequestMapping(value = "/{parentId}", method = RequestMethod.GET)
+	public String showReportWorkspaceFromCustomReport(@PathVariable Long parentId, Model model) {
+
+		CustomReportLibraryNode crln = customReportLibraryNodeService.findCustomReportLibraryNodeById(parentId);
+
+		if (crln.getEntityType().getTypeName().equals(CustomReportNodeType.REPORT_NAME)) {
+			ReportDefinition def = (ReportDefinition) crln.getEntity();
+			model.addAttribute("pluginNamespace", def.getPluginNamespace());
+		}
+
+		populateModelWithReportsRegistry(model);
+		model.addAttribute("parentId", parentId);
+		return "report-workspace.html";
+	}
+
+	private void populateModelWithReportsRegistry(Model model){
 		model.addAttribute("categories", reportsRegistry.getSortedCategories());
 		model.addAttribute("reports", reportsRegistry.getSortedReportsByCategory());
-
-		return "report-workspace.html";
 	}
 
 	@ModelAttribute("hilightedWorkspace")

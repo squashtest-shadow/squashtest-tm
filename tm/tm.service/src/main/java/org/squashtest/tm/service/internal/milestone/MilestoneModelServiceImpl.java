@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import org.apache.commons.lang3.EnumUtils;
-import org.jooq.*;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.MilestoneRange;

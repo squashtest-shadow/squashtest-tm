@@ -25,17 +25,12 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
-import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
+import org.squashtest.csp.core.bugtracker.core.*;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.domain.Priority;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
@@ -44,12 +39,12 @@ import org.squashtest.tm.core.foundation.lang.CollectionUtils;
 
 /**
  * Could also have been called LegacyBugtrackerConnectorAdapter
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
-public class SimpleBugtrackerConnectorAdapter implements InternalBugtrackerConnector {
+public class SimpleBugtrackerConnectorAdapter extends AbstractInternalConnectorAdapter {
 
 	private BugTrackerConnector connector;
 
@@ -67,15 +62,10 @@ public class SimpleBugtrackerConnectorAdapter implements InternalBugtrackerConne
 	}
 
 	@Override
-	public void authenticate(AuthenticationCredentials credentials) {
-		connector.authenticate(credentials);
+	public BugTrackerConnector getConnector() {
+		return connector;
 	}
 
-	@Override
-	public void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,
-			BugTrackerRemoteException {
-		connector.checkCredentials(credentials);
-	}
 
 	@Override
 	public RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException {
@@ -92,10 +82,6 @@ public class SimpleBugtrackerConnectorAdapter implements InternalBugtrackerConne
 		return connector.createIssue((BTIssue) issue);
 	}
 
-	@Override
-	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
-		return connector.getInterfaceDescriptor();
-	}
 
 	@Override
 	public RemoteIssue findIssue(String key) {
@@ -103,7 +89,7 @@ public class SimpleBugtrackerConnectorAdapter implements InternalBugtrackerConne
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })

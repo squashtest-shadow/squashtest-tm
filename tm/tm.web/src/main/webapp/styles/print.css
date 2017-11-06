@@ -5399,6 +5399,10 @@ li[rel="chart"] > a > .jstree-icon {
   background-image: url(../images/icon-lib/reporting_chart.png);
   /** sprite-ref: sprites-icons; */
 }
+
+li[rel="report"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_report.png);
+}
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2016 Henix, henix.fr

@@ -26,16 +26,14 @@ package org.squashtest.tm.web.internal.report;
  */
 public class ReportIdentifier {
 	private final String namespace;
-	private final int index;
 
 	/**
 	 * @param namespace
 	 * @param index
 	 */
-	/* package */ReportIdentifier(String namespace, int index) {
+	/* package */ReportIdentifier(String namespace) {
 		super();
 		this.namespace = namespace;
-		this.index = index;
 	}
 
 	/**
@@ -45,7 +43,6 @@ public class ReportIdentifier {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 7;
-		result = prime * result + index;
 		result = prime * result + (namespace == null ? 0 : namespace.hashCode());
 		return result;
 	}
@@ -60,7 +57,6 @@ public class ReportIdentifier {
 		if (obj == null){return false;}
 		if (getClass() != obj.getClass()){return false;}
 		ReportIdentifier other = (ReportIdentifier) obj;
-		if (index != other.index){return false;}
 		if (namespace == null) {
 			if (other.namespace != null){return false;}
 		} else if (!namespace.equals(other.namespace)){	return false;}
@@ -75,17 +71,10 @@ public class ReportIdentifier {
 	}
 
 	/**
-	 * @return the index
-	 */
-	public int getIndex() {
-		return index;
-	}
-
-	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "ReportIdentifier [namespace=" + namespace + ", index=" + index + "]";
+		return "ReportIdentifier [namespace=" + namespace + "]";
 	}
 }

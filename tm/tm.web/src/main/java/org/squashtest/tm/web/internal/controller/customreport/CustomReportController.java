@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
@@ -92,6 +93,13 @@ public class CustomReportController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "custom-report-report/{id}", method = RequestMethod.GET)
+	public ReportDefinition getReportDetails(@PathVariable Long id){
+		ReportDefinition ReportDef = customReportLibraryNodeService.findReportDefinitionByNodeId(id);
+		return ReportDef;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "custom-report-dashboard/{id}", method = RequestMethod.GET)
 	public JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id, Locale locale){
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
@@ -125,6 +133,12 @@ public class CustomReportController {
 	@RequestMapping(method = RequestMethod.POST, value="custom-report-chart/{nodeId}",params = { "newName" })
 	@ResponseBody
 	public RenameModel renameChartDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-report/{nodeId}",params = { "newName" })
+	@ResponseBody
+	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 

@@ -63,6 +63,6 @@ public class NullFilterListCollector<T>
 	}
 
 	public static <T> Collector<T, ?, List<T>> toNullFilteredList(){
-		return new NullFilterListCollector<T>();
+		return new NullFilterListCollector<>();
 	}
 }

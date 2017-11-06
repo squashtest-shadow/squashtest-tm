@@ -66,7 +66,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 
 			$.ajax({
 				type : 'GET',
-				url : routing.buildURL("info-list.isUsed", self.config.data.infoList.id),
+				url : routing.buildURL("info-list.isUsed", self.config.data.infoList.id)
 			}).done(function(data) {
 				if (data === true){
 					message.text(translator.get("dialog.delete.info-list.used.message"));
@@ -119,7 +119,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 					id:'info-list-label',
 					'value' : newName
 				},
-				url : routing.buildURL("info-list.info", self.config.data.infoList.id),
+				url : routing.buildURL("info-list.info", self.config.data.infoList.id)
 			}).done(function(data) {
 				self.$("#info-list-name-header").text(data);
 				self.$("#info-list-label").text(data);
@@ -131,7 +131,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		deleteInfoList : function(){
 			$.ajax({
 				type : 'DELETE',
-				url : routing.buildURL("info-list.info", config.data.infoList.id),
+				url : routing.buildURL("info-list.info", config.data.infoList.id)
 			}).done(function(data) {
 				document.location.href = squashtm.app.contextRoot + "/administration/info-lists/";
 			});
@@ -139,7 +139,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		},
 		closePopup : function() {
 			$(this).formDialog('close');
-		},
+		}
 
 
 	});

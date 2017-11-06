@@ -77,14 +77,14 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 				this.$icons().removeClass("low-opacity");
 			}
 		},
-		
-		
+
+
 		open : function(){
 			this.$el.formDialog("open");
 		},
 
 		close : function(event){
-			this.cancel(event);			
+			this.cancel(event);
 		},
 
 		cancel : function(event) {
@@ -138,7 +138,8 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 			this.cleanup();
 			this.undelegateEvents();
 			Backbone.View.prototype.remove.apply(this, arguments);
-		},
+		}
+
 	});
 
 	return View;

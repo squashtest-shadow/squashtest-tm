@@ -34,6 +34,9 @@ define(function () {
 					"max_children": -2, // unlimited w/o check
 					"valid_children": ["drive"],
 					"types": {
+						"report": {
+							"valid_children": 'none'
+						},
 						"chart": {
 							"valid_children": 'none'
 						},
@@ -41,10 +44,10 @@ define(function () {
 							"valid_children": 'none'
 						},
 						"folder": {
-							"valid_children": ["chart", "dashboard", "folder"]
+							"valid_children": ["report", "chart", "dashboard", "folder"]
 						},
 						"drive": {
-							"valid_children": ["chart", "dashboard", "folder"]
+							"valid_children": ["report", "chart", "dashboard", "folder"]
 						}
 					}
 				}

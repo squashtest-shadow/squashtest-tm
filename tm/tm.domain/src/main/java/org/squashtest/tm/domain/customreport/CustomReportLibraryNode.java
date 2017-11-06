@@ -47,6 +47,7 @@ import org.hibernate.annotations.MetaValue;
 import javax.persistence.Table;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
@@ -67,17 +68,17 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@SequenceGenerator(name="custom_report_library_node_crln_id_seq", sequenceName="custom_report_library_node_crln_id_seq", allocationSize = 1)
 	private Long id;
 
-        
+
         /*
-         * careful : the @Column for entityId and entityType must state name =  
-         * ENTITY_ID and ENTITY_TYPE, otherwise these column would be registered as entityId and 
-         * entityType. This is problematic because the @Any annotation (on property 'entity') 
-         * states that it expects ENTITY_ID and ENTITY_TYPE. And so Hibernate crashes because of the 
+         * careful : the @Column for entityId and entityType must state name =
+         * ENTITY_ID and ENTITY_TYPE, otherwise these column would be registered as entityId and
+         * entityType. This is problematic because the @Any annotation (on property 'entity')
+         * states that it expects ENTITY_ID and ENTITY_TYPE. And so Hibernate crashes because of the
          * double definition of the same columns.
-         * 
-         * Note : Hibernate resolves column name using a PhysicalNamingStrategy and ImplicitNamingStrategy. 
-         * In our case we have a custom PhysicalNamingStrategy, but no ImplicitNamingStrategy. The default 
-         * there is ImplicitNamingStrategyJpaCompliantImpl, provided by Hibernate. If some more problems occur 
+         *
+         * Note : Hibernate resolves column name using a PhysicalNamingStrategy and ImplicitNamingStrategy.
+         * In our case we have a custom PhysicalNamingStrategy, but no ImplicitNamingStrategy. The default
+         * there is ImplicitNamingStrategyJpaCompliantImpl, provided by Hibernate. If some more problems occur
          * one day maybe having our custom strategy would help.
          */
 	@Enumerated(EnumType.STRING)
@@ -118,6 +119,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	    idType = "long",
 	    metaType = "string",
 	    metaValues = {
+			@MetaValue( value = CustomReportNodeType.REPORT_NAME, targetEntity = ReportDefinition.class ),
 	        @MetaValue( value = CustomReportNodeType.CHART_NAME, targetEntity = ChartDefinition.class ),
 	        @MetaValue( value = CustomReportNodeType.FOLDER_NAME, targetEntity = CustomReportFolder.class ),
 	        @MetaValue( value = CustomReportNodeType.LIBRARY_NAME, targetEntity = CustomReportLibrary.class ),

@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -72,6 +73,14 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	ChartDefinition findChartDefinitionByNodeId(Long treeNodeId);
+
+	/**
+	 * Return a {@link ReportDefinition}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	ReportDefinition findReportDefinitionByNodeId(Long treeNodeId);
 
 	/**
 	 * Return a {@link CustomReportDashboard}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}

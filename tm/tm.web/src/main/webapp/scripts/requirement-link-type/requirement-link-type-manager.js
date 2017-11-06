@@ -57,7 +57,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
     			tdSelector : "td.delete-button",
     			uiIcon : "ui-icon-trash",
     			jquery : true
-    		}],
+    		}]
     	};
 			this.table = $("#requirement-link-types-table").squashTable(
 				{
@@ -262,7 +262,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
       	url : routing.buildURL("requirementLinkType"),
       	type : 'POST',
       	dataType: 'json',
-      	data : paramLinkType,
+      	data : paramLinkType
       });
 		},
 
@@ -634,7 +634,7 @@ define([ 'module',  "jquery", "backbone", "underscore", "squash.basicwidgets", "
 				self.table.refresh();
 				self.DeleteMultipleTypesPopup.formDialog('close');
       });
-		},
+		}
 
 
 	});

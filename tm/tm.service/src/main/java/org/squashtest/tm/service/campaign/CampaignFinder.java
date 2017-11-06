@@ -25,6 +25,7 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 import java.util.List;
 
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -38,6 +39,9 @@ public interface CampaignFinder {
 
 	@PostAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)
 	Campaign findById(long campaignId);
+
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	List<Campaign> findAllByIds(List<Long> campaignIds);
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') "
 			+ OR_HAS_ROLE_ADMIN)

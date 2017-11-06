@@ -103,7 +103,7 @@
         <div id="tabbed-pane">
           <!-- The page must have a first ul because jQuery make it a 'ui-widget-header' (black background)
           and make the next ones 'ui-widget-content' (white background) -->
-          <ul></ul> 
+          <ul></ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
             <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
@@ -115,6 +115,9 @@
                 <ul id="tree-create-menu" class="not-displayed">
                   <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
+                  </li>
+                  <li id="new-report-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-report.label}+'...'">New Report...</a>
                   </li>
                   <li id="new-chart-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{tree.button.new-chart.label}+'...'">New chart...</a>
@@ -219,7 +222,14 @@
 
 	<!-- /SHOW DASHBOARD  -->
 
-	<!-- SHOW CHART-->
+  <!--  SHOW REPORT  -->
+  <script id="tpl-show-report" type="text/x-handlebars-template"
+          th:inline="text"
+          th:include="charts/workspace/showReport :: report-view" />
+  <!-- /SHOW REPORT  -->
+
+
+  <!-- SHOW CHART-->
 	<script id="tpl-show-chart" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showChart :: chart-view" />

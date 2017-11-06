@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -112,6 +113,15 @@ public class CustomReportLibraryNodeServiceImpl implements
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
 		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+		+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public ReportDefinition findReportDefinitionByNodeId(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.REPORT);
+		return (ReportDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 
 	@Override

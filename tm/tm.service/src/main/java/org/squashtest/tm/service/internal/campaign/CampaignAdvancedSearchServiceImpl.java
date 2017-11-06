@@ -99,7 +99,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
-
+		return findUsersWhoCanAccessProject(idList);
 //		UserDto currentUser = new UserDto(null, null, null, true);
 //		List<Long> finalProjectsId = new ArrayList<>();
 //		workspaceDisplayService.findAllProjects(idList,currentUser).stream().forEach(r -> {
@@ -114,7 +114,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return list;
 	}
 
-	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
 		/* Creating a copy of the model to keep a model with milestones criteria */
 		AdvancedSearchModel modelCopy = model.shallowCopy();
@@ -125,12 +125,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
 		if(shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 		return luceneQuery;
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
 		addMilestoneFilter(modelCopy);
 
@@ -167,7 +167,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession, locale);
+		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession);
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;

@@ -130,7 +130,7 @@ define([ "backbone", "jquery", "handlebars", "underscore", "jquery.squash.onesho
 
 			events : {
 				"click #milestone-feat-on:not(.active)" : "onActivateMilestonesFeat",
-				"click #milestone-feat-off:not(.active)" : "onDeactivateMilestonesFeat",
+				"click #milestone-feat-off:not(.active)" : "onDeactivateMilestonesFeat"
 			},
 
 			initialize : function() {
@@ -191,7 +191,7 @@ define([ "backbone", "jquery", "handlebars", "underscore", "jquery.squash.onesho
 			 */
 			_rollbackStateCallback : function(state) {
 				return this._commitStateCallback(inverse(state));
-			},
+			}
 
 		});
 

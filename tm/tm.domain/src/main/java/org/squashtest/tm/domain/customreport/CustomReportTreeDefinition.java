@@ -32,10 +32,11 @@ public enum CustomReportTreeDefinition implements TreeEntityDefinition{
 	LIBRARY(true, CustomReportNodeType.LIBRARY_NAME),
 	DASHBOARD(false,CustomReportNodeType.DASHBOARD_NAME),
 	CHART(false, CustomReportNodeType.CHART_NAME),
-	FOLDER(true, CustomReportNodeType.FOLDER_NAME);
-	
+	FOLDER(true, CustomReportNodeType.FOLDER_NAME),
+	REPORT(false, CustomReportNodeType.REPORT_NAME);
+
 	private boolean container;
-	
+
 	private final String typeIdentifier;
 
 	private CustomReportTreeDefinition(boolean container,String typeIdentifier) {

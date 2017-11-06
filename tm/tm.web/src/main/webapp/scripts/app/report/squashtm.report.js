@@ -27,8 +27,10 @@ var squashtm = squashtm || {};
  *
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "./ReportCriteriaPanel", "./ConciseFormModel", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil, ReportCriteriaPanel, FormModel) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "./ReportInformationPanel", "./ReportCriteriaPanel", "./ConciseFormModel",
+		"is","workspace.routing", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.jeditable"],
+	function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil, ReportInformationPanel, ReportCriteriaPanel, FormModel,
+					 is, router) {
 	"use strict";
 
 	var config = {
@@ -42,6 +44,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	var formState = {
 		restore: function() {
 			var stored = sessionStorage[config.reportUrl + "-formerState"];
+			var reportDef = config.reportDef;
+			if(reportDef !== null & reportDef !== undefined){
+				var parmeters = JSON.parse(reportDef).parameters;
+				return  JSON.parse(parmeters);
+			}
 			if (!!stored) {
 				return JSON.parse(stored);
 			}
@@ -54,7 +61,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	};
 
 	var selectedTab = false;
-	var formModel, criteriaPanel;
+	var formModel, criteriaPanel, reportInfomationPanel;
 
 	function resetState() {
 		selectedTab = false;
@@ -192,10 +199,20 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		formModel = new FormModel();
 		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formState.restore(), config: config });
+		reportInfomationPanel = new ReportInformationPanel({el: "#report-information-panel", model: formModel }, config);
+
 		initViewTabs();
+
+		if (squashtm.app.customReportWorkspaceConf !== undefined) {
+			generateView();
+		}
 
 		$("#generate-view").click(generateView); // perfect world -> in ReportCritPanel
 		$("#export").click(doExport);
+
+
+
+
 	}
 
 	squashtm.report = {

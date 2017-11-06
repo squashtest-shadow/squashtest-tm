@@ -65,6 +65,7 @@ define(["jquery", "./utils", "./permissions-rules",
 		var btnselector = [
 		  "#tree-create-button",
 			"#new-folder-tree-button",
+			"#new-report-tree-button",
 			"#new-chart-tree-button",
       "#new-dashboard-tree-button",
 			"#rename-node-tree-button",

@@ -161,7 +161,7 @@ public class TestSuiteExecutionRunnerController {
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
 		}
 		catch(NoBugTrackerBindingException ex){
-			//well, no bugtracker then. It's fine.
+			LOGGER.debug("Well, no bugtracker then. It's fine.", ex);
 		}
 
 		return OPTIMIZED_RUNNER_MAIN;
@@ -187,12 +187,11 @@ public class TestSuiteExecutionRunnerController {
 	 *
 	 * \o/ There should be a params = "optimized" in this method's {@link RequestMapping}. We omitted it because
 	 * "params" has more precedence than "headers", which leads to requests meant to be processed by
-	 * {@link #getNextTestCaseRunnerState(long, long, HttpServletRequest, Locale)} being routed to this method instead.
+	 * {@link #getNextTestCaseRunnerState(long, long, Locale)} being routed to this method instead.
 	 *
 	 * @param testPlanItemId
 	 * @param testSuiteId
 	 * @param optimized
-	 * @param suitemode
 	 * @return
 	 */
 	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER)
@@ -214,11 +213,10 @@ public class TestSuiteExecutionRunnerController {
 	 * It is called by the optimized runner only
 	 *
 	 * headers parameter is required otherwise there is an ambiguity with
-	 * {@link #moveToNextTestCase(long, long, boolean, boolean)}
+	 * {@link #moveToNextTestCase(long, long, boolean)}
 	 *
 	 * @param testPlanItemId
 	 * @param testSuiteId
-	 * @param context
 	 * @param locale
 	 * @return
 	 */
@@ -258,7 +256,6 @@ public class TestSuiteExecutionRunnerController {
 	 * @param testPlanItemId
 	 * @param executionId
 	 * @param optimized
-	 * @param model
 	 * @return
 	 */
 	@RequestMapping(value = "{testPlanItemId}/executions/{executionId}", method = RequestMethod.GET)

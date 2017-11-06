@@ -109,6 +109,9 @@ public class CustomReportTreeNodeBuilder {
 		case CHART:
 			doChartBuild(builtNode,crln);
 			break;
+		case REPORT:
+			doReportBuild(builtNode,crln);
+			break;
 		case DASHBOARD:
 			doDashboardBuild(builtNode,crln);
 			break;
@@ -137,6 +140,13 @@ public class CustomReportTreeNodeBuilder {
 		setNodeHTMLId(builtNode, "CustomReportChart-"+crln.getId());
 		setNodeRel(builtNode, "chart");
 		setNodeResType(builtNode, "custom-report-chart");
+		setNodeLeaf(builtNode);
+	}
+
+	private void doReportBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomReportReport-"+crln.getId());
+		setNodeRel(builtNode, "report");
+		setNodeResType(builtNode, "custom-report-report");
 		setNodeLeaf(builtNode);
 	}
 

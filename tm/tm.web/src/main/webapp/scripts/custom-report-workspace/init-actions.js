@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "squash.translator" ,
-        "workspace.tree-node-copier", "workspace.tree-event-handler","workspace.routing"], function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler,urlBuilder){
+        "workspace.tree-node-copier", "workspace.tree-event-handler","workspace.routing"], function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler, urlBuilder){
 
 
 	function showError(messageName){
@@ -92,6 +92,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         url = urlBuilder.buildURL("custom-report-chart",nodeId);
         backboneRouter.navigate(url, {trigger: true});
         break;
+			case "report":
+				url = urlBuilder.buildURL("custom-report-report",nodeId);
+				backboneRouter.navigate(url, {trigger: true});
+				break;
       default:
 
     }
@@ -119,6 +123,16 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			$("#new-dashboard-tree-button").on("click", function(){
 				$("#add-dashboard-dialog").formDialog("open");
+			});
+
+			$("#new-report-tree-button").on("click", function(){
+				var selectedNode =  tree.jstree("get_selected");
+				if (!selectedNode.canContainNodes()) {
+					selectedNode = selectedNode.getParent();
+				}
+				var nodeId = selectedNode.getResId();
+				url = urlBuilder.buildURL("report-workspace",nodeId);
+				document.location.href = url;
 			});
 
       $("#new-chart-tree-button").on("click", function(){

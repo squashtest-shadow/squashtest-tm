@@ -35,6 +35,8 @@ public interface IterationFinder {
 
 	Iteration findById(long iterationId);
 
+	List<Iteration> findAllByIds(List<Long> iterationIds);
+
 	/**
 	 * @param iterationId
 	 * @return the list of iteration's executions ordered by their test plan order.

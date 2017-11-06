@@ -73,6 +73,7 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementModificationExc
 import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -492,6 +493,22 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion);
 			copies.add(verifyingCopy);
+		}
+		return copies;
+	}
+
+	/**
+	 * Will create a copy of this.requirementVersionLinks. Each {@link RequirementVersionLink} having, instead
+	 * of this the copyVersion param as their requirementVersion.
+	 *
+	 * @param copyVersion
+	 * @return the copies of {@link RequirementVersionLink}s
+	 */
+	public List<RequirementVersionLink> createRequirementVersionLinksForCopy(RequirementVersion copyVersion) {
+		List<RequirementVersionLink> copies = new ArrayList<>();
+		for (RequirementVersionLink link : this.requirementVersionLinks) {
+			RequirementVersionLink linkCopy = link.copyForRequirementVersion(copyVersion);
+			copies.add(linkCopy);
 		}
 		return copies;
 	}

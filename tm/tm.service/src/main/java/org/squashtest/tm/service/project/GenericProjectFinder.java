@@ -43,7 +43,7 @@ public interface GenericProjectFinder extends CustomGenericProjectFinder{
 	List<GenericProject> findAllOrderedByName(Paging paging);
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
-	 * 
+	 *
 	 * @param filter the {@link PagingAndSorting} that holds order and paging params
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 *
@@ -54,6 +54,8 @@ public interface GenericProjectFinder extends CustomGenericProjectFinder{
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
 
 	GenericProject findById(long projectId);
+
+	List<GenericProject> findAllByIds(List<Long> projectIds);
 
 
 

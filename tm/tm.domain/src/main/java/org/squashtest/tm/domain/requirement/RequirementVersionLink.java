@@ -129,4 +129,8 @@ public class RequirementVersionLink implements Identified {
 				this.linkType,
 				!this.linkDirection);
 	}
+
+	public RequirementVersionLink copyForRequirementVersion(RequirementVersion copyVersion) {
+		return new RequirementVersionLink(copyVersion, this.relatedRequirementVersion, this.linkType, this.linkDirection);
+	}
 }

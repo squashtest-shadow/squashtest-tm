@@ -20,7 +20,7 @@
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
 		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator",
-		"app/lnf/Forms", "app/util/StringUtil", 
+		"app/lnf/Forms", "app/util/StringUtil",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
 		"jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
 		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms, StringUtil) {
@@ -114,7 +114,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				url : routing.buildURL("info-list-item.info", data['entity-id']),
 				type : 'POST',
 				data : {
-					id : 'info-list-item-default',
+					id : 'info-list-item-default'
 				}
 			}).done(function() {
 				self.optionsTable.find(".isDefault>input:radio").prop("checked", false);
@@ -209,7 +209,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					id : 'info-list-item-label',
 					'value' : newValue
 				},
-				url : routing.buildURL("info-list-item.info", id),
+				url : routing.buildURL("info-list-item.info", id)
 			}).done(function() {
 				self.optionsTable._fnAjaxUpdate();
 				self.ChangeLabelPopup.formDialog('close');
@@ -298,7 +298,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			$.ajax({
 				type : 'DELETE',
-				url : routing.buildURL("info-list-item.delete", self.config.data.infoList.id, id),
+				url : routing.buildURL("info-list-item.delete", self.config.data.infoList.id, id)
 			}).done(function(data) {
 				self.optionsTable._fnAjaxUpdate();
 				if (isUsed) {
@@ -317,7 +317,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(codeCell).text();
 			var reindexWarn = $("#change-code-reindex-warn");
-			
+
 			//clean previous error message in popup
 			Forms.input($("#change-code-popup-info-list-item-code")).clearState();
 
@@ -354,11 +354,11 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			dialog.on('formdialogcancel', this.closePopup);
 
 		},
-		
+
 		checkIfCodeExists : function checkIfCodeExists(newValue){
 			var exists = false;
-			
-			
+
+
 			return exists;
 		},
 
@@ -367,7 +367,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val();
 			var newValue = self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val();
 			var isUsed = self.ChangeCodePopup.data('isUsed');
-			
+
 			if (StringUtil.isBlank(newValue)){
 				Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
 						translator.get("message.notBlank"));
@@ -379,7 +379,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				url : routing.buildURL("info-list-item.exist", newValue),
 				data : {
 					format : "exists"
-				},
+				}
 			}).done(function(data) {
 				if (data.exists) {
 					Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
@@ -392,7 +392,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 							id : 'info-list-item-code',
 							'value' : newValue
 						},
-						url : routing.buildURL("info-list-item.info", id),
+						url : routing.buildURL("info-list-item.info", id)
 					}).done(function() {
 						self.optionsTable._fnAjaxUpdate();
 						if (isUsed) {
@@ -402,10 +402,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					});
 				}
 			});
-			
+
 		},
-		
-		
+
+
 		closePopup : function() {
 			$(this).formDialog('close');
 		},
@@ -423,7 +423,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				discard();
 				refresh();
 			}
-			
+
 			function refresh() {
 				self.optionsTable._fnAjaxUpdate();
 			}

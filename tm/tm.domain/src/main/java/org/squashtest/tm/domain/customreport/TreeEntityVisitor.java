@@ -21,10 +21,12 @@
 package org.squashtest.tm.domain.customreport;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.report.ReportDefinition;
 
 public interface TreeEntityVisitor {
 	void visit(CustomReportFolder crf);
 	void visit(CustomReportLibrary crl);
 	void visit(CustomReportDashboard crf);
 	void visit(ChartDefinition chartDefinition);
+	void visit(ReportDefinition reportDefinition);
 }

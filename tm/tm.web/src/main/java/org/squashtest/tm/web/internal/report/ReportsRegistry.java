@@ -69,23 +69,22 @@ public class ReportsRegistry {
 		for (ReportPlugin plugin : plugins) {
 			Report[] reports = plugin.getReports();
 
-			for (int i = 0; i < reports.length; i++) {
-				UUID uuid = UUID.randomUUID();
-				Report report = reports[i];
+			for (Report report : reports) {
+				String pluginNamespace = report.getLabelKey();
 				StandardReportCategory category = report.getCategory();
-				IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, uuid, i);
+				IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, pluginNamespace);
 
 				reportsByCategory.put(category, identifiedReport);
 				reportByIdentifier.put(identifiedReport.getIdentifier(), identifiedReport);
 
-				LOGGER.info("Registered report [{}] under Category [{}] along with UUID [{}]", report, category.getI18nKey(), uuid);
+				LOGGER.info("Registered report [{}] under Category [{}] along with Namespace [{}]", report, category.getI18nKey(), pluginNamespace);
 			}
+
 		}
 	}
 
-	private IdentifiedReportDecorator createIdentifiedReport(Report report, UUID uuid, int index) {
-		String pluginNamespace = uuid.toString();
-		return new IdentifiedReportDecorator(report, pluginNamespace, index);
+	private IdentifiedReportDecorator createIdentifiedReport(Report report, String pluginNamespace) {
+		return new IdentifiedReportDecorator(report, pluginNamespace);
 	}
 
 
@@ -128,11 +127,10 @@ public class ReportsRegistry {
 
 	/**
 	 * @param namespace
-	 * @param index
 	 * @return
 	 */
-	public Report findReport(String namespace, int index) {
-		return reportByIdentifier.get(new ReportIdentifier(namespace, index));
+	public Report findReport(String namespace) {
+		return reportByIdentifier.get(new ReportIdentifier(namespace));
 	}
 
 

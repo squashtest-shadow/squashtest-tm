@@ -32,13 +32,13 @@ class IdentifiedReportDecoratorTest extends Specification {
 	def "should delegate view building to decorated report"() {
 		given:
 		Report report = Mock()
-		
+
 		and:
-		IdentifiedReportDecorator decorator = new IdentifiedReportDecorator(report, "foo.bar", 0)
-		
+		IdentifiedReportDecorator decorator = new IdentifiedReportDecorator(report, "foo.bar")
+
 		when:
 		decorator.buildModelAndView 10, "pdf", Collections.emptyMap()
-		
+
 		then:
 		1 * report.buildModelAndView(10, "pdf", Collections.emptyMap())
 	}

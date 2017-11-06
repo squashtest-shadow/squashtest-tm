@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +41,12 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.security.UserContextService;
+
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.ExecutionProcessingService")
 @Transactional
@@ -186,7 +185,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		}
 
 		for (TestSuite testSuite : execution.getTestPlan().getTestSuites()) {
-			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 
 		}
 	}
@@ -197,6 +196,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	 * @param executionStep
 	 *            the step to update
 	 */
+	@Override
 	public void updateStepExecutionData(ExecutionStep executionStep) {
 		// check the execution step status
 		if (executionStep.getExecutionStatus().compareTo(ExecutionStatus.READY) == 0) {
