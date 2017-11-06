@@ -30,6 +30,8 @@ public interface MilestoneFinderService {
 
 	Milestone findById(long milestoneId);
 
+	List<Milestone> findAllByIds(List<Long> milestoneIds);
+
 	Milestone findByName(String name);
 
 	/**

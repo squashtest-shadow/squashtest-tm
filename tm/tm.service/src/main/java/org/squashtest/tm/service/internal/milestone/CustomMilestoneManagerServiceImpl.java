@@ -128,6 +128,11 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
+	public List<Milestone> findAllByIds(List<Long> milestoneIds) {
+		return milestoneDao.findAll(milestoneIds);
+	}
+
+	@Override
 	public void verifyCanEditMilestone(long milestoneId) {
 		if (!canEditMilestone(milestoneId)) {
 			throw new IllegalAccessError("What are you doing here ?! You are not allowed. Go away");

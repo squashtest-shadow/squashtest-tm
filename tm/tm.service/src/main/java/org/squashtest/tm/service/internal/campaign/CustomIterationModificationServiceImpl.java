@@ -187,6 +187,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public List<Iteration> findAllByIds(List<Long> iterationIds) {
+		return iterationDao.findAllByIds(iterationIds);
+	}
+
+	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') " + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public Iteration findById(long iterationId) {

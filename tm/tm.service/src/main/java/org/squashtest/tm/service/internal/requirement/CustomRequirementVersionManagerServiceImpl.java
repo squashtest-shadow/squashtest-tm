@@ -40,6 +40,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,7 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
@@ -80,6 +82,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+
+	@Inject
+	private RequirementDao requirementDao;
 
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
@@ -112,6 +117,12 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			+ OR_HAS_ROLE_ADMIN)
 	public Requirement findRequirementById(long requirementId) {
 		return requirementVersionDao.findRequirementById(requirementId);
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	public List<Requirement> findRequirementsAllByIds(List<Long> requirementIds) {
+		return requirementDao.findAllByIds(requirementIds);
 	}
 
 	@Override

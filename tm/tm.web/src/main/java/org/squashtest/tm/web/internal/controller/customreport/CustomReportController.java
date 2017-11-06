@@ -136,6 +136,12 @@ public class CustomReportController {
 		return renameNode(nodeId, newName);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-report/{nodeId}",params = { "newName" })
+	@ResponseBody
+	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
 	/**
 	 * Change the favorite dashboard for current user, and keep the info in party preferences.
 	 * @param nodeId This is the {@link CustomReportLibraryNode} id, not the {@link CustomReportDashboard} id.

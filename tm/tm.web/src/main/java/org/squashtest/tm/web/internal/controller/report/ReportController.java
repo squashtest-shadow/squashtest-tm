@@ -29,13 +29,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -68,6 +68,7 @@ import org.squashtest.tm.service.report.ReportModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
@@ -85,6 +86,9 @@ import com.lowagie.text.pdf.codec.Base64;
 public class ReportController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
+
+	@Inject
+	private ReportHelper reportHelper;
 
 	@Inject
 	private ReportsRegistry reportsRegistry;
@@ -148,8 +152,8 @@ public class ReportController {
 	}
 
 	@RequestMapping(value = "/panel/{parentId}", method = RequestMethod.GET)
-	public String showReportPanelFromCustomReport(@PathVariable String namespace, Model model,
-												  @PathVariable("parentId") long parentId) {
+	public String showReportPanelInCustomReport(@PathVariable String namespace, Model model,
+												@PathVariable("parentId") long parentId, Locale locale) throws IOException{
 		populateModel(namespace, model);
 
 		model.addAttribute("parentId", parentId);
@@ -159,9 +163,15 @@ public class ReportController {
 		if (crln.getEntityType().getTypeName().equals(CustomReportNodeType.REPORT_NAME)) {
 			ReportDefinition def = (ReportDefinition) crln.getEntity();
 			model.addAttribute("reportDef", JsonHelper.serialize(def));
+
+			Map<String, Object> form = JsonHelper.deserialize(def.getParameters());
+			Report report = reportsRegistry.findReport(namespace);
+			List<Project> projects = projectFinder.findAllOrderedByName();
+			if(def.getPluginNamespace().equalsIgnoreCase(namespace)){
+				Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, projects).convert(form);
+				model.addAttribute("reportAttributes", reportHelper.getAttributesForReport(report, crit));
+			}
 		}
-
-
 		return "report-panel.html";
 	}
 

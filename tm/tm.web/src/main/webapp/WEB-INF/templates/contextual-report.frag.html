@@ -311,35 +311,38 @@
         <div class="tg-body">
           <div class="display-table">
             <div class="display-table-row">
-              <label for="chart-perimeter" class="display-table-cell"> <span
-                th:text="#{chart.label.perimeter}">perimetre</span>
+              <label for="report-type" class="display-table-cell"> <span
+                th:text="#{label.Type}">perimetre</span>
               </label>
-              <div id="chart-perimeter" class="display-table-cell">
-                {{perimeterMessage}}
+              <div id="report-type">
+                <span class="display-table-cell" style="font-weight: bold;" th:text="${report.label}"/>
               </div>
             </div>
-            <div class="display-table-row">&nbsp;</div>
+
             <div class="display-table-row">
-              <label for="chart-operation" class="display-table-cell"> <span
-                th:text="#{chart.label.operation}">operation</span>
+              <label for="report-desc" class="display-table-cell"> <span
+                th:text="#{label.Description }">Description</span>
               </label>
-              <div id="chart-operation" class="display-table-cell">
-                {{#each entityOperation}}
-                {{> entityOperationsTpl}}
-                {{/each}}</div>
+              <div id="report-desc"/>
             </div>
-            <div class="display-table-row">&nbsp;</div>
-            <div class="display-table-row">
-              <label for="chart-filter" class="display-table-cell"> <span
-                th:text="#{chart.label.filter}">filtres</span>
-              </label>
-              <div id="chart-filter" class="display-table-cell">
-                <div class="display-table">
-                  {{#each entityFilters}}
-                  {{>entityFiltersTpl}}
-                  {{/each}}</div>
+
+            <div class="display-table-row" th:each="attribute : ${reportAttributes}">
+              <div class="display-table-cell" th:switch="${attribute.key}">
+                <label th:case="Project" th:text="#{label.project}"/>
+                <label th:case="Requirement" th:text="#{label.requirement}"/>
+                <label th:case="Testcase" th:text="#{label.testCase}"/>
+                <label th:case="Campaign" th:text="#{label.Campaign}"/>
+                <label th:case="Iteration" th:text="#{label.iteration}"/>
+                <label th:case="Milestone" th:text="#{label.Milestone}"/>
+                <label th:case="Tag" th:text="#{customField.inputType.TAG}"/>
+                <label th:case="Option" th:text="#{label.option}"/>
+                <label th:case="*" th:text="${attribute.key}"/>
+              </div>
+              <div th:each="val : ${attribute.value}" >
+                <div class="display-table-cell" th:text="${val}"/>
               </div>
             </div>
+
           </div>
         </div>
       </div>

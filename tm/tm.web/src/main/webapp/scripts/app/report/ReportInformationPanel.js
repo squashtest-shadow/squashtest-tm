@@ -41,10 +41,12 @@ define(["is", "jquery", "backbone", "squash.configmanager", "workspace.routing",
 				$("#report-description").ckeditor(function () {
 				}, confman.getStdCkeditor());
 
-				if (this.isModify) {
+				if (this.isModify()) {
 					var reportDef = JSON.parse(this.config.reportDef);
 					$("#report-name").val(reportDef.name);
 					$("#report-description").val(reportDef.description);
+
+					$("#report-desc").html(reportDef.description);
 				}
 			},
 
