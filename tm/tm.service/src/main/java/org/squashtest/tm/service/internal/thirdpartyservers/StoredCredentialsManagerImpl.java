@@ -27,10 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 import org.squashtest.tm.domain.thirdpartyservers.StoredCredentials;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.thirdpartyservers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.thirdpartyservers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
@@ -135,6 +137,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public Credentials findCredentials(long serverId) {
 
 		if (! isSecretConfigured()){
@@ -179,6 +182,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void deleteCredentials(long serverId) {
 		try {
 			StoredCredentials sc = (StoredCredentials) em.createNamedQuery("StoredCredentials.findByServerId")

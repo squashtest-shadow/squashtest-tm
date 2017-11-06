@@ -38,9 +38,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationPolicy;
+import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 @Controller
@@ -50,6 +54,9 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerModificationService bugtrackerModificationService;
+	
+	@Inject
+	private InternationalizationHelper i18nHelper;
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
@@ -113,6 +120,10 @@ public class BugTrackerModificationController {
 		return mav;
 	}
 
+	
+	// ********************** more private stuffs ******************
+	
+	
 	private String findJsonBugTrackerKinds() {
 		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
 		Map<String, String> mapKinds = new HashMap<>(bugtrackerKinds.size());
@@ -121,5 +132,65 @@ public class BugTrackerModificationController {
 		}
 		return JsonHelper.serialize(mapKinds);
 	}
+	
+	
+	private BugtrackerCredentialsManagementBean makeCredentialsBean(BugTracker bugTracker){
+		BugtrackerCredentialsManagementBean bean = new BugtrackerCredentialsManagementBean();
+		
+		try{
+			
+		}
+		catch(Exception ex){
+			
+		}
+		
+	}
+	
+	
+	
+	public static final class BugtrackerCredentialsManagementBean{
+		
+		// if this String remains to null it is a good thing
+		private String whyServiceUnavailable = null;
+		
+		// the rest is used if the above is null
+		private AuthenticationPolicy authPolicy;
+		private AuthenticationMode authMode;
+		private Credentials credentials;
+		
+		
+		public String getWhyServiceUnavailable() {
+			return whyServiceUnavailable;
+		}
+
+		public void setWhyServiceUnavailable(String whyServiceUnavailable) {
+			this.whyServiceUnavailable = whyServiceUnavailable;
+		}
+
+		public AuthenticationPolicy getAuthPolicy() {
+			return authPolicy;
+		}
+		
+		public void setAuthPolicy(AuthenticationPolicy authPolicy) {
+			this.authPolicy = authPolicy;
+		}
+		
+		public AuthenticationMode getAuthMode() {
+			return authMode;
+		}
+		
+		public void setAuthMode(AuthenticationMode authMode) {
+			this.authMode = authMode;
+		}
+		
+		public Credentials getCredentials() {
+			return credentials;
+		}
+		
+		public void setCredentials(Credentials credentials) {
+			this.credentials = credentials;
+		}
+	}
+	
 
 }

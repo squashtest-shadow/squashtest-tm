@@ -98,19 +98,22 @@
 
 				<jsp:attribute name="body">
 					<div id="bugtracker-description-table" class="display-table">
-					<div class="display-table-row">
+						
+						<div class="display-table-row">
 							<label for="bugtracker-kind" class="display-table-cell">
 							<f:message key="label.Kind" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-kind">${ bugtracker.kind }</div>
-						<comp:select-jeditable componentId="bugtracker-kind" jsonData="${bugtrackerKinds}" targetUrl="${bugtrackerUrl}" />
+							<comp:select-jeditable componentId="bugtracker-kind" jsonData="${bugtrackerKinds}" targetUrl="${bugtrackerUrl}" />
 						</div>
+						
 						<div class="display-table-row">
 							<label for="bugtracker-url" class="display-table-cell">
 							<f:message key="label.Url" />
 							</label>
 							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}, callback=changeBugTrackerUrlCallback" id="bugtracker-url">${ bugtracker.url }</div>
 						</div>
+						
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">
 							<f:message key="label.DisplaysInIframe" />
@@ -123,12 +126,50 @@
 								/>
 							</div>
 						</div>
+						
+						<div class="display-table-row">
+							<label for="bugtracker-auth-mode" class="display-table-cell">protocole d'authentification</label>
+							<select id="bugtracker-auth-mode" class="display-table-cell">
+								<option value="usename-password">Basic</option>
+							</select>
+						</div>	
+							
+						<div class="display-table-row">	
+							<label class="display-table-cell">politique d'authentification</label>
+							
+							<div class="display-table-cell">
+								<input type="radio" id="auth-policy-user" name="bugtracker-auth-policy" value="user" checked="checked">
+								<label for="auth-policy-user">Les utilisateurs s'authentifient eux-même</label>								
+								
+								<br/>
+								
+								<input type="radio" id="auth-policy-application" name="bugtracker-auth-policy" value="application">
+								<label for="auth-policy-application">Utiliser les permissions suivantes :</label>
+								
+								<br/>
+								
+								<%-- TODO : make the panel rendered if the "app" radio button was selected --%>
+								<div id="auth-application-credentials" class="not-displayed">
+									<div class="display-table">
+										<div class="display-table-row" style="line-height:3.5">
+											<label class="display-table-cell">login</label> 
+											<input type="text" class="display-table-cell"/> 
+										</div>
+										<div class="display-table-row" style="line-height:3.5">
+											<label class="display-table-cell">mot de passe</label> 
+											<input class="display-table-cell" type="password" /> 
+										</div>
+									</div> 								
+								</div>
+								
+							</div>
+						</div>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
-
-
+			
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
+			
 			</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
@@ -231,25 +272,33 @@
 
   function initDeletePopup(){
 
-  $("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
-
-
+  	$("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
 		var url = "${ bugtrackerUrl }";
 
 		$.ajax({
 			url : url,
 			type : 'delete'
 		}).success(function () {
-      document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
+	      document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
 		});
-
-
 	});
 
-  $("#delete-bugtracker-button").on('click', function() {
+  	$("#delete-bugtracker-button").on('click', function() {
 		var popup = $("#delete-bugtracker-popup");
 		popup.confirmDialog('open');
 	});
+  }
+  
+  function initAuthOptions(){
+	  $("input[type='radio'][name='bugtracker-auth-policy']").on('change', function(evt){
+		  var target = evt.target.id;
+		  switch(target){
+		  case 'auth-policy-user' : $('#auth-application-credentials').addClass('not-displayed'); break;
+		  case 'auth-policy-application' : $('#auth-application-credentials').removeClass('not-displayed'); break;
+		  default: 'break';
+		  }
+	  })
+	  
   }
 
   require(["common"], function(){
@@ -260,6 +309,7 @@
 	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
 	      initRenameDialog();
 	      initDeletePopup();
+	      initAuthOptions();
 	    });
 	  });
   });

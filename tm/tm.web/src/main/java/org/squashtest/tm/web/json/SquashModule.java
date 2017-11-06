@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.web.internal.model.json.*;
@@ -43,7 +44,7 @@ import org.squashtest.tm.web.internal.model.json.*;
 @Component
 public class SquashModule extends SimpleModule {
 	public SquashModule() {
-		super("SquashModule", new Version(1, 13, 0, "REL"));
+		super("SquashModule", new Version(1, 17, 0, "REL"));
 	}
 
 	@Override
@@ -63,5 +64,6 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
 		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
+		context.setMixInAnnotations(Credentials.class, CredentialsMixin.class);
 	}
 }
