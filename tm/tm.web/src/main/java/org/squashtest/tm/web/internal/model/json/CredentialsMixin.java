@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.CUSTOM, property="type")
+@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.CLASS, property="type")
 @JsonSubTypes({
 	@Type(name="USERNAME_PASSWORD", value=BasicAuthenticationCredentials.class)
 })

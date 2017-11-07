@@ -25,6 +25,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
@@ -33,12 +34,39 @@
 <s:url var="bugtrackerUrl" value="/bugtracker/{bugtrackerId}">
 	<s:param name="bugtrackerId" value="${bugtracker.id}" />
 </s:url>
-<s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
+<s:url var="admBugtrackerUrl" value="/administration/bugtrackers" />
 
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="renameLabel" key="label.Rename" />
 <f:message var="cancelLabel" key="label.Cancel" />
 
+
+<style>
+	.bt-auth-credentials-section{
+		margin-top : 1em;
+		border: 1px solid black;
+		border-radius: 5px;
+		padding: 1em;
+		margin-bottom: 1em;
+	}
+	
+	.bt-auth-credentials-section.disabled{
+		opacity: 0.5;
+		background-color: #c5cddb;
+	}
+	
+	.bt-auth-credentials-section .bt-credentials{
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+	
+	.bt-auth-credentials-section .bt-auth-buttonpane {
+		text-align: center;
+	}
+	
+</style>
 
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">
@@ -52,9 +80,9 @@
 
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${bugtrackersUrl}'"/>
-
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${admBugtrackerUrl}'"/>
 	</jsp:attribute>
+	
 	<jsp:attribute name="informationContent">
 
 		<div id="bugtracker-name-div"
@@ -76,17 +104,16 @@
 		<div class="fragment-body">
 			<%------------------------------------------------ BODY -----------------------------------------------%>
 
-			<div id="bugtracker-toolbar" classes="toolbar-class ui-corner-all">
-				<%--- Toolbar ---------------------%>
+			<%--- Toolbar ---------------------%>
+			<div id="bugtracker-toolbar" class="toolbar-class ui-corner-all">
 
-			<div class="toolbar-button-panel">
-				<f:message var="rename" key="rename" />
-				<input type="button" value="${ rename }" id="rename-bugtracker-button"
-							class="sq-btn" />
-											<f:message var="delete" key='project.button.delete.label' />
-    				<input type="button" value="${ delete }" id="delete-bugtracker-button"
-    						class="sq-btn" />
-			</div>
+				<div class="toolbar-button-panel">
+					<f:message var="rename" key="rename" />
+					<input type="button" value="${ rename }" id="rename-bugtracker-button" class="sq-btn" />
+					
+					<f:message var="delete" key='project.button.delete.label' />    			
+	    			<input type="button" value="${ delete }" id="delete-bugtracker-button" class="sq-btn" />
+				</div>
 			</div>
 			<%--------End Toolbar ---------------%>
 
@@ -111,7 +138,7 @@
 							<label for="bugtracker-url" class="display-table-cell">
 							<f:message key="label.Url" />
 							</label>
-							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}, callback=changeBugTrackerUrlCallback" id="bugtracker-url">${ bugtracker.url }</div>
+							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}" id="bugtracker-url">${ bugtracker.url }</div>
 						</div>
 						
 						<div class="display-table-row">
@@ -127,32 +154,39 @@
 							</div>
 						</div>
 
-							
-						<div class="display-table-row">	
+						
+						<c:set var="credSectionStyle" value="${(authConf.authPolicy == 'USER') ? 'disabled' : ''}"/>
+						<c:set var="policyUsr" value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>						
+						<c:set var="policyApp" value="${(authConf.authPolicy == 'APPL_LEVEL') ? 'checked=\"checked\"' : ''}"/>
+												
+						<div id="bugtracker-auth" class="display-table-row">	
 							<label class="display-table-cell">Gestion de l'authentification</label>
 							
 							
 							<div class="display-table-cell">
-								<input type="radio" id="auth-policy-user" name="bugtracker-auth-policy" value="user" ${(authConf.authPolicy == 'USER') ? 'checked="checked"' : ''}>
-								<label for="auth-policy-user">Les utilisateurs s'authentifient eux-même</label>								
-								
-								<br/>
-								
-								<input type="radio" id="auth-policy-application" name="bugtracker-auth-policy" value="application" ${(authConf.authPolicy == 'APPL_LEVEL') ? 'checked="checked"' : ''}>
-								<label for="auth-policy-application">Utiliser les permissions suivantes :</label>
+								<div>
+									<input id="auth-policy-user" 	type="radio" name="bugtracker-auth-policy" value="user" ${policyUsr}>
+									<label for="auth-policy-user" class="vertical-align:middle;">Les utilisateurs s'authentifient eux-même</label>								
+								</div>
 								
 								<div>
-									<label for="bugtracker-auth-mode">protocole d'authentification</label>
+									<input id="auth-policy-application" type="radio" name="bugtracker-auth-policy" value="application" ${policyApp}>
+									<label for="auth-policy-application" class="vertical-align:middle;">Utiliser les permissions suivantes :</label>
+								</div>
+								
+								<div class="bt-auth-credentials-section ${credSectionStyle}">
+									<label for="bugtracker-auth-proto">protocole d'authentification</label>
 									
 									<select id="bugtracker-auth-proto" >
 										<c:forEach items="${authConf.availableProtos}" var="protocol">
-										<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''}" >
+										<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
 											${protocol}
 										</option>
 										</c:forEach>
 									</select>
 									
-									<div id="auth-application-credentials" class="not-displayed">
+									<div class="bt-auth-variable-template">
+									<%--
 										<div class="display-table">
 											<div class="display-table-row" style="line-height:3.5">
 												<label class="display-table-cell">login</label> 
@@ -162,10 +196,13 @@
 												<label class="display-table-cell">mot de passe</label> 
 												<input class="display-table-cell" type="password" /> 
 											</div>
-										</div> 								
+										</div>
+									 --%> 								
 									</div>
 									
 									
+								<div class="bt-auth-buttonpane">
+									<input type="button" class="sq-btn" id="bugtracker-auth-save" value="Enregistrer"/>
 								</div>
 							
 							</div>
@@ -206,108 +243,34 @@
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
 <f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
-	<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
-	<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
+<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
+<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
 
-        <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
+    <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
 
-
-		<div class="popup-dialog-buttonpane">
-		    <input class="confirm" type="button" value="${confirmLabel}" />
-		    <input class="cancel" type="button" value="${cancelLabel}" />
-		</div>
-
+	<div class="popup-dialog-buttonpane">
+	    <input class="confirm" type="button" value="${confirmLabel}" />
+	    <input class="cancel" type="button" value="${cancelLabel}" />
+	</div>
+</div>
 
 
 
 <script type="text/javascript">
 
-  //*****************Back button
-
-  function clickBugtackerBackButton(){
-    document.location.href = "${bugtrackersUrl}";
-  }
-
-  function clickBugTrackerIframeFriendly(){
-
-    $.ajax({
-      type : 'post',
-      data : {
-        'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
-      },
-      dataType : "json",
-      url : "${ bugtrackerUrl }"
-    });
-   }
-
-  function changeBugTrackerUrlCallback(){
-
-  }
-
-
-  function initRenameDialog(){
-    var renameDialog = $("#rename-bugtracker-dialog");
-    renameDialog.formDialog();
-
-    renameDialog.on('formdialogopen', function(){
-          var name = $.trim($('#bugtracker-name-header').text());
-          $("#rename-bugtracker-input").val($.trim(name));
-    });
-
-    renameDialog.on('formdialogconfirm', function(){
-      var params = { newName : $("#rename-bugtracker-input").val() };
-      $.ajax({
-        url : "${ bugtrackerUrl }",
-        type : 'POST',
-        dataType : 'json',
-        data : params
-      }).success(function(data){
-  	    $('#bugtracker-name-header').html(data.newName);
-  	    renameDialog.formDialog('close');
-      });
-    });
-
-    renameDialog.on('formdialogcancel', function(){
-    	renameDialog.formDialog('close');
-    });
-
-    $("#rename-bugtracker-button").on('click', function(){
-    	renameDialog.formDialog('open');
-    });
-
-  }
-
-  function initDeletePopup(){
-
-  	$("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
-		var url = "${ bugtrackerUrl }";
-
-		$.ajax({
-			url : url,
-			type : 'delete'
-		}).success(function () {
-	      document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
-		});
-	});
-
-  	$("#delete-bugtracker-button").on('click', function() {
-		var popup = $("#delete-bugtracker-popup");
-		popup.confirmDialog('open');
-	});
-  }
-
-
-  require(["common"], function(){
-	  require(["jquery", "squash.basicwidgets", "jquery.squash.formdialog"], function(jquery, basic){
-	    $(function(){
-	      basic.init();
-	      $("#back").click(clickBugtackerBackButton);
-	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
-	      initRenameDialog();
-	      initDeletePopup();
-	    });
-	  });
+  requirejs.config({
+	 config :{
+		 'bugtracker-manager/bugtracker-info': {
+			 backUrl : "${admBugtrackerUrl}",
+			 btUrl : "${bugtrackerUrl}",
+			 authConf : ${json:serialize(authConf)}			 
+		 }
+	 } 
   });
+  
+  require(['common'], function(){
+	  require(['bugtracker-manager/bugtracker-info']);
+  })
 
 
 </script>

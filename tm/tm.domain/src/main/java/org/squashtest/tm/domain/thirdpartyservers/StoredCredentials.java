@@ -79,6 +79,7 @@ public class StoredCredentials {
 	 * for now I say YAGNI and go with a OneToOne.
 	 */
 	@OneToOne
+	@JoinColumn(name = "AUTHENTICATED_SERVER")	
 	private BugTracker authenticatedServer;
 
 
