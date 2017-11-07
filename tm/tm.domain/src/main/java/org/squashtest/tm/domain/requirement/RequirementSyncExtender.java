@@ -79,6 +79,9 @@ public class RequirementSyncExtender {
 	@JoinColumn(name = "REMOTE_SYNCHRONISATION_ID")
 	private RemoteSynchronisation remoteSynchronisation;
 
+	@Column
+	private String remoteParentId;
+
 	public RequirementSyncExtender(){
 		super();
 	}
@@ -160,6 +163,14 @@ public class RequirementSyncExtender {
 
 	public void setRemoteSynchronisation(RemoteSynchronisation remoteSynchronisation) {
 		this.remoteSynchronisation = remoteSynchronisation;
+	}
+
+	public String getRemoteParentId() {
+		return remoteParentId;
+	}
+
+	public void setRemoteParentId(String remoteParentId) {
+		this.remoteParentId = remoteParentId;
 	}
 }
 

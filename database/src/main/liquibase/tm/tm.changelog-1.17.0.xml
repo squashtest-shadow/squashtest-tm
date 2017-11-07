@@ -154,6 +154,8 @@
 
       <column name="REMOTE_LAST_UPDATED" type="DATETIME"/>
 
+      <column name="REMOTE_PARENT_ID" type="VARCHAR(30)"/>
+
     </addColumn>
 
   </changeSet>
