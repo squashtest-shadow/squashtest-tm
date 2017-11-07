@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -52,7 +53,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	DSLContext DSL;
 
 	@Inject
-	HibernateRequirementFolderDao hibernateRequirementFolderDao ;
+	HibernateRequirementFolderDao hibernateRequirementFolderDao;
 
 	private RequirementLibraryNode RLN = REQUIREMENT_LIBRARY_NODE.as("RLN");
 	private RequirementFolder RF = REQUIREMENT_FOLDER.as("RF");
@@ -60,7 +61,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private RequirementVersion RV = REQUIREMENT_VERSION.as("RV");
 	private RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
 	private Resource RES = RESOURCE.as("RES");
-	private MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
 
 	private List<Long> reqsDontAllowClick = new ArrayList<>();
@@ -79,7 +79,8 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 				RES.NAME,
 				REQ.MODE,
 				RV.REFERENCE,
-				MRV.MILESTONE_ID,
+				RV.REQUIREMENT_STATUS,
+
 				org.jooq.impl.DSL.decode()
 					.when(RLNR.ANCESTOR_ID.isNull(), "false")
 					.otherwise("true")
@@ -93,11 +94,10 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.leftJoin(REQ).on(RLN.RLN_ID.eq(REQ.RLN_ID))
 			.leftJoin(RES).on(RF.RES_ID.eq(RES.RES_ID).or(REQ.CURRENT_VERSION_ID.eq(RES.RES_ID)))
 			.leftJoin(RV).on(RLN.RLN_ID.eq(RV.REQUIREMENT_ID))
-			.leftJoin(MRV).on(REQ.CURRENT_VERSION_ID.eq(MRV.REQ_VERSION_ID))
 			.leftJoin(RLNR).on(RLN.RLN_ID.eq(RLNR.ANCESTOR_ID))
 			.leftJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
 			.where(RLN.RLN_ID.in(childrenIds))
-			.groupBy(RLN.RLN_ID, RF.RLN_ID, RES.NAME, REQ.MODE, RV.REFERENCE, MRV.MILESTONE_ID, RLNR.ANCESTOR_ID, ILI.ICON_NAME)
+			.groupBy(RLN.RLN_ID, RF.RLN_ID, RES.NAME, REQ.MODE, RV.REFERENCE, RV.REQUIREMENT_STATUS, RLNR.ANCESTOR_ID, ILI.ICON_NAME)
 			.fetch()
 			.stream()
 			.map(r -> {
@@ -108,14 +108,18 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 					Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
 					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
 					boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
+					boolean isReqVersionModifiable = isReqVersionModifiable(r.get(RV.REQUIREMENT_STATUS), isMilestoneModifiable);
 					return buildRequirement(id, r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
-						r.get(REQ.MODE), r.get(MRV.MILESTONE_ID), (String) r.get("ICON_NAME"), (String) r.get("HAS_CONTENT"), currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
+						r.get(REQ.MODE), (String) r.get("ICON_NAME"), isReqVersionModifiable, (String) r.get("HAS_CONTENT"),
+						currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
 				}
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, Long milestone, String categoryIcon, String hasContent, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
+	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, String categoryIcon,
+										boolean isReqVersionModifiable, String hasContent, UserDto currentUser, Integer milestonesNumber,
+										String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 		attr.put("resId", id);
@@ -123,9 +127,9 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 		attr.put("name", name);
 		attr.put("id", "Requirement-" + id);
 		attr.put("rel", "requirement");
+		attr.put("req-version-modifiable", isReqVersionModifiable);
 		if (mode.equals("SYNCHRONIZED"))
 			attr.put("synchronized", true);
-		/*attr.put("milestone", milestone);*/
 		attr.put("category-icon", categoryIcon);
 
 		if (Boolean.parseBoolean(hasContent)) {
@@ -165,6 +169,11 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	private boolean isReqDontAllowClick(List<Long> reqsDontAllowClick, Long id) {
 		return reqsDontAllowClick.size() != 0 && reqsDontAllowClick.contains(id);
+	}
+
+	private boolean isReqVersionModifiable(String requirementStatus, String isMilestoneModifiable) {
+		RequirementStatus reqStatus = RequirementStatus.valueOf(requirementStatus);
+		return reqStatus.isRequirementModifiable() && Boolean.parseBoolean(isMilestoneModifiable);
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToActiveMilestone(Long activeMilestoneId) {
