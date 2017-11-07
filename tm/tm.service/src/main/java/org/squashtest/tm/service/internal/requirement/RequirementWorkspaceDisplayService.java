@@ -80,7 +80,6 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 				REQ.MODE,
 				RV.REFERENCE,
 				RV.REQUIREMENT_STATUS,
-
 				org.jooq.impl.DSL.decode()
 					.when(RLNR.ANCESTOR_ID.isNull(), "false")
 					.otherwise("true")
@@ -93,7 +92,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.leftJoin(RF).on(RLN.RLN_ID.eq(RF.RLN_ID))
 			.leftJoin(REQ).on(RLN.RLN_ID.eq(REQ.RLN_ID))
 			.leftJoin(RES).on(RF.RES_ID.eq(RES.RES_ID).or(REQ.CURRENT_VERSION_ID.eq(RES.RES_ID)))
-			.leftJoin(RV).on(RLN.RLN_ID.eq(RV.REQUIREMENT_ID))
+			.leftJoin(RV).on(RES.RES_ID.eq(RV.RES_ID))
 			.leftJoin(RLNR).on(RLN.RLN_ID.eq(RLNR.ANCESTOR_ID))
 			.leftJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
 			.where(RLN.RLN_ID.in(childrenIds))
