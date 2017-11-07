@@ -149,7 +149,6 @@ public class CampaignSearchController extends GlobalSearchController{
 
 		if (activeMilestone.isPresent()) {
 
-			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),
 			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),	projectIds);
 		}
 

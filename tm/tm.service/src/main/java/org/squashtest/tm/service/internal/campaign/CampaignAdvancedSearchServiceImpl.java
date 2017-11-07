@@ -100,13 +100,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
 		return findUsersWhoCanAccessProject(idList);
-//		UserDto currentUser = new UserDto(null, null, null, true);
-//		List<Long> finalProjectsId = new ArrayList<>();
-//		workspaceDisplayService.findAllProjects(idList,currentUser).stream().forEach(r -> {
-//				finalProjectsId.add(r.getId());
-//				}
-//		);
-		return findUsersWhoCanAccessProject(idList);
+
 	}
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {

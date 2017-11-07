@@ -66,7 +66,7 @@ class RowImpl implements Row {
 					.append(separator);
 			}
 			}
-		}
+
 
 		return builder.toString().replaceAll(separator + "$", "");
 	}
