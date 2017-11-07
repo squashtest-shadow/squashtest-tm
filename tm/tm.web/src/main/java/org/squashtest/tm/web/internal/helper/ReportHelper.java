@@ -56,7 +56,7 @@ public class ReportHelper {
 	private static final String PROJECTIDS = "projectIds";
 	private static final String MILESTONES = "milestones";
 	private static final String TAGS = "tags";
-	private static final String OPTION = "Option";
+	private static final String OPTION = "option";
 
 	@Inject
 	private CampaignModificationService campaignModificationService;
