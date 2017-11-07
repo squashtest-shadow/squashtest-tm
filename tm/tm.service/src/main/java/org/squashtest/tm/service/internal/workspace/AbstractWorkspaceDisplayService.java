@@ -552,7 +552,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 			.stream()
 			.collect(Collectors.groupingBy(r -> r.get(getProjectLibraryColumn()), mapping(r -> r.get(LIBRARY_PLUGIN_BINDING.PLUGIN_ID), toSet())));
 
-		pluginByLibraryId.forEach((libId, pluginIds) -> jsTreeNodes.get(libId).addAttr("wizards", pluginIds));
+		pluginByLibraryId.forEach((libId, pluginIds) -> {if (jsTreeNodes.get(libId) != null) {jsTreeNodes.get(libId).addAttr("wizards", pluginIds);}});
 	}
 
 	private List<Long> getMilestonesModifiable() {
