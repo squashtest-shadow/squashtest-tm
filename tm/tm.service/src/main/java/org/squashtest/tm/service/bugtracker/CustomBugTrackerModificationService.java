@@ -23,10 +23,53 @@ package org.squashtest.tm.service.bugtracker;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
 
 
 public interface CustomBugTrackerModificationService {
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeName(long bugtrackerId, String newName);
+	
+	
+	//**** credential services,  that will be forwarded to StoredCredentialsManager ****
+
+	/**
+	 * Says whether the StoredCredentials service is properly configured
+	 * 
+	 *  @see StoredCredentialsManager#isSecretConfigured()
+	 * 
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	boolean isCredentialsServiceAvailable();
+
+	/**
+	 * 
+	 * @see StoredCredentialsManager#storeCredentials(long, Credentials)
+	 * @param serverId
+	 * @param credentials
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void storeCredentials(long serverId, Credentials credentials);
+
+	/**
+	 * 
+	 * @see StoredCredentialsManager#findCredentials(long)
+	 * @param serverId
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	Credentials findCredentials(long serverId);
+
+	
+	/**
+	 * 
+	 * @see StoredCredentialsManager#deleteCredentials(long)
+	 * @param serverId
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void deleteCredentials(long serverId);
+	
 }

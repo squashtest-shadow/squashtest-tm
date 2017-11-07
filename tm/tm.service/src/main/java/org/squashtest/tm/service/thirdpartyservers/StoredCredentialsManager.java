@@ -23,15 +23,22 @@ package org.squashtest.tm.service.thirdpartyservers;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
 /**
+ * <p>
  * That manager deals with the stored credentials for third party servers, most of the time for the usage of Squash itself.
  * The credentials are encrypted with AES 128, so that neither the JCE extension nor setting crypto.policy is required.
+ * </p>
+ * 
+ * <p>
+ * 	Unless stated otherwise, users of this service must have administrator privileges.
+ * </p>
  *
  */
 public interface StoredCredentialsManager {
 
 	/**
 	 * Tells whether the secret key used for encryption has been configured. Returns false if not, in which case the administrator
-	 * should know about that and the problem fixed before any credential is stored.
+	 * should know about that and the problem fixed before any credential is stored. The user context for that operation needs not 
+	 * to be that of an administrator.
 	 *
 	 * @return true if a secret key was provided
 	 */
@@ -58,6 +65,16 @@ public interface StoredCredentialsManager {
 	 * @throws MissingEncryptionKeyException if if no secret key was configured
 	 */
 	Credentials findCredentials(long serverId);
+	
+	
+	/**
+	 * Like {@link #findCredentials(long)} but left unsecured : no check will be performed on the authorizations of the 
+	 * user context. For Squash internal use only.
+	 * 
+	 * @param serverId
+	 * @return
+	 */
+	Credentials unsecuredFindCredentials(long serverId);
 
 
 	/**

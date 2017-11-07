@@ -21,18 +21,17 @@
 package org.squashtest.csp.core.bugtracker.core;
 
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
-import org.squashtest.tm.domain.thirdpartyservers.UsernamePasswordCredentials;
+import org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials;
 
 public final class ConnectorUtils {
 	private ConnectorUtils(){
 
 	}
 
-	public static boolean supports(AuthenticationMode[] supported, AuthenticationMode mode){
-		for (AuthenticationMode mm : supported){
+	public static boolean supports(AuthenticationProtocol[] supported, AuthenticationProtocol mode){
+		for (AuthenticationProtocol mm : supported){
 			if (mode == mm){
 				return true;
 			}
@@ -41,19 +40,19 @@ public final class ConnectorUtils {
 	}
 
 	/**
-	 * Convert a {@link UsernamePasswordCredentials} to a {@link AuthenticationCredentials} for
+	 * Convert a {@link BasicAuthenticationCredentials} to a {@link AuthenticationCredentials} for
 	 * retrocompatibility purposes
 	 */
-	public static AuthenticationCredentials backportCredentials(Credentials credentials, AuthenticationMode[] supported){
-		if (!supports(supported, AuthenticationMode.USERNAME_PASSWORD)){
-			throw new UnsupportedAuthenticationModeException(AuthenticationMode.USERNAME_PASSWORD.toString());
+	public static AuthenticationCredentials backportCredentials(Credentials credentials, AuthenticationProtocol[] supported){
+		if (!supports(supported, AuthenticationProtocol.BASIC_AUTH)){
+			throw new UnsupportedAuthenticationModeException(AuthenticationProtocol.BASIC_AUTH.toString());
 		}
 
-		if (!UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass())){
+		if (!BasicAuthenticationCredentials.class.isAssignableFrom(credentials.getClass())){
 			throw new UnsupportedAuthenticationModeException(credentials.getClass().getSimpleName());
 		}
 
-		UsernamePasswordCredentials creds = (UsernamePasswordCredentials) credentials;
+		BasicAuthenticationCredentials creds = (BasicAuthenticationCredentials) credentials;
 		return new AuthenticationCredentials(creds.getUsername(), new String(creds.getPassword()));
 	}
 

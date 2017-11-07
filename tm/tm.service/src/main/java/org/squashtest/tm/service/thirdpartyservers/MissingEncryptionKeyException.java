@@ -30,9 +30,9 @@ public class MissingEncryptionKeyException extends ActionException {
 
 	private static final String I18N_KEY = "storedcredentials.missingencryptionkey";
 
-	private static final String STD_ERR_MSG= "Stored credentials : no encryption key was set. Stored credentials will not be managed " +
-												 "until a key is supplied. Please contact your administrator and make sure that property squash.crypto.secret is configured " +
-												 "either in the configuration file or at the command line using -Dsquash.crypto.secret=*******.";
+	private static final String STD_ERR_MSG= "Stored credentials : no encryption key was set. Squash TM won't store credentials until a key is supplied. "
+											+ "Please contact your administrator and make sure that property squash.crypto.secret is configured either in the configuration file "
+											+ "or at the command line using -Dsquash.crypto.secret=*******.";
 
 
 	public MissingEncryptionKeyException() {

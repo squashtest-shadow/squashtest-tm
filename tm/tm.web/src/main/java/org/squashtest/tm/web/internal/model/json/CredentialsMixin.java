@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.thirdpartyservers.UsernamePasswordCredentials;
+import org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.CUSTOM, property="type")
 @JsonSubTypes({
-	@Type(name="USERNAME_PASSWORD", value=UsernamePasswordCredentials.class)
+	@Type(name="USERNAME_PASSWORD", value=BasicAuthenticationCredentials.class)
 })
 public abstract class CredentialsMixin {
 

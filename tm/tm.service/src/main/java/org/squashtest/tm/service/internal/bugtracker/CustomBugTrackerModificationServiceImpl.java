@@ -25,9 +25,11 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
 
 /**
  * 
@@ -39,6 +41,11 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 public class CustomBugTrackerModificationServiceImpl implements CustomBugTrackerModificationService {
 	@Inject
 	private BugTrackerDao bugTrackerDao;
+	
+	@Inject
+	private StoredCredentialsManager credentialsManager;
+	
+	
 	@Override
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
@@ -54,6 +61,33 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 		}
 		
 	}
+
+
+	@Override
+	public boolean isCredentialsServiceAvailable() {
+		return credentialsManager.isSecretConfigured();
+	}
+
+
+	@Override
+	public void storeCredentials(long serverId, Credentials credentials) {
+		credentialsManager.storeCredentials(serverId, credentials);
+	}
+
+
+	@Override
+	public Credentials findCredentials(long serverId) {
+		return credentialsManager.findCredentials(serverId);
+	}
+
+
+	@Override
+	public void deleteCredentials(long serverId) {
+		credentialsManager.deleteCredentials(serverId);
+	}
+	
+	
+	
 	
 
 }

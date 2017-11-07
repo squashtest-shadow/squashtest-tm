@@ -35,15 +35,22 @@ import java.util.Arrays;
  * 	However if one day the in-memory password usage is actually implemented this bit is already done.
  * </p>
  */
-public class UsernamePasswordCredentials implements Credentials {
-	private String username;
-	private char[] password;
+public class BasicAuthenticationCredentials implements Credentials {
+	private String username = "";
+	private char[] password = new char[0];
 
-	public UsernamePasswordCredentials() {
+	
+	
+	@Override
+	public AuthenticationProtocol getImplementedProtocol() {
+		return AuthenticationProtocol.BASIC_AUTH;
+	}
+
+	public BasicAuthenticationCredentials() {
 
 	}
 
-	public UsernamePasswordCredentials(String login, char[] password) {
+	public BasicAuthenticationCredentials(String login, char[] password) {
 		super();
 		this.username = login;
 		this.password = password;

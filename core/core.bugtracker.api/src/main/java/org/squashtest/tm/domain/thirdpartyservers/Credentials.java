@@ -24,8 +24,13 @@ import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
 
 /**
  * Marker interface for the different ways the application can connect to a third party server. A BugTrackerConnector must publish
- * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthModes()}.
+ * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthProtocols()}.
  *
  */
 public interface Credentials {
+	
+	/**
+	 * @return which authentication protocol the implementation of Credentials is for.
+	 */
+	AuthenticationProtocol getImplementedProtocol();
 }

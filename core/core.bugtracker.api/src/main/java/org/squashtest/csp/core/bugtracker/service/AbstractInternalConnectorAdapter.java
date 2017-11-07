@@ -26,7 +26,7 @@ import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeExce
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
 abstract class AbstractInternalConnectorAdapter implements InternalBugtrackerConnector{
@@ -34,12 +34,12 @@ abstract class AbstractInternalConnectorAdapter implements InternalBugtrackerCon
 	abstract BugtrackerConnectorBase getConnector();
 
 	@Override
-	public AuthenticationMode[] getSupportedAuthModes(){
-		return getConnector().getSupportedAuthModes();
+	public AuthenticationProtocol[] getSupportedAuthProtocols(){
+		return getConnector().getSupportedAuthProtocols();
 	}
 
 	@Override
-	public boolean supports(AuthenticationMode mode){
+	public boolean supports(AuthenticationProtocol mode){
 		return getConnector().supports(mode);
 	}
 

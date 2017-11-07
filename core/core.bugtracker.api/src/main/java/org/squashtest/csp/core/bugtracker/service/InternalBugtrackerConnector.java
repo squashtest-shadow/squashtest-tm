@@ -33,7 +33,7 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
 /**
@@ -45,19 +45,19 @@ public interface InternalBugtrackerConnector {
 
 
 	/**
-	 * Declares which authentication modes are supported by this BugTrackerConnector.
+	 * Declares which authentication protocols are supported by this BugTrackerConnector.
 	 * Default implementation returns [AuthenticationMode.USERNAME_PASSWORD]
 	 *
 	 * @return
 	 */
-	AuthenticationMode[] getSupportedAuthModes();
+	AuthenticationProtocol[] getSupportedAuthProtocols();
 
 	/**
-	 * Declares whether the given connector supports a given connection mode.
+	 * Declares whether the given connector supports a given connection protocol.
 	 *
 	 * @param mode
 	 */
-	boolean supports(AuthenticationMode mode);
+	boolean supports(AuthenticationProtocol protocol);
 
 
 	/**
@@ -65,7 +65,7 @@ public interface InternalBugtrackerConnector {
 	 * required again at least for the current thread.
 	 *
 	 * Default implementation delegates to the deprecated {@link #authenticate(AuthenticationCredentials)}
-	 * if the connector supports the USERNAME_PASSWORD mode
+	 * if the connector supports the BASIC_AUTH mode
 	 *
 	 * @param credentials the credentials
 	 * @throw UnsupportedAuthenticationModeException if the connector cannot use the given credentials
@@ -77,7 +77,7 @@ public interface InternalBugtrackerConnector {
 	 * will check if the current credentials are actually acknowledged by the bugtracker
 	 *
 	 * Default implementation delegates to the deprecated {@link #checkCredentials(AuthenticationCredentials)}
-	 * if the connector supports the USERNAME_PASSWORD mode
+	 * if the connector supports the BASIC_AUTH mode
 	 *
 	 *
 	 * @param credentials

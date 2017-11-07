@@ -126,43 +126,50 @@
 								/>
 							</div>
 						</div>
-						
-						<div class="display-table-row">
-							<label for="bugtracker-auth-mode" class="display-table-cell">protocole d'authentification</label>
-							<select id="bugtracker-auth-mode" class="display-table-cell">
-								<option value="usename-password">Basic</option>
-							</select>
-						</div>	
+
 							
 						<div class="display-table-row">	
-							<label class="display-table-cell">politique d'authentification</label>
+							<label class="display-table-cell">Gestion de l'authentification</label>
+							
 							
 							<div class="display-table-cell">
-								<input type="radio" id="auth-policy-user" name="bugtracker-auth-policy" value="user" checked="checked">
+								<input type="radio" id="auth-policy-user" name="bugtracker-auth-policy" value="user" ${(authConf.authPolicy == 'USER') ? 'checked="checked"' : ''}>
 								<label for="auth-policy-user">Les utilisateurs s'authentifient eux-même</label>								
 								
 								<br/>
 								
-								<input type="radio" id="auth-policy-application" name="bugtracker-auth-policy" value="application">
+								<input type="radio" id="auth-policy-application" name="bugtracker-auth-policy" value="application" ${(authConf.authPolicy == 'APPL_LEVEL') ? 'checked="checked"' : ''}>
 								<label for="auth-policy-application">Utiliser les permissions suivantes :</label>
 								
-								<br/>
-								
-								<%-- TODO : make the panel rendered if the "app" radio button was selected --%>
-								<div id="auth-application-credentials" class="not-displayed">
-									<div class="display-table">
-										<div class="display-table-row" style="line-height:3.5">
-											<label class="display-table-cell">login</label> 
-											<input type="text" class="display-table-cell"/> 
-										</div>
-										<div class="display-table-row" style="line-height:3.5">
-											<label class="display-table-cell">mot de passe</label> 
-											<input class="display-table-cell" type="password" /> 
-										</div>
-									</div> 								
+								<div>
+									<label for="bugtracker-auth-mode">protocole d'authentification</label>
+									
+									<select id="bugtracker-auth-proto" >
+										<c:forEach items="${authConf.availableProtos}" var="protocol">
+										<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''}" >
+											${protocol}
+										</option>
+										</c:forEach>
+									</select>
+									
+									<div id="auth-application-credentials" class="not-displayed">
+										<div class="display-table">
+											<div class="display-table-row" style="line-height:3.5">
+												<label class="display-table-cell">login</label> 
+												<input type="text" class="display-table-cell"/> 
+											</div>
+											<div class="display-table-row" style="line-height:3.5">
+												<label class="display-table-cell">mot de passe</label> 
+												<input class="display-table-cell" type="password" /> 
+											</div>
+										</div> 								
+									</div>
+									
+									
 								</div>
-								
+							
 							</div>
+							
 						</div>
 					</div>
 				</jsp:attribute>
@@ -288,18 +295,7 @@
 		popup.confirmDialog('open');
 	});
   }
-  
-  function initAuthOptions(){
-	  $("input[type='radio'][name='bugtracker-auth-policy']").on('change', function(evt){
-		  var target = evt.target.id;
-		  switch(target){
-		  case 'auth-policy-user' : $('#auth-application-credentials').addClass('not-displayed'); break;
-		  case 'auth-policy-application' : $('#auth-application-credentials').removeClass('not-displayed'); break;
-		  default: 'break';
-		  }
-	  })
-	  
-  }
+
 
   require(["common"], function(){
 	  require(["jquery", "squash.basicwidgets", "jquery.squash.formdialog"], function(jquery, basic){
@@ -309,7 +305,6 @@
 	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
 	      initRenameDialog();
 	      initDeletePopup();
-	      initAuthOptions();
 	    });
 	  });
   });

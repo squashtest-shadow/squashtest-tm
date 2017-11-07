@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.thirdpartyservers;
 
 /**
  * This enum says whether Squash should let the users authenticate themselves, or use one of its stored credentials, when time is come to authenticate.
- * In that it is different from {@link AuthenticationMode}, that says which protocol should be used
+ * In that it is different from {@link AuthenticationProtocol}, that says which protocol should be used
  * for the said authentication.
  *
  *

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.thirdpartyservers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 import org.squashtest.tm.domain.thirdpartyservers.StoredCredentials;
 import org.squashtest.tm.service.security.Authorizations;
@@ -88,6 +90,7 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
+    @PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void storeCredentials(long serverId, Credentials credentials) {
 
 		if (! isSecretConfigured()){
@@ -136,9 +139,17 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	}
 
+	
+	
+	
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public Credentials findCredentials(long serverId) {
+		return unsecuredFindCredentials(serverId);
+	}
+
+	@Override
+	public Credentials unsecuredFindCredentials(long serverId) {
 
 		if (! isSecretConfigured()){
 			throw new MissingEncryptionKeyException();
@@ -229,7 +240,11 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 
 	@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.CLASS)
 	@JsonInclude
-	abstract class CredentialsMixin {}
+	abstract class CredentialsMixin {
+		@JsonIgnore
+		abstract AuthenticationProtocol getImplementedProtocol();
+		
+	}
 
 
 }

@@ -25,7 +25,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ConnectorUtils;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationMode;
+import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
 import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 
 
@@ -39,22 +39,22 @@ import org.squashtest.tm.domain.thirdpartyservers.Credentials;
 public interface BugtrackerConnectorBase{
 
 	/**
-	 * Declares which authentication modes are supported by this BugTrackerConnector.
-	 * Default implementation returns [AuthenticationMode.USERNAME_PASSWORD]
+	 * Declares which authentication protocols are supported by this BugTrackerConnector.
+	 * Default implementation returns [{@link AuthenticationProtocol#BASIC_AUTH}]
 	 *
 	 * @return
 	 */
-	default AuthenticationMode[] getSupportedAuthModes(){
-		return new AuthenticationMode[]{AuthenticationMode.USERNAME_PASSWORD};
+	default AuthenticationProtocol[] getSupportedAuthProtocols(){
+		return new AuthenticationProtocol[]{AuthenticationProtocol.BASIC_AUTH};
 	}
 
 	/**
-	 * Declares whether the given connector supports a given connection mode.
+	 * Declares whether the given connector supports a given connection protocol.
 	 *
 	 * @param mode
 	 */
-	default boolean supports(AuthenticationMode mode){
-		return ConnectorUtils.supports(this.getSupportedAuthModes(), mode);
+	default boolean supports(AuthenticationProtocol mode){
+		return ConnectorUtils.supports(this.getSupportedAuthProtocols(), mode);
 	}
 
 
@@ -63,13 +63,13 @@ public interface BugtrackerConnectorBase{
 	 * required again at least for the current thread.
 	 *
 	 * Default implementation delegates to the deprecated {@link #authenticate(AuthenticationCredentials)}
-	 * if the connector supports the USERNAME_PASSWORD mode
+	 * if the connector supports the BASIC_AUTH mode
 	 *
 	 * @param credentials the credentials
 	 * @throw UnsupportedAuthenticationModeException if the connector cannot use the given credentials
 	 */
 	default void authenticate(Credentials credentials) throws UnsupportedAuthenticationModeException {
-		AuthenticationCredentials creds = ConnectorUtils.backportCredentials(credentials, getSupportedAuthModes());
+		AuthenticationCredentials creds = ConnectorUtils.backportCredentials(credentials, getSupportedAuthProtocols());
 		authenticate(creds);
 	}
 
@@ -78,7 +78,7 @@ public interface BugtrackerConnectorBase{
 	 * will check if the current credentials are actually acknowledged by the bugtracker
 	 *
 	 * Default implementation delegates to the deprecated {@link #checkCredentials(AuthenticationCredentials)}
-	 * if the connector supports the USERNAME_PASSWORD mode
+	 * if the connector supports the BASIC_AUTH mode
 	 *
 	 * @param credentials
 	 * @return nothing
@@ -88,7 +88,7 @@ public interface BugtrackerConnectorBase{
 	 */
 	default void checkCredentials(Credentials credentials) throws BugTrackerNoCredentialsException,
 																	  BugTrackerRemoteException{
-		AuthenticationCredentials creds = ConnectorUtils.backportCredentials(credentials, getSupportedAuthModes());
+		AuthenticationCredentials creds = ConnectorUtils.backportCredentials(credentials, getSupportedAuthProtocols());
 		checkCredentials(creds);
 	}
 
