@@ -52,7 +52,9 @@ public class ReportHelper {
 	private static final String REQUIREMENTS_IDS = "requirementsIds";
 	private static final String TESTCASES_IDS = "testcasesIds";
 	private static final String CAMPAIGN_IDS = "campaignIds";
+	private static final String CAMPAIGN_ID = "campaignId";
 	private static final String ITERATION_IDS = "iterationIds";
+	private static final String ITERATION_ID = "iterationId";
 	private static final String PROJECT_IDS = "projectIds";
 	private static final String MILESTONES = "milestones";
 	private static final String TAGS = "tags";
@@ -192,12 +194,14 @@ public class ReportHelper {
 		List<String> names = new ArrayList<>();
 		List<Long> ids = new ArrayList<>();
 		switch (entity) {
+			case CAMPAIGN_ID:
 			case CAMPAIGN_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Campaign> campaigns = campaignModificationService.findAllByIds(ids);
 				campaigns.forEach(o -> names.add(o.getName()));
 				attributes.put(Campaign.class.getSimpleName(), names);
 				break;
+			case ITERATION_ID:
 			case ITERATION_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Iteration> iterations = iterationModificationService.findAllByIds(ids);
