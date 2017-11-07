@@ -49,11 +49,11 @@ import java.util.*;
 
 @Component
 public class ReportHelper {
-	private static final String REQUIREMENTIDS = "requirementsIds";
-	private static final String TESTCASEIDS = "testcasesIds";
-	private static final String CAMPAIGNIDS = "campaignIds";
-	private static final String ITERATIONIDS = "iterationIds";
-	private static final String PROJECTIDS = "projectIds";
+	private static final String REQUIREMENTS_IDS = "requirementsIds";
+	private static final String TESTCASES_IDS = "testcasesIds";
+	private static final String CAMPAIGN_IDS = "campaignIds";
+	private static final String ITERATION_IDS = "iterationIds";
+	private static final String PROJECT_IDS = "projectIds";
 	private static final String MILESTONES = "milestones";
 	private static final String TAGS = "tags";
 	private static final String OPTION = "option";
@@ -192,31 +192,31 @@ public class ReportHelper {
 		List<String> names = new ArrayList<>();
 		List<Long> ids = new ArrayList<>();
 		switch (entity) {
-			case CAMPAIGNIDS:
+			case CAMPAIGN_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Campaign> campaigns = campaignModificationService.findAllByIds(ids);
 				campaigns.forEach(o -> names.add(o.getName()));
 				attributes.put(Campaign.class.getSimpleName(), names);
 				break;
-			case ITERATIONIDS:
+			case ITERATION_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Iteration> iterations = iterationModificationService.findAllByIds(ids);
 				iterations.forEach(o -> names.add(o.getName()));
 				attributes.put(Iteration.class.getSimpleName(), names);
 				break;
-			case REQUIREMENTIDS:
+			case REQUIREMENTS_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Requirement> requirements = requirementVersionManagerService.findRequirementsAllByIds(ids);
 				requirements.forEach(o -> names.add(o.getName()));
 				attributes.put(Requirement.class.getSimpleName(), names);
 				break;
-			case TESTCASEIDS:
+			case TESTCASES_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<TestCase> testCases = testCaseModificationService.findAllByIds(ids);
 				testCases.forEach(o -> names.add(o.getName()));
 				attributes.put(TestCase.class.getSimpleName(), names);
 				break;
-			case PROJECTIDS:
+			case PROJECT_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<GenericProject> genericProjects = projectManagerService.findAllByIds(ids);
 				genericProjects.forEach(o -> names.add(o.getName()));
