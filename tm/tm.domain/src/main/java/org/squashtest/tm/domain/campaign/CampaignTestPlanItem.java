@@ -65,6 +65,7 @@ public class CampaignTestPlanItem implements Identified{
 	@JoinColumn(name = "CAMPAIGN_ID", insertable = false, updatable = false)
 	private Campaign campaign;
 
+	@Override
 	public Long getId() {
 		return id;
 	}

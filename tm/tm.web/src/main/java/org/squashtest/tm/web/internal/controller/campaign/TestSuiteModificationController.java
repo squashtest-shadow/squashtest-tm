@@ -20,29 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -53,7 +36,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -67,6 +49,12 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/test-suites/{suiteId}")
@@ -107,8 +95,6 @@ public class TestSuiteModificationController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
-	@Inject
-	private CampaignFolderDao campaignFolderDao;
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -250,7 +236,6 @@ public class TestSuiteModificationController {
 	public void updateExecutionStatus(@RequestParam(VALUE) String value, @PathVariable long suiteId) {
 
 		ExecutionStatus executionStatus = ExecutionStatus.valueOf(value);
-
 		service.changeExecutionStatus(suiteId, executionStatus);
 		LOGGER.trace("Test-suite " + suiteId + ": updated status to " + value);
 	}
@@ -259,8 +244,7 @@ public class TestSuiteModificationController {
 	@ResponseBody
 	public String getExecutionStatus(@PathVariable long suiteId) {
 
-		String executionStatus = testSuiteDao.findOne(suiteId).getExecutionStatus().toString();
-		return executionStatus;
+		return testSuiteDao.findOne(suiteId).getExecutionStatus().toString();
 
 	}
 

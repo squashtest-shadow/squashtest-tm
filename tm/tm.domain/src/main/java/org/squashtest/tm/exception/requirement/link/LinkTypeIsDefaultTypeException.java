@@ -29,6 +29,7 @@ public class LinkTypeIsDefaultTypeException extends RequirementLinkTypeException
 
 	private static final long serialVersionUID = -1907643035129593749L;
 
+	@Override
 	public String getShortName() {
 		return "type-is-default-type";
 	}

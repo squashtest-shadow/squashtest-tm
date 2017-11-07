@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -35,6 +37,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.JenkinsCrumb;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
@@ -46,21 +49,11 @@ import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.apache.http.client.utils.URIBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.JenkinsCrumb;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class configure and execute a unique HTTP request.
@@ -79,7 +72,7 @@ public class StartTestExecution {
 	private final HttpClientProvider clientProvider;
 
 	private final String externalId;
-        
+
         private RestTemplate template;
 
 	public StartTestExecution(BuildDef buildDef, HttpClientProvider clientProvider, String externalId) {
@@ -87,7 +80,7 @@ public class StartTestExecution {
 		this.buildDef = buildDef;
 		this.clientProvider = clientProvider;
 		this.externalId = externalId;
-                
+
                 this.template = new RestTemplate(clientProvider.getRequestFactoryFor(
 			buildDef.getProject().getServer()));
 	}
@@ -95,7 +88,7 @@ public class StartTestExecution {
 	public void run() {
 
 		TestAutomationProject project = buildDef.getProject();
-                
+
                 // [Issue 6460]
                 JenkinsCrumb crumb = getCrumb(project.getServer());
 
@@ -113,15 +106,15 @@ public class StartTestExecution {
 		try {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-                    
+
                     // [Issue 6460]
                     if (crumb != null){
                         headers.add(crumb.getCrumbRequestField(), crumb.getCrumb());
                     }
-                    
+
                     RequestEntity<?> request = new RequestEntity(postData, headers, HttpMethod.POST, url);
-                    
-                    return template.exchange(request, Void.class);                    
+
+                    return template.exchange(request, Void.class);
 		} catch (ResourceAccessException ex) {
 			throw new ServerConnectionFailed(ex);
 		} catch (HttpClientErrorException ex) {
@@ -145,15 +138,15 @@ public class StartTestExecution {
 	}
 
         // **************** helper for the 'fetch crumb' request ***********************
-        
+
         // [Issue 6460]
         private JenkinsCrumb getCrumb(TestAutomationServer server){
-            
+
             try{
                 LOGGER.trace("fetching CSRF jenkins crumb");
                 URI uri = new URI(server.getBaseURL()+"/crumbIssuer/api/json");
                 LOGGER.trace("crumb found");
-                return template.getForObject(uri, JenkinsCrumb.class);                
+                return template.getForObject(uri, JenkinsCrumb.class);
             }
             catch(HttpClientErrorException e){
                 // A 404 is fine if Jenkins has not enabled CSRF protection
@@ -173,9 +166,9 @@ public class StartTestExecution {
                 }
                 throw new RuntimeException(ex);
             }
-            
+
         }
-        
+
         // ************ helper for the start build request itself ***************************
 
 	private URI createUrl(TestAutomationProject project) {
@@ -196,7 +189,7 @@ public class StartTestExecution {
             }
 	}
 
-        
+
 	private MultiValueMap<String, ?> createPostData(BuildDef buildDef, String externalId) {
 
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();

@@ -62,9 +62,7 @@ public class JsonParser {
 			return toProjectList(filteredList);
 
 		}
-		catch (JsonParseException | JsonMappingException e) {
-			throw new UnreadableResponseException(e);
-		} catch (IOException e) {
+		catch (IOException e) {
 			throw new UnreadableResponseException(e);
 		}
 
@@ -91,9 +89,7 @@ public class JsonParser {
 		try {
 			return objMapper.writeValueAsString(object);
 		}
-		catch (JsonGenerationException | JsonMappingException e) {
-			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		} catch (IOException e) {
+		catch (IOException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
 		}
 	}

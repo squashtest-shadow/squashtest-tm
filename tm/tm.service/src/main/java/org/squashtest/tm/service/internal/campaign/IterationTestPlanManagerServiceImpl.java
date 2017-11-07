@@ -243,6 +243,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@PreventConcurrent(entityType = Iteration.class, paramName = "iterationId")
+	@Override
 	public void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId) {
 		List<IterationTestPlanItem> itpis = findTestPlanItems(iterationTestPlanIds);
 
@@ -328,7 +329,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		//if an ITPI was deleted, we update the test suites status
 		if (sizeBeforeDeletion > iteration.getTestPlans().size()) {
 			for (TestSuite testSuiteToUpdate : testSuitesToUpdate) {
-				customTestSuiteModificationService.updateExecutionStatus(testSuiteToUpdate.getId());
+				customTestSuiteModificationService.updateExecutionStatus(testSuiteToUpdate);
 			}
 		}
 
@@ -516,7 +517,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 
 		for (TestSuite testSuite : testSuitesToUpdate) {
-			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 		return testPlanItems;
 

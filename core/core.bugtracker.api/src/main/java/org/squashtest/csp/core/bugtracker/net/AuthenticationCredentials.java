@@ -22,7 +22,12 @@ package org.squashtest.csp.core.bugtracker.net;
 
 import java.io.Serializable;
 
+/**
+ * Deprecated. Use {@link org.squashtest.tm.domain.thirdpartyservers.UsernamePasswordCredentials} instead.
+ *
+ */
 @SuppressWarnings("serial")
+@Deprecated
 public class AuthenticationCredentials implements Serializable {
 	private final String username;
 	private final String password;

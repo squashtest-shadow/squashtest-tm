@@ -329,7 +329,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			} catch (UnallowedTestAssociationException e) {
 				LOGGER.error(
 						"data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled",
-						this.getId());
+						this.getId(), e);
 			}
 		}
 		return copy;

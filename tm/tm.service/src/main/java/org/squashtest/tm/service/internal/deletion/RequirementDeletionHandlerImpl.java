@@ -727,23 +727,23 @@ RequirementNodeDeletionHandler {
 
 
 		List<Long> getDeletableRequirementIds() {
-			return deletableRequirementIds != null ? deletableRequirementIds : new ArrayList<Long>();
+			return deletableRequirementIds != null ? deletableRequirementIds : new ArrayList<>();
 		}
 
 		List<Long> getRequirementsWithOneDeletableVersion() {
-			return requirementsWithOneDeletableVersion != null ? requirementsWithOneDeletableVersion : new ArrayList<Long>();
+			return requirementsWithOneDeletableVersion != null ? requirementsWithOneDeletableVersion : new ArrayList<>();
 		}
 
 		List<Long> getDeletableFolderIds() {
-			return deletableFolderIds != null ? deletableFolderIds : new ArrayList<Long>();
+			return deletableFolderIds != null ? deletableFolderIds : new ArrayList<>();
 		}
 
 		List<Long> getRequirementsWithOneUnbindableVersion() {
-			return requirementsWithOneUnbindableVersion != null ? requirementsWithOneUnbindableVersion : new ArrayList<Long>();
+			return requirementsWithOneUnbindableVersion != null ? requirementsWithOneUnbindableVersion : new ArrayList<>();
 		}
 
 		List<Long> getRequirementsWithRewirableChildren() {
-			return requirementsWithRewirableChildren != null ? requirementsWithRewirableChildren : new ArrayList<Long>();
+			return requirementsWithRewirableChildren != null ? requirementsWithRewirableChildren : new ArrayList<>();
 		}
 
 		void setDeletableRequirementIds(List<Long> deletableRequirementIds) {

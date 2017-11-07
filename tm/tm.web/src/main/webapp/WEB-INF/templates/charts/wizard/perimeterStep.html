@@ -48,14 +48,14 @@
     <input  type="radio" name="scope-type" class="scope-type" value="CUSTOM"
             {{#equal this.attributes.scopeType "CUSTOM"}} checked="checked" {{/equal}}/> {{!--]]>--}}
             <span th:text="#{chart.wizard.perimeter.custom}">Custom entities</span>
-            <a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+            <a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" >
         	  <span th:text="#{wizard.perimeter.change}"/>
             </a>
 
             <ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
                   {{#each attributes.perimSelect}}
                   <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
-                    <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+                    <a  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
                   </li>
                   {{/each}}
             </ul>

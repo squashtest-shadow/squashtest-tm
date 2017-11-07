@@ -20,29 +20,11 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.MultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -57,6 +39,13 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
 @Transactional
@@ -96,7 +85,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		TestSuite suite = testSuiteDao.findOne(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
-		customTestSuiteModificationService.updateExecutionStatus(suiteId);
+		customTestSuiteModificationService.updateExecutionStatus(suite);
 	}
 
 	@Override()
@@ -125,7 +114,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.unBindTestPlan(itemTestPlans);
-		customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+		customTestSuiteModificationService.updateExecutionStatus(testSuite);
 	}
 
 	@Override
@@ -139,7 +128,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	/**
-	 * @see TestSuiteTestPlanManagerService#findAssignedTestPlan(long, PagingAndMultiSorting)
+	 * @see TestSuiteTestPlanManagerService# findAssignedTestPlan(long, PagingAndMultiSorting)
 	 **/
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long testSuiteId,
@@ -204,7 +193,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 			.addTestPlanItemsToIteration(testCaseIds, iteration);
 
 		bindTestPlanObj(testSuite, listTestPlanItemsToAffectToTestSuite);
-		customTestSuiteModificationService.updateExecutionStatus(suiteId);
+		customTestSuiteModificationService.updateExecutionStatus(testSuite);
 	}
 
 	@Override
@@ -221,7 +210,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		}
 
 		unbindTestPlanObj(testSuite, listTestPlanItems);
-		customTestSuiteModificationService.updateExecutionStatus(suiteId);
+		customTestSuiteModificationService.updateExecutionStatus(testSuite);
 	}
 
 	@Override

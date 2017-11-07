@@ -466,7 +466,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<Long> executionIds = IdentifiedUtil.extractIds(executions);
 		List<Long> executionStepIds = IdentifiedUtil.extractIds(executionSteps);
 
-		if(executionStepIds.size() > 0){
+		if(!executionStepIds.isEmpty()){
 			return issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepIds);
 		} else {
 			return issueDao.countIssuesfromEmptyExecutions(executionIds);

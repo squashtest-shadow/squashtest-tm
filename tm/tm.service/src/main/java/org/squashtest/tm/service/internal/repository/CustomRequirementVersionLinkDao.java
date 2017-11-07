@@ -59,6 +59,12 @@ public interface CustomRequirementVersionLinkDao {
 	 * @return The persisted RequirementVersionLink given as parameter.
 	 */
 	RequirementVersionLink addLink(RequirementVersionLink requirementVersionLink);
+
+	/**
+	 * Saves the given RequirementVersionLinks.
+	 * @see #addLink(RequirementVersionLink) */
+	void addLinks(List<RequirementVersionLink> requirementVersionLinks);
+
 	/** For all the links of given type, replace the given type by the default one.
 	 * @param linkTypeToReplace
 	 * @param defaultLinkType

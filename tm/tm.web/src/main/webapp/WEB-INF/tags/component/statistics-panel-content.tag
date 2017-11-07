@@ -27,7 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <c:if test="${not empty statisticsEntity}">
-				<span ><f:message key="label.progress" />&nbsp;:&nbsp;<b>${ statisticsEntity.progression }</b>%&nbsp;(&nbsp;${ statisticsEntity.nbDone }&nbsp;/&nbsp;${ statisticsEntity.nbTestCases }&nbsp;)&nbsp;&nbsp;&nbsp;</span>
+				<span ><f:message key="label.progress" />&nbsp;:&nbsp;<strong>${ statisticsEntity.progression }</strong>%&nbsp;(&nbsp;${ statisticsEntity.nbDone }&nbsp;/&nbsp;${ statisticsEntity.nbTestCases }&nbsp;)&nbsp;&nbsp;&nbsp;</span>
 				<br />
 
 

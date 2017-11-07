@@ -64,7 +64,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
-	
+
 	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{
 		new SortField("project.name", SortField.Type.STRING, false),
 		new SortField("campaign-name", SortField.Type.STRING, false),
@@ -118,52 +118,52 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return list;
 	}
 
-	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
+	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
 		/* Creating a copy of the model to keep a model with milestones criteria */
 		AdvancedSearchModel modelCopy = model.shallowCopy();
 		/* Removing these criteria from the main model */
 		removeMilestoneSearchFields(model);
-		
+
 		/* Building main Lucene Query with this main model */
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 		/* If requested, add milestones criteria with the copied model */
 		if(shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
+			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
 		return luceneQuery;
 	}
-	
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
-		
+
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
+
 		addMilestoneFilter(modelCopy);
-		
+
 		/* Find the milestones ids. */
-		List<String> strMilestoneIds = 
+		List<String> strMilestoneIds =
 				((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
 		List<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
 		for (String str : strMilestoneIds) {
 			milestoneIds.add(Long.valueOf(str));
 		}
-		
+
 		/* Find the ItereationTestPlanItems ids. */
 		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
 		List<String> itpiIds = new ArrayList<>(lItpiIds.size());
 		for(Long l : lItpiIds) {
 			itpiIds.add(l.toString());
 		}
-		
+
 		/* Fake Id to find no result via Lucene if no Itpi found */
 		if(itpiIds.isEmpty()) {
 			itpiIds.add(FAKE_ITPI_ID);
 		}
-		
+
 		/* Add Criteria to restrict Itpi ids */
 		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
-		
+
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
 	}
-	
+
 	@Override
 	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
 		PagingAndMultiSorting paging, Locale locale) {
@@ -171,7 +171,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession, locale);
+		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession);
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;

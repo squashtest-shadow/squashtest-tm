@@ -22,8 +22,10 @@ package org.squashtest.tm.service.campaign;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.DuplicateNameException;
+
 /**
  * Test-Suite modification services which cannot be dynamically generated.
  *
@@ -42,7 +44,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void rename(long suiteId, String newName) throws DuplicateNameException;
 
 
-	void updateExecutionStatus(Long id);
+	void updateExecutionStatus(TestSuite testSuite);
 
 	/**
 	 * <p>That method will retrieve the data and fill the testSuiteStatistics DTO.</p>

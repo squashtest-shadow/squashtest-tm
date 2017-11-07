@@ -105,11 +105,11 @@ number of columns.
 				<c:choose>
 					<c:when test="${ execution.lastExecutedOn != null }">
 						<f:message var="dateFormat" key="squashtm.dateformat" />
-						<i><f:formatDate value="${ execution.lastExecutedOn }"
-								pattern="${dateFormat}" /> </i>
+						<em><f:formatDate value="${ execution.lastExecutedOn }"
+								pattern="${dateFormat}" /> </em>
 					</c:when>
 					<c:otherwise>
-						<i><f:message key="squashtm.nodata" /> </i>
+						<em><f:message key="squashtm.nodata" /> </em>
 					</c:otherwise>
 				</c:choose>
 				</td>

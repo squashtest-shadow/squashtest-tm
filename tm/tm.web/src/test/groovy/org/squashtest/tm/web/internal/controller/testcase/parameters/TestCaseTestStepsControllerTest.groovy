@@ -101,7 +101,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		cufHelperService.newStepsHelper(_, _) >> cufhelper
 
 		when:
-		def res = controller.getStepsTableModel(10, params, Locale.FRENCH)
+		def res = controller.getStepsTableModel(10, params)
 
 		then:
 		res.sEcho == "echo"

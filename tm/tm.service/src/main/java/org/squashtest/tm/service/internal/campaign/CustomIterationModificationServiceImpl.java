@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,12 +28,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -52,12 +38,10 @@ import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
-import org.squashtest.tm.service.annotation.Id;
-import org.squashtest.tm.service.annotation.Ids;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.annotation.PreventConcurrents;
-import org.squashtest.tm.service.campaign.*;
+import org.squashtest.tm.service.annotation.*;
+import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
+import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -76,6 +60,14 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("CustomIterationModificationService")
 @Transactional
@@ -349,7 +341,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		}
 
 		for (TestSuite testSuite : item.getTestSuites()) {
-			customTestSuiteModificationService.updateExecutionStatus(testSuite.getId());
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
 		operationsAfterAddingExec(item, execution);

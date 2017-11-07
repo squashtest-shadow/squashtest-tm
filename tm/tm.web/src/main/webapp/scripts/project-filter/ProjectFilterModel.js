@@ -26,27 +26,27 @@ define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($
 	var ProjectFilterModel = Backbone.Model.extend({
 
 		defaults : {
-			projectIds :[],
+			projectIds :[]
 		},
 
 		allProjectIds : [],
 		initiallySelectedIds : [],
-		
+
 		select : function(ids) {
 			this.attributes.projectIds = _.union(this.attributes.projectIds, ids);
-			
+
 		},
 		deselect : function(ids) {
 			this.attributes.projectIds = _.difference(this.attributes.projectIds, ids);
 		},
-				
+
 		changeProjectState : function(id, checked) {
 			if(checked){
 				this.attributes.projectIds.push(id);
 			}else{
 				this.attributes.projectIds = _.without(this.attributes.projectIds, id);
 			}
-			
+
 		}
 
 	});

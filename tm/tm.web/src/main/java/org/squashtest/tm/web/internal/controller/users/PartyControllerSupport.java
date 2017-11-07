@@ -47,9 +47,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 /**
  * Superclass of team and user controllers (code factorization)
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class PartyControllerSupport {
 	protected ProjectsPermissionManagementService permissionService;
@@ -58,7 +58,7 @@ public abstract class PartyControllerSupport {
 	protected InternationalizationHelper messageSource;
 
 	/**
-	 * 
+	 *
 	 */
 	public PartyControllerSupport() {
 		super();
@@ -70,7 +70,7 @@ public abstract class PartyControllerSupport {
 	}
 
 
-	protected List<PermissionGroupModel> getPermissionGroupModels(long partyId){
+	protected List<PermissionGroupModel> getPermissionGroupModels(){
 		Locale locale = LocaleContextHolder.getLocale();
 
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
@@ -107,7 +107,7 @@ public abstract class PartyControllerSupport {
 	protected Map<String, Object> createPermissionPopupModel(long partyId) {
 
 		List<ProjectModel> projectModelList = getProjectModels(partyId);
-		List<PermissionGroupModel> permissionGroupModelList = getPermissionGroupModels(partyId);
+		List<PermissionGroupModel> permissionGroupModelList = getPermissionGroupModels();
 
 		Map<String, Object> res = new HashMap<>();
 

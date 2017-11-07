@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.spi;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
+
 /**
  * Interface for providers of BugTrackerConnector instance. A provider will create instances of connectors suitable a
  * determined kind of bug tracker. The bug tracker kind should uniquely identify the connector plugin.

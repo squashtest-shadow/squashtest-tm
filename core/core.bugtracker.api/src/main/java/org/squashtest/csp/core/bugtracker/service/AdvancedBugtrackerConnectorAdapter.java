@@ -24,20 +24,17 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.core.foundation.lang.CollectionUtils;
 
-public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerConnector {
+public class AdvancedBugtrackerConnectorAdapter extends AbstractInternalConnectorAdapter {
 
 	private AdvancedBugTrackerConnector connector;
 
@@ -50,6 +47,7 @@ public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerCon
 		this.connector = connector;
 	}
 
+	@Override
 	public AdvancedBugTrackerConnector getConnector() {
 		return connector;
 	}
@@ -58,16 +56,6 @@ public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerCon
 		this.connector = connector;
 	}
 
-	@Override
-	public void authenticate(AuthenticationCredentials credentials) {
-		connector.authenticate(credentials);
-	}
-
-	@Override
-	public void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,
-			BugTrackerRemoteException {
-		connector.checkCredentials(credentials);
-	}
 
 	@Override
 	public RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException {
@@ -84,10 +72,6 @@ public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerCon
 		return connector.createIssue(issue);
 	}
 
-	@Override
-	public BugTrackerInterfaceDescriptor getInterfaceDescriptor() {
-		return connector.getInterfaceDescriptor();
-	}
 
 	@Override
 	public RemoteIssue findIssue(String key) {
