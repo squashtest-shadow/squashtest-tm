@@ -46,8 +46,16 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			var stored = sessionStorage[config.reportUrl + "-formerState"];
 			var reportDef = config.reportDef;
 			if(reportDef !== null & reportDef !== undefined){
-				var parmeters = JSON.parse(reportDef).parameters;
-				return  JSON.parse(parmeters);
+
+				var currentNamespace = config.reportUrl.split(/[/]+/).pop();
+				var storedNamespace = JSON.parse(reportDef).pluginNamespace;
+
+				if(currentNamespace.localeCompare(storedNamespace) === 0){
+
+					var parmeters = JSON.parse(reportDef).parameters;
+					return  JSON.parse(parmeters);
+
+				}
 			}
 			if (!!stored) {
 				return JSON.parse(stored);

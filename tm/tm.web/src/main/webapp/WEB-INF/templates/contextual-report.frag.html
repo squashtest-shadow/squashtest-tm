@@ -315,15 +315,8 @@
                 th:text="#{label.Type}">perimetre</span>
               </label>
               <div id="report-type">
-                <span class="display-table-cell" style="font-weight: bold;" th:text="${report.label}"/>
+                <span class="display-table-cell" style="font-weight: bold; padding-left: 0em;" th:text="${report.label}"/>
               </div>
-            </div>
-
-            <div class="display-table-row">
-              <label for="report-desc" class="display-table-cell"> <span
-                th:text="#{label.Description }">Description</span>
-              </label>
-              <div class="display-table-cell" id="report-desc"/>
             </div>
 
             <div class="display-table-row" th:each="attribute : ${reportAttributes}">
@@ -339,8 +332,15 @@
                 <label th:case="*" th:text="${attribute.key}"/>
               </div>
               <div th:each="val : ${attribute.value}" >
-                <div class="display-table-cell" th:text="${val}"/>
+                <div class="display-table-cell" style="padding-left: 0em;" th:text="${val}"/>
               </div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="report-desc" class="display-table-cell"> <span
+                th:text="#{label.Description }">Description</span>
+              </label>
+              <div class="display-table-cell" id="report-desc"/>
             </div>
 
           </div>
