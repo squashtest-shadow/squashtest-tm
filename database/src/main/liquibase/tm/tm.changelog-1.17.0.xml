@@ -120,7 +120,7 @@
 
 
     <addColumn tableName="BUGTRACKER">
-      <column name="AUTH_POLICY" type="VARCHAR(30)" remarks="the policy that decides who needs to authenticate" />
+      <column name="AUTH_POLICY" type="VARCHAR(30)" remarks="the policy that decides who needs to authenticate" defaultValue="USER" />
     </addColumn>
 
   </changeSet>
