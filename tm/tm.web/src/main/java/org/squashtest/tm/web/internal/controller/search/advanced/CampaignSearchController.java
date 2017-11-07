@@ -138,7 +138,7 @@ public class CampaignSearchController extends GlobalSearchController{
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
