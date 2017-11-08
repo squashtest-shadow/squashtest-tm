@@ -35,21 +35,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationPolicy;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
-import org.squashtest.tm.service.thirdpartyservers.EncryptionKeyChangedException;
-import org.squashtest.tm.service.thirdpartyservers.MissingEncryptionKeyException;
+import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
+import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -57,6 +56,8 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 @Controller
 @RequestMapping("/bugtracker/{bugtrackerId}")
 public class BugTrackerModificationController {
+	private static final String BUGTRACKER_ID = "bugtrackerId";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerModificationController.class);
 
 	@Inject
@@ -68,8 +69,23 @@ public class BugTrackerModificationController {
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
 	
-	@Inject
-	private BugTrackerConnectorFactory connectorFactory;
+	
+	
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView getProjectInfos(@PathVariable long bugtrackerId, Locale locale) {
+
+		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
+		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
+		BugtrackerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
+		
+		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
+		mav.addObject("bugtracker", bugTracker);
+		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
+		mav.addObject("authConf", authBean);
+		return mav;
+	}
+
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
@@ -118,21 +134,33 @@ public class BugTrackerModificationController {
 
 		return kind;
 	}
-
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView getProjectInfos(@PathVariable long bugtrackerId, Locale locale) {
-
-		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
-		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
-		BugtrackerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
-		
-		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
-		mav.addObject("bugtracker", bugTracker);
-		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
-		mav.addObject("authConf", authBean);
-		return mav;
+	
+	
+	// **************************** credentials management ******************************
+	
+	@RequestMapping(method = RequestMethod.POST, params = {"id=bugtracker-auth-policy", VALUE})
+	@ResponseBody
+	public void changeAuthPolicy(@RequestParam(VALUE) AuthenticationPolicy policy, @PathVariable(BUGTRACKER_ID) long bugtrackerId){
+		bugtrackerModificationService.changeAuthenticationPolicy(bugtrackerId, policy);
 	}
-
+	
+	
+	@RequestMapping(value= "/credentials/validator", method = RequestMethod.POST, consumes="application/json")
+	@ResponseBody
+	public void testCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
+		/*
+		 * no exception -> no problem
+		 * exception	-> let it fly
+		 */
+		bugtrackerModificationService.testCredentials(bugtrackerId, credentials);
+	}
+	
+	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
+	@ResponseBody
+	public void storeCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId ,@RequestBody Credentials credentials){
+		bugtrackerModificationService.storeCredentials(bugtrackerId, credentials);
+	}
+	
 	
 	// ********************** more private stuffs ******************
 	
@@ -148,15 +176,13 @@ public class BugTrackerModificationController {
 	
 	
 	private BugtrackerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
-
-		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugTracker);
-		
+		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
 		BugtrackerCredentialsManagementBean bean = new BugtrackerCredentialsManagementBean();
 		
 		// defaults 
 		bean.setAuthPolicy(bugTracker.getAuthenticationPolicy());
 		bean.setSelectedProto(AuthenticationProtocol.BASIC_AUTH);
-		bean.setAvailableProtos(Arrays.asList(connector.getSupportedAuthProtocols()));
+		bean.setAvailableProtos(Arrays.asList(availableProtos));
 		
 		// now check against the credentials
 		try{

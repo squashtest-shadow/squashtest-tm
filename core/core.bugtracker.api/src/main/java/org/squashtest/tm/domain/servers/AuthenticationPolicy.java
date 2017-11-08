@@ -18,32 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.thirdpartyservers;
-
-import org.squashtest.tm.core.foundation.exception.ActionException;
+package org.squashtest.tm.domain.servers;
 
 /**
- * Exception thrown when attempting to retrieve credentials that were encrypted with a different key than the current one,
- * and this is completely undecipherable.
+ * This enum says whether Squash should let the users authenticate themselves, or use one of its stored credentials, when time is come to authenticate.
+ * In that it is different from {@link AuthenticationProtocol}, that says which protocol should be used
+ * for the said authentication.
+ *
  *
  */
-public class EncryptionKeyChangedException extends ActionException {
-
-	private static final String I18N_KEY = "storedcredentials.encryptionkeychanged";
-
-	private static final String STD_ERR_MSG= "Stored credentials : it seems the encryption key changed since the credentials were encrypted. " +
-												 "The credentials cannot be read again without that key. The solutions are either 1/ restore the key " +
-												 "if the change was unintentional or 2/ reconfigure the stored credentials.";
-
-
-	public EncryptionKeyChangedException() {
-		super(STD_ERR_MSG);
-	}
-
-	@Override
-	public String getI18nKey(){
-		return I18N_KEY;
-	}
-
-
+public enum AuthenticationPolicy {
+	/**
+	 * Indicates that the users need to authenticate themselves.
+	 *
+	 */
+	USER,
+	/**
+	 * Indicates that the application will use one of its stored credentials.
+	 *
+	 */
+	APP_LEVEL
 }

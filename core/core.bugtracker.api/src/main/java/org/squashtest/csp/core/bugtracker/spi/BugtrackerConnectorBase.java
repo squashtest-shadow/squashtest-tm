@@ -25,8 +25,8 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ConnectorUtils;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 
 
 /**

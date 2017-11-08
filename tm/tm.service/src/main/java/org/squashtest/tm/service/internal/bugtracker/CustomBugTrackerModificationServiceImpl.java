@@ -24,12 +24,17 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
  * 
@@ -39,11 +44,15 @@ import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
 @Service("CustomBugTrackerModificationService")
 @Transactional
 public class CustomBugTrackerModificationServiceImpl implements CustomBugTrackerModificationService {
+	
 	@Inject
 	private BugTrackerDao bugTrackerDao;
 	
 	@Inject
 	private StoredCredentialsManager credentialsManager;
+	
+	@Inject
+	private BugTrackerConnectorFactory connectorFactory;
 	
 	
 	@Override
@@ -84,6 +93,23 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	@Override
 	public void deleteCredentials(long serverId) {
 		credentialsManager.deleteCredentials(serverId);
+	}
+
+
+	@Override
+	public AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker) {
+		InternalBugtrackerConnector connector = connectorFactory.createConnector(bugtracker);
+		return connector.getSupportedAuthProtocols();
+	}
+
+
+	@Override
+	public void testCredentials(long bugtrackerId, Credentials credentials) {
+		BugTracker bt = bugTrackerDao.findOne(bugtrackerId);
+		InternalBugtrackerConnector connector = connectorFactory.createConnector(bt);
+		
+		connector.checkCredentials(credentials);
+		
 	}
 	
 	

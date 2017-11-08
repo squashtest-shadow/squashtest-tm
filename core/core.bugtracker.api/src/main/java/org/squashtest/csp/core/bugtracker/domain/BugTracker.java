@@ -36,8 +36,8 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 
 @Entity
 @Table(name = "BUGTRACKER")

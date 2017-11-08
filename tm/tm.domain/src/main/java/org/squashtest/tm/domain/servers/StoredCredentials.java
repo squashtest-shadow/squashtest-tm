@@ -18,10 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.thirdpartyservers;
+package org.squashtest.tm.domain.servers;
 
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.Credentials;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,7 @@ import java.util.Set;
  *</p>
  *
  * <p>
- *     The actual credentials is one of the several implementations of {@link org.squashtest.tm.domain.thirdpartyservers.Credentials}, in an encrypted form. The format is unspecified here
+ *     The actual credentials is one of the several implementations of {@link org.squashtest.tm.domain.servers.Credentials}, in an encrypted form. The format is unspecified here
  *     and mostly depend on the service that manage it. See the service layer and usages of {@link #getEncryptedCredentials()}
  *     about that.
  * </p>

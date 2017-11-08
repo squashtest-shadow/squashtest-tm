@@ -33,8 +33,8 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 
 /**
  * This interface declares how to wrap the various bugtracker connector types (simple, advanced and oslc) in a unified
@@ -94,6 +94,7 @@ public interface InternalBugtrackerConnector {
 	/**
 	 * Must set the credentials in the connector context for remote authentication challenges
 	 *
+	 * @Deprecated use {@link #authenticate(Credentials)} instead
 	 * @param credentials
 	 */
 	@Deprecated
@@ -103,7 +104,7 @@ public interface InternalBugtrackerConnector {
 	 * Must set the credentials as in {@link #authenticate(AuthenticationCredentials)} and immediately test them
 	 * against the endpoint to check their validity
 	 *
-	 * @Deprecated use {@link #authenticate(Credentials)} instead
+	 * @Deprecated use {@link #checkCredentials(Credentials)} instead
 	 * @param credentials
 	 * @throws BugTrackerNoCredentialsException for null arguments
 	 * @throws BugTrackerRemoteException for else.
@@ -116,7 +117,6 @@ public interface InternalBugtrackerConnector {
 	/**
 	 * Must return the URL where one can browse the issue.
 	 *
-	 * @Deprecated use {@link #authenticate(Credentials)} instead
 	 * @param issueId
 	 * @param bugTracker
 	 * @return

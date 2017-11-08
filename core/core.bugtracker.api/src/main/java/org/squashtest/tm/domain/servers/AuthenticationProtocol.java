@@ -18,19 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.thirdpartyservers;
-
-import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
+package org.squashtest.tm.domain.servers;
 
 /**
- * Marker interface for the different ways the application can connect to a third party server. A BugTrackerConnector must publish
- * which credentials it supports with method {@link BugtrackerConnectorBase#getSupportedAuthProtocols()}.
- *
+ * The authentication schemes (or authorizations, if used that way) that are supported by Squash. 
  */
-public interface Credentials {
+public enum AuthenticationProtocol {
+
+	BASIC_AUTH(BasicAuthenticationCredentials.class);
 	
-	/**
-	 * @return which authentication protocol the implementation of Credentials is for.
-	 */
-	AuthenticationProtocol getImplementedProtocol();
+	private Class<? extends Credentials> implementation;
+	
+	private AuthenticationProtocol(Class<? extends Credentials> refImpl){
+		this.implementation = refImpl;
+	}
+
+	public Class<? extends Credentials> referenceImplementation(){
+		return implementation;
+	}
 }

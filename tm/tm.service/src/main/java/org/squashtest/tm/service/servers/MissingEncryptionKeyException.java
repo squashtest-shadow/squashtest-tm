@@ -18,17 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.servers;
+
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * <p>
- * That package deals in a general way with other servers that Squash would interact with. Currently residing
- * in artifact 'core.bugtracker.api' but ought to belong to 'tm.domain'.
- * </p>
+ * Exception thrown if the administrator forgot to configure the secret for credentials encryption
  *
- * <p>
- * TODO : one day we will extract all the services, the BugTracker entity etc in tm.domain.
- * In waiting for this glorious day I put some classes of the package org.squashtest.tm.domain.thirdpartyservers
- * in this artifact.
- * </p>
  */
-package org.squashtest.tm.domain.thirdpartyservers;
+public class MissingEncryptionKeyException extends ActionException {
+
+	private static final String I18N_KEY = "storedcredentials.missingencryptionkey";
+
+	private static final String STD_ERR_MSG= "Stored credentials : no encryption key was set. Squash TM won't store credentials until a key is supplied. "
+											+ "Please contact your administrator and make sure that property squash.crypto.secret is configured either in the configuration file "
+											+ "or at the command line using -Dsquash.crypto.secret=*******.";
+
+
+	public MissingEncryptionKeyException() {
+		super(STD_ERR_MSG);
+	}
+
+	@Override
+	public String getI18nKey(){
+		return I18N_KEY;
+	}
+
+
+}

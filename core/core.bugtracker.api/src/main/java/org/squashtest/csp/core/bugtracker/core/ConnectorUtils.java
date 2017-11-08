@@ -21,9 +21,9 @@
 package org.squashtest.csp.core.bugtracker.core;
 
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
-import org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.Credentials;
 
 public final class ConnectorUtils {
 	private ConnectorUtils(){

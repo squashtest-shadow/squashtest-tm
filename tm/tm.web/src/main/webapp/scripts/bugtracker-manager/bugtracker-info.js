@@ -102,8 +102,12 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 		 
 		 // *************** authentication **************
 		 var authconfModel = new Backbone.Model(conf.authConf);
+		 
+		 // we don't update the data using backbone model .save() and to reflect that 
+		 // we set the url separetely from the model
 		 new bb.CredentialManagerView({
-			 model : authconfModel
+			 model : authconfModel,
+			 btUrl : conf.btUrl
 		 })
 		 
 	});

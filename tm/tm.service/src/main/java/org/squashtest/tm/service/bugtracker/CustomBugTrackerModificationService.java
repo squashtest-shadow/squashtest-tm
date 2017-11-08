@@ -23,18 +23,31 @@ package org.squashtest.tm.service.bugtracker;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
-import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 
 public interface CustomBugTrackerModificationService {
-
+	
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeName(long bugtrackerId, String newName);
 	
 	
-	//**** credential services,  that will be forwarded to StoredCredentialsManager ****
+	//**** credential services, some being forwarded to StoredCredentialsManager ****
 
+	/**
+	 * Returns the authentication protocols supported by the underlying connector
+	 * 
+	 * @param bugtracker
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	AuthenticationProtocol[] getSupportedProtocols(BugTracker bugtracker);
+	
+	
 	/**
 	 * Says whether the StoredCredentials service is properly configured
 	 * 
@@ -63,6 +76,19 @@ public interface CustomBugTrackerModificationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	Credentials findCredentials(long serverId);
 
+
+	/**
+	 * Tests whether the given credentials are valid for the given bugtracker.
+	 * The method exits normally if the credentials are valid.   
+	 * 
+	 * @param bugtracker
+	 * @param credentials
+	 * @throws BugTrackerRemoteException in case of a problem.
+	 * @return
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void testCredentials(long bugtrackerId, Credentials credentials);
+	
 	
 	/**
 	 * 

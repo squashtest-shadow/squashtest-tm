@@ -26,8 +26,8 @@ import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeExce
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.csp.core.bugtracker.spi.BugtrackerConnectorBase;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 
 abstract class AbstractInternalConnectorAdapter implements InternalBugtrackerConnector{
 

@@ -22,7 +22,7 @@ package org.squashtest.csp.core.bugtracker.core;
 
 /**
  *
- * @author Gregory Fouquet
+ * @author bsiri
  *
  */
 public class UnsupportedAuthenticationModeException extends BugTrackerManagerException {

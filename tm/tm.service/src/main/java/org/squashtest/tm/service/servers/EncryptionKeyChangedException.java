@@ -18,24 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.thirdpartyservers;
+package org.squashtest.tm.service.servers;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
 /**
- * Exception thrown if the administrator forgot to configure the secret for credentials encryption
+ * Exception thrown when attempting to retrieve credentials that were encrypted with a different key than the current one,
+ * and this is completely undecipherable.
  *
  */
-public class MissingEncryptionKeyException extends ActionException {
+public class EncryptionKeyChangedException extends ActionException {
 
-	private static final String I18N_KEY = "storedcredentials.missingencryptionkey";
+	private static final String I18N_KEY = "storedcredentials.encryptionkeychanged";
 
-	private static final String STD_ERR_MSG= "Stored credentials : no encryption key was set. Squash TM won't store credentials until a key is supplied. "
-											+ "Please contact your administrator and make sure that property squash.crypto.secret is configured either in the configuration file "
-											+ "or at the command line using -Dsquash.crypto.secret=*******.";
+	private static final String STD_ERR_MSG= "Stored credentials : it seems the encryption key changed since the credentials were encrypted. " +
+												 "The credentials cannot be read again without that key. The solutions are either 1/ restore the key " +
+												 "if the change was unintentional or 2/ reconfigure the stored credentials.";
 
 
-	public MissingEncryptionKeyException() {
+	public EncryptionKeyChangedException() {
 		super(STD_ERR_MSG);
 	}
 

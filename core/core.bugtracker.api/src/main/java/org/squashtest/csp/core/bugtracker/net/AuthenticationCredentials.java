@@ -23,7 +23,7 @@ package org.squashtest.csp.core.bugtracker.net;
 import java.io.Serializable;
 
 /**
- * Deprecated. Use {@link org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials} instead.
+ * Deprecated. Use {@link org.squashtest.tm.domain.servers.BasicAuthenticationCredentials} instead.
  *
  */
 @SuppressWarnings("serial")

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.thirdpartyservers;
+package org.squashtest.tm.service.internal.servers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,13 +31,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.thirdpartyservers.AuthenticationProtocol;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
-import org.squashtest.tm.domain.thirdpartyservers.StoredCredentials;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.StoredCredentials;
 import org.squashtest.tm.service.security.Authorizations;
-import org.squashtest.tm.service.thirdpartyservers.EncryptionKeyChangedException;
-import org.squashtest.tm.service.thirdpartyservers.MissingEncryptionKeyException;
-import org.squashtest.tm.service.thirdpartyservers.StoredCredentialsManager;
+import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
+import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;

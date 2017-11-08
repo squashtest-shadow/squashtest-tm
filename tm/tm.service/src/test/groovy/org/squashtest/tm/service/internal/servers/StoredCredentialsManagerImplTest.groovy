@@ -18,11 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.thirdpartyservers
+package org.squashtest.tm.service.internal.servers
 
-import org.squashtest.tm.domain.thirdpartyservers.Credentials
-import org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials
-import org.squashtest.tm.service.thirdpartyservers.EncryptionKeyChangedException
+import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.service.servers.EncryptionKeyChangedException
 import spock.lang.Specification
 
 class StoredCredentialsManagerImplTest extends Specification{
@@ -46,7 +46,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 			String res = manager.objectMapper.writeValueAsString(creds)
 
 		then :
-			res == '{"@class":"org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
+			res == '{"@class":"org.squashtest.tm.domain.servers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
 
 	}
 
@@ -54,7 +54,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "should deserialize credentials"(){
 
 		given :
-			def str = '{"@class":"org.squashtest.tm.domain.thirdpartyservers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
+			def str = '{"@class":"org.squashtest.tm.domain.servers.BasicAuthenticationCredentials","username":"bob","password":"you\'ll never find it"}'
 
 		when :
 			def res = manager.objectMapper.readValue(str, Credentials.class)

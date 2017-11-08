@@ -18,24 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.thirdpartyservers;
 
 /**
- * This enum says whether Squash should let the users authenticate themselves, or use one of its stored credentials, when time is come to authenticate.
- * In that it is different from {@link AuthenticationProtocol}, that says which protocol should be used
- * for the said authentication.
+ * <p>
+ * That package deals in a general way with other servers that Squash would interact with. Currently residing
+ * in artifact 'core.bugtracker.api' but ought to belong to 'tm.domain'.
+ * </p>
  *
- *
+ * <p>
+ * TODO : one day we will extract all the services, the BugTracker entity etc in tm.domain.
+ * In waiting for this glorious day I put some classes of the package org.squashtest.tm.domain.thirdpartyservers
+ * in this artifact.
+ * </p>
  */
-public enum AuthenticationPolicy {
-	/**
-	 * Indicates that the users need to authenticate themselves.
-	 *
-	 */
-	USER,
-	/**
-	 * Indicates that the application will use one of its stored credentials.
-	 *
-	 */
-	APPL_LEVEL
-}
+package org.squashtest.tm.domain.servers;

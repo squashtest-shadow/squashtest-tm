@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.thirdpartyservers.Credentials;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.web.internal.model.json.*;

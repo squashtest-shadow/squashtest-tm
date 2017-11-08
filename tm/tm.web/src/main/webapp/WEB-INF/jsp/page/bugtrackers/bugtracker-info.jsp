@@ -157,56 +157,53 @@
 						
 						<c:set var="credSectionStyle" value="${(authConf.authPolicy == 'USER') ? 'disabled' : ''}"/>
 						<c:set var="policyUsr" value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>						
-						<c:set var="policyApp" value="${(authConf.authPolicy == 'APPL_LEVEL') ? 'checked=\"checked\"' : ''}"/>
+						<c:set var="policyApp" value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
 												
 						<div id="bugtracker-auth" class="display-table-row">	
-							<label class="display-table-cell">Gestion de l'authentification</label>
+							<label class="display-table-cell"><f:message key="bugtracker.admin.policy.title"/></label>
 							
 							
 							<div class="display-table-cell">
 								<div>
-									<input id="auth-policy-user" 	type="radio" name="bugtracker-auth-policy" value="user" ${policyUsr}>
-									<label for="auth-policy-user" class="vertical-align:middle;">Les utilisateurs s'authentifient eux-même</label>								
+									<input id="bt-auth-policy-user" 	type="radio" name="bt-auth-policy" value="user" ${policyUsr}>
+									<label for="bt-auth-policy-user" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.users"/></label>								
 								</div>
 								
 								<div>
-									<input id="auth-policy-application" type="radio" name="bugtracker-auth-policy" value="application" ${policyApp}>
-									<label for="auth-policy-application" class="vertical-align:middle;">Utiliser les permissions suivantes :</label>
+									<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp}>
+									<label for="bt-auth-policy-application" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.app"/></label>
 								</div>
 								
 								<div class="bt-auth-credentials-section ${credSectionStyle}">
-									<label for="bugtracker-auth-proto">protocole d'authentification</label>
+									<label for="bugtracker-auth-proto"><f:message key="bugtracker.admin.protocol.label"/></label>
 									
-									<select id="bugtracker-auth-proto" >
+									<select id="bt-auth-proto" >
 										<c:forEach items="${authConf.availableProtos}" var="protocol">
 										<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
-											${protocol}
+											<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
 										</option>
 										</c:forEach>
 									</select>
 									
-									<div class="bt-auth-variable-template">
-									<%--
-										<div class="display-table">
-											<div class="display-table-row" style="line-height:3.5">
-												<label class="display-table-cell">login</label> 
-												<input type="text" class="display-table-cell"/> 
-											</div>
-											<div class="display-table-row" style="line-height:3.5">
-												<label class="display-table-cell">mot de passe</label> 
-												<input class="display-table-cell" type="password" /> 
-											</div>
-										</div>
-									 --%> 								
+									<div id="bt-auth-cred-template">
+									<%-- populated by javascript --%>						
 									</div>
 									
 									
-								<div class="bt-auth-buttonpane">
-									<input type="button" class="sq-btn" id="bugtracker-auth-save" value="Enregistrer"/>
+									<f:message var="testLabel" key="label.test"/>
+									<f:message var="saveLabel" key="label.save"/>
+									<div class="bt-auth-buttonpane">
+										<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
+										<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>
+									</div>
+									
+									<div id="bt-auth-messagezone" class="${(empty authConf.failureMessage) ? 'not-displayed' : ''}">
+										<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
+									</div>
+							
 								</div>
-							
-							</div>
-							
+
+						   </div>
 						</div>
 					</div>
 				</jsp:attribute>
@@ -218,6 +215,8 @@
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
 </layout:info-page-layout>
+
+
 
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
