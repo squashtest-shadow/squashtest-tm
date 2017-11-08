@@ -69,23 +69,23 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			+ " where rRoot.LIBRARY_ID = :libraryId" + " )";
 
 	private static final String SQL_SORT_REQUIREMENT =
-		"select req.rln_id, req.CURRENT_VERSION_ID, rv.REFERENCE,"
-			+ " concat(ifnull(right(concat('000', f.content_order),4),''),"
-			+ " ifnull(right(concat('000', e.content_order),4),''),"
-			+ " ifnull(right(concat('000', d.content_order),4),''),"
-			+ " ifnull(right(concat('000', c.content_order),4),''),"
-			+ " ifnull(right(concat('000', b.content_order),4),''),"
-			+ " ifnull(right(concat('000', a.content_order),4),'')) ordre"
-			+ " from REQUIREMENT req join REQUIREMENT_VERSION rv on req.CURRENT_VERSION_ID=rv.RES_ID"
-			+ " left join rln_relationship a on req.rln_id=a.descendant_id"
-			+ " left join rln_relationship b on a.ancestor_id=b.descendant_id"
-			+ " left join rln_relationship c on b.ancestor_id=c.descendant_id"
-			+ " left join rln_relationship d on c.ancestor_id=d.descendant_id"
-			+ " left join rln_relationship e on d.ancestor_id=e.descendant_id"
-			+ " left join rln_relationship f on e.ancestor_id=f.descendant_id,"
+		"SELECT req.rln_id, req.CURRENT_VERSION_ID, rv.REFERENCE,"
+			+ " concat(COALESCE (RIGHT (concat('000', f.content_order),4),''),"
+			+ " COALESCE (RIGHT (concat('000', e.content_order),4),''),"
+			+ " COALESCE (RIGHT (concat('000', d.content_order),4),''),"
+			+ " COALESCE (RIGHT (concat('000', c.content_order),4),''),"
+			+ " COALESCE (RIGHT (concat('000', b.content_order),4),''),"
+			+ " COALESCE (RIGHT (concat('000', a.content_order),4),'')) ordre"
+			+ " FROM REQUIREMENT req JOIN REQUIREMENT_VERSION rv ON req.CURRENT_VERSION_ID=rv.RES_ID"
+			+ " LEFT JOIN RLN_RELATIONSHIP a ON req.rln_id=a.descendant_id"
+			+ " LEFT JOIN RLN_RELATIONSHIP b ON a.ancestor_id=b.descendant_id"
+			+ " LEFT JOIN RLN_RELATIONSHIP c ON b.ancestor_id=c.descendant_id"
+			+ " LEFT JOIN RLN_RELATIONSHIP d ON c.ancestor_id=d.descendant_id"
+			+ " LEFT JOIN RLN_RELATIONSHIP e ON d.ancestor_id=e.descendant_id"
+			+ " LEFT JOIN RLN_RELATIONSHIP f ON e.ancestor_id=f.descendant_id,"
 			+ " REQUIREMENT requirement"
-			+ " where req.RLN_ID = requirement.RLN_ID and requirement.RLN_ID in (:reqIds)"
-			+ " order by 4;";
+			+ " WHERE req.RLN_ID = requirement.RLN_ID AND requirement.RLN_ID in (:reqIds)"
+			+ " ORDER BY 4;";
 
 	private static final class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
 		private Collection<Long> requirementIds;
