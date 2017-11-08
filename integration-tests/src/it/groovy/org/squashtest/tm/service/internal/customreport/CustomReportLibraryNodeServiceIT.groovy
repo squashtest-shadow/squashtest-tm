@@ -91,11 +91,11 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-20L]				||	[-20L,-40L]
 		[-6L]				||	[-6L,-11L,-12L,-13L,-14L,-15L]
 		[-7L]				||	[-7L]
-		[-2L]				||	[-2L,-3L,-4L,-5L]
-		[-10L]				||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
-		[-10L,-20L,-30L]	||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
-		[-10L,-7L]			||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
-		[-2L,-6L]			||	[-6L,-11L,-12L,-13L,-14L,-15L,-2L,-3L,-4L,-5L]
+		[-2L]				||	[-2L,-3L,-4L,-5L,-16L]
+		[-10L]				||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-16L]
+		[-10L,-20L,-30L]	||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-16L]
+		[-10L,-7L]			||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-16L]
+		[-2L,-6L]			||	[-6L,-11L,-12L,-13L,-14L,-15L,-2L,-3L,-4L,-5L,-16L]
 	}
 
 	def "should delete various nodes"() {
@@ -116,13 +116,13 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		}
 
 		where:
-		nodesIds 		|| 	 		siblingIds											|	deletedNodesIds
-		[-40L]			||	[-10L,-20L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]|	[-40L]
-		[-20L]			||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
-		[-20L,-40L]		||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
-		[-20L,-40L,-12L]||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L]					|	[-20L,-40L,-12L,-13L,-14L]
-		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]			|	[-20L,-30L,-40L]
-		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L]|	[-11L,-15L]
+		nodesIds 		|| 	 		siblingIds													|	deletedNodesIds
+		[-40L]			||	[-10L,-20L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]	|	[-40L]
+		[-20L]			||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]		|	[-20L,-40L]
+		[-20L,-40L]		||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]		|	[-20L,-40L]
+		[-20L,-40L,-12L]||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-16L]						|	[-20L,-40L,-12L,-13L,-14L]
+		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L,-16L]				|	[-20L,-30L,-40L]
+		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L,-16L]	|	[-11L,-15L]
 	}
 
 	def "should rename node and entity"() {

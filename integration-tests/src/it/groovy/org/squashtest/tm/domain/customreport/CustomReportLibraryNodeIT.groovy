@@ -52,96 +52,97 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		CustomReportLibraryNode crln = findEntity(CustomReportLibraryNode.class, nodeID)
 		TreeLibraryNode parent = crln.getParent();
 		def parentId = parent.getId();
-		
+
 		then :
 		parentId == expectedParentID
-		
+
 		where:
-		
+
 		nodeID		 	|| 	 expectedParentID
 		-2L				||	 -1L
 		-3L				||	 -2L
 		-4L				||	 -2L
 		-5L				||	 -2L
+		-6L				||	 -2L
 	}
 
 	def "should find null parent for library nodes"(){
 		given :
-			
+
 		when :
 		CustomReportLibraryNode crln = findEntity(CustomReportLibraryNode.class, -1L)
 		CustomReportLibraryNode parent = crln.getParent();
-		
+
 		then :
 		parent==null;
-		
+
 	}
-	
+
 	def "should find childrens"(){
 		given :
 
 		when :
 		CustomReportLibraryNode crln = findEntity(CustomReportLibraryNode.class, nodeID)
 		def childrens = crln.getChildren();
-		
+
 		then :
 		childrens.size() == expectedSize
-		
+
 		def ids = childrens.collect{
 			it.getId()
 		}
-		
+
 		ids as Set == expectedChildrensIDs as Set
-		
+
 		where:
-		
+
 		nodeID		 	|| 	 expectedChildrensIDs 	|	expectedSize
 		-1L				||	 [-2L,-30L]				|	2
-		-2L				||	 [-3L,-4L,-5L]			|	3
-		
+		-2L				||	 [-3L,-4L,-5L,-6L]			|	4
+
 	}
-	
+
 	def "should add childrens"(){
 		given :
 		CustomReportLibrary crl = findEntity(CustomReportLibrary.class, -1L)
-		
+
 		when :
 		CustomReportLibraryNode parentNode = findEntity(CustomReportLibraryNode.class, nodeID)
 		def childrens = parentNode.getChildren();
 		CustomReportLibraryNode newChild = new CustomReportLibraryNode()
-		newChild.id = -6L
+		newChild.id = -7L
 		newChild.library = crl
 		newChild.parent = parentNode
 		childrens.add(newChild)
-		
+
 		then :
 		childrens.size() == expectedSize
-		
+
 		where:
-		
+
 		nodeID		 	|| 	 	expectedSize
 		-1L				||	 	3
-		-2L				||	 	4
+		-2L				||	 	5
 		-3L				||		1
-		
+
 	}
-	
+
 	def "should find bound entity"(){
 		given :
-		
-		
+
+
 		when :
 		CustomReportLibraryNode node = findEntity(CustomReportLibraryNode.class, nodeID)
 		TreeEntity nodeEntity = node.getEntity();
-		
+
 		then :
 		nodeEntity != null
 		//checking polymorphic mapping with @any in CustomReportLibraryNode
 		nodeEntity.getId()==expectedEntityID
 		nodeEntity.getName()==expectedEntityName
-		
+
 		where:
-		
+
 		nodeID		 	|| 	 	expectedEntityID	|	expectedEntityName
 		-1L				||	 			-1L			|		"project-1"
 		-2L				||	 			-1L			|		"Folder1"
@@ -149,18 +150,18 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		-4L				||				-2L			|		"Chart2"
 		-5L				||				-3L			|		"Chart3"
 	}
-	
+
 	def "should find bound charts in dashboard"(){
 		given :
 		CustomReportDashboard crd = findEntity(CustomReportDashboard.class, -1L)
-		
+
 		when :
 		def chartBindings = crd.getChartBindings()
-				
+
 		then :
 		chartBindings.size()==3
-		
+
 	}
-	
-	
+
+
 }

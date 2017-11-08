@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.customreport.*
+import org.squashtest.tm.domain.report.ReportDefinition
 import org.squashtest.tm.domain.tree.TreeLibraryNode
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
@@ -88,7 +89,7 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 
 		//checking childs of baseFolder, wich should have been copied with their parent
 		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
-		copiedChildrens.size().equals(3)
+		copiedChildrens.size().equals(4)
 
 
 	}
@@ -197,6 +198,33 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 		copiedFilter.getValues().containsAll(originalFilter.getValues())
 	}
 
+	def "should copy a folder and check report def child"(){
+		when:
+		def result = service.copyNodes([-10L], -2L);
+		em.flush()
+		em.clear()
+
+		then:
+		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)
+		List<CustomReportLibraryNode> childrens = targetFolderNode.getChildren()
+
+		//verify content order and ids
+		CustomReportLibraryNode baseFolderNode = childrens.get(1)
+		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
+
+		//checking chart copy
+		ReportDefinition originalReport = findEntity(ReportDefinition.class,-1L)
+		CustomReportLibraryNode childReportNode = copiedChildrens.get(3)
+		childReportNode.getId() != -103L
+		childReportNode.getName().equals("report1")
+		childReportNode.getParent().equals(baseFolderNode)
+		ReportDefinition childReport = childReportNode.getEntity()
+		childReport.getId() != -1L
+		childReport.getPluginNamespace().equals("my plugin")
+		childReport.getCustomReportLibrary().getId().equals(-2L)
+
+	}
+
 	def "should copy a folder and sub tree recursively"(){
 		when:
 		def result = service.copyNodes([-11L], -2L);
@@ -262,7 +290,7 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 
 		//checking children of baseFolder, witch should have been copied with their parent
 		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
-		copiedChildrens.size().equals(3)
+		copiedChildrens.size().equals(4)
 	}
 
 	def "should move a folder and check folder child"(){
@@ -281,7 +309,7 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 
 		//checking children of baseFolder, witch should have been copied with their parent
 		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
-		copiedChildrens.size().equals(3)
+		copiedChildrens.size().equals(4)
 
 		CustomReportLibraryNode childFolderNode = copiedChildrens.get(0)
 		childFolderNode.getId() == -100L
