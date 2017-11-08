@@ -151,6 +151,8 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 					});
 			};
 
+
+
 			/*
 			 * also handle errors when the table encounter them
 			 * although the panel itself did load successfully
@@ -174,7 +176,7 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 					if (ui.newPanel.is(btDiv)) {
 							loadFn();
 							tab.off('tabsactivate', loadFn);
-							btContentDiv.show();
+
 					}
 				});
 

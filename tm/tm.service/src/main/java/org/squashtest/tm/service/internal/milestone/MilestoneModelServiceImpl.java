@@ -71,7 +71,7 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 	}
 
 	protected Map<Long, JsonMilestone> findJsonMilestones(List<Long> usedMilestonesIds) {
-		return DSL.select(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
+		return DSL.selectDistinct(MILESTONE.MILESTONE_ID, MILESTONE.LABEL, MILESTONE.M_RANGE, MILESTONE.STATUS, MILESTONE.END_DATE
 			, CORE_USER.LOGIN)
 			.from(MILESTONE)
 			.join(CORE_USER).on(MILESTONE.USER_ID.eq(CORE_USER.PARTY_ID))
@@ -98,7 +98,7 @@ public class MilestoneModelServiceImpl implements MilestoneModelService {
 	}
 
 	private Map<Long, List<JsonMilestone>> doFindMilestoneByProject(List<Long> readableProjectIds, Map<Long, JsonMilestone> milestoneMap) {
-		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.select(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
+		Map<Long, List<JsonMilestone>> milestoneByProjectId = DSL.selectDistinct(MILESTONE_BINDING.PROJECT_ID, MILESTONE_BINDING.MILESTONE_ID)
 			.from(MILESTONE_BINDING)
 			.where(MILESTONE_BINDING.PROJECT_ID.in(readableProjectIds))
 			.fetch()

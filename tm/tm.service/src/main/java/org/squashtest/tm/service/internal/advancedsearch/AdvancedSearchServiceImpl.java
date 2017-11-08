@@ -130,15 +130,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	public List<JsonMilestone> findAllVisibleMilestonesToCurrentUser() {
 
-		List<JsonMilestone> collection = new ArrayList<>();
+		List<JsonMilestone> list = new ArrayList<>();
 		milestoneModelService.findMilestoneByProject(findAllReadablesId()).values().stream().forEach(r-> {
-			ListIterator<JsonMilestone> iterator = r.listIterator();
-			while (iterator.hasNext()) {
-				collection.add(iterator.next());
+			for(JsonMilestone milestone : r) {
+				if (!list.contains(milestone)) {
+					list.add(milestone);
+				}
 			}
-
 		});
-				return collection;
+				return list;
 	}
 
 	private String padRawValue(Integer rawValue) {
