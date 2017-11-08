@@ -58,9 +58,6 @@ public class RemoteSynchronisation {
 	@Size(min = 0, max = 1000)
 	private String selectValue;
 
-	@Column(name = "DELETE_OUT_OF_SCOPE")
-	private boolean deleteOutOfScope;
-
 	@Column(name = "LAST_SUCCESSFUL_SYNC_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastSuccessfulSyncDate;
@@ -116,14 +113,6 @@ public class RemoteSynchronisation {
 
 	public void setSelectValue(String selectValue) {
 		this.selectValue = selectValue;
-	}
-
-	public boolean isDeleteOutOfScope() {
-		return deleteOutOfScope;
-	}
-
-	public void setDeleteOutOfScope(boolean deleteOutOfScope) {
-		this.deleteOutOfScope = deleteOutOfScope;
 	}
 
 	public Date getLastSuccessfulSyncDate() {

@@ -90,11 +90,6 @@
 
       <column name="REMOTE_SELECT_VALUE" type="VARCHAR(1000)"/>
 
-      <column name="DELETE_OUT_OF_SCOPE" type="BOOLEAN" defaultValueBoolean="false"
-              remarks="If true Squash TM will try to delete object out of scope.">
-        <constraints nullable="false"/>
-      </column>
-
       <column name="LAST_SUCCESSFUL_SYNC_DATE" type="DATETIME"/>
 
       <column name="LAST_SYNC_DATE" type="DATETIME"/>
@@ -157,6 +152,10 @@
       <column name="REMOTE_PARENT_ID" type="VARCHAR(30)"/>
 
     </addColumn>
+
+    <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="requirement_sync_extender_remote_parent_id_idx">
+      <column name="REMOTE_PARENT_ID" />
+    </createIndex>
 
   </changeSet>
 
