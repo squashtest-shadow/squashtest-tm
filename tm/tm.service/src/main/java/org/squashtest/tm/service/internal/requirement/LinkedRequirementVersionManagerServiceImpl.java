@@ -304,19 +304,22 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, reqLinkTypesList.size(), reqLinkTypesList);
 	}
 
-	private void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
+	@Override
+	public void checkIfLinkAlreadyExists(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (reqVersionLinkDao.linkAlreadyExists(reqVersion.getId(), relatedReqVersion.getId())) {
 			throw new AlreadyLinkedRequirementVersionException();
 		}
 	};
 
-	private void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
+	@Override
+	public void checkIfSameRequirement(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 			if (reqVersion.getRequirement().getId() == relatedReqVersion.getRequirement().getId()) {
 				throw new SameRequirementLinkedRequirementVersionException();
 			}
 		};
 
-	private void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
+	@Override
+	public void checkIfVersionsAreLinkable(RequirementVersion reqVersion, RequirementVersion relatedReqVersion) {
 		if (!reqVersion.isLinkable() || !relatedReqVersion.isLinkable()) {
 			throw new UnlinkableLinkedRequirementVersionException();
 		}
