@@ -276,17 +276,18 @@ define(["jquery", "backbone", "./TestStepInfoModel",
 					url: url,
 					type: 'delete',
 					dataType: 'json'
+				}).done(function () {
+					if (editTCS.previousId === -1 && editTCS.nextId === -1) {
+						$("#close").click();
+					} else if (editTCS.previousId === -1) {
+						$("#next-test-step-button").click();
+					} else {
+						$("#previous-test-step-button").click();
+					}
+					dialog.formDialog('close');
 				});
-				if (editTCS.previousId === -1 && editTCS.nextId === -1) {
-					$("#close").click();
-				} else if (editTCS.previousId === -1) {
-					$("#next-test-step-button").click();
-				} else {
-					$("#previous-test-step-button").click();
-				}
-				$(this).formDialog('close');
 			});
-		},
+		}
 
 	});
 	return TestStepModificationView;
