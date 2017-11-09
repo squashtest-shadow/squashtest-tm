@@ -492,7 +492,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						var srclabel = translator.get('label.source');
 						var url = data['event-meta'];
 
-						var link='<a href="'+url+'">'+srclabel+'</a>';
+						// 7014 - link must be opened in a new tab
+						var link='<a href="'+url+'" target="_blank">'+srclabel+'</a>';
 
 						var msgTemplate = msgcell.html();
 						var newmsg = msgTemplate.replace('{url}', link);

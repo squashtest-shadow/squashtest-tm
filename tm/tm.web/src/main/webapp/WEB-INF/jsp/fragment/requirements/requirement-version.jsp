@@ -239,7 +239,7 @@ publish('reload.requirement.toolbar');
                 <c:if test="${not empty requirementURL}">
                 <div class="display-table-row">
                   <label for="requirement-sync-source"><f:message key="label.Url" /></label>
-                  <div class="display-table-cell" id="requirement-sync-source"><a href="<c:url value='${ requirementURL }' />">${requirementURL}</a></div>
+                  <div class="display-table-cell" id="requirement-sync-source"><a href="<c:url value='${ requirementURL }' />" target="_blank">${requirementURL}</a></div>
                 </div>
                 </c:if>
 
