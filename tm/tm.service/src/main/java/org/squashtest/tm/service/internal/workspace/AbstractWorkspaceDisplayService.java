@@ -232,6 +232,10 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		MultiMap expansionCandidates = new MultiValueMap();
 		Long libraryId;
 
+		if (!NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
+			nodeLinkedToMilestone = findLNByMilestoneId(activeMilestoneId);
+		}
+
 		switch (entityClass) {
 			case "library":
 				expansionCandidates.put(getClassName(), entityId);
