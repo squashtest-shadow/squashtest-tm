@@ -119,7 +119,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ExecutionModificationService executionModificationService;
 
 	@Inject
-	@Inject
 	private MilestoneMembershipFinder milestoneService;
 
 	@Inject
@@ -129,6 +128,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private Provider<TreeNodeCopier> treeNodeCopierFactory;
 
+	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
