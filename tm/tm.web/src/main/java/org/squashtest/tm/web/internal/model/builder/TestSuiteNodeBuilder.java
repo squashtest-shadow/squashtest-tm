@@ -86,7 +86,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		try {
 			description = HTMLCleanupUtils.htmlToText(model.getFirstPlannedTestCase().getDescription());
 			if (description.length() > 30) {
-				description = description.substring(0, 30);
+				description = description.substring(0, 30) + "...";
 			}
 		} catch (Exception e) {
 			description = "";

@@ -30,6 +30,7 @@ import org.jooq.TableField;
 import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.tables.*;
@@ -43,6 +44,7 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateIteratio
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
+import javax.xml.transform.Source;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -226,7 +228,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		//build tooltip
 		String[] args = {getMessage("execution.execution-status." + executionStatus)};
 		String tooltip = getMessage("label.tree.testSuite.tooltip", args);
-		attr.put("title", tooltip + "\n" + removeHtml(description));
+		attr.put("title", tooltip + "\n" + removeHtmlForDescription(description));
 		Integer milestonesNumber = getMilestoneNumber(milestone);
 		return buildNode(name, State.leaf, attr, currentUser, milestonesNumber, isMilestoneModifiable);
 
@@ -343,7 +345,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	private Map<Long, String> getTestSuiteDescriptionList() {
-		Field<String> description = org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30), "");
+		Field<String> description = org.jooq.impl.DSL.coalesce(TCLN.DESCRIPTION, "");
 		return DSL.select(TS.ID, description)
 			.from(TS)
 			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
@@ -360,11 +362,14 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.as("IS_MILESTONE_MODIFIABLE");
 	}
 
-	private String removeHtml(String html) {
+	private String removeHtmlForDescription(String html) {
 		if (StringUtils.isBlank(html)) {
 			return "";
 		}
-		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+		String description = "<html>" + html + "</html>";
+		description = description.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+		description = HtmlUtils.htmlUnescape(description);
+		return (description.length() > 30) ? description.substring(0, 30) + "..." : description;
 	}
 
 	private Integer getMilestoneNumber(Long milestone) {
