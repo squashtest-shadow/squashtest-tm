@@ -97,7 +97,7 @@ define(['module',
 				var openerSize = Object.keys(window.opener).length;
 	      if (openerSize > 0 && window.opener.squashtm.execution){
 					window.opener.squashtm.execution.refresh();
-					if (window.opener.config.identity.restype === "test-suites") {
+					if (!!window.opener.config && window.opener.config.identity.restype === "test-suites") {
 						window.opener.squashtm.execution.refreshTestSuiteInfo();
 					}
 				}
