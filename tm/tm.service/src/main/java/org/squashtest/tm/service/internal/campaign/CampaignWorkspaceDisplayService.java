@@ -103,10 +103,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.otherwise("false")
 					.as("HAS_CONTENT"),
 				MC.MILESTONE_ID,
-				org.jooq.impl.DSL.decode()
-					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
-					.otherwise("false")
-					.as("IS_MILESTONE_MODIFIABLE")
+				decodeMilestone()
 			)
 			.from(CLN)
 			.leftJoin(CF).on(CLN.CLN_ID.eq(CF.CLN_ID))
@@ -134,12 +131,13 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		MultiMap expansionCandidates = new MultiValueMap();
 		expansionCandidates.put(entityClass, entityId);
 		Long libraryId;
+		Map<Long, String> testSuiteDescriptions = getTestSuiteDescriptionList();
 
 		MultiMap entityFatherChildrenMultimap = getFatherChildrenLibraryNode(entityClass, expansionCandidates);
 		childrenIds.remove(entityId);
 
 		Map<Long, JsTreeNode> libraryChildrenMap =
-			(entityClass.equals("Campaign") ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser));
+			(entityClass.equals("Campaign") ? getCampaignChildren(entityFatherChildrenMultimap, currentUser) : getIterationChildren(entityFatherChildrenMultimap, currentUser, testSuiteDescriptions));
 
 		libraryId = entityClass.equals("Campaign") ? hibernateCampaignDao.findById(entityId).getLibrary().getId() : hibernateIterationDao.findById(entityId).getCampaignLibrary().getId();
 
@@ -242,7 +240,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		iterationMap = getCampaignChildren(campaignFatherChildrenMultimap, currentUser);
 		//second test suites, get father-children relation, fetch them and add them  to  the iterations
 		iterationFatherChildrenMultiMap = getFatherChildrenLibraryNode("Iteration", expansionCandidates);
-		testSuiteMap = getIterationChildren(iterationFatherChildrenMultiMap, currentUser);
+		Map<Long, String> testSuiteDescriptions = getTestSuiteDescriptionList();
+		testSuiteMap = getIterationChildren(iterationFatherChildrenMultiMap, currentUser, testSuiteDescriptions);
 
 	}
 
@@ -297,10 +296,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.otherwise("true")
 					.as("HAS_CONTENT"),
 				MC.MILESTONE_ID,
-				org.jooq.impl.DSL.decode()
-					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
-					.otherwise("false")
-					.as("IS_MILESTONE_MODIFIABLE")
+				decodeMilestone()
 			)
 			.from(IT)
 			.leftJoin(CI).on(IT.ITERATION_ID.eq(CI.ITERATION_ID))
@@ -316,33 +312,52 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
-	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity, UserDto currentUser) {
+	private Map<Long, JsTreeNode> getIterationChildren(MultiMap fatherChildrenEntity, UserDto currentUser, Map<Long, String> testSuiteDescriptions) {
 		return DSL
 			.select(
 				TS.ID,
 				TS.NAME,
 				TS.EXECUTION_STATUS,
-				org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30), "").as("DESCRIPTION"),
 				MC.MILESTONE_ID,
-				org.jooq.impl.DSL.decode()
-					.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
-					.otherwise("false")
-					.as("IS_MILESTONE_MODIFIABLE")
+				decodeMilestone()
 			)
 			.from(TS)
-			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
-			.leftJoin(ITPI).on(TSTPI.TPI_ID.eq(ITPI.ITEM_TEST_PLAN_ID))
-			.leftJoin(TCLN).on(ITPI.TCLN_ID.eq(TCLN.TCLN_ID))
 			.leftJoin(ITS).on(TS.ID.eq(ITS.TEST_SUITE_ID))
 			.leftJoin(CI).on(ITS.ITERATION_ID.eq(CI.ITERATION_ID))
 			.leftJoin(MC).on(CI.CAMPAIGN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TS.ID.in(fatherChildrenEntity.values()))
-			.groupBy(TS.ID, TCLN.DESCRIPTION, MC.MILESTONE_ID, M.STATUS)
+			.groupBy(TS.ID, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
-			.map(r -> buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), (String) r.get("DESCRIPTION"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE")))
+			.map(r -> {
+				String description = getTSDescription(testSuiteDescriptions, r.get(TS.ID));
+				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), description, currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE"));
+			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
+	private String getTSDescription(Map<Long, String> testSuiteDescriptions, Long id) {
+		String description = testSuiteDescriptions.get(id);
+		return (description != null) ? description : "";
+	}
+
+	private Map<Long, String> getTestSuiteDescriptionList() {
+		Field<String> description = org.jooq.impl.DSL.coalesce(org.jooq.impl.DSL.left(TCLN.DESCRIPTION, 30), "");
+		return DSL.select(TS.ID, description)
+			.from(TS)
+			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
+			.leftJoin(ITPI).on(TSTPI.TPI_ID.eq(ITPI.ITEM_TEST_PLAN_ID))
+			.leftJoin(TCLN).on(ITPI.TCLN_ID.eq(TCLN.TCLN_ID))
+			.where(TSTPI.TEST_PLAN_ORDER.eq(0))
+			.fetchMap(TS.ID, description);
+	}
+
+	private Field<String> decodeMilestone() {
+		return org.jooq.impl.DSL.decode()
+			.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
+			.otherwise("false")
+			.as("IS_MILESTONE_MODIFIABLE");
 	}
 
 	private String removeHtml(String html) {
