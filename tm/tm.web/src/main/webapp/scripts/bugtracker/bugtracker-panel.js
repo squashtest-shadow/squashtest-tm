@@ -35,10 +35,12 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 		var errorDiv = $("#bugtracker-section-error"),
 			waitDiv = $("#bugtracker-section-pleasewait"),
 			btContentDiv = $("#bugtracker-section-div"),
+			actDiv= $("#bugtracker-section-must-activate"),
 			errorDetails = $("#bugtracker-section-error-details");
 
 		waitDiv.hide();
-		btContentDiv.hide();
+		actDiv.hide();
+				btContentDiv.hide();
 
 		xhr.errorIsHandled = true;
 
@@ -150,6 +152,24 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 						currentXhr = null;
 					});
 			};
+			var showFn = function () {
+				var params = {
+					data : { 'style' : sstyle}
+				};
+				currentXhr = $.ajax(conf.url, params)
+					.success(function(htmlpanel) {
+						btContentDiv.html(htmlpanel);
+						waitDiv.hide();
+						btContentDiv.show();
+						})
+					.error(function(xhr){
+						eventBus.trigger('bugtracker.ajaxerror', xhr);
+					})
+					.complete(function(){
+						currentXhr = null;
+					});
+
+			};
 
 
 
@@ -174,8 +194,10 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 			else if (sstyle === "fragment-tab"){
 				tab.on('tabsactivate', function (evt, ui) {
 					if (ui.newPanel.is(btDiv)) {
-							loadFn();
-							tab.off('tabsactivate', loadFn);
+						showFn();
+						waitDiv.hide();
+						btContentDiv.show();
+						tab.off('tabsactivate', showFn);
 
 					}
 				});
@@ -188,6 +210,7 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 					$.cookie(cookieName, null, { path: '/' });
 				}
 			}
+
 			else{
 				throw "bugtracker : unknown or undefined panel style '"+sstyle+"'";
 			}
