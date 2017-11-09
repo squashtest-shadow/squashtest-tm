@@ -294,7 +294,6 @@ define(
 					$.post(newurl, {
 						mode: 'manual'
 					}, 'json').done(function (execId) {
-						squashtm.execution.refresh();
 						var execurl = initconf.urls.executionsUrl + execId + '/runner';
 						if (ui === "popup") {
 							execrunner.runInPopup(execurl);

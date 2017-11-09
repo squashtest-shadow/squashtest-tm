@@ -215,15 +215,11 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	public void updateExecutionMetadata(Execution execution) {
 		LOGGER.debug("update the executed by/on for given execution and it's test plan.");
 
-		if (execution.getSteps().isEmpty()) {
-			execution.setLastExecutedBy(userContextService.getUsername());
-			execution.setLastExecutedOn(new Date());
-		} else {
-			// Get the date and user of the most recent step which status is not at READY
-			ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
-			execution.setLastExecutedBy(mostRecentStep.getLastExecutedBy());
-			execution.setLastExecutedOn(mostRecentStep.getLastExecutedOn());
-		}
+		// Get the date and user of the most recent step which status is not at READY
+		ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
+		execution.setLastExecutedBy(mostRecentStep.getLastExecutedBy());
+		execution.setLastExecutedOn(mostRecentStep.getLastExecutedOn());
+
 		// forward to the test plan
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		testPlanService.updateMetadata(testPlan);
