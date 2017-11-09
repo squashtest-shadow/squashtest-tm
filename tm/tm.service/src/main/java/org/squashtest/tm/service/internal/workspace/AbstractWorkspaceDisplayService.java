@@ -242,15 +242,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				expansionCandidates.put(getFolderName(), entityId);
 				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, nodeLinkedToMilestone, activeMilestoneId);
 				libraryId = ((ProjectResource) hibernateFolderDao().findById(entityId)).getLibrary().getId();
+				childrenIds.remove(entityId);
 				break;
 			default: //used for requirements only
 				expansionCandidates.put(entityClass, entityId);
 				getLibraryNodeFatherChildrenMultiMap(expansionCandidates, childrenIds, nodeLinkedToMilestone, activeMilestoneId);
 				libraryId = ((ProjectResource) hibernateRequirementDao.findById(entityId)).getLibrary().getId();
+				childrenIds.remove(entityId);
 				break;
 		}
-
-		childrenIds.remove(entityId);
 
 		// milestones
 		Map<Long, List<Long>> allMilestonesForLN = findAllMilestonesForLN();
