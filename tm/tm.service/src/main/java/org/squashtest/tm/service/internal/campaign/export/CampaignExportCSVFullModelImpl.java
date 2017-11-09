@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +36,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -59,6 +45,10 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+
+import javax.inject.Inject;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /*
  * TODO :
@@ -288,7 +278,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("IT_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_END_ON"));
 
-		// test case fixed fields (16)
+		// test case fixed fields (17)
 		headerCells.add(new CellImpl("TC_ID"));
 		headerCells.add(new CellImpl("TC_NAME"));
 		headerCells.add(new CellImpl("TC_PROJECT_ID"));
@@ -388,7 +378,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		// ** caching **
 		// slight optimization, but will not make up for the need for refactoring (see comments on top)
 
-		private List<CellImpl> cachedItpcellFixed = new ArrayList<>(16);
+		private List<CellImpl> cachedItpcellFixed = new ArrayList<>(17);
 		private List<CellImpl> cachedItpcellCuf = new ArrayList<>(iterCUFModel.size());
 		private boolean cachedItpcellReady = false;
 
@@ -567,7 +557,6 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
 				dataCells.add(new CellImpl(String.valueOf(stepIndex + 1)));
 				dataCells.add(new CellImpl(formatStepRequirements()));
-				dataCells.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
 				dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
 				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
 				dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
@@ -620,6 +609,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				cachedItpcellFixed
 					.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+				cachedItpcellFixed.add(new CellImpl((itp.getReferencedDataset() == null) ? "" : itp.getReferencedDataset().getName()));
 
 				cachedItpcellFixed.add(new CellImpl(itp.getExecutionStatus().toString()));
 				cachedItpcellFixed.add(new CellImpl(formatUser(itp.getUser())));
