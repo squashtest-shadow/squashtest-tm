@@ -211,15 +211,10 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		initViewTabs();
 
-		if (squashtm.app.customReportWorkspaceConf !== undefined) {
-			generateView();
-		}
-
 		$("#generate-view").click(generateView); // perfect world -> in ReportCritPanel
 		$("#export").click(doExport);
 
-
-
+		$("#generate-report-button").click(generateView);
 
 	}
 

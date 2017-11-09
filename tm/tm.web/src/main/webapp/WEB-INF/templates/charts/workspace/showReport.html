@@ -44,6 +44,9 @@
 		</div>
     {{#if (contains acls.perms 'WRITE')}}
 		<div class="toolbar-button-panel">
+      <input type="button"
+             th:attr="value=#{report.criteria.panel.button.generate.label},title=#{report.criteria.panel.button.generate.label}"
+             id="generate-report-button" class="sq-btn" />
 			<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
 				id="rename-report-button" class="sq-btn" />
