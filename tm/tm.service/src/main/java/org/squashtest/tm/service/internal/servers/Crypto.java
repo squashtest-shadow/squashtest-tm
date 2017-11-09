@@ -25,6 +25,9 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.*;
@@ -264,8 +267,7 @@ class Crypto {
         try {
             return cipher.doFinal(encrypted);
         } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            // ouch, I so  believed that my block size and padding were honored by any JRE implementor
-            throw new RuntimeException(ex);
+            throw new EncryptionKeyChangedException();
         }
     }
 

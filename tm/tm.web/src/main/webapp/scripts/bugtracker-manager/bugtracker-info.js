@@ -24,7 +24,7 @@
  */ 
 
 define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.basicwidgets', 'jquery.squash.formdialog'], 
-		function(module, $, Backbone, bb, basic){
+		function(module, $, Backbone, CredentialManagerView, basic){
 	
 	var conf = module.config();
 	
@@ -105,7 +105,7 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 		 
 		 // we don't update the data using backbone model .save() and to reflect that 
 		 // we set the url separetely from the model
-		 new bb.CredentialManagerView({
+		 new CredentialManagerView({
 			 model : authconfModel,
 			 btUrl : conf.btUrl
 		 })

@@ -194,15 +194,20 @@ public class BugTrackerModificationController {
 			}
 			
 		}
-		// expected exceptions : are internationalizable
-		catch(MissingEncryptionKeyException | EncryptionKeyChangedException ex){
+		// no encryption key : blocking error, internationalizable
+		catch(MissingEncryptionKeyException ex){
 			String msg = i18nHelper.internationalize(ex, locale);
 			bean.setFailureMessage(msg);
 		}
-		// unexpected exception : just display the raw message
+		// key changed : recoverable error, internationalizable
+		catch(EncryptionKeyChangedException ex){
+			String msg = i18nHelper.internationalize(ex, locale);
+			bean.setWarningMessage(msg);
+		}
+		// other exceptions are treated as non blocking, non internationalizable errors
 		catch(Exception ex){
 			LOGGER.error(ex.getMessage(), ex);
-			bean.setFailureMessage(ex.getMessage());
+			bean.setWarningMessage(ex.getMessage());
 		}
 		
 		return bean;
@@ -213,8 +218,9 @@ public class BugTrackerModificationController {
 	
 	public static final class BugtrackerCredentialsManagementBean{
 		
-		// if this String remains to null it is a good thing
+		// if those Strings remains to null it is a good thing
 		private String failureMessage = null;
+		private String warningMessage = null;
 		
 		// the rest is used if the above is null
 		private AuthenticationPolicy authPolicy;
@@ -222,14 +228,6 @@ public class BugTrackerModificationController {
 		private AuthenticationProtocol selectedProto; 
 		private Credentials credentials;
 		
-		
-		
-		public String getFailureMessage() {
-			return failureMessage;
-		}
-		public void setFailureMessage(String failureMessage) {
-			this.failureMessage = failureMessage;
-		}
 		public AuthenticationPolicy getAuthPolicy() {
 			return authPolicy;
 		}
@@ -254,6 +252,20 @@ public class BugTrackerModificationController {
 		public void setCredentials(Credentials credentials) {
 			this.credentials = credentials;
 		}
+		public String getFailureMessage() {
+			return failureMessage;
+		}
+		public void setFailureMessage(String failureMessage) {
+			this.failureMessage = failureMessage;
+		}
+		public String getWarningMessage() {
+			return warningMessage;
+		}
+		public void setWarningMessage(String warningMessage) {
+			this.warningMessage = warningMessage;
+		}
+		
+		
 		
 		
 	}

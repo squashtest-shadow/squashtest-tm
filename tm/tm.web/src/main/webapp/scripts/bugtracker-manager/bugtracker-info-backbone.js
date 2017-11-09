@@ -60,7 +60,8 @@ The configuration expected by the CredentialManagerView is :
 			authPolicy :  either 'USER' and 'APP_LEVEL'
 			availableProtos : the list of available authentication protocols
 			selectedProto : the selected protocol chosen among the above
-			failureMessage : error message if the server reported problems using that functionality, or null if all is fine and dandy
+			failureMessage : error message if an unrecoverable error was encountered
+			warningMessage: error message if a recoverable error was encountered
 			credentials : the actual credential object, which is variable. See the various subview implementations for insights. May be null if none were set yet.
 		}
 	}
@@ -88,30 +89,194 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		function($, Backbone, _, Handlebars, notification){
 	
 	
-	// ****************** auth conf details ***************
+
+	// ***************** communication channel ***************************
+	
+	var radio = $.extend({}, Backbone.Events);
+	
+	
+	// ************************ The main view ****************************
 	
 	var CredentialManagerView = Backbone.View.extend({
 		
 		el: "#bugtracker-auth",
 		
+		// the following are created at initialization
+		$credPane : null,
+		$msgPane : null,
+		$usrPolRadio : null,
+		$appPolRadio : null,
+		
+		initialize : function(options){
+			this.$credPane = new MainView(options);
+			this.$msgPane = new MessageView();
+			
+			this.$usrPolRadio = $("#bt-auth-policy-user");
+			this.$appPolRadio = $("#bt-auth-policy-application");
+			this.btUrl = options.btUrl;
+			
+			this.render();
+		},
+		
+		events : {
+			'change #bt-auth-policy-user' : 'setPolicyUser',
+			'change #bt-auth-policy-application' : 'setPolicyApp'
+		},
+	
+		render : function(){
+			var failure = this.model.get('failureMessage');
+		
+			if (!! failure){
+				// ooooh this is bad. Do not show the app credentials panel 
+				// and just display the message
+				this.fail(failure);
+			}
+			else{
+				this.renderCreds();
+			}
+			
+			return this;
+		},
+		
+		fail : function(failure){
+			this.$appPolRadio.prop('disabled', true);
+			this.$credPane.hide();
+			radio.trigger('bt-auth-failure', failure);
+		},
+		
+		renderCreds: function(){
+			this.$appPolRadio.prop('disabled', false);
+			
+			/*
+			 * Most of the time the message pane and the cred pane work together
+			 * but here we really mean to handle the cred pane alone because 
+			 * the msg pane must be rendered no matter what (and already has)
+			 */
+			this.$credPane.render();
+			this.$credPane.show();
+			
+			
+			switch(this.model.get('authPolicy')){
+				case 'USER': this.setPaneStatus('disable'); break;
+				case 'APP_LEVEL' : this.setPaneStatus('enable'); break;
+				default: this.$credPane.enable(); break;
+			}
+			
+			this.$credPane.render();
+		},
+		
+		setPolicyUser : function(evt){
+			var view = this;
+			this.setPolicy('USER').done(function(){
+				view.setPaneStatus('disable');
+			});
+		},
+		
+		setPolicyApp : function(evt){
+			var view = this;
+			this.setPolicy('APP_LEVEL').done(function(){
+				view.setPaneStatus('enable');
+			});
+		},
+		
+		setPaneStatus : function(status){
+			this.$credPane[status]();
+			this.$msgPane[status]();
+		},
+		
+		setPolicy : function(policy){
+			this.model.set('authPolicy', policy);
+			var url = this.btUrl;
+			return $.ajax({
+				url : url,
+				type : 'POST',
+				data : {id: 'bugtracker-auth-policy', value : policy}
+			});
+		},
+		
+		
+	});
+
+	
+	// ************ message pane *************************
+	
+	
+	var MessageView = Backbone.View.extend({
+		
+		el : '#bt-auth-main-messagezone',
+		
+		$failPane : null,
+		$warnPane : null,
+		$succPane : null,
+
+		
+		initialize : function(){
+			this.$failPane = $("#bt-auth-failure");
+			this.$warnPane = $("#bt-auth-warning");
+			this.$succPane = $("#bt-auth-info");
+			
+			this.listenTo(radio, 'bt-auth-success', this.showSuccess);
+			this.listenTo(radio, 'bt-auth-warning', this.showWarning);
+			this.listenTo(radio, 'bt-auth-failure', this.showFailure);
+		},
+		
+		disable : function(){
+			this.$el.addClass('disabled-transparent');
+		},
+	
+		enable : function(){
+			this.$el.removeClass('disabled-transparent');
+		},
+		
+		allPanes : function(){
+			return [this.$failPane, this.$warnPane, this.$succPane];
+		},
+		
+		showPane : function(paneName){
+			_.without(this.allPanes(), this[paneName])
+			.forEach(function(pane){
+				pane.addClass('not-displayed');
+			});
+			this[paneName].removeClass('not-displayed');
+		},
+		
+		showSuccess : function(){
+			this.showPane('$succPane');
+		},
+		
+		showWarning : function(msg){
+			this.$warnPane.find('.generic-warning-main').text(msg);
+			this.showPane('$warnPane');
+		},
+		
+		showFailure : function(msg){
+			this.$failPane.find('.generic-warning-main').text(msg);
+			this.showPane('$failPane');
+		}
+	});
+	
+	
+	// ********************* The application credentials view **************************
+
+	
+	// TODO : actually handle the dropdown list when more protocols are supported
+	var MainView = Backbone.View.extend({
+		
+		el: "#bt-auth-creds-main",
+		
 		// following attributes are initialized in the init function
-		$credpanel : null,
 		$dropdown : null,
-		$testbtn : null,
-		$savebtn : null,
-		$errzone: null,
+		$btnpane : null,
 		btUrl : null,
 		
 		initialize: function(options){
 			
 			var $el = this.$el;
-			this.$credpanel = $el.find('.bt-auth-credentials-section');
 			this.$dropdown = $el.find('#bt-auth-proto');
-			this.$savebtn = $el.find('#bt-auth-save').button();
-			this.$testbtn = $el.find('#bt-auth-test').button();
-			this.$errzone = $el.find('#bt-auth-messagezone');
+			this.$btnpane = $el.find('#bt-auth-creds-buttonpane');
 			this.btUrl = options.btUrl;
 			
+			this.getButtons().button();
 			
 			// select the right subview to apply for the credentials form
 			var SubView = null;
@@ -137,84 +302,61 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			
 			// init, if defined
 			this.subview = new SubView(credsOptions);
-			
-			// now render
-			this.render();
+
 			
 		},
 		
 		events : {
-			'click #bt-auth-policy-user' : 'setPolicyUser',
-			'click #bt-auth-policy-application' : 'setPolicyApp',
 			'click #bt-auth-test' : 'test',
 			'click #bt-auth-save' : 'save'
 		},
 		
 		render: function(){
 			this.subview.render();
-			
-			switch(this.model.get('authPolicy')){
-				case 'USER': this.disablePanel(); break;
-				case 'APP_LEVEL' : this.enablePanel(); break;
-				default: this.enablePanel(); break;
+
+			var warning = this.model.get('warningMessage');
+			if (!!warning){
+				radio.trigger('bt-auth-warning', warning);
 			}
-			
-			var failure = this.model.get('failureMessage');
-			if (!!failure){
-				this.showMessage(failure);
-			}
-			
 			
 			return this;
 		},
 		
-		setPolicyUser(evt){
-			var view = this;
-			this.setPolicy('USER').done(function(){
-				view.disablePanel();
-			});
+		show : function(){
+			this.$el.removeClass('not-displayed');
 		},
 		
-		setPolicyApp(evt){
-			var view = this;
-			this.setPolicy('APP_LEVEL').done(function(){
-				view.enablePanel();
-			});
+		hide : function(){
+			this.$el.addClass('not-displayed');
 		},
 		
-		setPolicy : function(policy){
-			this.model.set('authPolicy', policy);
-			var url = this.btUrl;
-			return $.ajax({
-				url : url,
-				type : 'POST',
-				data : {id: 'bugtracker-auth-policy', value : policy}
-			});
-		},
 		
-		showMessage : function(msg){
-			this.$errzone.find('.generic-warning-main').text(msg);
-			this.$errzone.removeClass('not-displayed');
-		},
-		
-		hideMessage : function(){
-			this.$errzone.addClass('not-displayed');
-		},
-		
-		disablePanel: function(){
-			this.$credpanel.addClass('disabled');
+		disable : function(){
+			this.$el.addClass('disabled-transparent');
 			this.$dropdown.prop('disabled', true);
-			this.$testbtn.button('disable');
-			this.$savebtn.button('disable');
+			this.getButtons().button('disable');
 			this.subview.disable();
 		},
 	
-		enablePanel : function(){
-			this.$credpanel.removeClass('disabled');
+		enable : function(){
+			this.$el.removeClass('disabled-transparent');
 			this.$dropdown.prop('disabled', false);
-			this.$testbtn.button('enable');
-			this.$savebtn.button('enable');
+			this.getButtons().button('enable');
 			this.subview.enable();
+		},
+		
+		setAjaxMode : function(){
+			this.getButtons().css('visibility', 'hidden');
+			this.$btnpane.addClass('waiting-loading');
+		},
+		
+		unserAjaxMode : function(){
+			this.getButtons().css('visibility', 'visible');
+			this.$btnpane.removeClass('waiting-loading');
+		},
+		
+		getButtons : function(){
+			return this.$btnpane.find(':button');
 		},
 		
 		test : function(){
@@ -234,6 +376,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			var type = this.model.get('selectedProto');
 			var payload = $.extend({type: type}, creds, true);
 			
+			this.setAjaxMode();
+			
 			return $.ajax({
 				url : url,
 				type : 'POST',
@@ -241,17 +385,22 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				contentType : 'application/json'
 			})
 			.done(function(){
-				self.hideMessage();
+				radio.trigger('bt-auth-success');
 			})
 			.fail(function(xhr){
 				xhr.errorIsHandled = true;
-				self.showMessage(notification.getErrorMessage(xhr));
+				radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
+			})
+			.always(function(){
+				self.unserAjaxMode();
 			});
 		}
 	});
 	
+
+
 	
-	
+	// ************ implementations for the subviews *****************************
 	
 	var BasicAuthView = Backbone.View.extend({
 		
@@ -284,7 +433,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		),
 		
 		render: function(){
-			this.$el.html(this.template(this.model.attributes));		
+			this.$el.html(this.template(this.model.attributes));	
+			return this;
 		},
 		
 		enable: function(){
@@ -307,8 +457,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 	});
 	
 	
-	return {
-		CredentialManagerView : CredentialManagerView
-	}
+	
+	return CredentialManagerView;
+
 	
 });

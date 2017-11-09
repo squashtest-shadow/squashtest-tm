@@ -42,28 +42,27 @@
 
 
 <style>
-	.bt-auth-credentials-section{
+
+
+	#bugtracker-auth .bt-auth-credentials-section{
 		margin-top : 1em;
-		border: 1px solid black;
-		border-radius: 5px;
 		padding: 1em;
 		margin-bottom: 1em;
 	}
-	
-	.bt-auth-credentials-section.disabled{
-		opacity: 0.5;
-		background-color: #c5cddb;
+
+
+	#bugtracker-auth .bt-auth-messagepane{
+		max-width : 500px;
 	}
 	
-	.bt-auth-credentials-section .bt-credentials{
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 1em;
-		margin-bottom: 1em;
+	#bugtracker-auth .side-panel{
+		display:inline-block;
+		vertical-align : middle;
 	}
 	
-	.bt-auth-credentials-section .bt-auth-buttonpane {
-		text-align: center;
+	
+	#bugtracker-auth .side-panel.not-displayed{
+		display : none
 	}
 	
 </style>
@@ -154,57 +153,90 @@
 							</div>
 						</div>
 
+
+						<%-- ==================== authentication panel ===================== --%>
 						
-						<c:set var="credSectionStyle" value="${(authConf.authPolicy == 'USER') ? 'disabled' : ''}"/>
-						<c:set var="policyUsr" value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>						
-						<c:set var="policyApp" value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
-												
+						<%-- all the variable states necessary for the pre-rendering --%>
+						<c:set var="credSectionEnabling" value="${(authConf.authPolicy == 'USER') ? 'disabled-transparent' : ''}"/>
+						<c:set var="credsSectionVisibility" 	value="${(not empty authConf.failureMessage) ? 'not-displayed' : ''}" />
+						<c:set var="policyAppAvailable" value="${(not empty authConf.failureMessage) ? 'disabled=disabled' : ''}"/>
+						<c:set var="policyUsr" 			value="${(authConf.authPolicy == 'USER') ? 'checked=\"checked\"' : ''}"/>						
+						<c:set var="policyApp" 			value="${(authConf.authPolicy == 'APP_LEVEL') ? 'checked=\"checked\"' : ''}"/>
+						
+						<c:set var="failureVisibility" 	value="${(empty authConf.failureMessage) ? 'not-displayed' : ''}" />
+						<c:set var="warningVisibility" 	value="${(empty authConf.warningMessage) ? 'not-displayed' : ''}" />
+						
+						<f:message var="labelSuccess" key="bugtracker.admin.messages.success"/>										
+						<f:message var="testLabel" key="label.test"/>
+						<f:message var="saveLabel" key="label.save"/>
+																		
 						<div id="bugtracker-auth" class="display-table-row">	
+							
 							<label class="display-table-cell"><f:message key="bugtracker.admin.policy.title"/></label>
 							
-							
 							<div class="display-table-cell">
+								
 								<div>
 									<input id="bt-auth-policy-user" 	type="radio" name="bt-auth-policy" value="user" ${policyUsr}>
 									<label for="bt-auth-policy-user" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.users"/></label>								
 								</div>
 								
 								<div>
-									<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp}>
+									<input id="bt-auth-policy-application" type="radio" name="bt-auth-policy" value="application" ${policyApp} ${policyAppAvailable}>
 									<label for="bt-auth-policy-application" class="vertical-align:middle;"><f:message key="bugtracker.admin.policy.app"/></label>
 								</div>
 								
-								<div class="bt-auth-credentials-section ${credSectionStyle}">
-									<label for="bugtracker-auth-proto"><f:message key="bugtracker.admin.protocol.label"/></label>
+								<div>
+									<div id="bt-auth-creds-main" 
+										class="bt-auth-credentials-section side-panel std-border std-border-radius 
+												${credSectionEnabling} ${credsSectionVisibility}">
 									
-									<select id="bt-auth-proto" >
-										<c:forEach items="${authConf.availableProtos}" var="protocol">
-										<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
-											<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
-										</option>
-										</c:forEach>
-									</select>
-									
-									<div id="bt-auth-cred-template">
-									<%-- populated by javascript --%>						
-									</div>
-									
-									
-									<f:message var="testLabel" key="label.test"/>
-									<f:message var="saveLabel" key="label.save"/>
-									<div class="bt-auth-buttonpane">
-										<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
-										<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>
-									</div>
-									
-									<div id="bt-auth-messagezone" class="${(empty authConf.failureMessage) ? 'not-displayed' : ''}">
-										<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
-									</div>
-							
-								</div>
 
-						   </div>
+										<label for="bt-auth-proto"><f:message key="bugtracker.admin.protocol.label"/></label>
+										
+										<select id="bt-auth-proto" >
+											<c:forEach items="${authConf.availableProtos}" var="protocol">
+											<option value="${protocol}" ${(authConf.selectedProto == protocol) ? 'selected' : ''} >
+												<f:message key="authentication.protocol.${protocol.toString().toLowerCase()}"/>
+											</option>
+											</c:forEach>
+										</select>
+										
+										<div id="bt-auth-cred-template">
+										<%-- populated by javascript --%>						
+										</div>
+	
+										<div id="bt-auth-creds-buttonpane" class="centered" style="position:relative">
+											<input type="button" class="sq-btn" id="bt-auth-test" value="${testLabel}"/>
+											<input type="button" class="sq-btn" id="bt-auth-save" value="${saveLabel}"/>	
+										</div>
+
+										
+									</div>
+								
+									<div id="bt-auth-main-messagezone" class="side-panel bt-auth-messagepane ${credSectionEnabling}">
+										
+										<div id="bt-auth-failure" class="std-border std-border-radius ${failureVisibility}">
+											<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
+										</div>
+										
+										<div id="bt-auth-warning" class="${warningVisibility}">
+											<comp:notification-pane type="warning" txtcontent="${authConf.warningMessage}"/>
+										</div>
+										
+										<div id="bt-auth-info" class="not-displayed">
+											<comp:notification-pane type="info" txtcontent="${labelSuccess}"/>
+										</div>							
+									</div>
+								
+						   		</div>
+	
+								
+							</div>
 						</div>
+						
+						<%-- ==================== /authentication panel ===================== --%>
+						
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
