@@ -31,6 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -116,21 +117,26 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-	                            @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-	                            @CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
+								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+								@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementEntityReference) {
 
 //		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
-		String[] nodesToOpen;
+		String[] nodesToOpen = new String[0];
 
 		// #5585 : the case where elementId explicitly equals string literal "null" can and will happen
 		// thus the test here
-		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
+		if (StringUtils.isBlank(elementEntityReference) || "null".equals(elementEntityReference)) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
-			Long id = Long.valueOf(elementId);
-			nodesToOpen = getNodeParentsInWorkspace(id);
-			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
+			EntityReference entityReference = null;
+			try {
+				entityReference = EntityReference.fromString(elementEntityReference);
+				nodesToOpen = getNodeParentsInWorkspace(entityReference);
+				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference));
+			} catch (RuntimeException e) {
+				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
+			}
 		}
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
@@ -157,10 +163,10 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 		model.addAttribute("userPrefs", getWorkspaceUserPref());
 		model.addAttribute("defaultInfoLists", infoListModelService.findSystemInfoListItemLabels());
-		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
-		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
-		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
-		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+		model.addAttribute("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class, locale));
+		model.addAttribute("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class, locale));
+		model.addAttribute("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class, locale));
+		model.addAttribute("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class, locale));
 		model.addAttribute("executionStatus",
 			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
@@ -172,14 +178,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/tree/{openedNodes}")
-	public
-	List<JsTreeNode> getRootModel(@PathVariable String[] openedNodes) {
+	public List<JsTreeNode> getRootModel(@PathVariable String[] openedNodes) {
 
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 		List<Long> projectIds = projectFinder.findAllReadableIds(currentUser);
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser, expansionCandidates,activeMilestoneId.get());
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 
 		return new ArrayList<JsTreeNode>(rootNodes);
@@ -211,18 +216,18 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	/**
 	 * Returns the list of parents of a node given the id of an element
 	 *
-	 * @param elementId
+	 * @param entityReference
 	 * @return
 	 */
-	protected abstract String[] getNodeParentsInWorkspace(Long elementId);
+	protected abstract String[] getNodeParentsInWorkspace(EntityReference entityReference);
 
 	/**
 	 * Returns the id of a node in the tree given the id of an element
 	 *
-	 * @param elementId
+	 * @param entityReference
 	 * @return
 	 */
-	protected abstract String getTreeElementIdInWorkspace(Long elementId);
+	protected abstract String getTreeElementIdInWorkspace(EntityReference entityReference);
 
 	/**
 	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add anything you need to
@@ -244,9 +249,11 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 *
 	 * @return Map<String,String> All user preferences
 	 */
-	protected Map<String,String> getWorkspaceUserPref(){
+	protected Map<String, String> getWorkspaceUserPref() {
 		return partyPreferenceService.findPreferencesForCurrentUser();
-	};
+	}
+
+	;
 
 	@ModelAttribute("wizards")
 	public MenuItem[] getWorkspaceWizards() {
@@ -264,7 +271,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		Collection<WorkspaceWizard> effective = CollectionUtils.select(wizards, new Predicate() {
 			@Override
 			public boolean evaluate(Object object) {
-				return (((WorkspaceWizard)object).getWizardMenu() != null);
+				return (((WorkspaceWizard) object).getWizardMenu() != null);
 			}
 		});
 
@@ -272,7 +279,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		int i = 0;
 
 		for (WorkspaceWizard wizard : wizards) {
-			if (wizard.getWizardMenu()!=null){
+			if (wizard.getWizardMenu() != null) {
 				res[i] = createMenuItem(wizard);
 				i++;
 			}

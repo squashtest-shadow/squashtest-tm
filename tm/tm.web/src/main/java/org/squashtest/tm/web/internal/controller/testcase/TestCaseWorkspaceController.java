@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
@@ -100,14 +101,14 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	}
 
 	@Override
-	protected String[] getNodeParentsInWorkspace(Long elementId) {
-		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(elementId);
+	protected String[] getNodeParentsInWorkspace(EntityReference entityReference) {
+		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(entityReference.getId());
 		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override
-	protected String getTreeElementIdInWorkspace(Long elementId) {
-		return "TestCase-" + elementId;
+	protected String getTreeElementIdInWorkspace(EntityReference entityReference) {
+		return "TestCase-" + entityReference.getId();
 	}
 
 }

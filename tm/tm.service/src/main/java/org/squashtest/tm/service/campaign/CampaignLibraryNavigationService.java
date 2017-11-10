@@ -23,6 +23,7 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -185,7 +186,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 */
 	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 
-	List<String> getParentNodesAsStringList(Long elementId);
+	List<String> getParentNodesAsStringList(EntityReference entityReference);
 
 	List<Long> findAllCampaignIdsForMilestone(Milestone milestone);
 

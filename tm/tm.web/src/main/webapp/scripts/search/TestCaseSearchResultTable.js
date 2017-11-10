@@ -475,7 +475,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
-					$.cookie("workspace-prefs", id, {path : "/"});
+					$.cookie("workspace-prefs", "TEST_CASE-" + id, {path : "/"});
 					window.location = squashtm.app.contextRoot + "test-case-workspace/";
 			});
 		},

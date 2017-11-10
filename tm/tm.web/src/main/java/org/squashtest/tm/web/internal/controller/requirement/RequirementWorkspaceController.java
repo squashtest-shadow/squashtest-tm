@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
@@ -90,14 +91,14 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	}
 
 	@Override
-	protected String[] getNodeParentsInWorkspace(Long elementId) {
-		List<String> parents = requirementLibraryNavigationService.getParentNodesAsStringList(elementId);
+	protected String[] getNodeParentsInWorkspace(EntityReference entityReference) {
+		List<String> parents = requirementLibraryNavigationService.getParentNodesAsStringList(entityReference.getId());
 		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override
-	protected String getTreeElementIdInWorkspace(Long elementId) {
-		return "Requirement-" + elementId;
+	protected String getTreeElementIdInWorkspace(EntityReference entityReference) {
+		return "Requirement-" + entityReference.getId();
 	}
 
 	@Override

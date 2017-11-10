@@ -20,21 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
@@ -42,6 +40,7 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
@@ -52,18 +51,21 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by jsimon on 04/05/2016.
  */
 @Controller
-public class CampaignSearchController extends GlobalSearchController{
+public class CampaignSearchController extends GlobalSearchController {
 
 
 	@Inject
@@ -99,9 +101,9 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN,activeMilestone);
+		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN, activeMilestone);
 		return "campaign-search-result.html";
 
 	}
@@ -110,8 +112,8 @@ public class CampaignSearchController extends GlobalSearchController{
 	public String showCampaignSearchPageFilledWithParams(Model model,
 														 @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 														 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
-			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-			@RequestParam(required = false) Long id, Locale locale) {
+														 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
+														 @RequestParam(required = false) Long id, Locale locale) {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		return showCampaignSearchPage(model, openedNodes, elementId, associateResultWithType, id, locale);
@@ -119,20 +121,24 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@RequestMapping(method = RequestMethod.GET, params = "searchDomain=campaign")
 	public String showCampaignSearchPage(Model model, @RequestParam(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-										 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
-										@RequestParam(required = false, defaultValue = "") String associateResultWithType,
-										@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
+										 @RequestParam(value = "workspace-prefs", required = false, defaultValue = "") String elementEntityReference,
+										 @RequestParam(required = false, defaultValue = "") String associateResultWithType,
+										 @RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
 
-		String[] nodesToOpen;
+		String[] nodesToOpen = new String[0];
 
-		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
+		if (StringUtils.isBlank(elementEntityReference) || "null".equals(elementEntityReference)) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
-			Long nodeId = Long.valueOf(elementId);
-			nodesToOpen = getNodeParentsInWorkspace(nodeId);
-			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(nodeId));
+			try {
+				EntityReference entityReference = EntityReference.fromString(elementEntityReference.toUpperCase());
+				nodesToOpen = getNodeParentsInWorkspace(entityReference);
+				model.addAttribute("selectedNode", getTreeElementIdInWorkspace(entityReference.getId()));
+			} catch (RuntimeException e) {
+				LOGGER.warn("Error during conversion of the 'workspace-prefs' cookie to an EntityReference.");
+			}
 		}
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
@@ -143,26 +149,25 @@ public class CampaignSearchController extends GlobalSearchController{
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds,user, expansionCandidates, activeMilestoneId.get());
+		Collection<JsTreeNode> rootNodes = workspaceDisplayService().findAllLibraries(projectIds, user, expansionCandidates, activeMilestoneId.get());
 
 		boolean isCampaignAvailable = true;
 
 		if (activeMilestone.isPresent()) {
 
-			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(),	projectIds);
+			isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(activeMilestone.get().getId(), projectIds);
 		}
 
 		model.addAttribute("rootModel", rootNodes);
 
 		model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 
-		return  "campaign-search-input.html";
+		return "campaign-search-input.html";
 	}
 
 
-
-	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, CAMPAIGN,
-		RequestParams.S_ECHO_PARAM })
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = {RequestParams.MODEL, CAMPAIGN,
+		RequestParams.S_ECHO_PARAM})
 	@ResponseBody
 	public DataTableModel getCampaignTableModel(final DataTableDrawParameters params, final Locale locale,
 												@RequestParam(value = RequestParams.MODEL) String model)
@@ -182,7 +187,6 @@ public class CampaignSearchController extends GlobalSearchController{
 	}
 
 
-
 	@Override
 	protected WorkspaceDisplayService workspaceDisplayService() {
 		return workspaceDisplayService;
@@ -192,8 +196,8 @@ public class CampaignSearchController extends GlobalSearchController{
 		return "Campaign-" + elementId;
 	}
 
-	protected String[] getNodeParentsInWorkspace(Long elementId) {
-		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+	protected String[] getNodeParentsInWorkspace(EntityReference entityReference) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(entityReference);
 		return parents.toArray(new String[parents.size()]);
 	}
 

@@ -24,6 +24,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -94,14 +96,14 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	}
 
 	@Override
-	protected String[] getNodeParentsInWorkspace(Long elementId) {
-		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+	protected String[] getNodeParentsInWorkspace(EntityReference entityReference) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(entityReference);
 		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override
-	protected String getTreeElementIdInWorkspace(Long elementId) {
-		return "Campaign-" + elementId;
+	protected String getTreeElementIdInWorkspace(EntityReference entityReference) {
+		return entityReference.getType().equals(EntityType.CAMPAIGN) ? "Campaign-" + entityReference.getId() : "Iteration-" + entityReference.getId();
 	}
 
 }

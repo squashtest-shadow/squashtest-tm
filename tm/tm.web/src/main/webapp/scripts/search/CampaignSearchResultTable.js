@@ -161,7 +161,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function() {
-					$.cookie("jstree_select", "Iteration-"+itId, {path : "/squash/campaign-workspace/"});
+					$.cookie("workspace-prefs", "ITERATION-" + itId, {path : "/"});
 					window.location = squashtm.app.contextRoot + "campaign-workspace/";
 				});
 		},

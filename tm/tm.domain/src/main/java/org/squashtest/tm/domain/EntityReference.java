@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.domain;
 
+import org.squashtest.tm.core.foundation.lang.Assert;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import org.squashtest.tm.core.foundation.lang.Assert;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class EntityReference {
@@ -65,8 +67,29 @@ public class EntityReference {
 	}
 
 	@Override
-	public String toString(){
-		return "["+type.toString()+":"+id+"]";
+	public String toString() {
+		return "[" + type.toString() + ":" + id + "]";
+	}
+
+	/**
+	 * Gets the "workspace-prefs" cookie from a "...SearchResultTable.js" and converts it to an EntityReference
+	 * group 1 is the name of the entity
+	 * group 2 is its id
+	 */
+
+	public static EntityReference fromString(String asString) {
+		Pattern p = Pattern.compile("(.+)-(\\d+)");
+		Matcher m = p.matcher(asString);
+
+		if (m.matches()) {
+			String type = m.group(1);
+			Long id = Long.valueOf(m.group(2));
+
+			EntityType etype = EntityType.valueOf(type.toUpperCase());
+			return new EntityReference(etype, id);
+		} else {
+			throw new RuntimeException();
+		}
 	}
 
 	/**
