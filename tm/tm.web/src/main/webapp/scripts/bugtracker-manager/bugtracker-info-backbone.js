@@ -23,34 +23,76 @@
 /*
  Backbone things used by bugtracker-info.
  
- There is a view and a subview. The code is fairly light so there wont 
- be much comments here, beside the indications stated below. 
+ The overall layout of this view is the following : 
  
- 1/ Master view
+CredentialManagerView
+ 	* MessageView
+ 	* MainView
+ 		* SubView (variable implementation, see below)
+
+Aside from the SubView, which embbed their own Handlebars templates, each of these 
+use the pre-rendered DOM existing in the page. It means the code here mostly handle 
+the state of the UI but generate no HTML.
+
+
+ 1/ CredentialManagerView
  
- The master view is named CredentialManagerView and handles the following :
+ This is the main view. Its components are : 
   
-  * its main div : #bugtracker-auth
-  * the radio buttons : #bt-auth-policy-user and #bt-auth-policy-application
-  * in the stored credentials panel (.bt-auth-credentials-section) 
-  		- the authentication protocol dopdown list : #bt-auth-proto
-  		- the test button : #bt-auth-test
-  		- the save button : #bt-auth-save
-  		- the error message pane : #bt-auth-messagezone
+  	* main div : #bugtracker-auth
+  	* the radio buttons : #bt-auth-policy-user and #bt-auth-policy-application
 
-The part of the stored credentials panel between the dropdown and the button is 
-handled by the subview.
+It also manage the MessageView and MainView. In the nominal case both are rendered 
+(although the MessageView may remain empty at first, and thus invisible). However 
+if the initial model reports an unrecoverable failure (see Model), only the message 
+view will be rendered.
 
-2/ Subview
 
-The subview depends on the authentication protocol selected by #bt-auth-proto :  
-the implementation changes when the dropdown changes. Each implementation comes 
-with its own template. 
+2/ MainView
+	
+ Used for the authentication mode is APP_LEVEL :
 
- *template insertion div : #bt-auth-cred-template
+	* main div : #bt-auth-creds-main 
+	* the authentication protocol dopdown list : #bt-auth-proto
+	* the button pane : #bt-auth-creds-buttonpane
+	* the test button : #bt-auth-test
+	* the save button : #bt-auth-save
+
+Other inputs that may appear between the dropdown and the buttonpane are actually 
+handled by the SubView. 
+
+
+3/ Subview
+
+The SubView is whichever form that allows the administrator to enter app level credentials
+per se. The implementation varies according to the selected authentication protocol
+(ie the #bt-auth-proto). Each implementation comes ith its own template. 
+
+ 	* main div : #bt-auth-cred-template
  
+ Currently this feature is not yet implemented because only basic auth is available
+ anyway.
  
-3/ Configuration
+4/ MessageView
+
+ This is a dumb container which contains three panels that may show or hide alternately
+ if something must be reported to the user.
+ 
+  * main div : #bt-auth-creds-messagezone
+  * the failure notification : #bt-auth-failure
+  * warning notification : #bt-auth-warning
+  * success notification : #bt-auth-success 
+ 
+Failure are for unrecoverable errors while warnings are for other less fatal errors. 
+
+The other views interact with the MessageView with the radio. It is a simple event channel
+that the MessageView listen to and the preferred way of displaying a message.
+When a message must be displayed, the other views can trigger on the radio one of 
+events 'bt-auth-failure', 'bt-auth-warning' and 'bt-auth-success', and pass the message
+as a parameter.
+
+ 
+5/ Configuration
 
 The configuration expected by the CredentialManagerView is :
 
@@ -65,22 +107,28 @@ The configuration expected by the CredentialManagerView is :
 			credentials : the actual credential object, which is variable. See the various subview implementations for insights. May be null if none were set yet.
 		}
 	}
-	
-This serves as the Backbone model for the master view. An important thing to 
-note is that the attribute 'credentials' will itself be turned into a Backbone
-model and then passed to the subview : this element is shared between the 
-master and the subview. It entails that the subview implementation MUST NEVER 
-instantiate its model, instead it must work with what was given to it. The 
-content may however change at will.
-	
-	
-4/ States
 
-	* If #bt-auth-policy-user is selected, the stored credentials panel is disabled
-	* If #bt-auth-policy-application is enabled, the stored credentials panel is enabled
-	* When #bt-auth-proto changes value, the subview is flushed and replaced by the requested implementation
-	* When pages load, the subview is given the credentials object from the configuration as its model
-	* Subsequent refreshing of the subview alone will use a blank model 
+	
+This serves as the Backbone model for both CredentialManagerView and MainView. 
+
+An important thing to note is that the attribute 'credentials' will itself 
+be turned into a Backbone model and then passed to the SubView : this element 
+is shared between the MainView and the SubView. It entails that the SubView 
+implementation MUST NEVER instantiate its model, instead it must work with 
+what was given to it. The content may however change at will.
+	
+
+6/ States 
+
+	* When the policy is set to 'USER', the MainView (and SubView) and MessageView are disabled
+	* When the policy is set to 'APP_LEVEL', the MainView and MessageView are enabled
+	* In case of unrecoverable error, the error is displayed in the failure pane of the MessageView 
+		and the MainView is hidden.
+	* The MainView chooses the implementation of SubView to be rendered and gives it its 
+		Backbone Model for the credentials. At initialization if those credentials were null an
+		empty model is passed instead.
+	* When the selected auth protocol changes, the SubView is destroyed and replaced by a new, 
+	   adequate implementation and is given an empty model.
 
 */
 

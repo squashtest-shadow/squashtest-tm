@@ -41,32 +41,6 @@
 <f:message var="cancelLabel" key="label.Cancel" />
 
 
-<style>
-
-
-	#bugtracker-auth .bt-auth-credentials-section{
-		margin-top : 1em;
-		padding: 1em;
-		margin-bottom: 1em;
-	}
-
-
-	#bugtracker-auth .bt-auth-messagepane{
-		max-width : 500px;
-	}
-	
-	#bugtracker-auth .side-panel{
-		display:inline-block;
-		vertical-align : middle;
-	}
-	
-	
-	#bugtracker-auth .side-panel.not-displayed{
-		display : none
-	}
-	
-</style>
-
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.grey.css" />
@@ -170,7 +144,7 @@
 						<f:message var="testLabel" key="label.test"/>
 						<f:message var="saveLabel" key="label.save"/>
 																		
-						<div id="bugtracker-auth" class="display-table-row">	
+						<div id="bugtracker-auth" class="adm-srv-auth display-table-row ">	
 							
 							<label class="display-table-cell"><f:message key="bugtracker.admin.policy.title"/></label>
 							
@@ -188,7 +162,7 @@
 								
 								<div>
 									<div id="bt-auth-creds-main" 
-										class="bt-auth-credentials-section side-panel std-border std-border-radius 
+										class="srv-auth-credentials-section side-panel std-border std-border-radius 
 												${credSectionEnabling} ${credsSectionVisibility}">
 									
 
@@ -214,7 +188,7 @@
 										
 									</div>
 								
-									<div id="bt-auth-main-messagezone" class="side-panel bt-auth-messagepane ${credSectionEnabling}">
+									<div id="bt-auth-main-messagezone" class="side-panel srv-auth-messagepane ${credSectionEnabling}">
 										
 										<div id="bt-auth-failure" class="std-border std-border-radius ${failureVisibility}">
 											<comp:notification-pane type="warning" txtcontent="${authConf.failureMessage}"/>
