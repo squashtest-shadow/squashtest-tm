@@ -18,17 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.core.bugtracker.service;
+
+import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 
 /**
- * <p>
- * That package deals in a general way with other servers that Squash would interact with. Currently residing
- * in artifact 'core.bugtracker.api' but ought to belong to 'tm.domain'.
- * </p>
+ * Thrown when attempting to authenticate to a bugtracker with the wrong policy (@see {@link org.squashtest.tm.domain.servers.AuthenticationPolicy} )
  *
- * <p>
- * TODO : one day we will extract all the services, the BugTracker entity etc in tm.domain.
- * In waiting for this glorious day I put some classes of the package org.squashtest.tm.domain.servers
- * in this artifact.
- * </p>
  */
-package org.squashtest.tm.domain.servers;
+public class WrongAuthenticationPolicyException extends BugTrackerLocalException {
+
+	public WrongAuthenticationPolicyException(AuthenticationPolicy wrongPolicy){
+		super("Attempted to authenticate with policy "+wrongPolicy+", yet the server is configured to use a different policy", null);
+	}
+
+}

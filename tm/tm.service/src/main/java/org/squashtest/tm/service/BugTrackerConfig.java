@@ -34,6 +34,9 @@ import org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHo
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
+
+import javax.inject.Inject;
 
 /**
  * Spring configuration for bugtracker connectors subsystem
@@ -51,6 +54,7 @@ public class BugTrackerConfig {
 	@Autowired(required = false)
 	private Collection<OslcBugTrackerConnectorProvider> oslcProviders = Collections.emptyList();
 
+
 	@Bean(name = "squashtest.core.bugtracker.BugTrackerContextHolder")
 	public BugTrackerContextHolder bugTrackerContextHolder() {
 		return new ThreadLocalBugTrackerContextHolder();
@@ -66,10 +70,11 @@ public class BugTrackerConfig {
 	}
 
 	@Bean
-	public BugTrackersService bugTrackersService() {
+	public BugTrackersService bugTrackersService(StoredCredentialsManager credentialsManager) {
 		BugTrackersServiceImpl service = new BugTrackersServiceImpl();
 		service.setBugTrackerConnectorFactory(bugTrackerConnectorFactory());
 		service.setContextHolder(bugTrackerContextHolder());
+		service.setCredentialsManager(credentialsManager);
 
 		return service;
 	}

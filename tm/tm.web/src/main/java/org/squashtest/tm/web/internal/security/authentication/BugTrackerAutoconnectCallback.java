@@ -39,6 +39,7 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -142,26 +143,31 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			contextHolder.setContext(newContext);
 
 			try{
-			List<BugTracker> bugTrackers = findBugTrackers();
+				List<BugTracker> bugTrackers = findBugTrackers();
 
-			for (BugTracker bugTracker : bugTrackers) {
-				try {
-					LOGGER.debug("BugTrackerAutoconnectCallback : try connexion of bug-tracker : {}", bugTracker.getName());
-					bugTrackersLocalService.setCredentials(username, password, bugTracker);
-					// if success, store the credential in context
-					LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
-					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
-					newContext.setCredentials(bugTracker, creds);
+				for (BugTracker bugTracker : bugTrackers) {
+					try {
 
-				} catch (BugTrackerRemoteException ex) {
-					LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
-					LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
+						if (bugTracker.getAuthenticationPolicy() == AuthenticationPolicy.APP_LEVEL){
+							LOGGER.debug("BugTrackerAutoconnectCallback : bugtracker {} uses the app-level authentication policy, credentials are assumed set and correct", bugTracker.getName());
+						}
+						else {
+							LOGGER.debug("BugTrackerAutoconnectCallback : try connexion of bug-tracker : {}", bugTracker.getName());
+							bugTrackersLocalService.setCredentials(username, password, bugTracker);
+							// if success, store the credential in context
+							LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
+							AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
+							newContext.setCredentials(bugTracker, creds);
+						}
+					} catch (BugTrackerRemoteException ex) {
+						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
+						LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
+					}
 				}
+
+				// store context into session
+				mergeIntoSession(newContext);
 			}
-
-			// store context into session
-			mergeIntoSession(newContext);
-				}
 			finally{
 				contextHolder.clearContext();
 			}

@@ -22,13 +22,13 @@
 /**
  * <p>
  * That package deals in a general way with other servers that Squash would interact with. Currently residing
- * in artifact 'core.bugtracker.api' but ought to belong to 'tm.domain'.
+ * in artifact 'core.bugtracker.api' but ought to belong to 'tm.service'.
  * </p>
  *
  * <p>
- * TODO : one day we will extract all the services, the BugTracker entity etc in tm.domain.
- * In waiting for this glorious day I put some classes of the package org.squashtest.tm.domain.servers
+ * TODO : one day we will extract all the services, the BugTracker entity etc in tm.service.
+ * In waiting for this glorious day I put some classes of the package org.squashtest.tm.service.servers
  * in this artifact.
  * </p>
  */
-package org.squashtest.tm.domain.servers;
+package org.squashtest.tm.service.servers;

@@ -263,7 +263,8 @@ public interface BugTrackersLocalService {
 	AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId);
 
 	/**
-	 * sets the credentials of an user for authentication bugtracker-side.
+	 * sets the credentials of an user for authentication bugtracker-side. This operation is illegal if the bugtracker is set to use
+	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}.
 	 *
 	 * @param username
 	 * @param password
@@ -272,6 +273,7 @@ public interface BugTrackersLocalService {
 	 * @return nothing
 	 * @throws BugTrackerRemoteException
 	 *             if the credentials are wrong
+	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
 	 */
 	void setCredentials(String username, String password, BugTracker bugTracker) throws BugTrackerRemoteException;
 
@@ -282,6 +284,7 @@ public interface BugTrackersLocalService {
 	 * @param password
 	 * @param bugtrackerId
 	 * @throws BugTrackerRemoteException
+	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
 	 */
 	void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException;
 

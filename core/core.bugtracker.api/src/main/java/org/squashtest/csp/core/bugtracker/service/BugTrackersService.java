@@ -36,6 +36,7 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+import org.squashtest.tm.domain.servers.Credentials;
 
 
 /**
@@ -56,16 +57,31 @@ public interface BugTrackersService {
 
 	/**
 	 * Sets the credentials to use for bug tracker authentication. Once set,
-	 * {@link BugTrackersService#isCredentialsNeeded()} should no longer be <code>false</code> unless an authentication
-	 * error happens at some point.
+	 * {@link BugTrackersService#isCredentialsNeeded()} should no longer be <code>false</code> unless
+	 * an authentication error happens at some point. That operation is not required if the
+	 * bugtracker uses {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL},
+	 * since the user will always be considered as authenticated
 	 *
 	 * @param username
 	 * @param password
 	 * @param bugTracker the concerned BugTracker
 	 * @return nothing
 	 * @throws BugTrackerRemoteException if the credentials are invalid
+	 * @throws WrongAuthenticationPolicyException if the bugtracker is configured to use
+	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}
 	 */
 	void  setCredentials(String username, String password, BugTracker bugTracker);
+
+
+	/**
+	 * Will test if connector accepts and validate these credentials.
+	 *
+	 * @throws org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException if the credentials are of the wrong type
+	 * @throws org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException if the credentials are rejected by the endpoint
+	 *
+	 * @param credentials
+	 */
+	void testCredentials(BugTracker bugTracker, Credentials credentials);
 
 
 	/**
@@ -124,7 +140,7 @@ public interface BugTrackersService {
 
 	/**
 	 * given a key, returns an issue
-	 * 
+	 *
 	 * @param key
 	 * @param bugTracker the concerned BugTracker
 	 * @return the issue
@@ -137,7 +153,7 @@ public interface BugTrackersService {
 	 * <p>This method returns a list of issues corresponding to the given Squash Issue List. This method
 	 * returns a future so that the caller can abort if this takes too long. Technically it is done by having the
 	 * current thread enqueue a new task in the TaskExecutor, the caller can then set a time limit.</p>
-	 * 
+	 *
 	 * <p>Because the credentials are usually passed using a {@link ThreadLocalBugTrackerContextHolder}, and that the task
 	 * is performed in another thread, the code being executed will not find the credentials. That's why you have to
 	 * provide them explicitly here.</p>
@@ -155,7 +171,7 @@ public interface BugTrackersService {
 
 	/**
 	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
-	 * 
+	 *
 	 * @param projectName
 	 * @param BugTracker bugTracker
 	 * @return
@@ -166,7 +182,7 @@ public interface BugTrackersService {
 	/**
 	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
 	 * Note that the specified bugtracker will be used for that purpose.
-	 * 
+	 *
 	 * @param remoteIssueKey
 	 * @param bugtracker
 	 * @param attachments
@@ -175,7 +191,7 @@ public interface BugTrackersService {
 
 	/**
 	 * forwards a {@link DelegateCommand} to a connector
-	 * 
+	 *
 	 * @param command
 	 * @return
 	 */

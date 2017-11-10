@@ -30,6 +30,7 @@ import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -37,6 +38,11 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
  * Basic impementation of {@link BugTrackersService}
@@ -50,9 +56,13 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
 
+	private StoredCredentialsManager credentialsManager;
+
 	@Override
 	public boolean isCredentialsNeeded(BugTracker bugTracker) {
-		return !getBugTrackerContext().hasCredentials(bugTracker);
+		return !
+		   (getBugTrackerContext().hasCredentials(bugTracker)	||
+			(bugTracker.getAuthenticationPolicy() == AuthenticationPolicy.APP_LEVEL));
 	}
 
 	@Override
@@ -72,6 +82,10 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Override
 	public void setCredentials(String username, String password, BugTracker bugTracker) {
+		AuthenticationPolicy policy = bugTracker.getAuthenticationPolicy();
+		if (policy != AuthenticationPolicy.USER){
+			throw new WrongAuthenticationPolicyException(policy);
+		}
 
 		AuthenticationCredentials credentials = new AuthenticationCredentials(username, password);
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
@@ -85,6 +99,11 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	}
 
+	@Override
+	public void testCredentials(BugTracker bugTracker, Credentials credentials) {
+		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		connector.checkCredentials(credentials);
+	}
 
 	@Override
 	public RemoteProject findProject(String name, BugTracker bugTracker) {
@@ -98,7 +117,26 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		connector.authenticate(getBugTrackerContext().getCredentials(bugTracker));
+		switch(bugTracker.getAuthenticationPolicy()){
+			case USER:
+				if (! connector.supports(AuthenticationProtocol.BASIC_AUTH)){
+					throw new UnsupportedAuthenticationModeException(AuthenticationProtocol.BASIC_AUTH.toString());
+				}
+				AuthenticationCredentials oldCreds = getBugTrackerContext().getCredentials(bugTracker);
+				BasicAuthenticationCredentials creds = new BasicAuthenticationCredentials(oldCreds.getUsername(), oldCreds.getPassword().toCharArray());
+				connector.authenticate(creds);
+				break;
+
+			case APP_LEVEL:
+				Credentials credentials = credentialsManager.unsecuredFindCredentials(bugTracker.getId());
+				AuthenticationProtocol protocol = credentials.getImplementedProtocol();
+				if (! connector.supports(protocol)){
+					throw new UnsupportedAuthenticationModeException(protocol.toString());
+				}
+				connector.authenticate(credentials);
+
+		}
+
 		return connector;
 	}
 
@@ -176,4 +214,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		this.bugTrackerConnectorFactory = bugTrackerConnectorFactory;
 	}
 
+	public void setCredentialsManager(StoredCredentialsManager credentialsManager) {
+		this.credentialsManager = credentialsManager;
+	}
 }
