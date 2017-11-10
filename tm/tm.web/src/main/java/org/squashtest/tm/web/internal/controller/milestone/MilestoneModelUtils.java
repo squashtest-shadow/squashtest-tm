@@ -58,8 +58,11 @@ public final class MilestoneModelUtils {
 
 		String strMindate = i18nHelper.localizeShortDate(minDate, locale);
 		String strMaxdate = i18nHelper.localizeShortDate(maxDate, locale);
-
-		return strMindate + " - " + strMaxdate;
+		if(!strMaxdate.equals(strMindate)) {
+			return strMindate + " - " + strMaxdate;
+		}else{
+			return strMaxdate;
+		}
 	}
 
 	public static String milestoneLabelsOrderByDate(Set<Milestone> milestones) {
