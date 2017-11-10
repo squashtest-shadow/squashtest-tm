@@ -176,7 +176,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToActiveMilestone(Long activeMilestoneId) {
-		List<Long> reqIdsWithActiveMilestone = DSL.select().from(REQUIREMENT_VERSION)
+		List<Long> reqIdsWithActiveMilestone = DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID).from(REQUIREMENT_VERSION)
 			.where(REQUIREMENT_VERSION.RES_ID.in(DSL.select(MILESTONE_REQ_VERSION.REQ_VERSION_ID).from(MILESTONE_REQ_VERSION).where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))))
 			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class);
 
@@ -217,7 +217,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 	@Override
 	protected Map<Long, List<Long>> findAllMilestonesForLN() {
-		return DSL.select()
+		return DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID, MILESTONE_REQ_VERSION.MILESTONE_ID)
 			.from(MILESTONE_REQ_VERSION)
 			.join(REQUIREMENT_VERSION).on(MILESTONE_REQ_VERSION.REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
 			.join(REQUIREMENT).on(REQUIREMENT_VERSION.REQUIREMENT_ID.eq(REQUIREMENT.RLN_ID))

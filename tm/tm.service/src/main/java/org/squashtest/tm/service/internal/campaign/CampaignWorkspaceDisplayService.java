@@ -44,7 +44,6 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateIteratio
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import javax.xml.transform.Source;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
