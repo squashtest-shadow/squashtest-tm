@@ -156,9 +156,6 @@ public class BugTrackerController {
 	private static final String STYLE_ARG = "style";
 	private static final String STYLE_TOGGLE = "toggle";
 
-	private static final String SOURCE_ARG = "source";
-	private static final String SOURCE_INFO = "info";
-
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
 
@@ -427,9 +424,9 @@ public class BugTrackerController {
 	 * @param rvId
 	 * @return
 	 */
-	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}", method = RequestMethod.GET)
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/{panelSource}", method = RequestMethod.GET)
 	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, Locale locale, @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
-														  @RequestParam(value = SOURCE_ARG, required = false, defaultValue = SOURCE_INFO) String panelSource) {
+														  @PathVariable("panelSource") String panelSource) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(rvId);
 
@@ -449,9 +446,8 @@ public class BugTrackerController {
 	 * json Data for the known issues table.
 	 */
 	@ResponseBody
-	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues", method = RequestMethod.GET)
-	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, final DataTableDrawParameters params,
-															   @RequestParam(value = SOURCE_ARG, required = false, defaultValue = SOURCE_INFO) String panelSource) {
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues/{panelSource}", method = RequestMethod.GET)
+	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, final DataTableDrawParameters params,  @PathVariable("panelSource") String panelSource) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 

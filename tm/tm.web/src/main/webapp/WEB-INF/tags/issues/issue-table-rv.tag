@@ -104,13 +104,13 @@ require( ["common"], function(){
 				return row;
 			};
 
-			var targetSource;
+			var targetUrl = "${dataUrl}";
 			var reqRefVisibility;
 			if ($("#tree-panel-left").length != 0) {
-				targetSource = "workspace";
+				targetUrl += "/all";
 				reqRefVisibility = true;
 			}else {
-				targetSource = "info";
+				targetUrl += "/info";
 				reqRefVisibility = false;
 			}
 
@@ -125,8 +125,7 @@ require( ["common"], function(){
 						{"bVisible": reqRefVisibility, "aTargets": [7]}
 					],
 					'ajax': {
-						url: "${dataUrl}",
-						data: {'source': targetSource},
+						url: targetUrl,
 						error: function (xhr) {
 							eventBus.trigger('bugtracker.ajaxerror', xhr);
 							return false;

@@ -558,18 +558,19 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				var config = module.config();
 
 				if (config.basic.hasBugtracker) {
-					var targetSource;
+					var targetUrl = config.urls.btEntityUrl;
 					if ($("#tree-panel-left").length != 0) {
 						// there is tree
-						targetSource = "workspace";
+						targetUrl += "/all";
 					}else {
 						// no tree
-						targetSource = "info";
+						targetUrl += "/info";
 					}
+
 					bugtrackerPanel.load({
-						url: config.urls.btEntityUrl,
+						url: targetUrl,
 						style: "fragment-tab",
-						source: targetSource
+						source: targetUrl
 					});
 				}
 			}

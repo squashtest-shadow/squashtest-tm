@@ -48,7 +48,6 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 	private RequirementVersionManagerService requirementVersionManagerService;
 
 	static final String INFO = "info";
-	static final String WORKSPACE = "workspace";
 
 	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, String panelSource, PagingAndSorting sorter) {
 
@@ -57,7 +56,7 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 		List<RequirementVersion> versions = new ArrayList<>();
 		List<RequirementVersionIssueOwnership<RemoteIssueDecorator>> requirementVersionIssueOwnerships = new ArrayList<>();
 
-		if(panelSource.equalsIgnoreCase(WORKSPACE)){
+		if(!panelSource.equalsIgnoreCase(INFO)){
 			Requirement currentReq = currentReqVer.getRequirement();
 			List<Requirement> requirementList = getFatherChildrenRequirements(currentReq);
 			versions = requirementList.stream().map(Requirement::getCurrentVersion).collect(Collectors.toList());
