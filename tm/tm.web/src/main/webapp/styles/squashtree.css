@@ -112,6 +112,10 @@ li[rel="test-suite"][executionstatus="READY"] > a > .jstree-icon {
 	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_Grey.png"); /** sprite-ref: sprites-icons; */
 }
 
+li[rel="test-suite"][executionstatus="SETTLED"] > a > .jstree-icon {
+	background-image: url("../images/Icon_Tree_TestSuite.png"), url("../images/Icon_GreenWhite.png"); /** sprite-ref: sprites-icons; */
+}
+
 li[rel="ta-test"] > a > .jstree-icon {
 	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons; */
 }
