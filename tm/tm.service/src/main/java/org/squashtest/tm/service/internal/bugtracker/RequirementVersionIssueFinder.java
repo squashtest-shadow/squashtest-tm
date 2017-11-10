@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
+import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -32,81 +33,61 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.service.internal.repository.IssueDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 class RequirementVersionIssueFinder extends TestCaseIssueFinder {
-	@Inject
-	private RequirementDao requirementDao;
+
 	@Inject
 	private IssueDao issueDao;
 	@Inject
 	private RequirementVersionManagerService requirementVersionManagerService;
 
 	static final String INFO = "info";
-	static final String ALPHABETICAL_ORDER = "alphabetical-order";
-	static final String CUSTOM_ORDER = "custom-order";
+	static final String WORKSPACE = "workspace";
 
-	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, String displayMode, PagingAndSorting sorter) {
-		RequirementVersion currentRequirementVersion = requirementVersionManagerService.findById(entityId);
+	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, String panelSource, PagingAndSorting sorter) {
 
-		List<RequirementVersion> allRequirementVersions = new ArrayList<>();
+		RequirementVersion currentReqVer = requirementVersionManagerService.findById(entityId);
+
+		List<RequirementVersion> versions = new ArrayList<>();
 		List<RequirementVersionIssueOwnership<RemoteIssueDecorator>> requirementVersionIssueOwnerships = new ArrayList<>();
-		long nbIssues = 0L;
-		int order = 0;
 
-		if (displayMode.equals(INFO)) {
-			allRequirementVersions.add(currentRequirementVersion);
-		} else {
-			Requirement currentRequirement = currentRequirementVersion.getRequirement();
-			Map<Long, Requirement> targetRequirementMaps = getAllRequirements(currentRequirement);
-			if (displayMode.equals(CUSTOM_ORDER)) {
-				List<Long> unsortedRequirementIds = new ArrayList(targetRequirementMaps.keySet());
-				List<Long> sortedRequirementIds = requirementDao.sortRequirementByNodeRelationship(unsortedRequirementIds);
-				sortedRequirementIds.forEach(id -> {
-					allRequirementVersions.add(targetRequirementMaps.get(id).getCurrentVersion());
-				});
-			}
-			if (displayMode.equals(ALPHABETICAL_ORDER)) {
-				targetRequirementMaps.forEach((id, req) -> {
-					allRequirementVersions.add(req.getCurrentVersion());
-				});
-				allRequirementVersions.sort(Comparator.comparing(RequirementVersion::getFullName));
-			}
+		if(panelSource.equalsIgnoreCase(WORKSPACE)){
+			Requirement currentReq = currentReqVer.getRequirement();
+			List<Requirement> requirementList = getFatherChildrenRequirements(currentReq);
+			versions = requirementList.stream().map(Requirement::getCurrentVersion).collect(Collectors.toList());
+		}else {
+			versions.add(currentReqVer);
 		}
-		for (RequirementVersion rv : allRequirementVersions) {
-			List<Pair<Execution, Issue>> pairs = findExecutionIssuePairs(rv, sorter);
-			List<IssueOwnership<RemoteIssueDecorator>> issueOwnerships = findRemoteIssues(pairs);
-			for (IssueOwnership<RemoteIssueDecorator> io : issueOwnerships) {
-				requirementVersionIssueOwnerships.add(new RequirementVersionIssueOwnership<>(io.getIssue(), io.getOwner(), rv, String.valueOf(order)));
-			}
-			nbIssues += countIssues(rv);
-			order += 1;
+
+		List<RequirementIssueSupport> executionIssuePairsByRequirementVersions = issueDao.findAllExecutionIssuePairsByRequirementVersions(versions, sorter);
+		for (RequirementIssueSupport support : executionIssuePairsByRequirementVersions) {
+			Pair<Execution, Issue> pair = new Pair<>(support.getExecution(), support.getIssue());
+			IssueOwnership<RemoteIssueDecorator> issueOwnership = findRemoteIssues(Arrays.asList(pair)).get(0);
+			requirementVersionIssueOwnerships.add(new RequirementVersionIssueOwnership<>(issueOwnership.getIssue(), issueOwnership.getOwner(), support.getRequirementVersion()));
 		}
+
+		long nbIssues = versions.stream().mapToLong(rv -> countIssues(rv)).sum();
 		return new PagingBackedPagedCollectionHolder<>(sorter, nbIssues, requirementVersionIssueOwnerships);
 	}
 
-	private Map<Long, Requirement> getAllRequirements(Requirement currentRequirement) {
-		Map<Long, Requirement> allRequirements = new HashMap<>();
-		allRequirements.put(currentRequirement.getId(), currentRequirement);
+	private List<Requirement> getFatherChildrenRequirements(Requirement currentRequirement) {
+		List<Requirement> result = new ArrayList<>();
+		result.add(currentRequirement);
 		if (currentRequirement.hasContent()) {
 			for (Requirement childrenRequirement : currentRequirement.getContent()) {
-				allRequirements.putAll(getAllRequirements(childrenRequirement));
+				result.addAll(getFatherChildrenRequirements(childrenRequirement));
 			}
 		}
-		return allRequirements;
-	}
-
-	private List<Pair<Execution, Issue>> findExecutionIssuePairs(RequirementVersion requirementVersion, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionIssuePairsByRequirementVersion(requirementVersion, sorter);
+		return result;
 	}
 
 	private long countIssues(RequirementVersion requirementVersion) {
 		return issueDao.countByRequirementVersion(requirementVersion);
 	}
-
 }

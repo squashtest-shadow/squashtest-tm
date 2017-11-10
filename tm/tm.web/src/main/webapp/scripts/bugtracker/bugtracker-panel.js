@@ -112,6 +112,8 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 			});
 
 			var sstyle = conf.style || "toggle";
+
+			var ssource = conf.source || "info"
 			// keep a reference on that request
 			// in case we need to abort it
 			var currentXhr = null;
@@ -119,7 +121,10 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 			// the main loading function
 			var loadFn = function(){
 				var params = {
-					data : { 'style' : sstyle}
+					data : {
+						'style' : sstyle,
+						'source' : ssource
+					}
 				};
 				currentXhr = $.ajax(conf.url, params)
 				.success(function(htmlpanel) {
@@ -137,7 +142,9 @@ define([ "jquery", "user-account/user-prefs", "app/util/ButtonUtil",
 			};
 			var activateFn = function () {
 				var params = {
-					data: {'style': sstyle}
+					data: {'style' : sstyle,
+						'source' : ssource
+					}
 				};
 				currentXhr = $.ajax(conf.url, params)
 					.success(function (htmlpanel) {

@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
+import org.squashtest.tm.service.internal.bugtracker.RequirementIssueSupport;
 
 import java.util.Collection;
 import java.util.List;
@@ -100,7 +101,7 @@ public interface CustomIssueDao {
 	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter);
 	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter);
 	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter);
-	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByRequirementVersion(RequirementVersion requirementVersion, PagingAndSorting sorter);
+	List<RequirementIssueSupport> findAllExecutionIssuePairsByRequirementVersions(List<RequirementVersion> requirementVersions, PagingAndSorting sorter);
 	List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter);
 	List<Pair<ExecutionStep, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
 }

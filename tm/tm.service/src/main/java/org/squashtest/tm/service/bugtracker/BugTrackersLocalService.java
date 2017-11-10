@@ -216,7 +216,7 @@ public interface BugTrackersLocalService {
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of RequirementVersionIssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
-	PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion( Long rvId, String displayMode,
+	PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion( Long rvId, String panelSource,
 																																	 PagingAndSorting sorter);
 
 	/**

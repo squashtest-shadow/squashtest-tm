@@ -18,25 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.bugtracker;
+package org.squashtest.tm.service.internal.bugtracker;
 
-import org.squashtest.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-public class RequirementVersionIssueOwnership<ISSUE> extends IssueOwnership<ISSUE> {
+/**
+ * Same as {@link Pair}, but specialized for the requirement issues case
+ */
+public class RequirementIssueSupport {
 	private RequirementVersion requirementVersion;
+	private Execution execution;
+	private Issue issue;
 
-	public RequirementVersionIssueOwnership(ISSUE issue, IssueDetector owner, RequirementVersion requirementVersion) {
-		super(issue, owner);
+	public RequirementIssueSupport(RequirementVersion requirementVersion, Execution execution, Issue issue) {
 		this.requirementVersion = requirementVersion;
+		this.execution = execution;
+		this.issue = issue;
 	}
 
 	public RequirementVersion getRequirementVersion() {
 		return requirementVersion;
 	}
 
-	public void setRequirementVersion(RequirementVersion requirementVersion) {
-		this.requirementVersion = requirementVersion;
+	public Execution getExecution() {
+		return execution;
+	}
+
+	public Issue getIssue() {
+		return issue;
 	}
 }

@@ -363,8 +363,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	@PreAuthorize("hasPermission(#rvId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForRequirmentVersion(
-		 Long rvId, String displayMode, PagingAndSorting sorter) {
-		return requirementVersionIssueFinder.findSorted(rvId, displayMode, sorter);
+		 Long rvId, String panelSource, PagingAndSorting sorter) {
+		return requirementVersionIssueFinder.findSorted(rvId, panelSource, sorter);
 	}
 
 	@Override

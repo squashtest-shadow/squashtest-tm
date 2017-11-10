@@ -156,6 +156,9 @@ public class BugTrackerController {
 	private static final String STYLE_ARG = "style";
 	private static final String STYLE_TOGGLE = "toggle";
 
+	private static final String SOURCE_ARG = "source";
+	private static final String SOURCE_INFO = "info";
+
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
 
@@ -424,20 +427,16 @@ public class BugTrackerController {
 	 * @param rvId
 	 * @return
 	 */
-	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/{display-mode}", method = RequestMethod.GET)
-	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, @PathVariable("display-mode") String displayMode, Locale locale,
-														  @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}", method = RequestMethod.GET)
+	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, Locale locale, @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
+														  @RequestParam(value = SOURCE_ARG, required = false, defaultValue = SOURCE_INFO) String panelSource) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(rvId);
 
 		ModelAndView mav = makeIssuePanel(requirementVersion, REQUIREMENT_VERSION_TYPE, locale, panelStyle, requirementVersion.getProject());
 
-		/*
-		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
-		 * with the panel in one call)
-		 */
 		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, displayMode,
+			DataTableModel issues = getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, panelSource,
 				new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
@@ -450,13 +449,13 @@ public class BugTrackerController {
 	 * json Data for the known issues table.
 	 */
 	@ResponseBody
-	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues/{display-mode}", method = RequestMethod.GET)
-	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, @PathVariable("display-mode") String displayMode,
-															   final DataTableDrawParameters params) {
+	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/known-issues", method = RequestMethod.GET)
+	public DataTableModel getRequirementVersionKnownIssuesData(@PathVariable("rvId") Long rvId, final DataTableDrawParameters params,
+															   @RequestParam(value = SOURCE_ARG, required = false, defaultValue = SOURCE_INFO) String panelSource) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
-		return getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, displayMode, sorter, params.getsEcho());
+		return getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, panelSource, sorter, params.getsEcho());
 
 	}
 
@@ -866,11 +865,11 @@ public class BugTrackerController {
 
 	/* ******************************* private methods ********************************************** */
 
-	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String displayMode,PagingAndSorting paging, String sEcho) {
+	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String panelSource,PagingAndSorting paging, String sEcho) {
 
 		PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		try {
-			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForRequirmentVersion(id, displayMode, paging);
+			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForRequirmentVersion(id, panelSource, paging);
 		}
 		catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolderForRequirement(entityType, id, exception, paging);

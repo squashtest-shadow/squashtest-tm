@@ -62,7 +62,6 @@
 			<th data-def="map=issue-assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=issue-owner"><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
 			<th data-def="map=requirement-reference"><f:message key="requirement-version.issues.table.column-header.reference.label" /></th>
-			<th data-def="map=order, invisible"></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -101,39 +100,34 @@ require( ["common"], function(){
 				linkRequirement.attr('href', "${pageContext.servletContext.contextPath}"+ "/requirement-versions/" + data["requirement-id"] + "/info/");
 				linkRequirement.text(linkTextRequirement);
 				$(td).html(linkRequirement);
-				
-				td=$(row).find("td:eq(8)");
-				var encodedOrder = $("<div/>").text(data["order"]).html();
-				$(td).html(encodedOrder);
 
 				return row;
 			};
 
+			var targetSource;
+			var reqRefVisibility;
+			if ($("#tree-panel-left").length != 0) {
+				targetSource = "workspace";
+				reqRefVisibility = true;
+			}else {
+				targetSource = "info";
+				reqRefVisibility = false;
+			}
+
 			$("#issue-table").squashTable({
-					'fnRowCallback' : issueTableRowCallback,
+					'fnRowCallback': issueTableRowCallback,
 					<c:if test="${not empty tableEntries.aaData}">
-        			'aaData' : ${json:serialize(tableEntries.aaData)},
-        			</c:if>
-					'aaSorting' : [ [ 8, 'asc' ] [ 0, 'asc' ]],
-					'iDeferLoading' : ${deferLoading},
-					'ajax' : {
-						url: function () {
-							var dataUrl = "${dataUrl}";
-							if ($("#tree-panel-left").length != 0) {
-								// then we are in the requirement workspace, all the issues of children requirements should be displayed in mother requirement issue panel
-								var requirementTreePref = localStorage.getItem("requirement-tree-pref");
-								if(requirementTreePref == 0){
-									dataUrl += "/alphabetical-order";
-								} else{
-									dataUrl += "/custom-order";
-								}
-							} else {
-								// then only the current requirement is involved
-								dataUrl += "/info";
-							}
-							return dataUrl
-						},
-						error : function(xhr){
+					'aaData': ${json:serialize(tableEntries.aaData)},
+					</c:if>
+					'aaSorting': [0, 'asc'] [7, 'asc'],
+					'iDeferLoading': ${deferLoading},
+					"aoColumnDefs": [
+						{"bVisible": reqRefVisibility, "aTargets": [7]}
+					],
+					'ajax': {
+						url: "${dataUrl}",
+						data: {'source': targetSource},
+						error: function (xhr) {
 							eventBus.trigger('bugtracker.ajaxerror', xhr);
 							return false;
 						}

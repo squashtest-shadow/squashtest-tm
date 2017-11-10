@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
+import org.squashtest.tm.service.internal.bugtracker.RequirementIssueSupport;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomIssueDao;
@@ -305,14 +306,22 @@ public class IssueDaoImpl implements CustomIssueDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByRequirementVersion(RequirementVersion requirementVersion, PagingAndSorting sorter) {
-		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex.referencedTestCase in (select rvc.verifyingTestCase from RequirementVersion rv join rv.requirementVersionCoverages rvc where rv = :requirementVersion)", sorter);
+	public List<RequirementIssueSupport> findAllExecutionIssuePairsByRequirementVersions(List<RequirementVersion> requirementVersions, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.RequirementIssueSupport(rv, ex, Issue) " +
+			"from Execution ex " +
+			"inner join ex.issues Issue " +
+			"inner join ex.referencedTestCase.requirementVersionCoverages rvc  " +
+			"inner join rvc.verifiedRequirementVersion rv " +
+			"where rv in (:requirementVersions)", sorter);
 
-		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("requirementVersion", requirementVersion);
+		Query query = entityManager.unwrap(Session.class)
+			.createQuery(hql)
+			.setParameterList("requirementVersions", requirementVersions);
 		PagingUtils.addPaging(query, sorter);
 
 		return query.list();
 	}
+
 
 	@Override
 	public List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter) {

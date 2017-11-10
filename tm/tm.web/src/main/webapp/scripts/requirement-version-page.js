@@ -558,22 +558,18 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				var config = module.config();
 
 				if (config.basic.hasBugtracker) {
-					var bugtrackerUrl = config.urls.btEntityUrl;
+					var targetSource;
 					if ($("#tree-panel-left").length != 0) {
 						// there is tree
-						var requirementTreePref = localStorage.getItem("requirement-tree-pref");
-						if(requirementTreePref == 0){
-							bugtrackerUrl += "/alphabetical-order";
-						}	else {
-							bugtrackerUrl += "/custom-order";
-						}
+						targetSource = "workspace";
 					}else {
 						// no tree
-						bugtrackerUrl += "/info";
+						targetSource = "info";
 					}
 					bugtrackerPanel.load({
-						url: bugtrackerUrl,
-						style: "fragment-tab"
+						url: config.urls.btEntityUrl,
+						style: "fragment-tab",
+						source: targetSource
 					});
 				}
 			}
