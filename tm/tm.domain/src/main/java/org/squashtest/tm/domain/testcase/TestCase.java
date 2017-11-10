@@ -20,46 +20,9 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -83,9 +46,17 @@ import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.*;
+
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
+
+import org.squashtest.tm.domain.testcase.Parameter;
+
 /**
  * @author Gregory Fouquet
- *
  */
 @Entity
 @Indexed
@@ -97,10 +68,10 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") }),
-		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-			@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-			@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL")}),
+	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST")})})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -121,7 +92,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String prerequisite = "";
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
@@ -129,21 +100,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private List<TestStep> steps = new ArrayList<>();
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
+	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
+	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
@@ -223,7 +194,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -247,8 +217,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * @see TestCase#isAutomated()
 	 * @return TODO either replaced by isAutomated or should be synchronized with isAutomated
+	 * @see TestCase#isAutomated()
 	 */
 	public TestCaseExecutionMode getExecutionMode() {
 		return executionMode;
@@ -289,10 +259,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Will move a list of steps to a new position.
 	 *
-	 * @param newIndex
-	 *            the position we want the first element of movedSteps to be once the operation is complete
-	 * @param movedSteps
-	 *            the list of steps to move, sorted by rank among each others.
+	 * @param newIndex   the position we want the first element of movedSteps to be once the operation is complete
+	 * @param movedSteps the list of steps to move, sorted by rank among each others.
 	 */
 	public void moveSteps(int newIndex, List<TestStep> movedSteps) {
 		if (!steps.isEmpty()) {
@@ -328,8 +296,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 				copy.setAutomatedTest(this.automatedTest);
 			} catch (UnallowedTestAssociationException e) {
 				LOGGER.error(
-						"data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled",
-						this.getId(), e);
+					"data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled",
+					this.getId(), e);
 			}
 		}
 		return copy;
@@ -338,8 +306,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * will add to this parameters, datasets and dataParamValues copied from the given source.
 	 *
-	 * @param source
-	 *            : the source test case to copy the params, datasets and dataparamvalues from.
+	 * @param source : the source test case to copy the params, datasets and dataparamvalues from.
 	 */
 	private void addCopiesOfParametersAndDatasets(TestCase source) {
 		// create copy of parameters and remember the association original/copy
@@ -358,7 +325,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			// create copy of datasetParamValues and link the copies to the rightful parameters
 			for (DatasetParamValue datasetParamValue : dataset.getParameterValues()) {
 				Parameter datasetParamValueCopyParam = getParameterToLinkedTheCopiedDatasetParamValueTo(source,
-						copyByOriginalParam, datasetParamValue);
+					copyByOriginalParam, datasetParamValue);
 				String datasetParamValueCopyParamValue = datasetParamValue.getParamValue();
 				new DatasetParamValue(datasetParamValueCopyParam, datasetCopy, datasetParamValueCopyParamValue);
 			}
@@ -366,7 +333,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	private Parameter getParameterToLinkedTheCopiedDatasetParamValueTo(TestCase source,
-			Map<Parameter, Parameter> copyByOriginalParam, DatasetParamValue datasetParamValue) {
+																	   Map<Parameter, Parameter> copyByOriginalParam, DatasetParamValue datasetParamValue) {
 		Parameter datasetParamValueCopyParam;
 		if (datasetParamValue.getParameter().getTestCase().getId().equals(source.getId())) {
 			// if the parameter associated to the datasetParamValue is from this test case we need to link the
@@ -448,8 +415,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * @param weight
-	 *            the weight to set
+	 * @param weight the weight to set
 	 */
 	public void setImportance(@NotNull TestCaseImportance weight) {
 		this.importance = weight;
@@ -480,8 +446,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * @param prerequisite
-	 *            the prerequisite to set
+	 * @param prerequisite the prerequisite to set
 	 */
 	public void setPrerequisite(@NotNull String prerequisite) {
 		this.prerequisite = prerequisite;
@@ -495,8 +460,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * @param importanceAuto
-	 *            the importanceAuto to set
+	 * @param importanceAuto the importanceAuto to set
 	 */
 	public void setImportanceAuto(@NotNull Boolean importanceAuto) {
 		this.importanceAuto = importanceAuto;
@@ -542,7 +506,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 *
 	 * @return the list of {@link ActionTestStep} or empty list
 	 */
 	public List<ActionTestStep> getActionSteps() {
@@ -583,7 +546,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	// =====================Requirement verifying section====================
 
 	/**
-	 *
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
@@ -595,7 +557,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 *
 	 * Checks if the given version is already verified, avoiding to look at the given requirementVersionCoverage.
 	 *
 	 * @param requirementVersionCoverage
@@ -603,7 +564,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @throws RequirementAlreadyVerifiedException
 	 */
 	public void checkRequirementNotVerified(RequirementVersionCoverage requirementVersionCoverage,
-			RequirementVersion version) throws RequirementAlreadyVerifiedException {
+											RequirementVersion version) throws RequirementAlreadyVerifiedException {
 		Requirement req = version.getRequirement();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			if (coverage != requirementVersionCoverage) {
@@ -629,8 +590,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * Copy this.requirementVersionCoverages . All {@link RequirementVersionCoverage} having for verifying test case the
 	 * copy param.
 	 *
-	 * @param copy
-	 *            : the {@link TestCase} that will verify the copied coverages
+	 * @param copy : the {@link TestCase} that will verify the copied coverages
 	 * @return : the copied {@link RequirementVersionCoverage}s
 	 */
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(TestCase copy) {
@@ -648,8 +608,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Returns true if a step of the same id is found in this.steps.
 	 *
-	 * @param step
-	 *            : the step to check
+	 * @param step : the step to check
 	 * @return true if this {@link TestCase} has the given step.
 	 */
 	public boolean hasStep(TestStep step) {
@@ -664,9 +623,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
 	 *
-	 * @param requirementVersionCoverage
-	 *            : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
-	 *
+	 * @param requirementVersionCoverage : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
 	 * @deprecated does not seem to be used in 1.14 - to be removed
 	 */
 	@Deprecated
@@ -676,7 +633,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/***
-	 *
 	 * @return an unmodifiable set of the test case {@link RequirementVersionCoverage}s
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
@@ -684,7 +640,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * @param calledVersion
+	 * @param rVersion
 	 * @return true if this {@link TestCase} verifies the {@link RequirementVersion}
 	 */
 	public boolean verifies(RequirementVersion rVersion) {
@@ -721,8 +677,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * If the given parameter doesn't already exists in this.parameters, and, if the given parameter's name is not found
 	 * in this.parmeters : will add the given parameter to this.parameters.
 	 *
-	 * @throws NameAlreadyInUseException
 	 * @param parameter
+	 * @throws NameAlreadyInUseException
 	 */
 	protected void addParameter(@NotNull Parameter parameter) {
 		Parameter homonyme = findParameterByName(parameter.getName());
@@ -750,10 +706,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return milestones;
 	}
 
-	public Set<Milestone> getAllMilestones(){
+	public Set<Milestone> getAllMilestones() {
 		Set<Milestone> allMilestones = new HashSet<>();
 		allMilestones.addAll(milestones);
-		for (RequirementVersionCoverage coverage : requirementVersionCoverages){
+		for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 			allMilestones.addAll(coverage.getVerifiedRequirementVersion().getMilestones());
 		}
 		return allMilestones;
@@ -794,8 +750,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Will go through this.parameters and return the Parameter matching the given name
 	 *
-	 * @param name
-	 *            : the name of the parameter to return
+	 * @param name : the name of the parameter to return
 	 * @return the parameter matching the given name or <code>null</code>
 	 */
 	public Parameter findParameterByName(String name) {
@@ -817,6 +772,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		for (ActionTestStep step : this.getActionSteps()) {
 			result.addAll(step.findUsedParametersNames());
 		}
+		return result;
+	}
+
+	public Set<String> findUsedParamsNamesInPrerequisite() {
+		Set<String> result = new HashSet<>();
+		result.addAll(Parameter.findUsedParameterNamesInString(this.prerequisite));
 		return result;
 	}
 
@@ -842,7 +803,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Same as {@link #isImportanceAuto()}, required as per javabean spec since it returns a Boolean instead of a
 	 * boolean.
-	 *
 	 */
 	public Boolean getImportanceAuto() {
 		return isImportanceAuto();
@@ -878,10 +838,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Override
 	public Boolean doMilestonesAllowEdition() {
 		return Milestone.allowsEdition(getAllMilestones());
-	};
+	}
+
+	;
 
 	/**
-	 * @param findBindable
+	 * @param ms
 	 */
 	public void bindAllMilsetones(List<Milestone> ms) {
 		milestones.addAll(ms);

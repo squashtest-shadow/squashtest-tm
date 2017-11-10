@@ -53,7 +53,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void rename(long testCaseId, String newName);
 
 	void changeReference(long testCaseId, String reference);
-        	
+
         void changeImportance(long testCaseId, TestCaseImportance importance);
 
 	@PreventConcurrent(entityType=TestCase.class)
@@ -193,7 +193,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 */
 	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData);
 
-
+	public void addParametersFromPrerequisite(long testCaseId);
 
 	// *************** test automation section ******************
 

@@ -20,22 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
@@ -44,22 +28,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -73,22 +47,16 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -97,11 +65,7 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
-import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
-import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.*;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
@@ -112,8 +76,6 @@ import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -121,11 +83,17 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
@@ -146,10 +114,10 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case "; // NOSONAR generated name
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
-	.mapAttribute("tc-reference", "reference", TestCase.class)
-	.mapAttribute("tc-name", NAME, TestCase.class)
-	.mapAttribute("tc-mode", "executionMode", TestCase.class);
+		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
+		.mapAttribute("tc-reference", "reference", TestCase.class)
+		.mapAttribute("tc-name", NAME, TestCase.class)
+		.mapAttribute("tc-mode", "executionMode", TestCase.class);
 
 
 	@Inject
@@ -181,7 +149,6 @@ public class TestCaseModificationController {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
-
 
 	// ****** custom field services ******************
 
@@ -256,8 +223,8 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/edit-from-exec/{execId}", method = RequestMethod.GET, params = OPTIMIZED)
 	public ModelAndView editTestCaseFromExecution(@PathVariable long testCaseId, Locale locale,
-			@PathVariable long execId,
-			@RequestParam(OPTIMIZED) boolean optimized) {
+												  @PathVariable long execId,
+												  @RequestParam(OPTIMIZED) boolean optimized) {
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/edit-test-case-from-exec");
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
@@ -328,7 +295,7 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-description", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeDescription(@RequestParam(VALUE) String testCaseDescription, @PathVariable long testCaseId) {
 
@@ -343,22 +310,22 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)
-	public JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId){
+	public JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId) {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
 		return builder.get()
-				.extended()
-				.entities(Arrays.asList(testCase))
-				.toJson()
-				.get(0);
+			.extended()
+			.entities(Arrays.asList(testCase))
+			.toJson()
+			.get(0);
 
 	}
 
 
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData){
+	public JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData) {
 
 		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData);
 
@@ -371,12 +338,11 @@ public class TestCaseModificationController {
 	}
 
 
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-reference", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeReference(@RequestParam(VALUE) String testCaseReference, @PathVariable long testCaseId) {
 
-		testCaseReference = testCaseReference.substring(0, Math.min( testCaseReference.length(), 50));
+		testCaseReference = testCaseReference.substring(0, Math.min(testCaseReference.length(), 50));
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
@@ -386,15 +352,15 @@ public class TestCaseModificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-importance", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-importance", VALUE})
 	public String changeImportance(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseImportance importance,
-			Locale locale) {
+								   Locale locale) {
 		testCaseModificationService.changeImportance(testCaseId, importance);
 
 		return formatImportance(importance, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-nature", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-nature", VALUE})
 	@ResponseBody
 	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) String nature, Locale locale) {
 
@@ -404,7 +370,7 @@ public class TestCaseModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-newname", VALUE})
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-newname", VALUE})
 	@ResponseBody
 	public Object changeName(@PathVariable long testCaseId, @RequestParam(VALUE) String newName) {
 
@@ -415,7 +381,7 @@ public class TestCaseModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-type", VALUE})
 	@ResponseBody
 	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) String type, Locale locale) {
 
@@ -425,25 +391,24 @@ public class TestCaseModificationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-status", VALUE})
 	public String changeStatus(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseStatus status, Locale locale) {
 		testCaseModificationService.changeStatus(testCaseId, status);
 
 		return formatStatus(status, locale);
 	}
 
-	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
+	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = {"importanceAuto"})
 	@ResponseBody
 	public JsonEnumValue changeImportanceAuto(@PathVariable long testCaseId,
-			@RequestParam(value = "importanceAuto") boolean auto, Locale locale) {
+											  @RequestParam(value = "importanceAuto") boolean auto, Locale locale) {
 		testCaseModificationService.changeImportanceAuto(testCaseId, auto);
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale)) ;
+		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale));
 	}
 
 
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-prerequisite", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changePrerequisite(@RequestParam(VALUE) String testCasePrerequisite, @PathVariable long testCaseId) {
 
@@ -451,10 +416,13 @@ public class TestCaseModificationController {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
 		}
+
+		testCaseModificationService.addParametersFromPrerequisite(testCaseId);
+
 		return testCasePrerequisite;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object changeName(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
 
@@ -502,7 +470,7 @@ public class TestCaseModificationController {
 	}
 
 	private String formatInfoItem(InfoListItem nature, Locale locale) {
-		String item=  internationalizationHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+		String item = internationalizationHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
 		return HtmlUtils.htmlEscape(item);
 	}
 
@@ -511,20 +479,18 @@ public class TestCaseModificationController {
 	}
 
 
-
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long testCaseId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long testCaseId) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		return new JsonGeneralInfo((AuditableMixin)testCase);
+		return new JsonGeneralInfo((AuditableMixin) testCase);
 	}
-
 
 
 	@RequestMapping(value = "/calling-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
-			final Locale locale) {
+													   final Locale locale) {
 
 		LOGGER.trace("TestCaseModificationController: getCallingTestCaseTableModel called ");
 
@@ -535,10 +501,10 @@ public class TestCaseModificationController {
 	}
 
 
-	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
+	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho) {
 
 		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
-				paging);
+			paging);
 
 		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
 	}
@@ -549,53 +515,52 @@ public class TestCaseModificationController {
 	 *
 	 ********************************************************************** */
 
-	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
+	public DataTableModel getBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params) {
 
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
 
 		return buildMilestoneTableModel(testCaseId, allMilestones, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void bindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		testCaseModificationService.bindMilestones(testCaseId, milestoneIds);
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/milestones/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void unbindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds) {
 
 		testCaseModificationService.unbindMilestones(testCaseId, milestoneIds);
 	}
 
-	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@RequestMapping(value = "/milestones/associables", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getNotYetBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
+	public DataTableModel getNotYetBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params) {
 		Collection<Milestone> notBoundMilestones = testCaseModificationService.findAssociableMilestones(testCaseId);
 		return buildMilestoneTableModel(testCaseId, notBoundMilestones, params.getsEcho());
 	}
 
 
-
-	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model){
+	@RequestMapping(value = "/milestones/panel", method = RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model) {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
 		TestCase tc = testCaseModificationService.findById(testCaseId);
 		// build the needed data
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
-		List<?> currentModel = buildMilestoneTableModel(testCaseId,allMilestones,  "0").getAaData();
+		List<?> currentModel = buildMilestoneTableModel(testCaseId, allMilestones, "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "test-cases");
 		identity.put("resid", testCaseId.toString());
 
-		String rootPath = "/test-cases/"+testCaseId.toString();
+		String rootPath = "/test-cases/" + testCaseId.toString();
 
 		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", tc);
 
@@ -603,7 +568,7 @@ public class TestCaseModificationController {
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
-				return ((Milestone)milestone).getStatus().isBindableToObject();
+				return ((Milestone) milestone).getStatus().isBindableToObject();
 			}
 		});
 
@@ -629,13 +594,13 @@ public class TestCaseModificationController {
 	}
 
 
-	private DataTableModel buildMilestoneTableModel(long testCaseId, Collection<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneTableModel(long testCaseId, Collection<Milestone> milestones, String sEcho) {
 
 		TestCase tc = testCaseModificationService.findById(testCaseId);
 
 		List<MetaMilestone> metaMilestones = new ArrayList<>(milestones.size());
 
-		for (Milestone m : milestones){
+		for (Milestone m : milestones) {
 			metaMilestones.add(new MetaMilestone(m, tc.isMemberOf(m)));
 		}
 
@@ -671,7 +636,7 @@ public class TestCaseModificationController {
 			Project project = testCase.getProject();
 			AuthenticationStatus status = bugTrackersLocalService.checkBugTrackerStatus(project.getId());
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(project
-					.findBugTracker());
+				.findBugTracker());
 			descriptor.setLocale(locale);
 
 			mav.addObject("interfaceDescriptor", descriptor);
@@ -690,7 +655,7 @@ public class TestCaseModificationController {
 
 				}
 				// it's okay if the bugtracker fails, it should not forbid the rest to work
-				catch (BugTrackerRemoteException  | NullArgumentException  whatever) { // NOSONAR : this exception is part of the nominal use case
+				catch (BugTrackerRemoteException | NullArgumentException whatever) { // NOSONAR : this exception is part of the nominal use case
 				}
 			}
 			mav.addObject("issuesOwnerShipList", decoratedIssues);
@@ -714,7 +679,7 @@ public class TestCaseModificationController {
 
 		// the custom fields definitions
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+			.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
@@ -730,13 +695,13 @@ public class TestCaseModificationController {
 		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
 
 		ParametersModelHelper paramHelper = new ParametersModelHelper(testCaseId, messageSource,
-				locale);
+			locale);
 		Collection<Object> parameterDatas = paramHelper.buildRawModel(parameters);
 		mav.addObject("paramDatas", parameterDatas);
 
 		// ================DATASETS
 		Map<String, String> paramHeadersByParamId = TestCaseDatasetsController.findDatasetParamHeadersByParamId(
-				testCaseId, locale, parameters, messageSource);
+			testCaseId, locale, parameters, messageSource);
 		List<Object[]> datasetsparamValuesById = getParamValuesById(testCase.getDatasets());
 		mav.addObject("paramIds", IdentifiedUtil.extractIds(parameters));
 		mav.addObject("paramHeadersById", paramHeadersByParamId);
@@ -748,12 +713,12 @@ public class TestCaseModificationController {
 
 		// ========================VERIFIED REQUIREMENTS
 		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService
-				.findAllVerifiedRequirementsByTestCaseId(testCaseId);
+			.findAllVerifiedRequirementsByTestCaseId(testCaseId);
 		mav.addObject("verifiedRequirements", verifReq);
 
 		// ========================THE LOVELY MILESTONES
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
-		List<?> milestoneModels = buildMilestoneTableModel(testCaseId,allMilestones,  "0").getAaData();
+		List<?> milestoneModels = buildMilestoneTableModel(testCaseId, allMilestones, "0").getAaData();
 		mav.addObject("milestones", milestoneModels);
 
 		return mav;
@@ -776,7 +741,7 @@ public class TestCaseModificationController {
 
 			for (DatasetParamValue datasetParamValue : datasetParamValues) {
 				datasetParamValuesById.put(datasetParamValue.getParameter().getId().toString(),
-						datasetParamValue.getParamValue());
+					datasetParamValue.getParamValue());
 			}
 			String datasetName = dataset.getName();
 			Object[] datasetView = new Object[2];
@@ -819,7 +784,7 @@ public class TestCaseModificationController {
 		public DecoratedIssueOwnership(IssueOwnership<RemoteIssueDecorator> ownership, Locale locale) {
 			this.ownership = ownership;
 			this.ownerDesc = BugTrackerControllerHelper.findOwnerDescForTestCase(ownership.getOwner(), messageSource,
-					locale);
+				locale);
 		}
 
 		public String getOwnerDesc() {

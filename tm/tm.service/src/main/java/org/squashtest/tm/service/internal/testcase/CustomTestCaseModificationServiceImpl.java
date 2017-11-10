@@ -20,22 +20,9 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -64,15 +51,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
@@ -97,15 +76,14 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.*;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * @author Gregory Fouquet
- *
  */
 @Service("CustomTestCaseModificationService")
 @Transactional
@@ -171,35 +149,35 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
-            TestCase testCase = testCaseDao.findById(testCaseId);
-            testCaseManagementService.renameNode(testCaseId, newName);
-            
-            // [Issue 6337] sorry ma, they forced me to
-            reindexItpisReferencingTestCase(testCase);
-    		
-    		// Issue #6776 : it seems that the more we fix it the more we break it...
-    		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));       
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCaseManagementService.renameNode(testCaseId, newName);
+
+		// [Issue 6337] sorry ma, they forced me to
+		reindexItpisReferencingTestCase(testCase);
+
+		// Issue #6776 : it seems that the more we fix it the more we break it...
+		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void changeReference(long testCaseId, String reference) {
-            TestCase testCase = testCaseDao.findById(testCaseId);
-            testCase.setReference(reference);
-            
-            // [Issue 6337] sorry ma, they forced me to
-            reindexItpisReferencingTestCase(testCase);
-    		
-    		// Issue #6776 : it seems that the more we fix it the more we break it...
-    		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));       
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.setReference(reference);
+
+		// [Issue 6337] sorry ma, they forced me to
+		reindexItpisReferencingTestCase(testCase);
+
+		// Issue #6776 : it seems that the more we fix it the more we break it...
+		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
-        
-        @Override
+
+	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public void changeImportance(long testCaseId, TestCaseImportance importance){
-            TestCase testCase = testCaseDao.findById(testCaseId);
-            testCase.setImportance(importance);   
-    }
+	public void changeImportance(long testCaseId, TestCaseImportance importance) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.setImportance(importance);
+	}
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
@@ -223,7 +201,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
@@ -238,14 +216,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
 		testStepDao.persist(newTestStep);
 		// will throw a nasty NullPointerException if the parent test case can't
 		// be found
-		parentTestCase.addStep(index,newTestStep);
+		parentTestCase.addStep(index, newTestStep);
 		customFieldValuesService.createAllCustomFieldValues(newTestStep, newTestStep.getProject());
 		parameterModificationService.createParamsForStep(newTestStep.getId());
 		return newTestStep;
@@ -253,9 +231,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
-			Map<Long, RawValue> customFieldValues) {
+											Map<Long, RawValue> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues(step, customFieldValues);
@@ -265,11 +243,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
-			Map<Long, RawValue> customFieldValues, int index) {
+											Map<Long, RawValue> customFieldValues, int index) {
 
-		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep,index);
+		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep, index);
 		initCustomFieldValues(step, customFieldValues);
 		parameterModificationService.createParamsForStep(step.getId());
 		return step;
@@ -300,7 +278,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("**************** change step order : old index = " + index + ",new index : "
-					+ newStepPosition);
+				+ newStepPosition);
 		}
 
 		testCase.moveStep(index, newStepPosition);
@@ -308,7 +286,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -320,7 +298,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public void removeStepFromTestCase(@Id long testCaseId, long testStepId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		TestStep testStep = testStepDao.findById(testStepId);
@@ -329,7 +307,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public void removeStepFromTestCaseByIndex(@Id long testCaseId, int index) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		TestStep testStep = testCase.getSteps().get(index);
@@ -354,7 +332,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public List<TestStep> removeListOfSteps(@Id long testCaseId, List<Long> testStepIds) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
@@ -376,7 +354,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(copiedTestStepId), position);
@@ -384,7 +362,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public boolean pasteCopiedTestSteps(@Id long testCaseId, long idInsertion, List<Long> copiedTestStepIds) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, position);
@@ -392,14 +370,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId) {
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(copiedTestStepId), null);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCase.class)
+	@PreventConcurrent(entityType = TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds) {
 		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, null);
 	}
@@ -408,8 +386,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	// FIXME : check for potential cycle with call steps. For now it's being checked
 	// on the controller but it is obviously less safe.
 	// FIXME : Refactor the method for null and not null position... it shouldn't be in the same method.
+
 	/**
-	 *
 	 * @param testCaseId
 	 * @param copiedStepIds
 	 * @param position
@@ -425,11 +403,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		// If position is null we add at the end of list, so the index is correct
 		// If position is not null we add several time at the same index. The list push
 		// the content to the right, so we need to invert the order...
-		if (position!=null) {
+		if (position != null) {
 			Collections.reverse(originals);
 		}
 
-		for (TestStep original : originals){
+		for (TestStep original : originals) {
 
 			// first, create the step
 			TestStep copyStep = original.createCopy();
@@ -577,7 +555,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllByAncestorIds(java.util.List)
+	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder# findAllByAncestorIds(java.util.List)
 	 */
 	@Override
 	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -615,7 +593,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates) {
 		List<Long> callingCandidatesClone = new ArrayList<>(callingCandidates);
 		List<Long> callingLayer = testCaseDao
-				.findAllTestCasesIdsCallingTestCases(Arrays.asList(updatedId));
+			.findAllTestCasesIdsCallingTestCases(Arrays.asList(updatedId));
 		Set<Long> callingTCToUpdate = new HashSet<>();
 		while (!callingLayer.isEmpty() && !callingCandidatesClone.isEmpty()) {
 			// filter found calling test cases
@@ -631,20 +609,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 
-
-
 	@Override
 	// TODO : secure this
 	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData) {
 
-		List<Long> milestoneIds =  new ArrayList<>();
+		List<Long> milestoneIds = new ArrayList<>();
 
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		if (activeMilestone.isPresent()) {
 			milestoneIds.add(activeMilestone.get().getId());
 		}
 
-                // copy the core attributes
+		// copy the core attributes
 		TestCase orig = testCaseDao.findById(originalTcId);
 		TestCase newTC = orig.createCopy();
 
@@ -655,29 +631,43 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		// now we must inster that at the correct location
 		TestCaseLibrary library = libraryService.findLibraryOfRootNodeIfExist(orig);
-		if (library != null){
+		if (library != null) {
 			libraryService.addTestCaseToLibrary(library.getId(), newTC, null);
-		}
-		else{
+		} else {
 			TestCaseFolder folder = libraryService.findParentIfExists(orig);
 			libraryService.addTestCaseToFolder(folder.getId(), newTC, null);
 		}
 
-                // copy custom fields
+		// copy custom fields
 		customFieldValuesService.copyCustomFieldValuesContent(orig, newTC);
-                Queue<ActionTestStep> origSteps = new LinkedList<>(orig.getActionSteps());
-                Queue<ActionTestStep> newSteps = new LinkedList<>(newTC.getActionSteps());
-                while(! origSteps.isEmpty()){
-                    ActionTestStep oStep = origSteps.remove();
-                    ActionTestStep nStep = newSteps.remove();
-                    customFieldValuesService.copyCustomFieldValuesContent(oStep, nStep);
-                }
-                
-                // manage the milestones
+		Queue<ActionTestStep> origSteps = new LinkedList<>(orig.getActionSteps());
+		Queue<ActionTestStep> newSteps = new LinkedList<>(newTC.getActionSteps());
+		while (!origSteps.isEmpty()) {
+			ActionTestStep oStep = origSteps.remove();
+			ActionTestStep nStep = newSteps.remove();
+			customFieldValuesService.copyCustomFieldValuesContent(oStep, nStep);
+		}
+
+		// manage the milestones
 		milestoneService.bindTestCaseToMilestones(newTC.getId(), milestoneIds);
 		milestoneService.unbindTestCaseFromMilestones(originalTcId, milestoneIds);
 
 		return newTC;
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void addParametersFromPrerequisite(long testCaseId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		Set<String> parameters = testCase.findUsedParamsNamesInPrerequisite();
+
+		for (String name : parameters) {
+			Parameter parameter = testCase.findParameterByName(name);
+			if (parameter == null) {
+				parameterModificationService.addNewParameterToTestCase(new Parameter(name), testCaseId);
+			}
+		}
+
 	}
 
 
@@ -744,9 +734,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		Collection<Milestone> milestones = null;
 
-		for (Long testCaseId : testCaseIds){
+		for (Long testCaseId : testCaseIds) {
 			List<Milestone> mil = testCaseDao.findById(testCaseId).getProject().getMilestones();
-			if (milestones != null){
+			if (milestones != null) {
 				//keep only milestone that in ALL selected tc
 				milestones.retainAll(mil);
 			} else {
@@ -759,13 +749,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 
-	private void filterLockedAndPlannedStatus(Collection<Milestone> milestones){
+	private void filterLockedAndPlannedStatus(Collection<Milestone> milestones) {
 		CollectionUtils.filter(milestones, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
 
 				return ((Milestone) milestone).getStatus() != MilestoneStatus.LOCKED
-						&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
+					&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
 			}
 		});
 	}
@@ -776,9 +766,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		Collection<Milestone> milestones = null;
 
-		for (Long testCaseId : testCaseIds){
+		for (Long testCaseId : testCaseIds) {
 			Set<Milestone> mil = testCaseDao.findById(testCaseId).getMilestones();
-			if (milestones != null){
+			if (milestones != null) {
 				//keep only milestone that in ALL selected tc
 				milestones.retainAll(mil);
 			} else {
@@ -788,7 +778,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		filterLockedAndPlannedStatus(milestones);
 
-		return 	CollectionUtils.collect(milestones, new Transformer() {
+		return CollectionUtils.collect(milestones, new Transformer() {
 
 			@Override
 			public Object transform(Object milestone) {
@@ -797,7 +787,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 		});
 	}
-
 
 
 	@Override
@@ -844,7 +833,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		GenericProject tmproject = tc.getProject();
 
 		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(),
-				new HasSuchLabel(projectLabel));
+			new HasSuchLabel(projectLabel));
 
 		// if the project couldn't be found we must also reject the operation
 		if (tap == null) {
@@ -868,7 +857,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			return tap.getLabel().equals(label);
 		}
 	}
-
 
 
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {
@@ -895,8 +883,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 	}
-
-
 
 
 }
