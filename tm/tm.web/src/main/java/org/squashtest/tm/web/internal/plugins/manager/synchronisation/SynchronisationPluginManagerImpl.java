@@ -50,7 +50,7 @@ public class SynchronisationPluginManagerImpl implements SynchronisationPluginMa
 	public void registerSynchronisationPlugin() {
 		for (SynchronisationPlugin plugin : plugins) {
 			LOGGER.info("Registering workspace wizard {} for workspace {}", plugin, plugin.getName());
-			taskScheduler.scheduleAtFixedRate(plugin.performSynchronisation(), 5000L);
+			taskScheduler.scheduleWithFixedDelay(plugin.performSynchronisation(), 5000L);
 		}
 	}
 
