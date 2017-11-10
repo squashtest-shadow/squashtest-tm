@@ -67,7 +67,7 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 
-<c:set var="deferLoading" value="${tableEntries.iTotalRecords}" />
+<c:set var="deferLoading" value="${tableEntries == null? 0 : tableEntries.iTotalRecords}"/>
 
 <script type="text/javascript">
 require( ["common"], function(){

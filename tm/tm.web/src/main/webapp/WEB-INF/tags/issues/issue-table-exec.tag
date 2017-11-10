@@ -48,7 +48,7 @@
 
  --%>
 
-<c:set var="deferLoading" value="${tableEntries.iTotalRecords}" />
+<c:set var="deferLoading" value="${tableEntries == null? 0 : tableEntries.iTotalRecords}"/>
 
 <script type="text/javascript">
 
