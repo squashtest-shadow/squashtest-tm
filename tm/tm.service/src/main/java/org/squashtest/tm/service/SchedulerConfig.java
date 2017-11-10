@@ -45,8 +45,8 @@ public class SchedulerConfig implements SchedulingConfigurer, AsyncConfigurer {
     @Bean(name = "squashtest.tm.service.ThreadPoolTaskScheduler", destroyMethod="shutdown")
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(10);
-        return scheduler;
+		scheduler.setPoolSize(10);
+		return scheduler;
     }
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {

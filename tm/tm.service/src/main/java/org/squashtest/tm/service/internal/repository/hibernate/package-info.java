@@ -97,8 +97,10 @@
 	@NamedQuery(name = "requirement.findRequirementDescendantIds", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id and closure.depth != 0"),
 
 	// synchronized requirements
-	@NamedQuery(name = "requirement.findNodeIdByRemoteKey", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId = :key and req.project.name = :projectName"),
-	@NamedQuery(name = "requirement.findNodeIdsByRemoteKeys", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId in (:keys) and req.project.name = :projectName"),
+	// for requirement.findNodeIdByRemoteKey and requirement.findNodeIdsByRemoteKeys we need to ignore requirement synchronised with a proper remote sync object to not break apart Jira Req and Redmine Req plugin. Hence the 'sync.remoteSynchronisation is null' clause
+	@NamedQuery(name = "requirement.findNodeIdByRemoteKey", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId = :key and req.project.name = :projectName and sync.remoteSynchronisation is null"),
+	@NamedQuery(name = "requirement.findNodeIdByRemoteKeyAndSynchronisationId", query = "select req.id from Requirement req inner join req.syncExtender syncExt inner join syncExt.remoteSynchronisation sync where syncExt.remoteReqId = :key and sync.id = :remoteSynchronisationId"),
+	@NamedQuery(name = "requirement.findNodeIdsByRemoteKeys", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId in (:keys) and req.project.name = :projectName and sync.remoteSynchronisation is null"),
 
 
 	// deprecated, see RequirementPathEdge.findPathsByIds
