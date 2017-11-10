@@ -29,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand
 import org.squashtest.tm.bugtracker.definition.Attachment
 import org.squashtest.tm.bugtracker.definition.RemoteIssue
+import org.squashtest.tm.domain.servers.Credentials
 
 import java.util.concurrent.Future
 
@@ -49,6 +50,11 @@ class StubBugTrackerService implements BugTrackersService {
 
 	@Override
 	public void setCredentials(String username, String password, BugTracker bugTracker) {
+
+	}
+
+	@Override
+	void testCredentials(BugTracker bugTracker, Credentials credentials) {
 
 	}
 
