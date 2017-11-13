@@ -21,12 +21,8 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
+import org.squashtest.tm.domain.requirement.RequirementFolderSyncExtender;
 
-import java.util.List;
+public interface RequirementFolderSyncExtenderDao extends JpaRepository<RequirementFolderSyncExtender, Long> {
 
-public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronisation,Long> {
-
-	List<RemoteSynchronisation> findByKind(String kind);
-	List<RemoteSynchronisation> findByNameAndKind(String name,String kind);
 }

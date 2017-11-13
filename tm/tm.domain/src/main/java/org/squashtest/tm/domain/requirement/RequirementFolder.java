@@ -191,4 +191,8 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	public void setRequirementFolderSyncExtender(RequirementFolderSyncExtender requirementFolderSyncExtender) {
 		this.requirementFolderSyncExtender = requirementFolderSyncExtender;
 	}
+
+	public boolean isSynchronized(){
+		return this.requirementFolderSyncExtender != null;
+	}
 }
