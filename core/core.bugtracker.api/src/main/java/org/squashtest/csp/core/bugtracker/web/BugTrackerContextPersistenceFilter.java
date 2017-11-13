@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -117,6 +118,8 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 
 		if (context == null) {
 			LOGGER.info("BugTrackerContextPersistenceFilter : No BugTrackerContext available, will create it and eagerly store it in session");
+			// TODO : once this module is moved into tm.web, look for the current username in the security context (fetchable with session.getAttribute("SPRINT_SECURITY_CONTEXT")) and 
+			// use the constructor BugTrackerContext(String username)
 			context = new BugTrackerContext();
 			storeContext(session, context);
 		}
@@ -135,5 +138,6 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
+    
 
 }

@@ -117,11 +117,17 @@ define(['jquery', 'handlebars', 'workspace.routing',
 	        var password = $("#login-dialog-password").val();
 	        var url = routing.buildURL('servers.authentication', manager.serverId);
 	        
+	        var credentials = {
+	        	type : 'BASIC_AUTH',
+	        	username : login,
+	        	password : password
+	        };
+	        
 	        $.ajax({
 	          url : url,
 	          type : 'POST',
-	          data : { login : login, password : password},
-	          dataType : 'json'
+	          data : JSON.stringify(credentials),
+	          contentType : 'application/json'
 	        })
 	        .success(function(){
 		      hasResolved = true;

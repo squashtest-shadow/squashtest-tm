@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -224,6 +225,17 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker) {
 		return remoteBugTrackersService.createReportIssueTemplate(projectName, bugTracker);
+	}
+
+	@Override
+	public void setCredentials(Credentials credentials, BugTracker bugTracker) throws BugTrackerRemoteException {
+		remoteBugTrackersService.setCredentials(credentials, bugTracker);
+	}
+
+	@Override
+	public void setCredentials(Credentials credentials, Long bugtrackerId) throws BugTrackerRemoteException {
+		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
+		remoteBugTrackersService.setCredentials(credentials, bugtracker);
 	}
 
 	@Override

@@ -40,6 +40,8 @@ import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -90,8 +92,8 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			//let's do it.
 			LOGGER.info("BugTrackerAutoconnectCallback : Autologging against known bugtrackers...");
 			//creation of AsynchronousBugTrackerAutoconnect in this thread.
-
-			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, password, session);
+			Credentials credentials = new BasicAuthenticationCredentials(username, password.toCharArray());
+			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, credentials, session);
 			taskExecutor.execute(autoconnector);
 		}
 	}
@@ -112,17 +114,16 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 	private class AsynchronousBugTrackerAutoconnect implements Runnable {
 
-		private String username;
-		private String password;
-		private HttpSession session;
-		private SecurityContext secContext;
+		private final String user;
+		private final Credentials credentials;
+		private final HttpSession session;
+		private final SecurityContext secContext;
 
 
-		public AsynchronousBugTrackerAutoconnect(String username,
-		                                         String password, HttpSession session) {
+		public AsynchronousBugTrackerAutoconnect(String user, Credentials credentials, HttpSession session) {
 			super();
-			this.username = username;
-			this.password = password;
+			this.user = user;
+			this.credentials = credentials;
 			this.session = session;
 			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
 			//and get a local reference pointing to this SecurityContext
@@ -136,7 +137,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		@Override
 		public void run() {
 
-			BugTrackerContext newContext = new BugTrackerContext();
+			BugTrackerContext newContext = new BugTrackerContext(user);
 
 			//Setting the SecurityContext in the new thread with a reference to the original one.
 			SecurityContextHolder.setContext(secContext);
@@ -153,14 +154,13 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 						}
 						else {
 							LOGGER.debug("BugTrackerAutoconnectCallback : try connexion of bug-tracker : {}", bugTracker.getName());
-							bugTrackersLocalService.setCredentials(username, password, bugTracker);
+							bugTrackersLocalService.setCredentials(credentials, bugTracker);
 							// if success, store the credential in context
 							LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
-							AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
-							newContext.setCredentials(bugTracker, creds);
+							newContext.setCredentials(bugTracker, credentials);
 						}
 					} catch (BugTrackerRemoteException ex) {
-						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
+						LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", user, bugTracker.getName());
 						LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
 					}
 				}

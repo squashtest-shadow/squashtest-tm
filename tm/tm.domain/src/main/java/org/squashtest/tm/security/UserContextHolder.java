@@ -48,7 +48,7 @@ public final class UserContextHolder {
 	 */
 	public static Authentication getPrincipal() {
 		SecurityContext context = getContext();
-		LOGGER.debug("Gotten authentication {}", context.getAuthentication());
+		LOGGER.debug("Got authentication {}", context.getAuthentication());
 		return context.getAuthentication();
 	}
 

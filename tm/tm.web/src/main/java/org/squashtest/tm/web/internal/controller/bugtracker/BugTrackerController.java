@@ -90,7 +90,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
-import org.squashtest.tm.web.internal.controller.authentication.ThirPartyServersAuthenticationController;
+import org.squashtest.tm.web.internal.controller.authentication.ThirdPartyServersAuthenticationController;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -101,7 +101,7 @@ import oslcdomain.OslcIssue;
 /**
  *
  * Note : as of 1.13 the questions regarding authentications has been moved to
- * {@link ThirPartyServersAuthenticationController}
+ * {@link ThirdPartyServersAuthenticationController}
  *
  * @author bsiri
  *

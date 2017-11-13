@@ -24,17 +24,19 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 
 
 @Controller
 @RequestMapping("/servers")
-public class ThirPartyServersAuthenticationController {
+public class ThirdPartyServersAuthenticationController {
 
 	@Inject
 	private BugTrackersLocalService btService;
@@ -56,12 +58,12 @@ public class ThirPartyServersAuthenticationController {
 	 * an exception means failure.
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{serverId}/authentication", method = RequestMethod.POST, params = {"login", "password"})
+	@RequestMapping(value = "/{serverId}/authentication", method = RequestMethod.POST, consumes="application/json")
 	public
-	void authenticate(@RequestParam("login") String login, @RequestParam("password") String password,
+	void authenticate(@RequestBody BasicAuthenticationCredentials credentials,
 			@PathVariable("serverId") long serverId) {
 
-		btService.setCredentials(login, password, serverId);
+		btService.setCredentials(credentials.getUsername(), new String(credentials.getPassword()), serverId);
 
 	}
 

@@ -45,7 +45,7 @@ import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 /**
- * Basic impementation of {@link BugTrackersService}
+ * Basic implementation of {@link BugTrackersService}
  *
  * @author Gregory Fouquet
  *
@@ -57,6 +57,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
 
 	private StoredCredentialsManager credentialsManager;
+
 
 	@Override
 	public boolean isCredentialsNeeded(BugTracker bugTracker) {
@@ -80,14 +81,15 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		return contextHolder.getContext();
 	}
 
+
 	@Override
-	public void setCredentials(String username, String password, BugTracker bugTracker) {
+	public void setCredentials(Credentials credentials, BugTracker bugTracker) {
 		AuthenticationPolicy policy = bugTracker.getAuthenticationPolicy();
+
 		if (policy != AuthenticationPolicy.USER){
 			throw new WrongAuthenticationPolicyException(policy);
 		}
 
-		AuthenticationCredentials credentials = new AuthenticationCredentials(username, password);
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 
 		// setcredentials to null first. If the operation succeed then we'll set them in the context.
@@ -96,7 +98,11 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		connector.checkCredentials(credentials);
 
 		getBugTrackerContext().setCredentials(bugTracker, credentials);
+	}
 
+	@Override
+	public void setCredentials(String username, String password, BugTracker bugTracker) {
+		setCredentials(new BasicAuthenticationCredentials(username, password.toCharArray()), bugTracker);
 	}
 
 	@Override
@@ -117,26 +123,27 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		Credentials creds = null;
+		
 		switch(bugTracker.getAuthenticationPolicy()){
 			case USER:
-				if (! connector.supports(AuthenticationProtocol.BASIC_AUTH)){
-					throw new UnsupportedAuthenticationModeException(AuthenticationProtocol.BASIC_AUTH.toString());
-				}
-				AuthenticationCredentials oldCreds = getBugTrackerContext().getCredentials(bugTracker);
-				BasicAuthenticationCredentials creds = new BasicAuthenticationCredentials(oldCreds.getUsername(), oldCreds.getPassword().toCharArray());
-				connector.authenticate(creds);
+				creds = getBugTrackerContext().getCredentials(bugTracker);
 				break;
 
 			case APP_LEVEL:
-				Credentials credentials = credentialsManager.unsecuredFindCredentials(bugTracker.getId());
-				AuthenticationProtocol protocol = credentials.getImplementedProtocol();
-				if (! connector.supports(protocol)){
-					throw new UnsupportedAuthenticationModeException(protocol.toString());
-				}
-				connector.authenticate(credentials);
-
+				creds = credentialsManager.unsecuredFindCredentials(bugTracker.getId());
+				break;
+				
+			default : throw new RuntimeException("BugTrackerService#connect : forgot to implement policy "+bugTracker.getAuthenticationPolicy().toString());
+		
 		}
 
+		AuthenticationProtocol protocol = creds.getImplementedProtocol();
+		if (! connector.supports(protocol)){
+			throw new UnsupportedAuthenticationModeException(protocol.toString());
+		}
+		
+		connector.authenticate(creds);
 		return connector;
 	}
 

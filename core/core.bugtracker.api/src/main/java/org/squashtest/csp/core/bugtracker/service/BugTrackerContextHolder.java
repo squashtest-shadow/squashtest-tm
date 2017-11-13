@@ -30,7 +30,7 @@ package org.squashtest.csp.core.bugtracker.service;
 public interface BugTrackerContextHolder {
 	/**
 	 *
-	 * @return the holded context. Never returns null.
+	 * @return the held context. Never returns null.
 	 */
 	BugTrackerContext getContext();
 

@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
+import org.squashtest.tm.domain.servers.Credentials;
 
 /**
  * Bug tracker information for the current thread. This information is exposed through a {@link BugTrackerContextHolder}
@@ -41,22 +41,30 @@ public class BugTrackerContext implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerContext.class);
 
+	private String user;
 
-	Map<Long, AuthenticationCredentials> bugTrackersCredentials = new HashMap<>();
+	private Map<Long, Credentials> bugTrackersCredentials = new HashMap<>();
 
-	public AuthenticationCredentials getCredentials(BugTracker bugTracker) {
+	public BugTrackerContext(){
+
+	}
+
+	public BugTrackerContext(String user){
+		this.user = user;
+	}
+
+	public Credentials getCredentials(BugTracker bugTracker) {
 		return bugTrackersCredentials.get(bugTracker.getId());
 	}
 
-	public void setCredentials(BugTracker bugTracker, AuthenticationCredentials credentials) {
-		String login = credentials != null ? credentials.getUsername() : null;
-		LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (set credentials)", this.toString(), login);
+
+	public void setCredentials(BugTracker bugTracker, Credentials credentials) {
+		LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (set credentials)", this.toString(), user);
 		bugTrackersCredentials.put(bugTracker.getId(), credentials);
 	}
 
 	public boolean hasCredentials(BugTracker bugTracker) {
-		AuthenticationCredentials credentials = bugTrackersCredentials.get(bugTracker.getId()) ;
-		return credentials != null;
+		return bugTrackersCredentials.get(bugTracker.getId()) != null;
 	}
 
 	/**
@@ -67,17 +75,31 @@ public class BugTrackerContext implements Serializable {
 	 */
 	public void absorb(BugTrackerContext anotherContext){
 
-		for (Entry<Long, AuthenticationCredentials> anotherEntry : anotherContext.bugTrackersCredentials.entrySet()){
+		if (this.user == null && anotherContext.user != null){
+			this.user = anotherContext.user;
+		}
+		
+		for (Entry<Long, Credentials> anotherEntry : anotherContext.bugTrackersCredentials.entrySet()){
 
 			Long id = anotherEntry.getKey();
-			AuthenticationCredentials creds = anotherEntry.getValue();
+			Credentials ctxt = anotherEntry.getValue();
 
-			if (! bugTrackersCredentials.containsKey(id) && creds!= null){
-				LOGGER.trace("BugTrackerContext : Trying to set credentials : BugTrackerContext : {} . bugTrackersCredentials : {}", this.toString(), creds.toString());
-				LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (via merge)",this.toString(), creds.getUsername());
-				bugTrackersCredentials.put(id, creds);
+			if (! bugTrackersCredentials.containsKey(id) && ctxt!= null){
+				LOGGER.trace("BugTrackerContext : Trying to set credentials : BugTrackerContext : {} . bugTrackersCredentials : {}", this.toString(), user);
+				LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (via merge)",this.toString(), user);
+				bugTrackersCredentials.put(id, ctxt);
 			}
 		}
 
 	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+
 }

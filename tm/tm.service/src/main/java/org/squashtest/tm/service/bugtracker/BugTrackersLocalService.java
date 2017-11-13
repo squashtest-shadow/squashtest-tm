@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -41,6 +42,7 @@ import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 @Transactional
@@ -262,30 +264,60 @@ public interface BugTrackersLocalService {
 	 */
 	AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId);
 
+
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side. This operation is illegal if the bugtracker is set to use
 	 * {@link org.squashtest.tm.domain.servers.AuthenticationPolicy#APP_LEVEL}.
 	 *
+	 * @param credentials
+	 * @param bugTracker : the concerned BugTracker
+	 * @return nothing
+	 * @throws BugTrackerRemoteException if the credentials are wrong
+	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws {@link UnsupportedAuthenticationModeException} if the connector does not support such authentication
+	 */
+	void setCredentials(Credentials credentials, BugTracker bugTracker) throws BugTrackerRemoteException;
+
+	/**
+	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
+	 *
+	 * @param credentials
+	 * @param bugtrackerId
+	 * @throws BugTrackerRemoteException
+	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws {@link UnsupportedAuthenticationModeException}
+	 */
+	void setCredentials(Credentials credentials, Long bugtrackerId) throws BugTrackerRemoteException;
+
+	/**
+	 * Same as {@link #setCredentials(String, String, BugTracker)}, using behind the scene
+	 * {@link org.squashtest.tm.domain.servers.BasicAuthenticationCredentials} with the
+	 * given username and password
+	 *
+	 * @deprecated use {@link #setCredentials(Credentials, BugTracker)} instead
 	 * @param username
 	 * @param password
-	 * @param bugTracker
-	 *            : the concerned BugTracker
+	 * @param bugTracker : the concerned BugTracker
 	 * @return nothing
-	 * @throws BugTrackerRemoteException
-	 *             if the credentials are wrong
+	 * @throws BugTrackerRemoteException if the credentials are wrong
 	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
+	@Deprecated
 	void setCredentials(String username, String password, BugTracker bugTracker) throws BugTrackerRemoteException;
 
 	/**
 	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
 	 *
+	 * @deprecated
 	 * @param username
 	 * @param password
 	 * @param bugtrackerId
 	 * @throws BugTrackerRemoteException
 	 * @throws org.squashtest.csp.core.bugtracker.service.WrongAuthenticationPolicyException
+	 * @throws {@link UnsupportedAuthenticationModeException}
 	 */
+	@Deprecated
 	void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException;
 
 	/**
