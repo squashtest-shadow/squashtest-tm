@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.servers
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException
+import org.squashtest.tm.service.servers.MissingEncryptionKeyException
 import spock.lang.Specification
 
 class StoredCredentialsManagerImplTest extends Specification{
@@ -67,6 +68,29 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 	}
 
+	// ******************** main methods *********************************
+
+	def "cannot store credentials because the secret isn't configured"(){
+		given :
+			def creds = mockCredentials()
+
+		when :
+			manager.storeCredentials(1L, creds)
+
+		then :
+			thrown MissingEncryptionKeyException
+	}
+
+	def "cannot find credentials because the secret isn't configured"(){
+
+		when :
+			manager.findCredentials(1L)
+
+		then :
+			thrown MissingEncryptionKeyException
+
+	}
+
 
 	def "should find that an error at deserialization comes from unknown credential implementation"(){
 
@@ -95,6 +119,13 @@ class StoredCredentialsManagerImplTest extends Specification{
 		ex instanceof EncryptionKeyChangedException
 
 
+	}
+
+
+	// ****************** helper code ******************************
+
+	private Credentials mockCredentials(){
+		new BasicAuthenticationCredentials("bob", "you'll never find it".toCharArray())
 	}
 
 }

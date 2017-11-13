@@ -20,6 +20,9 @@
  */
 package org.squashtest.it.config
 
+import org.spockframework.mock.MockNature
+import spock.mock.DetachedMockFactory
+
 import javax.validation.ValidatorFactory
 
 import org.springframework.context.annotation.Bean
@@ -29,10 +32,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
-import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
-import org.squashtest.it.stub.milestone.StubActiveMilestoneHolder
 import org.squashtest.it.stub.validation.StubValidatorFactory
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 
 /**
  * Configuration for Repository (DAO) specifications. Instanciates repository layer beans.
@@ -45,13 +45,13 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 		excludeFilters = @ComponentScan.Filter(Configuration))
 @EnableSpringConfigured
 class RepositorySpecConfig {
-		
+
 	@Bean
 	@Primary
 	BugTrackersService bugTrackerService() {
-		new StubBugTrackerService();
+		new DetachedMockFactory().createMock("bugTrackerService", BugTrackersService, MockNature.MOCK, [:])
 	}
-	
+
 	@Bean
 	ValidatorFactory validatorFactory() {
 		return new StubValidatorFactory()

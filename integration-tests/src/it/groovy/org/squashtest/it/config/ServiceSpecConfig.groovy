@@ -20,22 +20,16 @@
  */
 package org.squashtest.it.config
 
+import org.spockframework.mock.MockNature
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.security.authentication.encoding.PasswordEncoder
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
-import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
-import org.squashtest.it.stub.security.StubUserDetailsManager;
-import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
 import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
-import org.squashtest.tm.service.security.AdministratorAuthenticationService
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.UserContextService
+import spock.mock.DetachedMockFactory
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -58,7 +52,7 @@ class ServiceSpecConfig {
 	@Bean
 	@Primary
 	BugTrackersService bugTrackerService() {
-		new StubBugTrackerService();
+		new DetachedMockFactory().createMock("bugTrackerService", BugTrackersService, MockNature.MOCK, [:])
 	}
 
 	@Bean
