@@ -49,11 +49,11 @@ public class RequirementFolderSyncExtender {
 	private RequirementFolderSyncExtenderType type;
 
 	@ManyToOne
-	@JoinColumn(name = "REMOTE_SYNCHRONISATION_ID")
+	@JoinColumn(name = "REMOTE_SYNCHRONISATION_ID", referencedColumnName = "REMOTE_SYNCHRONISATION_ID")
 	private RemoteSynchronisation remoteSynchronisation;
 
 	@OneToOne
-	@JoinColumn(name = "REQUIREMENT_FOLDER_ID")
+	@JoinColumn(name = "REQUIREMENT_FOLDER_ID", referencedColumnName = "RLN_ID")
 	private RequirementFolder requirementFolder;
 
 

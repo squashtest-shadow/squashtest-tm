@@ -68,7 +68,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@JoinColumn(name = "RES_ID", updatable = false)
 	private SimpleResource resource;
 
-	@OneToOne(mappedBy = "requirementFolder", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "requirementFolder", cascade = CascadeType.ALL, optional = true)
 	private RequirementFolderSyncExtender requirementFolderSyncExtender;
 
 	public RequirementFolder() {

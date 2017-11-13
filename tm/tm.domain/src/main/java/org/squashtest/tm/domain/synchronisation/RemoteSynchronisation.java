@@ -20,15 +20,20 @@
  */
 package org.squashtest.tm.domain.synchronisation;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementFolderSyncExtender;
+import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "REMOTE_SYNCHRONISATION")
