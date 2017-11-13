@@ -39,12 +39,12 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * Helper class which decorates {@link MessageSource} to get internationalized messages and dates.
- * 
+ *
  * Note : the decorator pattern should ease migration from {@link MessageSource} to {@link InternationalizationHelper}
  * thanks to full backward compatibility.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 @Primary
@@ -58,7 +58,7 @@ public class InternationalizationHelper implements MessageSource {
 
 	/**
 	 * Returns the internationalized message matching the given key.
-	 * 
+	 *
 	 * @param i18nKey
 	 * @param locale
 	 * @return
@@ -69,7 +69,7 @@ public class InternationalizationHelper implements MessageSource {
 
 	/**
 	 * Returns the internationalized message for the given {@link Internationalizable}
-	 * 
+	 *
 	 * @param i18nKey
 	 * @param locale
 	 * @return
@@ -85,7 +85,7 @@ public class InternationalizationHelper implements MessageSource {
 	/**
 	 * Formats a date using the built-in format for the given locale. If no date is given, returns a built-in "no data"
 	 * label.
-	 * 
+	 *
 	 * @param date
 	 * @param locale
 	 * @return
@@ -98,7 +98,7 @@ public class InternationalizationHelper implements MessageSource {
 	/**
 	 * Formats a date using the built-in short date format for the given locale. If no date is given, returns a built-in
 	 * "no data" label.
-	 * 
+	 *
 	 * @param date
 	 * @param locale
 	 * @return
@@ -118,7 +118,7 @@ public class InternationalizationHelper implements MessageSource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.lang.String,
 	 *      java.util.Locale)
 	 */
@@ -128,7 +128,7 @@ public class InternationalizationHelper implements MessageSource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.util.Locale)
 	 * @deprecated if args array is empty or null, condider {@link #internationalize(String, Locale)}
 	 */
@@ -172,7 +172,7 @@ public class InternationalizationHelper implements MessageSource {
 
 	/**
 	 * Translates true / false into an i18n'd yes / no
-	 * 
+	 *
 	 * @param yesOrNo
 	 * @param locale
 	 * @return
@@ -182,7 +182,7 @@ public class InternationalizationHelper implements MessageSource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locale
 	 * @return the i18n'd "nodata" message
 	 */
@@ -191,7 +191,7 @@ public class InternationalizationHelper implements MessageSource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locale
 	 * @return the i18n'd "deleted" message
 	 */
@@ -201,7 +201,7 @@ public class InternationalizationHelper implements MessageSource {
 
 	/**
 	 * Returns the message or "no data" when message is null.
-	 * 
+	 *
 	 * @param message
 	 *            the motentially null message
 	 * @param locale
@@ -209,5 +209,21 @@ public class InternationalizationHelper implements MessageSource {
 	 */
 	public String messageOrNoData(String message, Locale locale) {
 		return message != null ? message : noData(locale);
+	}
+
+	/**
+	 * as {@Link localizeDate} but will return the word "never" localized if date is null
+	 * @param date the date to format
+	 * @param locale the user locale
+	 * @return the formatted date or the word "never" localized
+	 */
+	public String localizeDateWithDefaultToNever(Date date, Locale locale) {
+		String strDate;
+		if(date != null){
+			strDate = localizeDate(date, locale);
+		} else {
+			strDate = internationalize("label.lower.Never", locale);
+		}
+		return strDate;
 	}
 }
