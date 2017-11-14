@@ -216,9 +216,12 @@ public class ProjectAdministrationController {
 			model.setEnabled(enabled);
 
 			String url = plugin.getConfigurationPath(context);
-			url = url.startsWith("/") ? url : "/" + url;
 
-			model.setConfigUrl(servContext + url);
+			if(url != null) {
+				url = url.startsWith("/") ? url : "/" + url;
+
+				model.setConfigUrl(servContext + url);
+			}
 
 			// that should be refactored too once the API is updated
 			try{
