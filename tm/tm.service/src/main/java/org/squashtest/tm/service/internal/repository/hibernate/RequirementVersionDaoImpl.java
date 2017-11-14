@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * 

@@ -79,7 +79,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional

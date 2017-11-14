@@ -52,7 +52,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 
 @Controller

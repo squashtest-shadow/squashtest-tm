@@ -55,7 +55,7 @@ import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")

@@ -28,12 +28,8 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 
-import com.google.common.base.Optional;
-import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import java.util.Optional;
 
 
 @Component
@@ -41,8 +37,6 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	@Inject
 	private MilestoneFinderService milestoneFinderService;
-	@Inject
-	private TestCaseAdvancedSearchService advancedSearchService;
 
 	private final ThreadLocal<Optional<Milestone>> activeMilestoneHolder = new ThreadLocal<>();
 
@@ -50,38 +44,22 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	@Override
 	public Optional<Milestone> getActiveMilestone() {
+		
 		if (activeMilestoneHolder.get() == null) {
-			List<Milestone> visibles = milestoneFinderService.findAllVisibleToCurrentUser();
-			final Long milestoneId = activeMilestoneIdHolder.get();
-			Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {
-				@Override
-				public boolean evaluate(Object milestone) {
-					return ((Milestone) milestone).getId().equals(milestoneId);
-				}
-			});
-			activeMilestoneHolder.set(Optional.fromNullable(milestone));
+			final Long milestoneId = activeMilestoneIdHolder.get();			
+			
+			List<Long> milestoneIds = milestoneFinderService.findAllIdsVisibleToCurrentUser();
+			
+			Milestone milestone = null;
+			if (milestoneIds.contains(milestoneId)){
+				milestone = milestoneFinderService.findById(milestoneId);
+			}			
+			
+			activeMilestoneHolder.set(Optional.ofNullable(milestone));
 		}
 
 		return activeMilestoneHolder.get();
 
-	}
-
-	public Optional<Milestone> getActiveMilestoneByJson() {
-		if (activeMilestoneHolder.get() == null) {
-			final Long milestoneId = activeMilestoneIdHolder.get();
-
-			List<JsonMilestone> visibles = advancedSearchService.findAllVisibleMilestonesToCurrentUser();
-			Milestone milestone = new Milestone();
-			for(JsonMilestone mile : visibles){
-				if(Long.valueOf(mile.getId()).equals(milestoneId)){
-					milestone = milestoneFinderService.findById(mile.getId());
-				}else{
-					milestone = null;
-				}
-			}
-			activeMilestoneHolder.set(Optional.fromNullable(milestone));
-		}
-		return activeMilestoneHolder.get();
 	}
 
 
@@ -100,7 +78,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	@Override
 	public Optional<Long> getActiveMilestoneId() {
-		return Optional.fromNullable(activeMilestoneIdHolder.get());
+		return Optional.ofNullable(activeMilestoneIdHolder.get());
 	}
 
 }

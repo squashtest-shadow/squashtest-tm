@@ -45,9 +45,16 @@ public class ActiveMilestoneInterceptor implements HandlerInterceptor {
 			throws Exception {
 
 		Cookie cookie = WebUtils.getCookie(request, MILESTONE);
-		// it's under 9000 ! just a fake id in case we don't find cookie.
-		String cookieId = cookie != null && !StringUtils.isBlank(cookie.getValue()) ? cookie.getValue() : "-9000";
-		final Long milestoneId = Long.parseLong(cookieId);
+		
+		Long milestoneId = null;
+		if (cookie != null && !StringUtils.isBlank(cookie.getValue())){
+			milestoneId = Long.parseLong(cookie.getValue());
+		}
+		else{
+			// it's under 9000 ! just a fake id in case we don't find cookie.
+			milestoneId = ActiveMilestoneHolder.NO_MILESTONE_ID;
+		}
+		
 		milestoneHolder.setActiveMilestone(milestoneId);
 		return true;
 	}

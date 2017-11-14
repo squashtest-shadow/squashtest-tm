@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

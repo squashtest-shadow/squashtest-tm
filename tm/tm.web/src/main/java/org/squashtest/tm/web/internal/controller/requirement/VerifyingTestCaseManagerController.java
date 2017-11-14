@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -74,7 +74,7 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional

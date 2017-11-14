@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;

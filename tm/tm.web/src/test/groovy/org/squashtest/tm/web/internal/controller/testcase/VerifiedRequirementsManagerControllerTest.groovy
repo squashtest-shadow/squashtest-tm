@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -74,7 +74,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		milestoneConfService.configure(_) >> new MilestoneFeatureConfiguration()
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)

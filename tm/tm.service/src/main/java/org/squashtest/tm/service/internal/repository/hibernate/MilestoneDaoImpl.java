@@ -24,6 +24,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.*;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -36,9 +37,17 @@ import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.CustomMilestoneDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
+
 import java.util.*;
 
 public class MilestoneDaoImpl implements CustomMilestoneDao {
@@ -54,6 +63,10 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Inject
+	private DSLContext DSL;
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -63,6 +76,33 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		query.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
 		return query.getResultList();
 	}
+	
+	
+
+	@Override
+	public List<Long> findAllMilestoneIds() {
+		return DSL.selectDistinct(MILESTONE.MILESTONE_ID)
+				.from(MILESTONE)
+				.fetch(MILESTONE.MILESTONE_ID, Long.class);
+	}
+
+
+
+	@Override
+	public List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds) {
+		
+		
+		return DSL.selectDistinct(MILESTONE_BINDING.MILESTONE_ID)
+				.from(ACL_RESPONSIBILITY_SCOPE_ENTRY)
+					.join(ACL_OBJECT_IDENTITY).on(ACL_OBJECT_IDENTITY.ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID))
+					.join(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
+					.join(MILESTONE_BINDING).on(ACL_OBJECT_IDENTITY.IDENTITY.eq(MILESTONE_BINDING.PROJECT_ID))
+				.where(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.in(partyIds)
+					.and(ACL_CLASS.CLASSNAME.eq("org.squashtest.tm.domain.project.Project")))
+				.fetch(MILESTONE_BINDING.MILESTONE_ID, Long.class);
+	}
+
+
 
 	@SuppressWarnings("unchecked")
 	@Override

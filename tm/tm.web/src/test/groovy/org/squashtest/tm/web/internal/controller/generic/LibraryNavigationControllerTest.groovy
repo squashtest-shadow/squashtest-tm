@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.*

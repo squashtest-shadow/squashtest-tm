@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import com.google.common.base.Optional
-import org.mockito.Mock
+import java.util.Optional
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService
 import org.squashtest.tm.service.infolist.InfoListModelService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode

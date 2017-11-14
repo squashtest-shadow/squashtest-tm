@@ -91,7 +91,7 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional

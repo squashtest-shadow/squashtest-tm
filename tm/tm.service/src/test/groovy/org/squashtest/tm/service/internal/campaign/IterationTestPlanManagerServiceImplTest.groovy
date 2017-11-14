@@ -39,7 +39,7 @@ import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import com.google.common.base.Optional
+import java.util.Optional
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 
@@ -64,7 +64,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
 		service.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 	}
 
 	def "should reccursively add a list of test cases to an iteration"() {

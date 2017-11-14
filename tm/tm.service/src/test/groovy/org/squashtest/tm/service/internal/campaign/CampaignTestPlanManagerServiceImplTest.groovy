@@ -45,7 +45,7 @@ import org.squashtest.tm.service.testutils.MockFactory
 
 import spock.lang.Specification
 
-import com.google.common.base.Optional
+import java.util.Optional
 
 
 class CampaignTestPlanManagerServiceImplTest extends Specification {
@@ -71,7 +71,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		service.testCaseLibraryNodeDao = nodeDao
 		service.userDao = userDao
 		service.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 	}
 
 	def "should find campaign by id"(){

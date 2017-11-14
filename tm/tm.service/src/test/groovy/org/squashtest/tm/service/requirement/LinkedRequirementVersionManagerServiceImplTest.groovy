@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.requirement.*
@@ -200,7 +200,7 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 			reqVersionLinkTypeDao.getDefaultRequirementVersionLinkType() >> defaultType
 
 		and: "Mock service method"
-			activeMilestoneHolder.getActiveMilestone() >> Optional.fromNullable(null)
+			activeMilestoneHolder.getActiveMilestone() >> Optional.ofNullable(null)
 
 		when:
 			def result = service.addLinkedReqVersionsToReqVersion(mainRvId, reqVerIdsToLink)

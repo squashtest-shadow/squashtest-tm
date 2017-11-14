@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;

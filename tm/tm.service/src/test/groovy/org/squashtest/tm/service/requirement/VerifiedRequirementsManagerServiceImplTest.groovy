@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -82,7 +82,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.permissionService = permissionService
 		service.indexationService = indexationService
 		service.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 

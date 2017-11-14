@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.*
@@ -59,7 +59,7 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 		}
 
 		controller.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())

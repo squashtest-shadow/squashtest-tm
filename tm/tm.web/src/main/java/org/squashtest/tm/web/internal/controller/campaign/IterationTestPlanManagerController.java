@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

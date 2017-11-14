@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -62,7 +62,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		controller.userAccountService = userAccountService
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
 
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		milestoneConfService.configure(_, _) >> new MilestoneFeatureConfiguration()

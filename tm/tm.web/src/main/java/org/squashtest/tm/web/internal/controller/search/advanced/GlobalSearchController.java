@@ -48,7 +48,7 @@ import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Created by jsimon on 04/05/2016.
@@ -186,7 +186,7 @@ public abstract class GlobalSearchController {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
 		// mode
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		if (activeMilestone.isPresent()) {
 			AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();

@@ -31,6 +31,12 @@ public interface CustomMilestoneDao {
 		void consume(MilestoneHolder holder);
 	}
 
+	List<Long> findAllMilestoneIds();
+	
+	List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds);
+	
+
+
 	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);

@@ -138,7 +138,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				}
 			}
 		});
-				return list;
+		return list;
 	}
 
 	private String padRawValue(Integer rawValue) {

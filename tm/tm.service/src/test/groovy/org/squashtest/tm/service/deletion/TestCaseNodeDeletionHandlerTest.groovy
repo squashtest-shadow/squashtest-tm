@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.deletion
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
@@ -51,7 +51,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		handler.calltreeFinder = calltreeFinder;
 		handler.deletionDao = deletionDao
 		handler.activeMilestoneHolder = activeMilestoneHolder
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 
 		deletionDao.findTestCasesWhichMilestonesForbidsDeletion(_) >> []
 	}

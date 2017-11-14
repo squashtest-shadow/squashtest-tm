@@ -39,10 +39,10 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.CustomMilestoneDao.HolderConsumer;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
@@ -200,19 +200,24 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 		return milestones;
 	}
 
-	// security provided by projectFinder.findAllReadable(); is enough here
+	
 	@Override
 	public List<Milestone> findAllVisibleToCurrentUser() {
 
-		Set<Milestone> allMilestones = new HashSet<>();
-
-		Collection<Project> projects = projectFinder.findAllReadable();
-
-		for (Project p : projects) {
-			allMilestones.addAll(p.getMilestones());
+		List<Long> milestoneIds = findAllIdsVisibleToCurrentUser();		
+		return milestoneDao.findAll(milestoneIds);
+	}
+	
+	
+	@Override
+	public List<Long> findAllIdsVisibleToCurrentUser() {
+		UserDto user = userService.findCurrentUserDto();
+		if (user.isAdmin()){
+			return milestoneDao.findAllMilestoneIds();
 		}
-
-		return new ArrayList<>(allMilestones);
+		else{
+			return milestoneDao.findMilestoneIdsForUsers(user.getPartyIds());
+		}
 	}
 
 	private boolean isInAProjetICanManage(Milestone milestone) {

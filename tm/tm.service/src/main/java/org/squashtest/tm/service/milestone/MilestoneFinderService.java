@@ -38,5 +38,7 @@ public interface MilestoneFinderService {
 	 * @return returns the list of all milestone a regular user can see
 	 */
 	List<Milestone> findAllVisibleToCurrentUser();
+	
+	List<Long> findAllIdsVisibleToCurrentUser();
 
 }

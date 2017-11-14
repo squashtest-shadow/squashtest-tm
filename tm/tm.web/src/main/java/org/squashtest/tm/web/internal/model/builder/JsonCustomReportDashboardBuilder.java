@@ -72,7 +72,7 @@ public class JsonCustomReportDashboardBuilder {
 		super();
 		this.chartService = chartService;
 		this.i18nHelper = i18nHelper;
-		this.milestone = activeMilestoneHolder.getActiveMilestone().orNull();
+		this.milestone = activeMilestoneHolder.getActiveMilestone().orElse(null);
 	}
 
 	public JsonCustomReportDashboard build(CustomReportDashboard dashboard, Locale locale){

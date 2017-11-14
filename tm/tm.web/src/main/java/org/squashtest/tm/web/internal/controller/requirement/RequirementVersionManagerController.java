@@ -68,7 +68,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 

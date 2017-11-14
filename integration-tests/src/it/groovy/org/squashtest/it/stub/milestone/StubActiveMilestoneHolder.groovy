@@ -27,7 +27,7 @@ import javax.persistence.PersistenceContext;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import com.google.common.base.Optional
+import java.util.Optional
 
 
 
@@ -36,19 +36,14 @@ public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
 	@PersistenceContext
 	EntityManager entityManager
 
-	private Optional<Milestone> activeMilestone = Optional.absent();
-	private Optional<JsonMilestone> activeJsonMilestone = Optional.absent();
+	private Optional<Milestone> activeMilestone = Optional.empty();
+	private Optional<JsonMilestone> activeJsonMilestone = Optional.empty();
 	@Override
 	public Optional<Milestone> getActiveMilestone() {
 
 		return activeMilestone;
 	}
 
-	@Override
-	public Optional<Milestone> getActiveMilestoneByJson() {
-
-		return activeJsonMilestone;
-	}
 
 	@Override
 	public void setActiveMilestone(Long milestoneId) {
@@ -57,12 +52,12 @@ public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
 		if (milestoneId != null){
 			milestone = entityManager.find(Milestone.class, milestoneId)
 		}
-		activeMilestone = Optional.fromNullable(milestone);
+		activeMilestone = Optional.ofNullable(milestone);
 	}
 
 	@Override
 	public void clearContext() {
-		activeMilestone = activeMilestone.absent();
+		activeMilestone = activeMilestone.empty();
 
 	}
 

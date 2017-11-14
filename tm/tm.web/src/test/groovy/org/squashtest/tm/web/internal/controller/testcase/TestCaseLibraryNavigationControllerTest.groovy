@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import com.google.common.base.Optional
+import java.util.Optional
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
@@ -61,7 +61,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		controller.testCaseWorkspaceDisplayService = testCaseWorkspaceDisplayService
 		controller.userAccountService = userAccountService
-		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		activeMilestoneHolder.getActiveMilestoneId() >> Optional.of(-9000L)
 
 		use(ReflectionCategory) {

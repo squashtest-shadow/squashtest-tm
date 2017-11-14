@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -327,7 +327,7 @@ public class RequirementLibraryNavigationController extends
 
 		// Find node ids for specific milestone
 		List<Long> nodeIds = requirementLibraryNavigationService
-			.findAllRequirementIdsInMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
+			.findAllRequirementIdsInMilestone(activeMilestoneHolder.getActiveMilestone().orElse(null));
 
 		return requirementLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
@@ -353,7 +353,7 @@ public class RequirementLibraryNavigationController extends
 
 		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
-		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
+		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orElse(null);
 		model.addAttribute("milestone", activeMilestone);
 		model.addAttribute("isMilestoneDashboard", true);
 

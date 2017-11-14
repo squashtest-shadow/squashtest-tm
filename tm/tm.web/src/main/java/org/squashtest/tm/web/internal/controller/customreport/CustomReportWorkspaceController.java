@@ -63,7 +63,7 @@ import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 /**

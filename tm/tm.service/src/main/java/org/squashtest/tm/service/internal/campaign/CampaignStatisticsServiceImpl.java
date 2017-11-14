@@ -57,7 +57,7 @@ import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStati
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")

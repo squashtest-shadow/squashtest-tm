@@ -58,6 +58,7 @@ public class User extends Party {
 	private String email = "";
 
 	// TODO is it nullable ? Aint "boolean" ok ?
+	// 2017/11/14 this is actually legit, see https://thedailywtf.com/articles/What_Is_Truth_0x3f_
 	private Boolean active = true;
 
 	// Feature 6763 - Add a new column 'last connected on'

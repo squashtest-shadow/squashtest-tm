@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -144,7 +144,7 @@ public class CampaignSearchController extends GlobalSearchController {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestoneByJson();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		initModel(model, associateResultWithType, id, locale, CAMPAIGN, activeMilestone);
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();

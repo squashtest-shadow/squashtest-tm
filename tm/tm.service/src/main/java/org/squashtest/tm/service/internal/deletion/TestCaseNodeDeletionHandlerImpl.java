@@ -61,7 +61,7 @@ import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 @Transactional

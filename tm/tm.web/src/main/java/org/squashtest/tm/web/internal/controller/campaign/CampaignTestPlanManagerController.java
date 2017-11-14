@@ -76,7 +76,7 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * @author Agnes Durand

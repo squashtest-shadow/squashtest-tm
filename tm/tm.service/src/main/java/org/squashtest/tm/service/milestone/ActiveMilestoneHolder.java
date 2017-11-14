@@ -20,14 +20,18 @@
  */
 package org.squashtest.tm.service.milestone;
 
+import java.util.Optional;
+
 import org.squashtest.tm.domain.milestone.Milestone;
 
-import com.google.common.base.Optional;
+
 
 public interface ActiveMilestoneHolder {
+	
+	public static final long NO_MILESTONE_ID = -9000L;
+	
 	Optional<Milestone> getActiveMilestone();
-	Optional<Milestone> getActiveMilestoneByJson();
-
+	
 	void setActiveMilestone(Long milestoneId);
 
 	void clearContext();

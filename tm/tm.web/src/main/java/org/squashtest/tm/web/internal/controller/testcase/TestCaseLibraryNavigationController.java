@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -320,7 +320,7 @@ public class TestCaseLibraryNavigationController extends
 
 		// Find node ids for specific milestone
 		List<Long> nodeIds = testCaseLibraryNavigationService
-			.findAllTestCasesLibraryNodeForMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
+			.findAllTestCasesLibraryNodeForMilestone(activeMilestoneHolder.getActiveMilestone().orElse(null));
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
@@ -333,7 +333,7 @@ public class TestCaseLibraryNavigationController extends
 
 		model.addAttribute("shouldShowDashboard", shouldShowDashboard);
 		model.addAttribute("canShowDashboard", canShowDashboard);
-		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
+		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orElse(null);
 		model.addAttribute("milestone", activeMilestone);
 		model.addAttribute("isMilestoneDashboard", true);
 

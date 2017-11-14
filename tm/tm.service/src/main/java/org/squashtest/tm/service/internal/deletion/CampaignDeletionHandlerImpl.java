@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;

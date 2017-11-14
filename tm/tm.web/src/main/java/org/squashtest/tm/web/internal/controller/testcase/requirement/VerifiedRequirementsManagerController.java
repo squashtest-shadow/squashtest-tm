@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
