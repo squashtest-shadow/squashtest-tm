@@ -407,19 +407,26 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				var columns = ["criticality","category","status"];
 				var index = 0;
 
+				var bulkUpdate = {};
 				for(index=0; index<columns.length; index++){
 					if($("#"+columns[index]+"-checkbox").prop('checked')){
-						self.updateDisplayedValueInColumn(table, columns[index]);
-						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-						for(var i=0; i<editableIds.length; i++){
-							var urlPOST = routing.buildURL('requirementversions', editableIds[i]);
-							$.post(urlPOST, {
-								value : value,
-								id : "requirement-"+columns[index]
-							});
-						}
-					}
-				}
+						var attr = columns[index];
+						self.updateDisplayedValueInColumn(table, attr);
+						var value = $("#"+attr+"-combo").find('option:selected').val();
+						bulkUpdate[attr] = value;
+		        	}
+		        }
+
+				var url = routing.buildURL('requirementversions.bulkupdate', editableIds.join(','))
+
+		        $.ajax({
+		        	url : url,
+		        	type : 'POST',
+		        	contentType : 'application/json',
+		        	data : JSON.stringify(bulkUpdate)
+		        });
+
+
 			});
 
 			addModifyResultDialog.on('confirmdialogopen',function() {

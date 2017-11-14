@@ -82,6 +82,15 @@ public interface CustomRequirementVersionManagerService {
 	void changeCategory(long requirementVersionId, String categoryCode);
 
 	/**
+	 * Applies a {@link RequirementBulkUpdate} to a bunch of requirement versions given their ids. The operation can
+	 * complete or fail individually for each RV. The ID of the RV for which it fails is returned in the result. In
+	 * particular an empty list indicates a success for all.
+	 *  @param requirementVersionIds
+	 * @param update
+	 */
+	Collection<Long> bulkUpdate(List<Long> requirementVersionIds, RequirementBulkUpdate update);
+
+	/**
 	 * Fetches the paged, sorted collection of versions for the given requirement.
 	 *
 	 * @param requirementId

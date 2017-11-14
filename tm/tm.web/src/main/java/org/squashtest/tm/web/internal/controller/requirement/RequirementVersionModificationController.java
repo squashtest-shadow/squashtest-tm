@@ -44,11 +44,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -69,6 +65,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.RequirementBulkUpdate;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -203,6 +200,13 @@ public class RequirementVersionModificationController {
 	String changeReference(@PathVariable long requirementVersionId, @RequestParam(VALUE) String requirementReference) {
 		requirementVersionManager.changeReference(requirementVersionId, requirementReference.trim());
 		return HtmlUtils.htmlEscape(requirementReference);
+	}
+
+	@RequestMapping(value = "/bulk-update", method = RequestMethod.POST, consumes = "application/json")
+	@ResponseBody
+	// here we use the path variable as a list, instead of a single id
+	void bulkUpdate(@PathVariable("requirementVersionId") List<Long> requirementId, @RequestBody RequirementBulkUpdate bulkUpdate){
+		requirementVersionManager.bulkUpdate(requirementId, bulkUpdate);
 	}
 
 	private String internationalize(Level level, Locale locale) {

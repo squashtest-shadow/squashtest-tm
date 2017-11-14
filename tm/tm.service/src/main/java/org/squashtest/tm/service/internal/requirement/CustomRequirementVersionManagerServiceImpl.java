@@ -32,6 +32,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -39,6 +40,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersion.PropertiesSetter;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -51,6 +53,10 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.RequirementBulkUpdate;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 import javax.inject.Inject;
@@ -97,6 +103,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private LinkedRequirementVersionManagerService requirementLinkService;
+
+	@Inject
+	private PermissionEvaluationService permService;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -206,17 +215,15 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public Page<RequirementVersion> findAllByRequirement(long requirementId, Pageable pageable) {
-
 		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
-
-                return page;
+		return page;
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
-                Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
+        Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
 		return findAllByRequirement(requirementId, pageable).getContent();
 	}
 
@@ -232,6 +239,57 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		} else {
 			throw new InconsistentInfoListItemException("requirementCategory", categoryCode);
 		}
+	}
+
+	@Override
+	public Collection<Long> bulkUpdate(List<Long> requirementVersionIds, RequirementBulkUpdate update) {
+
+		List<Long> failures = new ArrayList<>();
+
+		List<RequirementVersion> versions = requirementVersionDao.findAll(requirementVersionIds);
+
+		InfoListItem category = null;
+		if (update.hasCategoryDefined()){
+			category = infoListItemService.findByCode(update.getCategory());
+		}
+
+
+		for (RequirementVersion rv : versions){
+			try {
+				// security check
+				SecurityCheckableObject check = new SecurityCheckableObject(rv, "WRITE");
+				PermissionsUtils.checkPermission(permService, check);
+
+				PropertiesSetter ps = rv.getPropertySetter();
+				
+				// update category if needed
+				if (update.hasCategoryDefined()){
+					if (infoListItemService.isCategoryConsistent(rv.getProject().getId(), update.getCategory())) {
+						ps.setCategory(category);
+					} else {
+						throw new InconsistentInfoListItemException("requirementCategory", update.getCategory());
+					}
+				}
+
+				// update status if needed
+				if (update.hasStatusDefined()){
+					ps.setStatus(update.getStatus());
+				}
+
+				// update criticality if needed
+				if (update.hasCriticalityDefined()){
+					ps.setCriticality(update.getCriticality());
+				}
+
+			}
+			catch(Exception ex){
+				// lots of legitimate business exception could happen so I won't log them here
+				failures.add(rv.getId());
+			}
+		}
+
+		return failures;
+
 	}
 
 	@Override
