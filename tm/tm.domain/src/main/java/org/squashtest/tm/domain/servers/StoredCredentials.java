@@ -49,8 +49,8 @@ public class StoredCredentials {
 
 	@Id
 	@Column(name = "CREDENTIAL_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "stored_credentials_cred_id_seq")
-	@SequenceGenerator(name = "stored_credentials_cred_id_seq", sequenceName = "stored_credentials_cred_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "stored_credentials_credential_id_seq")
+	@SequenceGenerator(name = "stored_credentials_credential_id_seq", sequenceName = "stored_credentials_credential_id_seq", allocationSize = 1)
 	private Long id;
 
 	/**
@@ -80,7 +80,7 @@ public class StoredCredentials {
 	 * for now I say YAGNI and go with a OneToOne.
 	 */
 	@OneToOne
-	@JoinColumn(name = "AUTHENTICATED_SERVER")	
+	@JoinColumn(name = "AUTHENTICATED_SERVER")
 	private BugTracker authenticatedServer;
 
 
