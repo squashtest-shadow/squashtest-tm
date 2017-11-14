@@ -37,6 +37,8 @@ public class RequirementTarget implements Target, WithPath {
 	// for synchronized requirements, the remote key is also part of the key.
 	private String remoteKey;
 
+	// for synced requirement with a synchronisation id, we must also pass the sync id... i know
+	private Long remoteSynchronisationId;
 
 	public RequirementTarget() {
 		super();
@@ -99,13 +101,24 @@ public class RequirementTarget implements Target, WithPath {
 		return remoteKey;
 	}
 
-
+	/**
+	 * Don't remove that method even if your IDE tells you it's safe. It's used by req importer plugins...
+	 * @param remoteKey
+	 */
 	public void setRemoteKey(String remoteKey) {
 		this.remoteKey = remoteKey;
 	}
 
 	public boolean isSynchronized() {
 		return this.remoteKey != null;
+	}
+
+	public Long getRemoteSynchronisationId() {
+		return remoteSynchronisationId;
+	}
+
+	public void setRemoteSynchronisationId(Long remoteSynchronisationId) {
+		this.remoteSynchronisationId = remoteSynchronisationId;
 	}
 
 	@Override

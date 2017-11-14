@@ -190,10 +190,10 @@ public class Model {
 	 * CustomField
 	 */
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
-	
+
 	/**
 	 * caches the requirement link roles
-	 * 
+	 *
 	 */
 	private Set<String> requirementLinkRoles;
 
@@ -848,9 +848,16 @@ public class Model {
 
 	private void loadRequirement(RequirementTarget target) {
 		Long reqId;
-		if (target.isSynchronized()){
-			LOGGER.debug("ReqImport - looking for synchronized requirement key : '{}'", target.getRemoteKey());
-			reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey(), target.getProject());
+		if (target.isSynchronized()) {
+		// this if mean, if we have a synced requirement with JIRA Req or Redmine Req plugin, witch do not use RemoteSynchronisation objects
+			if (target.getRemoteSynchronisationId() == null) {
+				LOGGER.debug("ReqImport - looking for synchronized requirement key : '{}'", target.getRemoteKey());
+				reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey(), target.getProject());
+			} else {
+				//if we have a remote sync id that mean that the requirement is synchronised with a proper remote sync object
+				LOGGER.debug("ReqImport - looking for synchronized requirement key : '{}'", target.getRemoteKey());
+				reqId = reqFinderService.findNodeIdByRemoteKeyAndSynchronisationId(target.getRemoteKey(), target.getRemoteSynchronisationId());
+			}
 		} else {
 			LOGGER.debug("ReqImport - looking for native requirement by path : '{}", target.getPath());
 			reqId = reqFinderService.findNodeIdByPath(target.getPath());
@@ -874,10 +881,10 @@ public class Model {
 
 		return requirementTree.getStatus(target);
 	}
-	
-	
-	public Set<String> getRequirementLinkRoles(){
-		if (requirementLinkRoles == null){
+
+
+	public Set<String> getRequirementLinkRoles() {
+		if (requirementLinkRoles == null) {
 			requirementLinkRoles = Collections.unmodifiableSet(reqlinkService.findAllRoleCodes());
 		}
 		return requirementLinkRoles;
@@ -1100,7 +1107,7 @@ public class Model {
 		reqCufsPerProjectname.putAll(projectName, reqcufs);
 
 	}
-	
+
 	public void mainInitRequirements(RequirementVersionTarget target) {
 		mainInitRequirements(Arrays.asList(target));
 	}
@@ -1204,7 +1211,7 @@ public class Model {
 		requirementTree.addOrUpdateNode(target, status);
 	}
 
-	public Long getRequirementId(RequirementVersionTarget target){
+	public Long getRequirementId(RequirementVersionTarget target) {
 		return requirementTree.getNodeId(target.getRequirement());
 	}
 
@@ -1269,7 +1276,7 @@ public class Model {
 
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
-		List <String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
+		List<String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
 		Query q = em.createNamedQuery(
 			"Project.findAllByName");
 		q.setParameter("names", unescapedNames);

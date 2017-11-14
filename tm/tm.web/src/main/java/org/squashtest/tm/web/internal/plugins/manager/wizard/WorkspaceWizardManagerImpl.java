@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.wizard;
+package org.squashtest.tm.web.internal.plugins.manager.wizard;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -74,7 +74,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 
 	/**
-	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
+	 * @see WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
 	 */
 	@Override
 	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {

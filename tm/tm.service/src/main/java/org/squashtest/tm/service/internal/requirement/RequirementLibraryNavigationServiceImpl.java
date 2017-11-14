@@ -155,12 +155,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Inject
 	private RequirementStatisticsService statisticsService;
-	
+
 	@Inject
 	private MilestoneMembershipManager milestoneService;
-	
+
 	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder; 
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
@@ -724,6 +724,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	public Long findNodeIdByRemoteKeyAndSynchronisationId(String remoteKey, Long remoteSyncId) {
+		return requirementDao.findNodeIdByRemoteKeyAndRemoteSyncId(remoteKey, remoteSyncId);
+	}
+
+	@Override
 	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys, String projectName){
 		return requirementDao.findNodeIdsByRemoteKeys(remoteKeys, projectName);
 	}
@@ -966,26 +971,26 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
-	
+
 	@Override
 	public RequirementStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds,
 			Collection<Long> nodeIds) {
-		
+
 		Collection<Long> reqIds = findRequirementIdsFromSelection(libraryIds, nodeIds);
-		
+
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		if (activeMilestone.isPresent()) {
 			reqIds = filterReqIdsListByMilestone(reqIds, activeMilestone.get());
 		}
-		
+
 		return statisticsService.gatherRequirementStatisticsBundle(reqIds);
 	}
-	
+
 	private Collection<Long> filterReqIdsListByMilestone(Collection<Long> reqIds, Milestone activeMilestone) {
 		List<Long> reqInMilestone = findAllRequirementIdsInMilestone(activeMilestone);
 		return CollectionUtils.retainAll(reqIds, reqInMilestone);
 	}
-	
+
 	@Override
 	public List<Long> findAllRequirementIdsInMilestone(Milestone activeMilestone) {
 		if(activeMilestone != null) {
@@ -996,7 +1001,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			return new ArrayList<>();
 		}
 	}
-	
-	
+
+
 
 }

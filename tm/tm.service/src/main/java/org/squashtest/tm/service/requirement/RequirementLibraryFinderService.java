@@ -73,12 +73,16 @@ public interface RequirementLibraryFinderService {
 	/**
 	 * Return the id of a (synchronized) {@link Requirement}, identified by its remote key.
 	 *
+	 * IGNORING RESULTS FROM REQ WITH A PROPER {@link org.squashtest.tm.domain.synchronisation.RemoteSynchronisation}
+	 * THIS IS DUE TO REQUIREMENT IMPORT PLUGIN MESS, SO YOU WILL HAVE TO USE {@Link RequirementLibraryFinderService#findNodeIdByRemoteKeyAndSynchronisationId} IF YOU NEED A REQ SYNCHRONISED WITH PROPER SYNC ID
+	 *
 	 * @return the id or null if no {@link Requirement} have such remote key
 	 *
-	 * @param remoyeKey
-	 * @return
 	 */
 	Long findNodeIdByRemoteKey(String remoteKey, String projectName);
+
+
+	Long findNodeIdByRemoteKeyAndSynchronisationId(String remoteKey, Long remoteSyncId);
 
 
 	/**
@@ -101,13 +105,13 @@ public interface RequirementLibraryFinderService {
 	 * @return
 	 */
 	Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
-	
+
 	/**
 	 * Passing the ids of some selected RequirementLibrary and RequirementLibraryNodes (in separate collections), will return
 	 * the statistics covering all the Requirements encompassed by this selection. The requirement ids that cannot be
 	 * accessed for security reason will be filtered out.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param libraryIds
 	 * @param nodeIds
 	 * @return RequirementStatisticsBundle

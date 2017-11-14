@@ -65,7 +65,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.project.ProjectPluginModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 @Controller
 @RequestMapping("/administration/projects")

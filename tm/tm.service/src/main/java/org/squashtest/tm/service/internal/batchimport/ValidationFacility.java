@@ -68,6 +68,7 @@ import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -187,6 +188,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	@Inject
 	private ProjectDao projectDao;
 
+	@Inject
+	private UserContextService userContextService;
+
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -279,7 +283,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 		}
 		if (fixUser) {
-			auditable.setCreatedBy(userAccountService.findCurrentUser().getLogin());
+			String username = userContextService.getUsername();
+			auditable.setCreatedBy(username);
 		}
 
 		if (auditable.getCreatedOn() == null) {

@@ -208,4 +208,9 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	public List<Long> sortRequirementByNodeRelationship(List<Long> requirementVersionIds) {
 		return null;
 	}
+
+	@Override
+	public Long findNodeIdByRemoteKeyAndRemoteSyncId(String remoteKey, Long remoteSyncId) {
+		return null;
+	}
 }

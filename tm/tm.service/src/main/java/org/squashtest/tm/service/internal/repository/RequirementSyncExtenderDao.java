@@ -32,11 +32,15 @@ import java.util.Collection;
 
 /**
  * /!\ I (GRF) AM PRETTY SURE THIS CLASS IS USED AS AN API BY SOME PLUGIN - DON'T REMOVE ANY UNUSED METHOD !
+ * I (JTH) CONFIRM YOUR DOUBTS, USED IN ALL JIRA SYNC PLUGINS... DON'T MODIFY/RENAME/REMOVE ANYTHING HERE YOUR NOT PROTECTED BY COMPILER
  * TODO Move this to some place which explicitly tells this is used as an API
  */
 public interface RequirementSyncExtenderDao extends JpaRepository<RequirementSyncExtender, Long> {
 	@Query
 	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId, @Param("pId") Long projectId);
+
+	@Query
+	RequirementSyncExtender retrieveByRemoteKeyAndSyncId(@Param("id") String remoteId, @Param("remoteSynchronisationId") Long remoteSyncId);
 
 	@Query
 	@EmptyCollectionGuard

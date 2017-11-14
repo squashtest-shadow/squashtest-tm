@@ -35,10 +35,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -50,6 +47,7 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtenderDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -64,7 +62,6 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
  * </ul>
  *
  * @author mpagnon, bsiri
- *
  */
 @Component
 public class TreeNodeUpdater implements NodeVisitor {
@@ -87,15 +84,20 @@ public class TreeNodeUpdater implements NodeVisitor {
 	@Inject
 	private RequirementSyncExtenderDao syncreqDao;
 
+	@Inject
+	private RequirementFolderSyncExtenderDao requirementFolderSyncExtenderDao;
+
 	@Override
+
 	public void visit(CampaignFolder campaignFolder) {
 		// nothing to update
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
-		// nothing to update
+		stripFolderSyncExtender(requirementFolder);
 	}
+
 
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
@@ -165,8 +167,8 @@ public class TreeNodeUpdater implements NodeVisitor {
 	}
 
 	/**
-	 * @see PrivateCustomFieldValueService#migrateCustomFieldValues(BoundEntity)
 	 * @param entity
+	 * @see PrivateCustomFieldValueService#migrateCustomFieldValues(BoundEntity)
 	 */
 	public void updateCustomFields(BoundEntity entity) {
 		privateCustomFieldValueService.migrateCustomFieldValues(entity);
@@ -180,8 +182,8 @@ public class TreeNodeUpdater implements NodeVisitor {
 	public void updateIssues(List<Issue> issues, Project project) {
 		for (Issue issue : issues) {
 			if (project != null
-					&& (project.getBugtrackerBinding() == null || !issue.getBugtracker().getId()
-							.equals(project.getBugtrackerBinding().getBugtracker().getId()))) {
+				&& (project.getBugtrackerBinding() == null || !issue.getBugtracker().getId()
+				.equals(project.getBugtrackerBinding().getBugtracker().getId()))) {
 				issueDao.delete(issue);
 			}
 		}
@@ -190,12 +192,12 @@ public class TreeNodeUpdater implements NodeVisitor {
 	/**
 	 * <p>Will remove script of test-case if the script's automated-project is not bound to the current test-case's
 	 * project.<p>
-	 *
+	 * <p>
 	 * <p>Here a test case just copied might have been copied from a different project
 	 * that his own now. If that test case was referencing an automated script
 	 * we must create a copy of that automated script that match the configuration of
 	 * the TM project the test case was copied into.</p>
-	 *
+	 * <p>
 	 * <p>Of course we do so iif there is a matching TA project bound to the TM project,
 	 * namely if they refer to the same TA jobs.</p>
 	 *
@@ -207,11 +209,11 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 		AutomatedTest formerTATest = testCase.getAutomatedTest();
 
-		if (formerTATest != null){
+		if (formerTATest != null) {
 
 			TestAutomationProject newTAProject = testCase.getProject().findTestAutomationProjectByJob(formerTATest.getProject());
 
-			if (newTAProject != null){
+			if (newTAProject != null) {
 
 				testcaseService.bindAutomatedTest(testCase.getId(), newTAProject.getId(), formerTATest.getName());
 
@@ -220,46 +222,54 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 		}
 
-		if (! couldConvert){
+		if (!couldConvert) {
 			testCase.removeAutomatedScript();
 		}
 
 	}
 
-	private void updateNatureAndType(TestCase testCase){
+	private void updateNatureAndType(TestCase testCase) {
 		Project project = testCase.getProject();
 		InfoListItem nature = testCase.getNature();
 		InfoListItem type = testCase.getType();
 
-		if (! infoListItemService.isNatureConsistent(project.getId(), nature.getCode())){
+		if (!infoListItemService.isNatureConsistent(project.getId(), nature.getCode())) {
 			testCase.setNature(project.getTestCaseNatures().getDefaultItem());
 		}
 
-		if (! infoListItemService.isTypeConsistent(project.getId(), type.getCode())){
+		if (!infoListItemService.isTypeConsistent(project.getId(), type.getCode())) {
 			testCase.setType(project.getTestCaseTypes().getDefaultItem());
 		}
 
 	}
 
-	private void updateCategory(RequirementVersion requirement){
+	private void updateCategory(RequirementVersion requirement) {
 		Project project = requirement.getProject();
 		InfoListItem category = requirement.getCategory();
 
-		if (! infoListItemService.isCategoryConsistent(project.getId(), category.getCode())){
+		if (!infoListItemService.isCategoryConsistent(project.getId(), category.getCode())) {
 			requirement.setCategory(project.getRequirementCategories().getDefaultItem());
 		}
 	}
 
 
-	private void updateMilestones(MilestoneHolder element){
+	private void updateMilestones(MilestoneHolder element) {
 		milestoneService.migrateMilestones(element);
 	}
 
-	private void stripSyncExtender(Requirement req){
-		if (req.isSynchronized()){
+	private void stripSyncExtender(Requirement req) {
+		if (req.isSynchronized()) {
 			RequirementSyncExtender extender = req.getSyncExtender();
 			req.setSyncExtender(null);
 			syncreqDao.delete(extender);
+		}
+	}
+
+	private void stripFolderSyncExtender(RequirementFolder requirementFolder) {
+		if (requirementFolder.isSynchronized()) {
+			RequirementFolderSyncExtender extender = requirementFolder.getRequirementFolderSyncExtender();
+			requirementFolder.setRequirementFolderSyncExtender(null);
+			requirementFolderSyncExtenderDao.delete(extender);
 		}
 	}
 

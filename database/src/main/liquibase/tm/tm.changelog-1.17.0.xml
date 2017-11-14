@@ -123,6 +123,107 @@
       <column name="AUTH_POLICY" type="VARCHAR(30)" remarks="the policy that decides who needs to authenticate" defaultValue="USER" />
     </addColumn>
 
+
+  <changeSet id="tm-1.17.0-jira-sync-01" author="jthebault">
+    <comment>Add a remote synchronisation table in squash tm.</comment>
+    <createTable tableName="REMOTE_SYNCHRONISATION">
+
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT">
+        <constraints nullable="false"
+                     foreignKeyName="fk_remote_synchronisation__project__project_id"
+                     references="PROJECT(PROJECT_ID)" />
+      </column>
+
+      <column name="SERVER_ID" type="BIGINT">
+        <constraints nullable="false"
+                     foreignKeyName="fk_remote_synchronisation__bugtracker__bugtracker_id"
+                     references="BUGTRACKER(BUGTRACKER_ID)" />
+      </column>
+
+      <column name="REMOTE_SYNCHRONISATION_NAME" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="KIND" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="REMOTE_SELECT_TYPE" type="VARCHAR(50)"/>
+
+      <column name="REMOTE_SELECT_VALUE" type="VARCHAR(1000)"/>
+
+      <column name="LAST_SUCCESSFUL_SYNC_DATE" type="DATETIME"/>
+
+      <column name="LAST_SYNC_DATE" type="DATETIME"/>
+
+      <column name="REMOTE_SYNCHRONISATION_OPTIONS" type="CLOB"/>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.17.0-jira-sync-02" author="jthebault">
+    <comment>Add a remote folder synchronisation table in squash tm.</comment>
+    <createTable tableName="REQUIREMENT_FOLDER_SYNC_EXTENDER">
+
+      <column name="RF_SYNC_EXTENDER_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT" remarks="Only one master folder should be targeted by a given synchronisation">
+        <constraints nullable="false"
+                     foreignKeyName="fk_requirement_folder_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
+      </column>
+
+      <column name="REMOTE_FOLDER_ID" type="VARCHAR(255)">
+      </column>
+
+      <column name="REMOTE_FOLDER_STATUS" type="VARCHAR(50)">
+      </column>
+
+      <column name="REQUIREMENT_FOLDER_ID" type="BIGINT" remarks="Only one extender for any folder in Squash TM">
+        <constraints nullable="false"
+                     foreignKeyName="fk_requirement_folder_sync_extender__requirement_folder__rln_id"
+                     references="REQUIREMENT_FOLDER(RLN_ID)" unique="true" />
+      </column>
+
+      <column name="TYPE" type="VARCHAR(30)">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.17.0-jira-sync-03" author="jthebault">
+    <dropNotNullConstraint
+      columnDataType="VARCHAR"
+      columnName="REMOTE_FILTER_NAME"
+      tableName="REQUIREMENT_SYNC_EXTENDER"/>
+
+    <addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
+
+      <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT">
+        <constraints nullable="true"
+                     foreignKeyName="fk_requirement_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
+      </column>
+
+      <column name="REMOTE_LAST_UPDATED" type="DATETIME"/>
+
+      <column name="REMOTE_PARENT_ID" type="VARCHAR(30)"/>
+
+    </addColumn>
+
+    <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="requirement_sync_extender_remote_parent_id_idx">
+      <column name="REMOTE_PARENT_ID" />
+    </createIndex>
+
   </changeSet>
 
 </databaseChangeLog>

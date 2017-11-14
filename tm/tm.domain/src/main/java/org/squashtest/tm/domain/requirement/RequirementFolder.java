@@ -68,6 +68,9 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@JoinColumn(name = "RES_ID", updatable = false)
 	private SimpleResource resource;
 
+	@OneToOne(mappedBy = "requirementFolder", cascade = CascadeType.ALL, optional = true)
+	private RequirementFolderSyncExtender requirementFolderSyncExtender;
+
 	public RequirementFolder() {
 		resource = new SimpleResource();
 	}
@@ -181,4 +184,15 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		return content;
 	}
 
+	public RequirementFolderSyncExtender getRequirementFolderSyncExtender() {
+		return requirementFolderSyncExtender;
+	}
+
+	public void setRequirementFolderSyncExtender(RequirementFolderSyncExtender requirementFolderSyncExtender) {
+		this.requirementFolderSyncExtender = requirementFolderSyncExtender;
+	}
+
+	public boolean isSynchronized(){
+		return this.requirementFolderSyncExtender != null;
+	}
 }

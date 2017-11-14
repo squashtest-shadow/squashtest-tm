@@ -21,19 +21,12 @@
 package org.squashtest.tm.domain.requirement;
 
 import java.net.URL;
+import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 
 
 /**
@@ -78,6 +71,16 @@ public class RequirementSyncExtender {
 	@Column(name = "REMOTE_REQ_URL")
 	private URL remoteUrl;
 
+	@Column(name = "REMOTE_LAST_UPDATED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date remoteLastUpdated;
+
+	@ManyToOne
+	@JoinColumn(name = "REMOTE_SYNCHRONISATION_ID")
+	private RemoteSynchronisation remoteSynchronisation;
+
+	@Column
+	private String remoteParentId;
 
 	public RequirementSyncExtender(){
 		super();
@@ -146,6 +149,28 @@ public class RequirementSyncExtender {
 		this.remoteUrl = remoteUrl;
 	}
 
+	public Date getRemoteLastUpdated() {
+		return remoteLastUpdated;
+	}
 
+	public void setRemoteLastUpdated(Date remoteLastUpdated) {
+		this.remoteLastUpdated = remoteLastUpdated;
+	}
+
+	public RemoteSynchronisation getRemoteSynchronisation() {
+		return remoteSynchronisation;
+	}
+
+	public void setRemoteSynchronisation(RemoteSynchronisation remoteSynchronisation) {
+		this.remoteSynchronisation = remoteSynchronisation;
+	}
+
+	public String getRemoteParentId() {
+		return remoteParentId;
+	}
+
+	public void setRemoteParentId(String remoteParentId) {
+		this.remoteParentId = remoteParentId;
+	}
 }
 

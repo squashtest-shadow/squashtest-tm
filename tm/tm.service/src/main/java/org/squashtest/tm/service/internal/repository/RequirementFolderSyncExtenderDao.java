@@ -18,32 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This file is part of the Squash TM management services for SaaS / Squash On Demand (saas.management.fragment) project.
- * Copyright (C) 2015 - 2016 Henix, henix.fr - All Rights Reserved
- * <p>
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * <p>
- * (C)Henix. Tous droits réservés.
- * <p>
- * Avertissement : ce programme est protégé par la loi relative au droit d'auteur et par les conventions internationales. Toute reproduction ou distribution partielle ou totale du logiciel, par quelque moyen que ce soit, est strictement interdite.
- */
-package org.squashtest.tm.domain;
+package org.squashtest.tm.service.internal.repository;
 
-/**
- * Defines global size constraints
- * @author Gregory Fouquet
- * @since 1.14.0  07/07/16
- */
-public final  class Sizes {
-	private Sizes() {
-		super();
-	}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.squashtest.tm.domain.requirement.RequirementFolderSyncExtender;
 
-	public static final int NAME_MAX = 255;
+public interface RequirementFolderSyncExtenderDao extends JpaRepository<RequirementFolderSyncExtender, Long> {
 
-	public static final int LABEL_MAX = 255;
-
-	public static final int STATUS_MAX = 50;
 }

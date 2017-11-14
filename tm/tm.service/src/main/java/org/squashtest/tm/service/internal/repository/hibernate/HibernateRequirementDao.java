@@ -438,6 +438,15 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
+	public Long findNodeIdByRemoteKeyAndRemoteSyncId(String remoteKey, Long remoteSyncId) {
+		Query q = currentSession()
+			.getNamedQuery("requirement.findNodeIdByRemoteKeyAndSynchronisationId")
+			.setParameter("key", remoteKey)
+			.setParameter("remoteSynchronisationId", remoteSyncId);
+		return (Long)q.uniqueResult();
+	}
+
+	@Override
 	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys, String projectName) {
 
 		if (remoteKeys.isEmpty()){

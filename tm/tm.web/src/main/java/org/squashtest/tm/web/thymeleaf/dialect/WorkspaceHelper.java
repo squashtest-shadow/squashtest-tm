@@ -27,11 +27,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.web.internal.export.ExportPluginManager;
+import org.squashtest.tm.web.internal.plugins.manager.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.FilterModel;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import javax.servlet.ServletContext;
 import java.util.Collection;

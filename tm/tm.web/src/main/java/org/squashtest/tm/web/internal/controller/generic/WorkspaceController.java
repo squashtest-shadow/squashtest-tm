@@ -61,7 +61,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.rest.RestLibrary;
 import org.squashtest.tm.web.internal.model.rest.RestProject;
-import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
