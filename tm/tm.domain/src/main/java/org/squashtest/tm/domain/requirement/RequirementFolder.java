@@ -20,27 +20,21 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.domain.library.FolderSupport;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.resource.SimpleResource;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.library.*;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.resource.SimpleResource;
 
 @SuppressWarnings("rawtypes")
 @Entity
@@ -182,6 +176,11 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public Collection<RequirementLibraryNode> getOrderedContent() {
 		return content;
+	}
+
+	@Override
+	public boolean allowContentWithIdenticalName() {
+		return true;
 	}
 
 	public RequirementFolderSyncExtender getRequirementFolderSyncExtender() {

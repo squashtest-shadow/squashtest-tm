@@ -28,35 +28,18 @@ import spock.lang.Specification
 
 class RequirementLibraryTest extends Specification {
 	RequirementLibrary requirementLibrary = new RequirementLibrary()
-	
+
 	def setup() {
 		requirementLibrary.notifyAssociatedWithProject(new Project())
 	}
-	
+
 	def "should not add null root content"() {
 		when:
 		requirementLibrary.addContent((TreeNode) null)
 
-		
+
 		then:
 		thrown(NullArgumentException)
-	}
-	
-	def "should not add requirement with duplicate name"() {
-		given: "a folder named foo"
-		RequirementFolder newFolder = new RequirementFolder()
-		newFolder.setName("foo")
-		
-		and: "library already has a folder named 'foo'"
-		RequirementFolder fooFolder = new RequirementFolder()
-		fooFolder.setName("foo")
-		requirementLibrary.addContent(fooFolder)
-		
-		when:
-		requirementLibrary.addContent(newFolder)
-		
-		then:
-		thrown(DuplicateNameException)
 	}
 
 }

@@ -183,4 +183,8 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 		return rootContent;
 	}
 
+	@Override
+	public boolean allowContentWithIdenticalName() {
+		return true;
+	}
 }

@@ -23,8 +23,8 @@ package org.squashtest.tm.domain.requirement
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.exception.DuplicateNameException;
-
+import org.squashtest.tm.exception.DuplicateNameException
+import spock.lang.Ignore;
 import spock.lang.Specification
 
 class RequirementFolderTest extends Specification {
@@ -52,23 +52,6 @@ class RequirementFolderTest extends Specification {
 
 		then:
 		folder.getContent().contains(fooFolder)
-	}
-
-	def "should not add node with duplicate name"() {
-		given:
-		Requirement existing = Mock()
-		existing.name >> "foo"
-		folder.addContent(existing)
-		
-		and: 
-		Requirement candidate = Mock()
-		candidate.name >> "foo"
-
-		when:
-		folder.addContent(candidate)
-
-		then:
-		thrown DuplicateNameException
 	}
 
 	def "should set this folder's project as the project of new content"() {
@@ -104,25 +87,25 @@ class RequirementFolderTest extends Specification {
 		then:
 		content.project == project
 	}
-	
+
 	def "should create a 'pastable' copy"() {
-		given: 
+		given:
 		RequirementFolder folder = new RequirementFolder(name: "foo", description: "bar")
-		
+
 		and:
 		Attachment attachment = new Attachment()
 		attachment.setType("txt")
 		folder.attachmentList.addAttachment attachment
-		
+
 		when:
-		def res = folder.createCopy()		
+		def res = folder.createCopy()
 
 		then:
 		res.name == folder.name
 		res.description == folder.description
 		res.resource != null
 		res.resource.name == folder.name
-		
+
 		res.attachmentList.allAttachments.size() == 1
 		!res.attachmentList.allAttachments.contains(attachment)
 	}

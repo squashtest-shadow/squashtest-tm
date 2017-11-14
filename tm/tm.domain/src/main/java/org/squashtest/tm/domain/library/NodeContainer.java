@@ -32,9 +32,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Interface for an object which contains tree node objects.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <NODE>
  *            Type of contained node
  */
@@ -43,7 +43,7 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified {
 	 * Adds new content to this container. Should refuse to add null content, should refuse to add content with
 	 * duplicate
 	 * name.
-	 * 
+	 *
 	 * @param node
 	 */
 	void addContent(@NotNull NODE node) throws DuplicateNameException, NullArgumentException;
@@ -52,10 +52,17 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified {
 	 * Adds new content to this container at the given position. Should refuse to add null content, should refuse to add
 	 * content with duplicate
 	 * name.
-	 * 
+	 *
 	 * @param node
 	 */
 	void addContent(@NotNull NODE node, int position) throws DuplicateNameException, NullArgumentException;
+
+	/**
+	 * Indicate if this container allow two contents nodes to have the same name.
+	 * By default it's FALSE, only requirement workspace allow this rule to be broke, thanks to the milestone mess.
+	 * @return FALSE if not allowed (default), TRUE if allowed , witch mean that a subclass has override this method
+	 */
+	default boolean allowContentWithIdenticalName(){return false;}
 
 	boolean isContentNameAvailable(String name);
 
@@ -63,7 +70,7 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified {
 
 	/**
 	 * Will return the ordered (if order there is) content nodes.
-	 * 
+	 *
 	 * @return
 	 */
 	Collection<NODE> getOrderedContent();
@@ -76,7 +83,7 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified {
 
 	/**
 	 * A node container can be a library. That can be bound to a project template.
-	 * 
+	 *
 	 * @return
 	 */
 	GenericProject getProject();

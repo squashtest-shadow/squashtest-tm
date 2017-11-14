@@ -57,6 +57,9 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 
 	@Override
 	public boolean isContentNameAvailable(String name) {
+		if(allowContentWithIdenticalName()){
+			return true;
+		}
 		for (NODE content : getContent()) {
 			if (content.getName().equals(name)) {
 				return false;

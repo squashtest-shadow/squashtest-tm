@@ -550,5 +550,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null;
 	}
 
-
+	@Override
+	public boolean allowContentWithIdenticalName() {
+		return true;
+	}
 }

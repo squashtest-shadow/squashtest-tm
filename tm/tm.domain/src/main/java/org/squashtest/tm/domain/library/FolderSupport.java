@@ -59,7 +59,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 
 	public void addContent(NODE node, int position) {
 		checkContentNameAvailable(node);
-		if(position >= folder.getContent().size() || position < 0){
+		if (position >= folder.getContent().size() || position < 0) {
 			folder.addContent(node);
 		} else {
 			folder.getContent().add(position, node);
@@ -68,7 +68,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	}
 
 	private void checkContentNameAvailable(NODE candidateContent) throws DuplicateNameException {
-		if (!isContentNameAvailable(candidateContent.getName())) {
+		if (!this.folder.allowContentWithIdenticalName() && !isContentNameAvailable(candidateContent.getName())) {
 			throw new DuplicateNameException(candidateContent.getName(), candidateContent.getName());
 		}
 	}
@@ -111,16 +111,14 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	private boolean notSameProject(Project thisProject, Project thatProject) {
 		if (thisProject == null && thatProject == null) {
 			return false;
-		}
-		else if (thisProject == null){
+		} else if (thisProject == null) {
 			return true;
-		}
-		else{
+		} else {
 			return !thisProject.equals(thatProject);
 		}
 	}
 
-	public boolean hasContent(){
+	public boolean hasContent() {
 		return !folder.getContent().isEmpty();
 	}
 
@@ -141,7 +139,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 
 	public List<String> getContentNames() {
 		List<String> contentNames = new ArrayList<>(folder.getContent().size());
-		for(NODE node : folder.getContent()){
+		for (NODE node : folder.getContent()) {
 			contentNames.add(node.getName());
 		}
 		return contentNames;
