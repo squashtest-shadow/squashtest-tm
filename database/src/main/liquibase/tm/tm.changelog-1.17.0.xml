@@ -123,6 +123,8 @@
       <column name="AUTH_POLICY" type="VARCHAR(30)" remarks="the policy that decides who needs to authenticate" defaultValue="USER" />
     </addColumn>
 
+  </changeSet>
+
 
   <changeSet id="tm-1.17.0-jira-sync-01" author="jthebault">
     <comment>Add a remote synchronisation table in squash tm.</comment>
