@@ -179,7 +179,7 @@
 
       <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT" remarks="Only one master folder should be targeted by a given synchronisation">
         <constraints nullable="false"
-                     foreignKeyName="fk_requirement_folder_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     foreignKeyName="fk_requirement_folder_sync_extender__remote_sync_remote_sync_id"
                      references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
       </column>
 
