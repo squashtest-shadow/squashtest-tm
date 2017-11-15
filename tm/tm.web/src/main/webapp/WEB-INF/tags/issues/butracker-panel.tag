@@ -54,12 +54,16 @@
 
 <c:set var="panelStyle" value="${(issueDetector eq true) ? 'toggle' : 'fragment-tab'}" />
 
+<%-- This variable is only used if this tag is a panel.
+	 bugtrackerMode is only set in model while executing a test case. --%>
+<c:set var="expandPanel" value="${bugtrackerMode == 'Manual' ? false : true}" />
+
 <f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
 <f:message var="activateButtonlabel" key="message.bugtracker.must-activate.button-label" />
 <div id="bugtracker-section-main-div">
 
   <comp:structure-configurable-panel id="issue-panel"
-    titleKey="issue.panel.title" isContextual="true" open="false"
+    titleKey="issue.panel.title" isContextual="true" open="${expandPanel}"
     style="${panelStyle}">
 
     <jsp:attribute name="panelButtons">
