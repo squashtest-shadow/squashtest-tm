@@ -196,9 +196,9 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 			var that = this;
 			var inputsWithDefaultValues = this.$el.find("[data-prop][data-default-value]").each(function (index,input) {
 				var attName = $(input).attr("data-prop");
-				var defaultValue = $(input).attr("data-default-value")
-				that.model.set(attName, defaultValue)
-			})
+				var defaultValue = $(input).attr("data-default-value");
+				that.model.set(attName, defaultValue);
+			});
 		}
 
 	});

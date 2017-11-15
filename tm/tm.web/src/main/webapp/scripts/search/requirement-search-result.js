@@ -414,18 +414,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 						self.updateDisplayedValueInColumn(table, attr);
 						var value = $("#"+attr+"-combo").find('option:selected').val();
 						bulkUpdate[attr] = value;
-		        	}
-		        }
+					}
+				}
 
-				var url = routing.buildURL('requirementversions.bulkupdate', editableIds.join(','))
+				var url = routing.buildURL('requirementversions.bulkupdate', editableIds.join(','));
 
-		        $.ajax({
-		        	url : url,
-		        	type : 'POST',
-		        	contentType : 'application/json',
-		        	data : JSON.stringify(bulkUpdate)
-		        });
-
+				$.ajax({
+					url : url,
+					type : 'POST',
+					contentType : 'application/json',
+					data : JSON.stringify(bulkUpdate)
+				});
 
 			});
 
