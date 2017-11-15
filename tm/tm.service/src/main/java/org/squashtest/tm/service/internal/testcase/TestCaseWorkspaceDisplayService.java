@@ -108,7 +108,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				if (r.get("RESTYPE").equals("test-case-folders")) {
-					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
+					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), 0, currentUser);
 				} else {
 					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable,r.get(TCLN.TCLN_ID));

@@ -22,9 +22,7 @@ package org.squashtest.tm.service.internal.requirement;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.TableLike;
+import org.jooq.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -43,6 +41,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("requirementWorkspaceDisplayService")
@@ -70,54 +69,87 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 		reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
 
-		return DSL
-			.select(
-				RLN.RLN_ID,
-				org.jooq.impl.DSL.decode()
-					.when(RF.RLN_ID.isNotNull(), "requirement-folders")
-					.otherwise("requirements").as("RESTYPE"),
-				RES.NAME,
-				REQ.MODE,
-				RV.REFERENCE,
-				RV.REQUIREMENT_STATUS,
-				org.jooq.impl.DSL.decode()
-					.when(RLNR.ANCESTOR_ID.isNull(), "false")
-					.otherwise("true")
-					.as("HAS_CONTENT"),
-				org.jooq.impl.DSL.decode()
-					.when(ILI.ICON_NAME.eq(""), "def_cat_noicon")
-					.otherwise(ILI.ICON_NAME).as("ICON_NAME")
-			)
-			.from(RLN)
-			.leftJoin(RF).on(RLN.RLN_ID.eq(RF.RLN_ID))
-			.leftJoin(REQ).on(RLN.RLN_ID.eq(REQ.RLN_ID))
-			.leftJoin(RES).on(RF.RES_ID.eq(RES.RES_ID).or(REQ.CURRENT_VERSION_ID.eq(RES.RES_ID)))
-			.leftJoin(RV).on(RES.RES_ID.eq(RV.RES_ID))
-			.leftJoin(RLNR).on(RLN.RLN_ID.eq(RLNR.ANCESTOR_ID))
-			.leftJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
-			.where(RLN.RLN_ID.in(childrenIds))
-			.groupBy(RLN.RLN_ID, RF.RLN_ID, RES.NAME, REQ.MODE, RV.REFERENCE, RV.REQUIREMENT_STATUS, RLNR.ANCESTOR_ID, ILI.ICON_NAME)
+		RequirementLibraryNodeDistribution nodeDistribution = getRepartition(childrenIds);
+
+		Map<Long, JsTreeNode> result = buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, nodeDistribution);
+
+		result.putAll(buildRequirementFoldersJsTreeNode(currentUser, nodeDistribution));
+
+		return result;
+	}
+
+	private Map<Long, JsTreeNode> buildRequirementFoldersJsTreeNode(UserDto currentUser, RequirementLibraryNodeDistribution nodeDistribution) {
+		//fetch requirement folders
+		return DSL.select(RF.RLN_ID, RES.NAME, count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			.from(RF)
+			.innerJoin(RES).on(RES.RES_ID.eq(RF.RES_ID))
+			.leftJoin(RLNR).on(RF.RLN_ID.eq(RLNR.ANCESTOR_ID))
+			.where(RF.RLN_ID.in(nodeDistribution.reqFolderIds))
+			.groupBy(RF.RLN_ID, RES.NAME, RLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
+			.map(r -> buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), "requirement-folders", r.get("COUNT_CHILD", Integer.class), currentUser))
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+	}
+
+	private Map<Long, JsTreeNode> buildRequirementJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, RequirementLibraryNodeDistribution nodeDistribution) {
+
+		// fetch requirements
+		// milestones seems to be invalid... as we always fetch the last req version
+		// we should fetch the last version linked to the milestone...
+		return DSL.select(REQ.RLN_ID, REQ.MODE,
+				RES.NAME,
+				RV.REFERENCE, RV.REQUIREMENT_STATUS,
+				ILI.ICON_NAME,
+				count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			.from(REQ)
+			.innerJoin(RES).on(RES.RES_ID.eq(REQ.CURRENT_VERSION_ID))
+			.innerJoin(RV).on(RES.RES_ID.eq(RV.RES_ID))
+			.innerJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
+			.leftJoin(RLNR).on(REQ.RLN_ID.eq(RLNR.ANCESTOR_ID))
+			.where(REQ.RLN_ID.in(nodeDistribution.getReqIds()))
+		.groupBy(REQ.RLN_ID, REQ.MODE,RES.NAME,RV.REFERENCE, RV.REQUIREMENT_STATUS,ILI.ICON_NAME,RLNR.ANCESTOR_ID)
+		.fetch()
+			.stream()
 			.map(r -> {
-				if (r.get("RESTYPE").equals("requirement-folders")) {
-					return buildFolder(r.get(RLN.RLN_ID), r.get(RES.NAME), (String) r.get("RESTYPE"), (String) r.get("HAS_CONTENT"), currentUser);
-				} else {
-					Long id = r.get(RLN.RLN_ID);
-					Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
-					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
-					boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
-					boolean isReqVersionModifiable = isReqVersionModifiable(r.get(RV.REQUIREMENT_STATUS), isMilestoneModifiable);
-					return buildRequirement(id, r.get(RES.NAME), (String) r.get("RESTYPE"), r.get(RV.REFERENCE),
-						r.get(REQ.MODE), (String) r.get("ICON_NAME"), isReqVersionModifiable, (String) r.get("HAS_CONTENT"),
-						currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
+				Long id = r.get(REQ.RLN_ID);
+				Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
+				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
+				boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
+				boolean isReqVersionModifiable = isReqVersionModifiable(r.get(RV.REQUIREMENT_STATUS), isMilestoneModifiable);
+				String iconName = r.get(ILI.ICON_NAME);
+				if(StringUtils.isBlank(iconName)){
+					iconName = "def_cat_noicon";
 				}
+				return buildRequirement(id, r.get(RES.NAME), "requirements", r.get(RV.REFERENCE),
+					r.get(REQ.MODE), iconName, isReqVersionModifiable, r.get("COUNT_CHILD", Integer.class),
+					currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
 			})
-			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+	}
+
+	private RequirementLibraryNodeDistribution getRepartition(Set<Long> childrenIds) {
+		RequirementLibraryNodeDistribution nodes = new RequirementLibraryNodeDistribution();
+		DSL.select(REQ.RLN_ID,RF.RLN_ID)
+			.from(RLN)
+			.leftJoin(REQ).on(REQ.RLN_ID.eq(RLN.RLN_ID))
+			.leftJoin(RF).on(RF.RLN_ID.eq(RLN.RLN_ID))
+			.where(RLN.RLN_ID.in(childrenIds))
+		.fetch()
+		.forEach(r -> {
+			Long reqId = r.get(REQ.RLN_ID);
+			Long reqFolderId = r.get(RF.RLN_ID);
+			if (reqId != null) {
+				nodes.addReqId(reqId);
+			} else {
+				nodes.addReqFolderId(reqFolderId);
+			}
+		});
+		return nodes;
 	}
 
 	private JsTreeNode buildRequirement(Long id, String name, String restype, String reference, String mode, String categoryIcon,
-										boolean isReqVersionModifiable, String hasContent, UserDto currentUser, Integer milestonesNumber,
+										boolean isReqVersionModifiable, Integer childCount, UserDto currentUser, Integer milestonesNumber,
 										String isMilestoneModifiable, boolean isReqDontAllowClick, Long activeMilestoneId) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
@@ -131,7 +163,7 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			attr.put("synchronized", true);
 		attr.put("category-icon", categoryIcon);
 
-		if (Boolean.parseBoolean(hasContent)) {
+		if (childCount > 0) {
 			state = JsTreeNode.State.closed;
 		} else {
 			state = State.leaf;
@@ -325,5 +357,37 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	@Override
 	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
 		return null;
+	}
+
+	public class RequirementLibraryNodeDistribution {
+		Set<Long> reqIds = new HashSet<>();
+		Set<Long> reqFolderIds = new HashSet<>();
+		Set<Long> reqSyncFolderIds = new HashSet<>();
+
+		public Set<Long> getReqIds() {
+			return reqIds;
+		}
+
+		public void addReqId(Long reqId) {
+			this.reqIds.add(reqId);
+		}
+
+		public Set<Long> getReqFolderIds() {
+			return reqFolderIds;
+		}
+
+		public void addReqFolderId(Long reqFolderId) {
+			this.reqFolderIds.add(reqFolderId);
+		}
+
+		public Set<Long> getReqSyncFolderIds() {
+			return reqSyncFolderIds;
+		}
+
+		public void addReqSyncFolderIds(Long reqSyncFolderId) {
+			this.reqSyncFolderIds.add(reqSyncFolderId);
+		}
+
+
 	}
 }

@@ -53,6 +53,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
+import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMask;
@@ -127,9 +128,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				PROJECT.PROJECT_ID,
 				PROJECT.NAME,
 				PROJECT.LABEL,
-				org.jooq.impl.DSL.decode()
-					.when(selectLibraryContentLibraryId().isNull(), false)
-					.otherwise(true).as("HAS_CONTENT"))
+				count(selectLibraryContentLibraryId()).as("COUNT_CHILD"))
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
 			.leftJoin(getLibraryTableContent()).on(selectLibraryId().eq(selectLibraryContentLibraryId()))
@@ -150,10 +149,11 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				attr.put("title", r.get(PROJECT.LABEL));
 				attr.put("project", r.get(PROJECT.PROJECT_ID));
 
-				if (!(boolean) r.get("HAS_CONTENT")) {
-					state = State.leaf;
-				} else {
+				Integer countChild = r.get("COUNT_CHILD", Integer.class);
+				if (countChild > 0) {
 					state = State.closed;
+				} else {
+					state = State.leaf;
 				}
 
 				return buildNode(r.get(PROJECT.NAME), state, attr, currentUser, NODE_WITHOUT_MILESTONES_ATTRIBUTE, "true");
@@ -426,7 +426,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return openedLibraryNodeIds;
 	}
 
-	protected JsTreeNode buildFolder(Long id, String name, String restype, String hasContent, UserDto currentUser) {
+	protected JsTreeNode buildFolder(Long id, String name, String restype, Integer childCount, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 
@@ -435,7 +435,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		attr.put("name", name);
 		attr.put("id", getFolderName() + "-" + id);
 		attr.put("rel", "folder");
-		if (Boolean.parseBoolean(hasContent)) {
+		if (childCount > 0) {
 			state = State.closed;
 		} else {
 			state = State.leaf;
