@@ -69,10 +69,13 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 
 		reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
 
+		//get the repartition of node ie the type of each node
 		RequirementLibraryNodeDistribution nodeDistribution = getRepartition(childrenIds);
 
+		//get the js node for req
 		Map<Long, JsTreeNode> result = buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, nodeDistribution);
 
+		//add the js node for res folder
 		result.putAll(buildRequirementFoldersJsTreeNode(currentUser, nodeDistribution));
 
 		return result;

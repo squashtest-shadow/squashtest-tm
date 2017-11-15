@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("testCaseWorkspaceDisplayService")
@@ -73,57 +74,58 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	//TODO add milestones
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, Long activeMilestoneId) {
 
-		return DSL
-			.select(
-				TCLN.TCLN_ID,
-				org.jooq.impl.DSL.decode()
-					.when(TCF.TCLN_ID.isNotNull(), "test-case-folders")
-					.otherwise("test-cases").as("RESTYPE"),
-				TCLN.NAME,
-				TC.IMPORTANCE,
-				TC.REFERENCE,
-				TC.TC_STATUS,
-				org.jooq.impl.DSL.decode()
-					.when(TCS.TEST_CASE_ID.isNull(), "false")
-					.otherwise("true")
-					.as("HAS_STEP"),
-				org.jooq.impl.DSL.decode()
-					.when(RVC.VERIFYING_TEST_CASE_ID.isNull(), "false")
-					.otherwise("true")
-					.as("IS_REQ_COVERED"),
-				org.jooq.impl.DSL.decode()
-					.when(TCLNR.ANCESTOR_ID.isNull(), "false")
-					.otherwise("true")
-					.as("HAS_CONTENT")
-			)
+		TestCaseLibraryNodeDistribution nodeDistribution = getNodeDistribution(childrenIds);
+
+		Map<Long, JsTreeNode> result = buildTestCaseJsTreeNode(currentUser, allMilestonesForTCs, milestonesModifiable, nodeDistribution);
+
+		result.putAll(buildTestCaseFolderJsTreeNode(currentUser, nodeDistribution));
+
+		return result;
+	}
+
+	private Map<Long, JsTreeNode> buildTestCaseFolderJsTreeNode(UserDto currentUser, TestCaseLibraryNodeDistribution nodeDistribution) {
+		return DSL.select(TCLN.TCLN_ID, TCLN.NAME
+			, count(TCLNR.ANCESTOR_ID).as("CHILD_COUNT")
+		)
 			.from(TCLN)
-			.leftJoin(TCF).on(TCLN.TCLN_ID.eq(TCF.TCLN_ID))
-			.leftJoin(TC).on(TCLN.TCLN_ID.eq(TC.TCLN_ID))
-			.leftJoin(TCS).on(TC.TCLN_ID.eq(TCS.TEST_CASE_ID))
-			.leftJoin(RVC).on(TC.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.leftJoin(TCLNR).on(TCLN.TCLN_ID.eq(TCLNR.ANCESTOR_ID))
-			.where(TCLN.TCLN_ID.in(childrenIds))
-			.groupBy(TCLN.TCLN_ID, TCF.TCLN_ID, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TCLNR.ANCESTOR_ID)
+			.where(TCLN.TCLN_ID.in(nodeDistribution.getTcFolderIds()))
+			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TCLNR.ANCESTOR_ID)
 			.fetch()
 			.stream()
-			.map(r -> {
-				if (r.get("RESTYPE").equals("test-case-folders")) {
-					return buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), 0, currentUser);
-				} else {
-					Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
-					String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable,r.get(TCLN.TCLN_ID));
-					return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), (String) r.get("RESTYPE"), r.get(TC.REFERENCE),
-						r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), (String) r.get("HAS_STEP"), (String) r.get("IS_REQ_COVERED"), currentUser, milestonesNumber, isMilestoneModifiable);
-				}
-			})
+			.map(r -> buildFolder(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-case-folders", r.get("CHILD_COUNT", Integer.class), currentUser))
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
+	private Map<Long, JsTreeNode> buildTestCaseJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, TestCaseLibraryNodeDistribution nodeDistribution) {
+		return DSL.select(TCLN.TCLN_ID, TCLN.NAME
+			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS
+			, count(TCS.TEST_CASE_ID).as("STEP_COUNT")
+			, count(RVC.VERIFYING_TEST_CASE_ID).as("COVERAGE_COUNT")
+			)
+			.from(TCLN)
+			.innerJoin(TC).on(TCLN.TCLN_ID.eq(TC.TCLN_ID))
+			.leftJoin(TCS).on(TCLN.TCLN_ID.eq(TCS.TEST_CASE_ID))
+			.leftJoin(RVC).on(TCLN.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
+			.where(TCLN.TCLN_ID.in(nodeDistribution.getTcIds()))
+			//i would love to have the right to do some window function to avoid this messy groupBy clause
+			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
+				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable, r.get(TCLN.TCLN_ID));
+				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", r.get(TC.REFERENCE),
+					r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), r.get("STEP_COUNT", Integer.class), r.get("COVERAGE_COUNT", Integer.class), currentUser, milestonesNumber, isMilestoneModifiable);
+			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+	}
+
 	private JsTreeNode buildTestCase(Long id, String name, String restype, String reference, String importance, String status,
-									 String hasStep, String isDirectlyReqCovered, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable) {
+									 Integer stepCount, Integer coverageCount, UserDto currentUser, Integer milestonesNumber, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
-		Boolean isreqcovered = Boolean.parseBoolean(isDirectlyReqCovered) ||
+		Boolean isreqcovered = coverageCount > 0 ||
 			verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
+		boolean hasStep = stepCount > 0;
 
 		attr.put("resId", id);
 		attr.put("resType", restype);
@@ -152,6 +154,26 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Integer getMilestonesNumberForTC(Map<Long, List<Long>> allMilestonesForTCs, Long id) {
 		return (allMilestonesForTCs.get(id) != null) ? allMilestonesForTCs.get(id).size() : NODE_WITHOUT_MILESTONE;
+	}
+
+	private TestCaseLibraryNodeDistribution getNodeDistribution(Set<Long> childrenIds) {
+		TestCaseLibraryNodeDistribution nodes = new TestCaseLibraryNodeDistribution();
+		DSL.select(TCF.TCLN_ID, TC.TCLN_ID)
+			.from(TCLN)
+			.leftJoin(TC).on(TC.TCLN_ID.eq(TCLN.TCLN_ID))
+			.leftJoin(TCF).on(TCF.TCLN_ID.eq(TCLN.TCLN_ID))
+			.where(TCLN.TCLN_ID.in(childrenIds))
+			.fetch()
+			.forEach(r -> {
+				Long tcId = r.get(TC.TCLN_ID);
+				Long tcFolderId = r.get(TCF.TCLN_ID);
+				if (tcId != null) {
+					nodes.addTcId(tcId);
+				} else {
+					nodes.addTcFolderId(tcFolderId);
+				}
+			});
+		return nodes;
 	}
 
 	private String isMilestoneModifiable(Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, Long id) {
@@ -297,7 +319,7 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 					.from(REQUIREMENT_VERSION_COVERAGE)
 					.join(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
 					.join(MILESTONE_REQ_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(MILESTONE_REQ_VERSION.REQ_VERSION_ID))
-				.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
+					.where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))
 			)
 			.fetch(MILESTONE_TEST_CASE.TEST_CASE_ID, Long.class));
 	}
@@ -310,6 +332,28 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	public Collection<JsTreeNode> getCampaignNodeContent(Long folderId, UserDto currentUser, String libraryNode) {
 		return null;
+	}
+
+	class TestCaseLibraryNodeDistribution {
+		Set<Long> tcIds = new HashSet<>();
+		Set<Long> tcFolderIds = new HashSet<>();
+
+		public Set<Long> getTcIds() {
+			return tcIds;
+		}
+
+		public void addTcId(Long reqId) {
+			this.tcIds.add(reqId);
+		}
+
+		public Set<Long> getTcFolderIds() {
+			return tcFolderIds;
+		}
+
+		public void addTcFolderId(Long reqFolderId) {
+			this.tcFolderIds.add(reqFolderId);
+		}
+
 	}
 }
 
