@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.jooq.domain.tables.*;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -48,6 +50,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("campaignWorkspaceDisplayService")
@@ -91,40 +94,43 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 		getCampaignHierarchy(currentUser, expansionCandidates);
 
-		return DSL
-			.select(
-				CLN.CLN_ID,
-				org.jooq.impl.DSL.decode()
-					.when(CF.CLN_ID.isNotNull(), "campaign-folders")
-					.otherwise("campaigns").as("RESTYPE"),
+		CampaignLibraryNodeDistribution nodeDistribution = getNodeDistribution(childrenIds);
+
+
+		Map<Long, JsTreeNode> result = DSL.select(CLN.CLN_ID,
 				CLN.NAME,
 				C.REFERENCE,
-				org.jooq.impl.DSL.decode()
-					.when(CLNR.ANCESTOR_ID.isNotNull().or(CI.CAMPAIGN_ID.isNotNull()), "true")
-					.otherwise("false")
-					.as("HAS_CONTENT"),
+				count(CI.CAMPAIGN_ID).as("ITERATION_COUNT"),
 				MC.MILESTONE_ID,
-				decodeMilestone()
-			)
+				M.STATUS)
 			.from(CLN)
-			.leftJoin(CF).on(CLN.CLN_ID.eq(CF.CLN_ID))
-			.leftJoin(CLNR).on(CLN.CLN_ID.eq(CLNR.ANCESTOR_ID))
+			.innerJoin(C).on(CLN.CLN_ID.eq(C.CLN_ID))
 			.leftJoin(CI).on(CLN.CLN_ID.eq(CI.CAMPAIGN_ID))
-			.leftJoin(C).on(CLN.CLN_ID.eq(C.CLN_ID))
 			.leftJoin(MC).on(CLN.CLN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
-			.where(CLN.CLN_ID.in(childrenIds))
-			.groupBy(CLN.CLN_ID, CF.CLN_ID, CLN.NAME, C.REFERENCE, CLNR.ANCESTOR_ID, CI.CAMPAIGN_ID, MC.MILESTONE_ID, M.STATUS)
+			.where(CLN.CLN_ID.in(nodeDistribution.getCampaignIds()))
+			.groupBy(CLN.CLN_ID,CLN.NAME,C.REFERENCE,CI.CAMPAIGN_ID,MC.MILESTONE_ID,M.STATUS)
 			.fetch()
 			.stream()
-			.map(r -> {
-				if (r.get("RESTYPE").equals("campaign-folders")) {
-					return buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), 0, currentUser);
-				} else {
-					return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), (String) r.get("RESTYPE"), r.get(C.REFERENCE), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE"));
-				}
+			.map(r ->{
+				boolean isMilestoneModifiable = isMilestoneModifiable(r.get(M.STATUS,String.class));
+				return buildCampaign(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaigns", r.get(C.REFERENCE), r.get("ITERATION_COUNT", Integer.class), currentUser, r.get(MC.MILESTONE_ID), isMilestoneModifiable);
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+
+		Map<Long, JsTreeNode> collect = DSL.select(CLN.CLN_ID, CLN.NAME, count(CLNR.ANCESTOR_ID).as("CHILD_COUNT"))
+			.from(CLN)
+			.innerJoin(CF).on(CF.CLN_ID.eq(CLN.CLN_ID))
+			.leftJoin(CLNR).on(CLNR.ANCESTOR_ID.eq(CLN.CLN_ID))
+			.where(CLN.CLN_ID.in(nodeDistribution.getCampaignFolderIds()))
+			.groupBy(CLN.CLN_ID, CLN.NAME,CLNR.ANCESTOR_ID)
+			.fetch()
+			.stream()
+			.map(r -> buildFolder(r.get(CLN.CLN_ID), r.get(CLN.NAME), "campaign-folders", r.get("CHILD_COUNT", Integer.class), currentUser))
+			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
+
+		result.putAll(collect);
+		return result;
 	}
 
 	public Collection<JsTreeNode> getCampaignNodeContent(Long entityId, UserDto currentUser, String entityClass) {
@@ -151,7 +157,27 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	// ********************************************** Utils ************************************************************
 
-	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, String hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
+	private CampaignLibraryNodeDistribution getNodeDistribution(Set<Long> childrenIds) {
+		CampaignLibraryNodeDistribution nodes = new CampaignLibraryNodeDistribution();
+		DSL.select(C.CLN_ID, CF.CLN_ID)
+			.from(CLN)
+			.leftJoin(C).on(C.CLN_ID.eq(CLN.CLN_ID))
+			.leftJoin(CF).on(CF.CLN_ID.eq(CLN.CLN_ID))
+			.where(CLN.CLN_ID.in(childrenIds))
+			.fetch()
+			.forEach(r -> {
+				Long campaignId = r.get(C.CLN_ID);
+				Long campaignFolderId = r.get(CF.CLN_ID);
+				if (campaignId != null) {
+					nodes.addCampaignId(campaignId);
+				} else {
+					nodes.addCampaignFolderId(campaignFolderId);
+				}
+			});
+		return nodes;
+	}
+
+	private JsTreeNode buildCampaign(Long campaignId, String name, String restype, String reference, int iterationCount, UserDto currentUser, Long milestone, boolean isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 
 		attr.put("resId", campaignId);
@@ -167,10 +193,10 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		}
 		Integer milestonesNumber = getMilestoneNumber(milestone);
 
-		JsTreeNode campaign = buildNode(title, null, attr, currentUser, milestonesNumber, isMilestoneModifiable);
+		JsTreeNode campaign = buildNode(title, null, attr, currentUser, milestonesNumber, String.valueOf(isMilestoneModifiable));
 
 		// Messy but still simpler than GOT's genealogy
-		if (!Boolean.parseBoolean(hasContent)) {
+		if (iterationCount == 0 ) {
 			campaign.setState(State.leaf);
 		} else if (campaignFatherChildrenMultimap.containsKey(campaignId)) {
 			campaign.setState(State.open);
@@ -189,7 +215,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		return campaign;
 	}
 
-	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, String hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
+	private JsTreeNode buildIteration(Long id, String name, String reference, Integer iterationOrder, boolean hasContent, UserDto currentUser, Long milestone, String isMilestoneModifiable) {
 		Map<String, Object> attr = new HashMap<>();
 		JsTreeNode.State state;
 
@@ -199,7 +225,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 		attr.put("id", "Iteration-" + id);
 		attr.put("rel", "iteration");
 		attr.put("iterationIndex", String.valueOf(iterationOrder + 1));
-		if (Boolean.parseBoolean(hasContent)) {
+		if (hasContent) {
 			state = State.closed;
 		} else {
 			state = State.leaf;
@@ -277,7 +303,6 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				.where(fatherColumn.in(openedEntityIds))
 				.orderBy(orderColumn)
 				.fetch()
-				.stream()
 				.forEach(r ->
 						result.put(r.get(fatherColumn), r.get(childColumn))
 				);
@@ -292,12 +317,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				IT.NAME,
 				IT.REFERENCE,
 				CI.ITERATION_ORDER,
-				org.jooq.impl.DSL.decode()
-					.when(ITS.ITERATION_ID.isNull(), "false")
-					.otherwise("true")
-					.as("HAS_CONTENT"),
+				count(ITS.ITERATION_ID).as("ITERATION_COUNT"),
 				MC.MILESTONE_ID,
-				decodeMilestone()
+				M.STATUS
 			)
 			.from(IT)
 			.leftJoin(CI).on(IT.ITERATION_ID.eq(CI.ITERATION_ID))
@@ -308,8 +330,12 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.groupBy(IT.ITERATION_ID, CI.ITERATION_ORDER, ITS.ITERATION_ID, MC.MILESTONE_ID, M.STATUS)
 			.fetch()
 			.stream()
-			.map(r -> buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
-				r.get(CI.ITERATION_ORDER), (String) r.get("HAS_CONTENT"), currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE")))
+			.map(r -> {
+				boolean milestoneModifiable = isMilestoneModifiable(r.get(M.STATUS));
+				boolean hasContent = r.get("ITERATION_COUNT",Integer.class) > 0;
+				return buildIteration(r.get(IT.ITERATION_ID), r.get(IT.NAME), r.get(IT.REFERENCE),
+					r.get(CI.ITERATION_ORDER), hasContent, currentUser, r.get(MC.MILESTONE_ID), String.valueOf(milestoneModifiable));
+			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
 
@@ -320,11 +346,11 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 				TS.NAME,
 				TS.EXECUTION_STATUS,
 				MC.MILESTONE_ID,
-				decodeMilestone()
+				M.STATUS
 			)
 			.from(TS)
-			.leftJoin(ITS).on(TS.ID.eq(ITS.TEST_SUITE_ID))
-			.leftJoin(CI).on(ITS.ITERATION_ID.eq(CI.ITERATION_ID))
+			.innerJoin(ITS).on(TS.ID.eq(ITS.TEST_SUITE_ID))
+			.innerJoin(CI).on(ITS.ITERATION_ID.eq(CI.ITERATION_ID))
 			.leftJoin(MC).on(CI.CAMPAIGN_ID.eq(MC.CAMPAIGN_ID))
 			.leftJoin(M).on(MC.MILESTONE_ID.eq(M.MILESTONE_ID))
 			.where(TS.ID.in(fatherChildrenEntity.values()))
@@ -333,7 +359,8 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.stream()
 			.map(r -> {
 				String description = getTSDescription(testSuiteDescriptions, r.get(TS.ID));
-				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), description, currentUser, r.get(MC.MILESTONE_ID), (String) r.get("IS_MILESTONE_MODIFIABLE"));
+				boolean milestoneModifiable = isMilestoneModifiable(r.get(M.STATUS));
+				return buildTestSuite(r.get(TS.ID), r.get(TS.NAME), r.get(TS.EXECUTION_STATUS), description, currentUser, r.get(MC.MILESTONE_ID), String.valueOf(milestoneModifiable));
 			})
 			.collect(Collectors.toMap(node -> (Long) node.getAttr().get("resId"), Function.identity()));
 	}
@@ -499,5 +526,27 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	@Override
 	protected String getLibraryPluginType() {
 		return CampaignLibraryPluginBinding.CL_TYPE;
+	}
+
+	class CampaignLibraryNodeDistribution {
+		Set<Long> campaignIds = new HashSet<>();
+		Set<Long> campaignFolderIds = new HashSet<>();
+
+		public Set<Long> getCampaignIds() {
+			return campaignIds;
+		}
+
+		public void addCampaignId(Long campaignId) {
+			this.campaignIds.add(campaignId);
+		}
+
+		public Set<Long> getCampaignFolderIds() {
+			return campaignFolderIds;
+		}
+
+		public void addCampaignFolderId(Long campaignFolderId) {
+			this.campaignFolderIds.add(campaignFolderId);
+		}
+
 	}
 }

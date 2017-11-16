@@ -24,12 +24,15 @@ package org.squashtest.tm.service.internal.workspace;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.TableLike;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
@@ -426,7 +429,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 		return openedLibraryNodeIds;
 	}
 
-	protected JsTreeNode buildFolder(Long id, String name, String restype, Integer childCount, UserDto currentUser) {
+	protected JsTreeNode buildFolder(Long id, String name, String restype, int childCount, UserDto currentUser) {
 		Map<String, Object> attr = new HashMap<>();
 		State state;
 
@@ -595,6 +598,15 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 	protected abstract Field<Long> selectLNRelationshipAncestorId();
 
 	protected abstract Field<Long> selectLNRelationshipDescendantId();
+
+	protected boolean isMilestoneModifiable(String rawStatus) {
+		if (StringUtils.isBlank(rawStatus)) {
+			return true;
+		}
+
+		MilestoneStatus status = EnumUtils.getEnum(MilestoneStatus.class, rawStatus);
+		return status.isAllowObjectModification();
+	}
 
 	protected abstract Field<Long> getProjectLibraryColumn();
 
