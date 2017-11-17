@@ -137,13 +137,13 @@
 
       <column name="PROJECT_ID" type="BIGINT">
         <constraints nullable="false"
-                     foreignKeyName="fk_remote_synchronisation__project__project_id"
+                     foreignKeyName="fk_remote_sync__project__project_id"
                      references="PROJECT(PROJECT_ID)" />
       </column>
 
       <column name="SERVER_ID" type="BIGINT">
         <constraints nullable="false"
-                     foreignKeyName="fk_remote_synchronisation__bugtracker__bugtracker_id"
+                     foreignKeyName="fk_remote_sync__bugtracker__bugtracker_id"
                      references="BUGTRACKER(BUGTRACKER_ID)" />
       </column>
 
@@ -179,7 +179,7 @@
 
       <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT" remarks="Only one master folder should be targeted by a given synchronisation">
         <constraints nullable="false"
-                     foreignKeyName="fk_requirement_folder_sync_extender__remote_sync_remote_sync_id"
+                     foreignKeyName="fk_req_folder_sync_extender__remote_sync_remote_sync_id"
                      references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
       </column>
 
@@ -191,7 +191,7 @@
 
       <column name="REQUIREMENT_FOLDER_ID" type="BIGINT" remarks="Only one extender for any folder in Squash TM">
         <constraints nullable="false"
-                     foreignKeyName="fk_requirement_folder_sync_extender__requirement_folder__rln_id"
+                     foreignKeyName="fk_req_folder_sync_extender__req_folder__rln_id"
                      references="REQUIREMENT_FOLDER(RLN_ID)" unique="true" />
       </column>
 
@@ -209,7 +209,7 @@
 
       <column name="REMOTE_SYNCHRONISATION_ID" type="BIGINT">
         <constraints nullable="true"
-                     foreignKeyName="fk_requirement_sync_extender__remote_synchronisation__remote_synchronisation_id"
+                     foreignKeyName="fk_req_sync_extender__remote_sync_remote_sync_id"
                      references="REMOTE_SYNCHRONISATION(REMOTE_SYNCHRONISATION_ID)" />
       </column>
 
@@ -219,7 +219,7 @@
 
     </addColumn>
 
-    <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="requirement_sync_extender_remote_parent_id_idx">
+    <createIndex tableName="REQUIREMENT_SYNC_EXTENDER" indexName="req_sync_extender_remote_parent_id_idx">
       <column name="REMOTE_PARENT_ID" />
     </createIndex>
 
