@@ -20,13 +20,14 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.synchronisation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.wizard.SynchronisationPlugin;
-import org.squashtest.tm.api.wizard.WorkspaceWizard;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -38,6 +39,8 @@ import java.util.Collections;
 public class SynchronisationPluginManagerImpl implements SynchronisationPluginManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SynchronisationPluginManagerImpl.class);
+	public static final int DEFAULT_DELAY = 300;
+	public static final int MIN_DELAY = 5;
 
 	@Autowired(required = false)
 	private Collection<SynchronisationPlugin> plugins = Collections.emptyList();
@@ -46,12 +49,35 @@ public class SynchronisationPluginManagerImpl implements SynchronisationPluginMa
 	@Named("squashtest.tm.service.ThreadPoolTaskScheduler")
 	private TaskScheduler taskScheduler;
 
+	@Inject
+	private Environment environment;
+
 	@PostConstruct
 	public void registerSynchronisationPlugin() {
+		int delay = getDelay();
 		for (SynchronisationPlugin plugin : plugins) {
-			LOGGER.info("Registering workspace wizard {} for workspace {}", plugin, plugin.getName());
-			taskScheduler.scheduleWithFixedDelay(plugin.performSynchronisation(), 5000L);
+			LOGGER.info("Registering synchronisation plugin {} as {}", plugin, plugin.getName());
+			taskScheduler.scheduleWithFixedDelay(plugin.performSynchronisation(), delay);
 		}
+	}
+
+	private int getDelay() {
+		//this delay is expressed in seconds
+		String property = environment.getProperty("squash.external.synchronisation.delay");
+		int delay = DEFAULT_DELAY;
+		if (StringUtils.isNotBlank(property)) {
+            try {
+                delay = Integer.parseInt(property);
+				delay = Math.max(delay, MIN_DELAY);
+				LOGGER.info("Found the property 'squash.external.synchronisation.delay'. Delay between sync will be  : " + delay + " seconds.");
+            } catch (NumberFormatException e) {
+                //we keep default value and emit a warning
+                LOGGER.error("Impossible to parse the property 'squash.external.synchronisation.delay' as a number. Please provide a valid synchronisation delay.");
+                throw e;
+            }
+        }
+		delay = delay * 1000;//convert to milli second as specified by spring
+		return delay;
 	}
 
 	@Override
