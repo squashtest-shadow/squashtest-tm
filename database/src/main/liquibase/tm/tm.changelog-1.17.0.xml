@@ -203,10 +203,7 @@
   </changeSet>
 
   <changeSet id="tm-1.17.0-jira-sync-03" author="jthebault">
-    <dropNotNullConstraint
-      columnDataType="VARCHAR"
-      columnName="REMOTE_FILTER_NAME"
-      tableName="REQUIREMENT_SYNC_EXTENDER"/>
+    <dropNotNullConstraint tableName="REQUIREMENT_SYNC_EXTENDER" columnName="REMOTE_FILTER_NAME" columnDataType="VARCHAR(150)"/>
 
     <addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
 
