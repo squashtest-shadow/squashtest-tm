@@ -159,4 +159,15 @@ public class RemoteSynchronisation {
 	public void setServer(BugTracker server) {
 		this.server = server;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("RemoteSynchronisation{");
+		sb.append("id=").append(id);
+		sb.append(", name='").append(name).append('\'');
+		sb.append(", selectType='").append(selectType).append('\'');
+		sb.append(", selectValue='").append(selectValue).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }
