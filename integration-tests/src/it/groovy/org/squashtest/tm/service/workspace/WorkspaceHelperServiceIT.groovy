@@ -51,17 +51,17 @@ class WorkspaceHelperServiceIT extends DbunitServiceSpecification {
 		filterModel.enabled
 		filterModel.projectData.length == 3
 
-		Object[] pData = filterModel.projectData[0]
-		pData[0] == -3L
-		pData[1] == "baz"
-		pData[2] == false
-		pData[3] == null
-
-		Object[] pData1 = filterModel.projectData[1]
+		Object[] pData1 = filterModel.projectData[0]
 		pData1[0] == -2L
 		pData1[1] == "bar"
 		pData1[2] == true
 		pData1[3] == null
+
+		Object[] pData = filterModel.projectData[1]
+		pData[0] == -3L
+		pData[1] == "baz"
+		pData[2] == false
+		pData[3] == null
 
 		Object[] pData2 = filterModel.projectData[2]
 		pData2[0] == -1L
@@ -84,17 +84,17 @@ class WorkspaceHelperServiceIT extends DbunitServiceSpecification {
 		!filterModel.enabled
 		filterModel.projectData.length == 3
 
-		Object[] pData = filterModel.projectData[0]
-		pData[0] == -3L
-		pData[1] == "baz"
-		pData[2] == true
-		pData[3] == null
-
-		Object[] pData1 = filterModel.projectData[1]
+		Object[] pData1 = filterModel.projectData[0]
 		pData1[0] == -2L
 		pData1[1] == "bar"
 		pData1[2] == true
 		pData1[3] == null
+
+		Object[] pData = filterModel.projectData[1]
+		pData[0] == -3L
+		pData[1] == "baz"
+		pData[2] == true
+		pData[3] == null
 
 		Object[] pData2 = filterModel.projectData[2]
 		pData2[0] == -1L

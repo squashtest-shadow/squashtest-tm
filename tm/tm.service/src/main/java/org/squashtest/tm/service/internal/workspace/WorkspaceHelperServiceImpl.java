@@ -31,6 +31,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -97,11 +98,13 @@ public class WorkspaceHelperServiceImpl implements WorkspaceHelperService {
 		DSL.select(PROJECT.PROJECT_ID, PROJECT.PROJECT_TYPE, PROJECT.NAME, PROJECT.LABEL)
 			.from(PROJECT)
 			.where(PROJECT.PROJECT_ID.in(projectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
+			.orderBy(PROJECT.NAME.asc())
 			.fetch()
 			.forEach(r -> {
 				boolean selected = selectedProjectIds.contains(r.get(PROJECT.PROJECT_ID));
 				filterModel.addProject(r.get(PROJECT.PROJECT_ID), r.get(PROJECT.NAME), selected, r.get(PROJECT.LABEL));
 			});
+
 		return filterModel;
 	}
 
