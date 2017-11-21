@@ -414,6 +414,9 @@
                     <requireProperty>
                       <property>it.database.password</property>
                     </requireProperty>
+                    <requireProperty>
+                      <property>it.jooq.dialect</property>
+                    </requireProperty>
                   </rules>
                 </configuration>
               </execution>
@@ -461,6 +464,9 @@
                     </requireProperty>
                     <requireProperty>
                       <property>it.database.password</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.jooq.dialect</property>
                     </requireProperty>
                   </rules>
                 </configuration>
