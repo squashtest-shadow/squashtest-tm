@@ -384,7 +384,7 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.MySQLEnhancedDialect</hibernate.dialect>
         <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
-        <jooq.sql.dialect>${it.jooq.dialect}</jooq.sql.dialect>
+        <jooq.sql.dialect>MYSQL</jooq.sql.dialect>
       </properties>
 
       <build>
@@ -414,9 +414,6 @@
                     <requireProperty>
                       <property>it.database.password</property>
                     </requireProperty>
-                    <requireProperty>
-                      <property>it.jooq.dialect</property>
-                    </requireProperty>
                   </rules>
                 </configuration>
               </execution>
@@ -438,7 +435,7 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.squashtest.tm.domain.jpql.PostgresEnhancedDialect</hibernate.dialect>
         <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
-        <jooq.sql.dialect>${it.jooq.dialect}</jooq.sql.dialect>
+        <jooq.sql.dialect>POSTGRES</jooq.sql.dialect>
       </properties>
 
       <build>
@@ -464,9 +461,6 @@
                     </requireProperty>
                     <requireProperty>
                       <property>it.database.password</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>it.jooq.dialect</property>
                     </requireProperty>
                   </rules>
                 </configuration>
