@@ -26,6 +26,7 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.IgnoreIf
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -40,6 +41,10 @@ class JooqConfigurationIT extends DbunitServiceSpecification {
 	@Inject
 	DSLContext dslContext
 
+	static boolean isPostgres() {
+		return System.properties['jooq.sql.dialect'] == 'POSTGRES'
+	}
+
 	@DataSet("JooqConfigurationIT.xml")
 	def "should execute jooq query"() {
 		when:
@@ -50,13 +55,26 @@ class JooqConfigurationIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("JooqConfigurationIT.xml")
-	def "should generate request with upper case on table names"() {
+	@IgnoreIf({ return JooqConfigurationIT.isPostgres() })
+	def "should generate request with upper case on table names for mysql and h2"() {
 		when:
 		def request = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).getSQL();
 
 		then:
 		request.contains("PROJECT")
 		!request.contains("project")
+		!request.contains("Project")
+	}
+
+	@DataSet("JooqConfigurationIT.xml")
+	@IgnoreIf({ return !JooqConfigurationIT.isPostgres() })
+	def "should generate request with lower case on table names for postgresql"() {
+		when:
+		def request = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).getSQL();
+
+		then:
+		request.contains("project")
+		!request.contains("PROJECT")
 		!request.contains("Project")
 	}
 

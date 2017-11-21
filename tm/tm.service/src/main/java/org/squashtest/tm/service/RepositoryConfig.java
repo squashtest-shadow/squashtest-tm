@@ -192,7 +192,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 			case H2:
 				break;
 			case POSTGRES:
-				defaultConfiguration.settings().setRenderNameStyle(RenderNameStyle.LOWER); //postgres names are all lower case
+				defaultConfiguration.settings().setRenderNameStyle(RenderNameStyle.LOWER); //postgres names are all lower case or we get unknown table errors
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid jOOQ dialect. Use H2, MYSQL or POSTGRES ");
