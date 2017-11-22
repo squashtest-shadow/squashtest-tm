@@ -33,15 +33,15 @@ import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface VerifiedRequirementsManagerService extends VerifiedRequirementsFinderService{
 	/**
 	 * Adds a list of requirements to the ones verified by a test case. If a requirement is already verified, nothing
 	 * special happens.
-	 * 
+	 *
 	 * @param requirementsIds
 	 * @param testCaseId
 	 * @return
@@ -52,7 +52,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Adds a list of requirement's current requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.
 	 * If a sister version is already bound to the test case the version is not added.
-	 * 
+	 *
 	 * @param requirementsIds
 	 * @param testStepId
 	 *            : the id of the concerned {@link ActionTestStep}
@@ -72,7 +72,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already
 	 * verified, the requirement is not added and nothing special happens.
-	 * 
+	 *
 	 * @param requirementVersionsByTestCase
 	 *            : list of requirementVersions mapped by test-case
 	 * @return
@@ -83,7 +83,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementVersionsIds
 	 */
@@ -92,7 +92,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Removes a requirement from the ones verified by a test case. If the requirement was not previously verified by
 	 * the test case, nothing special happens.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
@@ -101,7 +101,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Removes a requirement version from the step but not from the test case. If the requirement version was not previously verified by
 	 * the test step, nothing special happens.
-	 * 
+	 *
 	 * @param testStepId
 	 * @param requirementsIds
 	 */
@@ -110,7 +110,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Removes a requirement version from the given test case and replaces it with the wanted version if the same
 	 * version is selected as was previously attached, nothing happens
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param oldVerifiedRequirementVersionId
 	 * @param newVerifiedRequirementVersionId
@@ -122,8 +122,12 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Return a list of coverage rate for a designed requirement version
 	 * @param requirementVersionId
-	 * @param iterations 
+	 * @param iterations
 	 * @return
 	 */
 	void findCoverageStat(Long requirementVersionId, List<Long> iterationsIds, RequirementCoverageStat stats);
+
+
+
+
 }

@@ -53,10 +53,10 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private RequirementDao requirementDao
-	
-	@Inject 
+
+	@Inject
 	private RequirementStatisticsService service;
-	
+
 	def setup (){
 		def ids = [-11L,-21L,-31,-51L,-61L,-71L,-91L,-101L,-111L,-121L,-131L, -1311L, -1321L, -141L,-151L]
 		ids.each {
@@ -69,44 +69,44 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		setBidirectionalReqReqVersion(-82L, -81L)*/
 		setBidirectionalReqReqVersion(-83L, -81L)
 	}
-	
+
 	def setBidirectionalReqReqVersion(Long reqVersionId, Long reqId) {
 		def reqVer = requirementVersionDao.findOne(reqVersionId)
 		def req = requirementDao.findById(reqId)
 		reqVer.setRequirement(req)
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should count how many requirements are bound to 0 testCases, 1 testCase, or above"(){
-		
+
 		given :
 			def reqIds = [-11L,-21L,-31L, -41L, -51L,-61L,-71L, -81L, -91L,-101L,-111L,-121L,-131L, -1311L, -1321L, -141L,-151L]
-		
+
 		when :
 			RequirementBoundTestCasesStatistics stats = service.gatherBoundTestCaseStatistics(reqIds)
-			
+
 		then :
 			stats.getZeroTestCases() == 1
-			stats.getOneTestCase() == 2 
+			stats.getOneTestCase() == 2
 			stats.getManyTestCases() == 14
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should count requirements sorted by status"(){
-		
+
 		given :
 			def reqIds = [-11L,-21L,-31L, -41L, -51L,-61L,-71L, -81L, -91L,-101L,-111L,-121L,-131L, -1311L, -1321L, -141L,-151L]
-		
+
 		when :
 			RequirementStatusesStatistics stats = service.gatherRequirementStatusesStatistics(reqIds)
-			
+
 		then :
 			stats.getWorkInProgress() == 3
 			stats.getUnderReview() == 4
 			stats.getApproved() == 8
 			stats.getObsolete() == 2
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should count requirements sorted by criticality"(){
 
@@ -122,7 +122,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 			stats.getMajor() == 4
 			stats.getCritical() == 3
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should count how many requirements have a description and how many haven't"(){
 
@@ -136,7 +136,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		stats.getHasDescription() == 13
 		stats.getHasNoDescription() == 4
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should calculate the coverage rate sorted by criticality"(){
 
@@ -174,7 +174,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		stats.getConclusiveMinor() == 3
 		stats.getInconclusiveMinor() == 1
 		stats.getUndefinedMinor() == 3
-		
+
 		stats.getConclusiveMajor() == 3
 		stats.getInconclusiveMajor() == 0
 		stats.getUndefinedMajor() == 3
@@ -183,7 +183,7 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		stats.getInconclusiveCritical() == 2
 		stats.getUndefinedCritical() == 4
 	}
-	
+
 	@DataSet("RequirementStatisticsServiceIT.xml")
 	def "Should return the requirement ids from a click on a validation chart part"() {
 		given:
@@ -199,13 +199,13 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 			criticality 					 | validationStatus | expectedSet
 			RequirementCriticality.UNDEFINED | ["SUCCESS"] 		| [-121l, -141l] as Set
 			RequirementCriticality.UNDEFINED | ["FAILURE"] 		| [-121l, -131l, -151l] as Set
-			
+
 			RequirementCriticality.MINOR 	 | ["SUCCESS"] 		| [-81l, -101l, -111l, -1321l] as Set
 			RequirementCriticality.MINOR 	 | ["FAILURE"] 		| [-111l] as Set
-			
+
 			RequirementCriticality.MAJOR 	 | ["SUCCESS"] 		| [-41l, -51l, -61l, -71l] as Set
 			RequirementCriticality.MAJOR 	 | ["FAILURE"] 		| [] as Set
-			
+
 			RequirementCriticality.CRITICAL  | ["SUCCESS"] 		| [-11l, -21l, -31l] as Set
 			RequirementCriticality.CRITICAL  | ["FAILURE"] 		| [-11l, -31l] as Set
 
@@ -213,5 +213,24 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 			RequirementCriticality.MINOR 	 | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-91l, -101l, -111l] as Set
 			RequirementCriticality.MAJOR 	 | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-61l, -71l] as Set
 			RequirementCriticality.CRITICAL  | ["READY", "RUNNING", "WARNING", "BLOCKED", "ERROR", "NOT_RUN", "NOT_FOUND", "SETTLED", "UNTESTABLE"] as Set| [-11l, -21l, -31l] as Set
+	}
+
+	@DataSet("RequirementStatisticsServiceIT.xml")
+	def "Should return the correct statistic bundle"() {
+		given :
+
+		when :
+		def stats = service.findSimplifiedCoverageStats(reqVersionIds)
+
+		then :
+		stats.getReqVersionStats().size() == reqVersionIds.size()
+		stats.getReqVersionStats().values().collect({it.redactionRate}) as Set == expectedRedactionRates as Set
+
+		where :
+		reqVersionIds 			|| expectedRedactionRates  	| expectedVerifcationRates 	| expectedValidationRates
+//		[]						||[]						|[]							|[]
+//		[-1321]					||[0d]						|[0d]						|[0d]
+		[-21,-1321]				||[50.00d,0.00d]			|[0d]						|[0d]
+		[-11]					||[66.67d]					|[0d]						|[0d]
 	}
 }

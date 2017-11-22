@@ -21,71 +21,66 @@
 package org.squashtest.tm.service.requirement;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
-import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
+import org.squashtest.tm.service.statistics.requirement.*;
 
 public interface RequirementStatisticsService {
 
 	/**
-	 * Given those requirements ids, returns how many of them are bound to test cases and how many aren't. Warning : no security check will 
+	 * Given those requirements ids, returns how many of them are bound to test cases and how many aren't. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementBoundTestCasesStatistics gatherBoundTestCaseStatistics(Collection<Long> requirementIds);
-	
+
 	/**
-	 * Returns all of the above bundled in one bean. 
-	 * 
+	 * Returns all of the above bundled in one bean.
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementStatisticsBundle gatherRequirementStatisticsBundle(Collection<Long> requirementIds);
-	
+
 	/**
-	 * Given those requirements ids, sort them by status and returns how many of each were found. Warning : no security check will 
+	 * Given those requirements ids, sort them by status and returns how many of each were found. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementStatusesStatistics gatherRequirementStatusesStatistics(Collection<Long> requirementIds);
 	/**
-	 * Given those requirements ids, sort them by criticality and returns how many of each were found. Warning : no security check will 
+	 * Given those requirements ids, sort them by criticality and returns how many of each were found. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementCriticalityStatistics gatherRequirementCriticalityStatistics(Collection<Long> requirementIds);
 	/**
-	 * Given those requirements ids, returns how many of them have a description and how many haven't. Warning : no security check will 
+	 * Given those requirements ids, returns how many of them have a description and how many haven't. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementBoundDescriptionStatistics gatherRequirementBoundDescriptionStatistics(Collection<Long> requirementIds);
 	/**
-	 * Given those requirements ids, sort them by criticality and returns the rate of coverage. Warning : no security check will 
+	 * Given those requirements ids, sort them by criticality and returns the rate of coverage. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
 	RequirementCoverageStatistics gatherRequirementCoverageStatistics(Collection<Long> requirementIds);
 	/**
-	 * Given those requirements ids, sort them by criticality and returns the rates of validation. Warning : no security check will 
+	 * Given those requirements ids, sort them by criticality and returns the rates of validation. Warning : no security check will
 	 * be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
@@ -93,11 +88,14 @@ public interface RequirementStatisticsService {
 	/**
 	 * Among the given requirements ids, returns the ids of the requirements that have the given criticality and are bound to the test cases with the given validation.
 	 * Warning : no security check will be performed and the data will be returned regardless of who requested it.
-	 * 
+	 *
 	 * @param requirementIds
 	 * @param criticality
 	 * @param validation
 	 * @return
 	 */
 	Collection<Long> gatherRequirementIdsFromValidation(Collection<Long> requirementIds, RequirementCriticality criticality, Collection<String> validation);
+
+
+	RequirementVersionBundleStat findSimplifiedCoverageStats(Collection<Long> requirementVersionIds);
 }

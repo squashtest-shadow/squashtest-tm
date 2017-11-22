@@ -25,24 +25,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.jooq.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
-import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
-import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
+import org.squashtest.tm.service.statistics.requirement.*;
+
+import static org.jooq.impl.DSL.count;
+import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("RequirementStatisticsService")
 @Transactional(readOnly = true)
@@ -172,6 +172,9 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Inject
+	private DSLContext DSL;
 
 	@Override
 	public RequirementBoundTestCasesStatistics gatherBoundTestCaseStatistics (
@@ -536,4 +539,58 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		}
 		return reqIdsList;
 	}
+
+	@Override
+	public RequirementVersionBundleStat findSimplifiedCoverageStats(Collection<Long> requirementVersionIds) {
+		RequirementVersionBundleStat bundle = new RequirementVersionBundleStat();
+		computeRedactionRate(requirementVersionIds, bundle);
+		return bundle;
+	}
+
+	private void computeRedactionRate(Collection<Long> requirementVersionIds, RequirementVersionBundleStat bundle) {
+
+		//creating a "virtual table" like ReqVersionId | CountCoverageTC to avoid correlated sub queries
+		Field<Long> reqVersionIdAllTC = REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("reqVersionIdAllTC");
+		Field<Integer> countAllTC = count().as("countAllTC");
+		Table<Record2<Long, Integer>> allTestCase = DSL
+			.select(reqVersionIdAllTC, countAllTC)
+			.from(REQUIREMENT_VERSION_COVERAGE)
+			.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(requirementVersionIds))
+			.groupBy(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID)
+			.asTable("allTestCase");
+
+
+		Field<Long> reqVersionIdValidatedTC = REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("reqVersionIdValidatedTC");
+		Field<Integer> countValidatedTC = count().as("countValidatedTC");
+		Table<Record2<Long, Integer>> validatedTestCase = DSL
+			.select(reqVersionIdValidatedTC, countValidatedTC)
+			.from(REQUIREMENT_VERSION_COVERAGE)
+			.innerJoin(TEST_CASE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(requirementVersionIds))
+			.	and(TEST_CASE.TC_STATUS.in(TestCaseStatus.UNDER_REVIEW.name(), TestCaseStatus.APPROVED.name()))
+			.groupBy(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID)
+			.asTable("verifiedTestCase");
+
+
+		//making our joins versus our "virtual tables" and fetch into stat bundle
+		DSL.select(REQUIREMENT_VERSION.RES_ID,allTestCase.field(countAllTC), validatedTestCase.field(countValidatedTC))
+			.from(REQUIREMENT_VERSION)
+			.leftJoin(allTestCase).on(REQUIREMENT_VERSION.RES_ID.eq(allTestCase.field(reqVersionIdAllTC)))
+			.leftJoin(validatedTestCase).on(REQUIREMENT_VERSION.RES_ID.eq(validatedTestCase.field(reqVersionIdValidatedTC)))
+			.where(REQUIREMENT_VERSION.RES_ID.in(requirementVersionIds))
+			.fetch()
+			.forEach(r ->{
+				Long reqVersionId = r.get(REQUIREMENT_VERSION.RES_ID);
+				Integer countAllTestCase = r.get(allTestCase.field(countAllTC));
+				Integer countValidatedTestCase = r.get( validatedTestCase.field(countValidatedTC));
+				bundle.computeRedactionRate(reqVersionId,countAllTestCase,countValidatedTestCase);
+			});
+
+
+
+		LOGGER.debug(bundle.toString());
+
+	}
+
+
 }

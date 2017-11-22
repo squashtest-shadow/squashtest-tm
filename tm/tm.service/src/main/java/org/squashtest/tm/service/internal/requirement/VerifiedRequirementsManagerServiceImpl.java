@@ -590,6 +590,8 @@ List<Long> requirementsIds) {
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')"
+		+ OR_HAS_ROLE_ADMIN)
 	public void findCoverageStat(Long requirementVersionId, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
 		RequirementVersion mainVersion = requirementVersionDao.findOne(requirementVersionId);
