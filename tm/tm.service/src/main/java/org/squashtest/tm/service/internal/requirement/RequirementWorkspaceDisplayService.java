@@ -59,29 +59,41 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	private Requirement REQ = REQUIREMENT.as("REQ");
 	private RequirementVersion RV = REQUIREMENT_VERSION.as("RV");
 	private RlnRelationship RLNR = RLN_RELATIONSHIP.as("RLNR");
+	private RlnRelationshipClosure RLNRC = RLN_RELATIONSHIP_CLOSURE.as("RLNRC");
 	private Resource RES = RESOURCE.as("RES");
 	private InfoListItem ILI = INFO_LIST_ITEM.as("ILI");
+	private MilestoneReqVersion MRV = MILESTONE_REQ_VERSION.as("MRV");
 
 	private List<Long> reqsDontAllowClick = new ArrayList<>();
 
 	@Override
 	protected Map<Long, JsTreeNode> getLibraryChildrenMap(Set<Long> childrenIds, MultiMap expansionCandidates, UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId) {
 
-		reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
+		Map<Long, JsTreeNode> result;
 
 		//get the repartition of node ie the type of each node
 		RequirementLibraryNodeDistribution nodeDistribution = getRepartition(childrenIds);
 
-		//get the js node for req
-		Map<Long, JsTreeNode> result = buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, nodeDistribution);
-
+		if(NO_ACTIVE_MILESTONE_ID.equals(activeMilestoneId)) {
+			result = fetchAndBuildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, nodeDistribution.getReqIds());
+		} else {
+			reqsDontAllowClick = findReqsWithChildrenLinkedToActiveMilestone(activeMilestoneId);
+			// remove nodes we don't want to build from reqDontAllowClick
+			reqsDontAllowClick.retainAll(nodeDistribution.getReqIds());
+			// build js nodes for requirements not linked to a milestone (i.e. the last version), concerns all the nodes in reqsDontAllowClick
+			result = fetchAndBuildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, reqsDontAllowClick);
+			// no need to build these nodes again
+			nodeDistribution.getReqIds().removeAll(reqsDontAllowClick);
+			// build js nodes for requirements linked to a milestone (i.e. the version linked to the milestone)
+			result.putAll(buildRequirementJsTreeNodeLinkedToMilestone(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, nodeDistribution.getReqIds()));
+		}
 		//add the js node for res folder
-		result.putAll(buildRequirementFoldersJsTreeNode(currentUser, nodeDistribution));
+		result.putAll(fetchAndBuildRequirementFoldersJsTreeNode(currentUser, nodeDistribution));
 
 		return result;
 	}
 
-	private Map<Long, JsTreeNode> buildRequirementFoldersJsTreeNode(UserDto currentUser, RequirementLibraryNodeDistribution nodeDistribution) {
+	private Map<Long, JsTreeNode> fetchAndBuildRequirementFoldersJsTreeNode(UserDto currentUser, RequirementLibraryNodeDistribution nodeDistribution) {
 		//fetch requirement folders
 		return DSL.select(RF.RLN_ID, RES.NAME, count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
 			.from(RF)
@@ -95,38 +107,63 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
 	}
 
-	private Map<Long, JsTreeNode> buildRequirementJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, RequirementLibraryNodeDistribution nodeDistribution) {
+	private Map<Long, JsTreeNode> fetchAndBuildRequirementJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, Collection<Long> nodeIdsToBuild) {
 
-		// fetch requirements
-		// milestones seems to be invalid... as we always fetch the last req version
-		// we should fetch the last version linked to the milestone...
 		return DSL.select(REQ.RLN_ID, REQ.MODE,
-				RES.NAME,
-				RV.REFERENCE, RV.REQUIREMENT_STATUS,
-				ILI.ICON_NAME,
-				count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			RES.NAME,
+			RV.REFERENCE, RV.REQUIREMENT_STATUS,
+			ILI.ICON_NAME,
+			count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
 			.from(REQ)
 			.innerJoin(RES).on(RES.RES_ID.eq(REQ.CURRENT_VERSION_ID))
 			.innerJoin(RV).on(RES.RES_ID.eq(RV.RES_ID))
 			.innerJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
 			.leftJoin(RLNR).on(REQ.RLN_ID.eq(RLNR.ANCESTOR_ID))
-			.where(REQ.RLN_ID.in(nodeDistribution.getReqIds()))
-		.groupBy(REQ.RLN_ID, REQ.MODE,RES.NAME,RV.REFERENCE, RV.REQUIREMENT_STATUS,ILI.ICON_NAME,RLNR.ANCESTOR_ID)
-		.fetch()
+			.where(REQ.RLN_ID.in(nodeIdsToBuild))
+			.groupBy(REQ.RLN_ID, REQ.MODE,RES.NAME,RV.REFERENCE, RV.REQUIREMENT_STATUS,ILI.ICON_NAME,RLNR.ANCESTOR_ID)
+			.fetch()
 			.stream()
 			.map(r -> {
-				Long id = r.get(REQ.RLN_ID);
-				Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
-				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
-				boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
-				boolean isReqVersionModifiable = isReqVersionModifiable(r.get(RV.REQUIREMENT_STATUS), isMilestoneModifiable);
-				String iconName = r.get(ILI.ICON_NAME);
-				if(StringUtils.isBlank(iconName)){
-					iconName = "def_cat_noicon";
-				}
-				return buildRequirement(id, r.get(RES.NAME), "requirements", r.get(RV.REFERENCE),
-					r.get(REQ.MODE), iconName, isReqVersionModifiable, r.get("COUNT_CHILD", Integer.class),
-					currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
+				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
+			})
+			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
+	}
+
+	private JsTreeNode buildRequirementJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, Record7<Long, String, String, String, String, String, Integer> r) {
+		Long id = r.get(REQ.RLN_ID);
+		Integer milestonesNumber = getMilestonesNumberForReq(allMilestonesForReqs, id);
+		String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForReqs, milestonesModifiable, id);
+		boolean isReqDontAllowClick = isReqDontAllowClick(reqsDontAllowClick, id);
+		boolean isReqVersionModifiable = isReqVersionModifiable(r.get(RV.REQUIREMENT_STATUS), isMilestoneModifiable);
+		String iconName = r.get(ILI.ICON_NAME);
+		if(StringUtils.isBlank(iconName)){
+            iconName = "def_cat_noicon";
+        }
+		return buildRequirement(id, r.get(RES.NAME), "requirements", r.get(RV.REFERENCE),
+            r.get(REQ.MODE), iconName, isReqVersionModifiable, r.get("COUNT_CHILD", Integer.class),
+            currentUser, milestonesNumber, isMilestoneModifiable, isReqDontAllowClick, activeMilestoneId);
+	}
+
+	private Map<Long, JsTreeNode> buildRequirementJsTreeNodeLinkedToMilestone(UserDto currentUser, Map<Long, List<Long>> allMilestonesForReqs, List<Long> milestonesModifiable, Long activeMilestoneId, Collection<Long> nodeIdsToBuild) {
+
+		return DSL.select(REQ.RLN_ID, REQ.MODE,
+			RES.NAME,
+			RV.REFERENCE, RV.REQUIREMENT_STATUS,
+			ILI.ICON_NAME,
+			count(RLNR.ANCESTOR_ID).as("COUNT_CHILD"))
+			.from(REQ)
+			.innerJoin(RV).on(RV.REQUIREMENT_ID.eq(REQ.RLN_ID))
+			.innerJoin(MRV).on(MRV.REQ_VERSION_ID.eq(RV.RES_ID))
+			.innerJoin(RES).on(RES.RES_ID.eq(RV.RES_ID))
+			.innerJoin(ILI).on(RV.CATEGORY.eq(ILI.ITEM_ID.cast(Long.class)))
+			.leftJoin(RLNR).on(REQ.RLN_ID.eq(RLNR.ANCESTOR_ID))
+			.where(REQ.RLN_ID.in(nodeIdsToBuild))
+			.and(MRV.MILESTONE_ID.eq(activeMilestoneId))
+			.groupBy(REQ.RLN_ID, REQ.MODE,RES.NAME,RV.REFERENCE, RV.REQUIREMENT_STATUS,ILI.ICON_NAME,RLNR.ANCESTOR_ID)
+			.fetch()
+			.stream()
+			.map(r -> {
+				return buildRequirementJsTreeNode(currentUser, allMilestonesForReqs, milestonesModifiable, activeMilestoneId, r);
 			})
 			.collect(Collectors.toMap(jsTreeNode -> (Long) jsTreeNode.getAttr().get("resId"), Function.identity()));
 	}
@@ -211,16 +248,19 @@ public class RequirementWorkspaceDisplayService extends AbstractWorkspaceDisplay
 	}
 
 	public List<Long> findReqsWithChildrenLinkedToActiveMilestone(Long activeMilestoneId) {
-		List<Long> reqIdsWithActiveMilestone = DSL.select(REQUIREMENT_VERSION.REQUIREMENT_ID).from(REQUIREMENT_VERSION)
-			.where(REQUIREMENT_VERSION.RES_ID.in(DSL.select(MILESTONE_REQ_VERSION.REQ_VERSION_ID).from(MILESTONE_REQ_VERSION).where(MILESTONE_REQ_VERSION.MILESTONE_ID.eq(activeMilestoneId))))
-			.fetch(REQUIREMENT_VERSION.REQUIREMENT_ID, Long.class);
+		List<Long> reqIdsWithActiveMilestone =
+			DSL.select(RV.REQUIREMENT_ID)
+				.from(RV)
+				.innerJoin(MRV).on(MRV.REQ_VERSION_ID.eq(RV.RES_ID))
+				.where(MRV.MILESTONE_ID.eq(activeMilestoneId))
+				.fetch(RV.REQUIREMENT_ID, Long.class);
 
-		return DSL.selectDistinct()
-			.from(RLN_RELATIONSHIP_CLOSURE)
-			.where(RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID.in(reqIdsWithActiveMilestone)
-				.and(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.notIn(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER)))
-				.and(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.notIn(reqIdsWithActiveMilestone)))
-			.fetch(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID, Long.class);
+		return DSL.selectDistinct(RLNRC.ANCESTOR_ID)
+			.from(RLNRC)
+			.where(RLNRC.DESCENDANT_ID.in(reqIdsWithActiveMilestone)
+				.and(RLNRC.ANCESTOR_ID.notIn(DSL.select(REQUIREMENT_FOLDER.RLN_ID).from(REQUIREMENT_FOLDER)))
+				.and(RLNRC.ANCESTOR_ID.notIn(reqIdsWithActiveMilestone)))
+			.fetch(RLNRC.ANCESTOR_ID, Long.class);
 	}
 
 	// *************************************** send stuff to abstract workspace ***************************************
