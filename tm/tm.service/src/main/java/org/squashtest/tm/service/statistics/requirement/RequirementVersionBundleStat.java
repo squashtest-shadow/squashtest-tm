@@ -38,19 +38,7 @@ public class RequirementVersionBundleStat {
 
 	public void computeRedactionRate(Long reqVersionId , Integer countAllTC, Integer countVerifiedTestTC) {
 		SimpleRequirementVersionStats stats = getSimpleStats(reqVersionId);
-		double rate = 0d;
-		if(countAllTC != null && countAllTC != 0 && countVerifiedTestTC != null){
-			rate = countVerifiedTestTC.doubleValue() / countAllTC.doubleValue();
-		}
-		rate = makeProperRoundedRate(rate);
-		stats.redactionRate = rate;
-	}
-
-	private double makeProperRoundedRate(double rate) {
-		rate = rate * 100;
-		BigDecimal bigDecimal = BigDecimal.valueOf(rate).setScale(2, BigDecimal.ROUND_HALF_UP);
-		rate = bigDecimal.doubleValue();
-		return rate;
+		stats.redactionRate = calculateRate(countAllTC, countVerifiedTestTC);
 	}
 
 	private SimpleRequirementVersionStats getSimpleStats(Long reqVersionId) {
@@ -62,6 +50,27 @@ public class RequirementVersionBundleStat {
 			reqVersionStats.put(reqVersionId, rates);
 		}
 		return rates;
+	}
+
+	public void computeVerificationRate(Long reqVersionId , Integer countAllITPI, Integer countMatchingITPI) {
+		SimpleRequirementVersionStats stats = getSimpleStats(reqVersionId);
+		stats.verificationRate = calculateRate(countAllITPI, countMatchingITPI);
+	}
+
+	private double calculateRate(Integer countAll, Integer countMatching) {
+		double rate = 0d;
+		if(countAll != null && countAll != 0 && countMatching != null){
+			rate = countMatching.doubleValue() / countAll.doubleValue();
+		}
+		rate = makeProperRoundedRate(rate);
+		return rate;
+	}
+
+	private double makeProperRoundedRate(double rate) {
+		rate = rate * 100;
+		BigDecimal bigDecimal = BigDecimal.valueOf(rate).setScale(2, BigDecimal.ROUND_HALF_UP);
+		rate = bigDecimal.doubleValue();
+		return rate;
 	}
 
 //	public void setVerificationRate(Double verificationRate) {

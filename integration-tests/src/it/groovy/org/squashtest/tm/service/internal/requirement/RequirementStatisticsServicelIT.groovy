@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.requirement
 
 import javax.inject.Inject
 
-import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.it.basespecs.DbunitServiceSpecification;
@@ -220,17 +219,20 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		given :
 
 		when :
-		def stats = service.findSimplifiedCoverageStats(reqVersionIds)
+		def stats = service.findSimplifiedCoverageStats(reqIds)
 
 		then :
-		stats.getReqVersionStats().size() == reqVersionIds.size()
-		stats.getReqVersionStats().values().collect({it.redactionRate}) as Set == expectedRedactionRates as Set
+		stats.getReqVersionStats().size() == reqIds.size()
+		stats.getReqVersionStats().values().sort({it.reqVersionId}).collect({it.redactionRate}) as Set == expectedRedactionRates as Set
 
 		where :
-		reqVersionIds 			|| expectedRedactionRates  	| expectedVerifcationRates 	| expectedValidationRates
-//		[]						||[]						|[]							|[]
-//		[-1321]					||[0d]						|[0d]						|[0d]
-		[-21,-1321]				||[50.00d,0.00d]			|[0d]						|[0d]
-		[-11]					||[66.67d]					|[0d]						|[0d]
+		reqIds      		|| expectedRedactionRates | expectedVerifcationRates | expectedValidationRates
+		[]          		||[]                      |[]                        |[]
+		[-1321]     		||[0.00d]                 |[100.00d]                 |[0d]
+		[-1311]     		||[0.00d]                 |[0d]                      |[0d]
+//		[-21,-1321] 		||[50.00d,0.00d]          |[0d]                      |[0d]
+		[-11]       		||[66.67d]                |[100.00d]             	 |[0d]
+//		[-131]       		||[33.33d]                |[0d]             		 |[0d]
+//		[-1321,-131,-11]    ||[0.00d,33.33d,66.67d]   |[0d]             		 |[0d]
 	}
 }

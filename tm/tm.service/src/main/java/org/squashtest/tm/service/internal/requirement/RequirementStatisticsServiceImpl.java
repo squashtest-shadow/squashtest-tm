@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,13 +36,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.jooq.domain.tables.records.RequirementRecord;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.*;
 
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.max;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service("RequirementStatisticsService")
@@ -541,49 +546,117 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 	}
 
 	@Override
-	public RequirementVersionBundleStat findSimplifiedCoverageStats(Collection<Long> requirementVersionIds) {
+	public RequirementVersionBundleStat findSimplifiedCoverageStats(Collection<Long> requirementIds) {
 		RequirementVersionBundleStat bundle = new RequirementVersionBundleStat();
-		computeRedactionRate(requirementVersionIds, bundle);
+		computeRedactionRate(requirementIds, bundle);
+		computeVerificationRate(requirementIds, bundle);
 		return bundle;
 	}
 
-	private void computeRedactionRate(Collection<Long> requirementVersionIds, RequirementVersionBundleStat bundle) {
+	private void computeVerificationRate(Collection<Long> requirementIds, RequirementVersionBundleStat bundle) {
+		TableOnConditionStep<Record> joinFromAncestorToITPI = RLN_RELATIONSHIP_CLOSURE
+			.innerJoin(REQUIREMENT).on(REQUIREMENT.RLN_ID.eq(RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID))
+			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT.CURRENT_VERSION_ID))
+			.innerJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+			.innerJoin(TEST_CASE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.innerJoin(ITERATION_TEST_PLAN_ITEM).on(TEST_CASE.TCLN_ID.eq(ITERATION_TEST_PLAN_ITEM.TCLN_ID));
+
+
+		Field<Long> lastExecutionTC = ITERATION_TEST_PLAN_ITEM.TCLN_ID.as("lastExecutionTC");
+		Field<Long> lastExecutionDS = coalesce(ITERATION_TEST_PLAN_ITEM.DATASET_ID,0L).as("lastExecutionDS");
+		Field<Timestamp> lastExecutionDate = coalesce(max(ITERATION_TEST_PLAN_ITEM.LAST_EXECUTED_ON), new Timestamp(0L)).as("lastExecutionDate");
+
+		Table<Record3<Long, Long, Timestamp>> selectLastExecution = DSL.select(lastExecutionTC, lastExecutionDS, lastExecutionDate)
+			.from(ITERATION_TEST_PLAN_ITEM)
+			.groupBy(ITERATION_TEST_PLAN_ITEM.TCLN_ID, ITERATION_TEST_PLAN_ITEM.DATASET_ID)
+			.asTable("selectLastExecution");
+
+
+		Field<Long> reqIdAll = RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.as("reqIdAll");
+		Field<Integer> countAll = count().as("countAll");
+
+		Table<Record2<Long, Integer>> allITPI = DSL.select(reqIdAll, countAll)
+			.from(joinFromAncestorToITPI)
+			.innerJoin(selectLastExecution)
+				.on(ITERATION_TEST_PLAN_ITEM.TCLN_ID.eq(selectLastExecution.field(lastExecutionTC)))
+				.and(coalesce(ITERATION_TEST_PLAN_ITEM.DATASET_ID,0L).eq(selectLastExecution.field(lastExecutionDS)))
+				.and(coalesce(ITERATION_TEST_PLAN_ITEM.LAST_EXECUTED_ON, new Timestamp(0L)).eq(selectLastExecution.field(lastExecutionDate)))
+			.where(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(requirementIds))
+			.groupBy(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID)
+			.asTable("allITPI");
+
+
+		Field<Long> reqIdMatch = RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.as("reqIdMatch");
+		Field<Integer> countMatch = count().as("countMatch");
+
+		Table<Record2<Long, Integer>> matchITPI = DSL.select(reqIdMatch, countMatch)
+			.from(joinFromAncestorToITPI)
+			.innerJoin(selectLastExecution)
+				.on(ITERATION_TEST_PLAN_ITEM.TCLN_ID.eq(selectLastExecution.field(lastExecutionTC)))
+				.and(coalesce(ITERATION_TEST_PLAN_ITEM.DATASET_ID,0L).eq(selectLastExecution.field(lastExecutionDS)))
+				.and(coalesce(ITERATION_TEST_PLAN_ITEM.LAST_EXECUTED_ON, new Timestamp(0L)).eq(selectLastExecution.field(lastExecutionDate)))
+			.where(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(requirementIds))
+				.and(ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS.in(ExecutionStatus.getTerminatedStatusSet()))
+			.groupBy(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID)
+			.asTable("matchITPI");
+
+		//making our joins versus our "virtual tables" and fetch into stat bundle
+		DSL.select(REQUIREMENT.RLN_ID, allITPI.field(countAll), matchITPI.field(countMatch))
+			.from(REQUIREMENT)
+			.leftJoin(allITPI).on(REQUIREMENT.RLN_ID.eq(allITPI.field(reqIdAll)))
+			.leftJoin(matchITPI).on(REQUIREMENT.RLN_ID.eq(matchITPI.field(reqIdMatch)))
+			.where(REQUIREMENT.RLN_ID.in(requirementIds))
+			.fetch()
+			.forEach(r ->{
+				Long reqId = r.get(REQUIREMENT.RLN_ID);
+				Integer countAllTestCase = r.get(allITPI.field(countAll));
+				Integer countValidatedTestCase = r.get(matchITPI.field(countMatch));
+				bundle.computeVerificationRate(reqId,countAllTestCase,countValidatedTestCase);
+			});
+	}
+
+	private void computeRedactionRate(Collection<Long> requirementIds, RequirementVersionBundleStat bundle) {
+
+		TableOnConditionStep<Record> joinFromAncestorToTestCase = RLN_RELATIONSHIP_CLOSURE
+			.innerJoin(REQUIREMENT).on(REQUIREMENT.RLN_ID.eq(RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID))
+			.innerJoin(REQUIREMENT_VERSION).on(REQUIREMENT_VERSION.RES_ID.eq(REQUIREMENT.CURRENT_VERSION_ID))
+			.innerJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.eq(REQUIREMENT_VERSION.RES_ID))
+			.innerJoin(TEST_CASE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
 		//creating a "virtual table" like ReqVersionId | CountCoverageTC to avoid correlated sub queries
-		Field<Long> reqVersionIdAllTC = REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("reqVersionIdAllTC");
+		Field<Long> reqIdAllTC = RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.as("reqIdAllTC");
 		Field<Integer> countAllTC = count().as("countAllTC");
 		Table<Record2<Long, Integer>> allTestCase = DSL
-			.select(reqVersionIdAllTC, countAllTC)
-			.from(REQUIREMENT_VERSION_COVERAGE)
-			.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(requirementVersionIds))
-			.groupBy(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID)
+			.select(reqIdAllTC, countAllTC)
+			.from(joinFromAncestorToTestCase)
+			.where(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(requirementIds))
+			.groupBy(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID)
 			.asTable("allTestCase");
 
 
-		Field<Long> reqVersionIdValidatedTC = REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.as("reqVersionIdValidatedTC");
+		Field<Long> reqIdValidatedTC = RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.as("reqIdValidatedTC");
 		Field<Integer> countValidatedTC = count().as("countValidatedTC");
 		Table<Record2<Long, Integer>> validatedTestCase = DSL
-			.select(reqVersionIdValidatedTC, countValidatedTC)
-			.from(REQUIREMENT_VERSION_COVERAGE)
-			.innerJoin(TEST_CASE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
-			.where(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID.in(requirementVersionIds))
-			.	and(TEST_CASE.TC_STATUS.in(TestCaseStatus.UNDER_REVIEW.name(), TestCaseStatus.APPROVED.name()))
-			.groupBy(REQUIREMENT_VERSION_COVERAGE.VERIFIED_REQ_VERSION_ID)
+			.select(reqIdValidatedTC, countValidatedTC)
+			.from(joinFromAncestorToTestCase)
+			.where(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(requirementIds))
+				.and(TEST_CASE.TC_STATUS.in(TestCaseStatus.UNDER_REVIEW.name(), TestCaseStatus.APPROVED.name()))
+			.groupBy(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID)
 			.asTable("verifiedTestCase");
 
 
 		//making our joins versus our "virtual tables" and fetch into stat bundle
-		DSL.select(REQUIREMENT_VERSION.RES_ID,allTestCase.field(countAllTC), validatedTestCase.field(countValidatedTC))
-			.from(REQUIREMENT_VERSION)
-			.leftJoin(allTestCase).on(REQUIREMENT_VERSION.RES_ID.eq(allTestCase.field(reqVersionIdAllTC)))
-			.leftJoin(validatedTestCase).on(REQUIREMENT_VERSION.RES_ID.eq(validatedTestCase.field(reqVersionIdValidatedTC)))
-			.where(REQUIREMENT_VERSION.RES_ID.in(requirementVersionIds))
+		DSL.select(REQUIREMENT.RLN_ID,allTestCase.field(countAllTC), validatedTestCase.field(countValidatedTC))
+			.from(REQUIREMENT)
+			.leftJoin(allTestCase).on(REQUIREMENT.RLN_ID.eq(allTestCase.field(reqIdAllTC)))
+			.leftJoin(validatedTestCase).on(REQUIREMENT.RLN_ID.eq(validatedTestCase.field(reqIdValidatedTC)))
+			.where(REQUIREMENT.RLN_ID.in(requirementIds))
 			.fetch()
 			.forEach(r ->{
-				Long reqVersionId = r.get(REQUIREMENT_VERSION.RES_ID);
+				Long reqId = r.get(REQUIREMENT.RLN_ID);
 				Integer countAllTestCase = r.get(allTestCase.field(countAllTC));
 				Integer countValidatedTestCase = r.get( validatedTestCase.field(countValidatedTC));
-				bundle.computeRedactionRate(reqVersionId,countAllTestCase,countValidatedTestCase);
+				bundle.computeRedactionRate(reqId,countAllTestCase,countValidatedTestCase);
 			});
 
 
