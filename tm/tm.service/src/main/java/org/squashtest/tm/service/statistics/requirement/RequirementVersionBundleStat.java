@@ -26,35 +26,27 @@ import java.util.Map;
 
 public class RequirementVersionBundleStat {
 
-	Map<Long, SimpleRequirementVersionStats> reqVersionStats = new HashMap<>();
+	Map<Long, SimpleRequirementStats> requirementStats = new HashMap<>();
 
-	public Map<Long, SimpleRequirementVersionStats> getReqVersionStats() {
-		return reqVersionStats;
+	public Map<Long, SimpleRequirementStats> getRequirementStats() {
+		return requirementStats;
 	}
 
-	public void setReqVersionStats(Map<Long, SimpleRequirementVersionStats> reqVersionStats) {
-		this.reqVersionStats = reqVersionStats;
-	}
-
-	public void computeRedactionRate(Long reqVersionId , Integer countAllTC, Integer countVerifiedTestTC) {
-		SimpleRequirementVersionStats stats = getSimpleStats(reqVersionId);
-		stats.redactionRate = calculateRate(countAllTC, countVerifiedTestTC);
-	}
-
-	private SimpleRequirementVersionStats getSimpleStats(Long reqVersionId) {
-		SimpleRequirementVersionStats rates;
-		if(reqVersionStats.containsKey(reqVersionId)){
-			rates = reqVersionStats.get(reqVersionId);
+	private SimpleRequirementStats getSimpleStats(Long reqId) {
+		SimpleRequirementStats rates;
+		if(requirementStats.containsKey(reqId)){
+			rates = requirementStats.get(reqId);
 		} else {
-			rates = new SimpleRequirementVersionStats();
-			reqVersionStats.put(reqVersionId, rates);
+			rates = new SimpleRequirementStats(reqId);
+			requirementStats.put(reqId, rates);
 		}
 		return rates;
 	}
 
-	public void computeVerificationRate(Long reqVersionId , Integer countAllITPI, Integer countMatchingITPI) {
-		SimpleRequirementVersionStats stats = getSimpleStats(reqVersionId);
-		stats.verificationRate = calculateRate(countAllITPI, countMatchingITPI);
+	public void computeRate(Long reqId , String key, Integer countAll, Integer countMatching) {
+		SimpleRequirementStats stats = getSimpleStats(reqId);
+		double rate = calculateRate(countAll, countMatching);
+		stats.setRate(key, rate);
 	}
 
 	private double calculateRate(Integer countAll, Integer countMatching) {
@@ -73,53 +65,48 @@ public class RequirementVersionBundleStat {
 		return rate;
 	}
 
-//	public void setVerificationRate(Double verificationRate) {
-//		this.verificationRate = verificationRate;
-//	}
-//
-//	public void setValidationRate(Double validationRate) {
-//		this.validationRate = validationRate;
-//	}
+	public static class SimpleRequirementStats {
+		private Long reqId;
 
-	public static class SimpleRequirementVersionStats {
-		private Long reqVersionId;
-		/**
-		 * Rate of coverage with test case with status UNDER_REVIEW, APPROVED. so it's not just the coverage as usual, but the coverage by validated test cases
-		 */
-		private Double redactionRate;
-		private Double verificationRate;
-		private Double validationRate;
+		public static final String REDACTION_RATE_KEY = "REDACTION_RATE";
+		public static final String VERIFICATION_RATE_KEY = "VERIFICATION_RATE";
+		public static final String VALIDATION_RATE_KEY = "VALIDATION_RATE";
 
-		public Long getReqVersionId() {
-			return reqVersionId;
+		private Map<String, Double> rates = new HashMap<>();
+
+		SimpleRequirementStats(Long reqId) {
+			this.reqId = reqId;
 		}
 
-		public void setReqVersionId(Long reqVersionId) {
-			this.reqVersionId = reqVersionId;
+		public Long getReqId() {
+			return reqId;
 		}
 
 		public Double getRedactionRate() {
-			return redactionRate;
+			return rates.getOrDefault(REDACTION_RATE_KEY, Double.NaN);
 		}
 
-		public void setRedactionRate(Double redactionRate) {
-			this.redactionRate = redactionRate;
-		}
 
 		public Double getVerificationRate() {
-			return verificationRate;
+			return rates.getOrDefault(VERIFICATION_RATE_KEY, Double.NaN);
 		}
 
-		public void setVerificationRate(Double verificationRate) {
-			this.verificationRate = verificationRate;
-		}
 
 		public Double getValidationRate() {
-			return validationRate;
+			return rates.getOrDefault(VALIDATION_RATE_KEY, Double.NaN);
 		}
 
-		public void setValidationRate(Double validationRate) {
-			this.validationRate = validationRate;
+		public void setRate(String key, Double value){
+			switch (key){
+				case REDACTION_RATE_KEY :
+				case VERIFICATION_RATE_KEY :
+				case VALIDATION_RATE_KEY :
+					rates.put(key, value);
+					break;
+				default:
+					throw new IllegalArgumentException("Programmatic error : Unknown key : " + key);
+			}
 		}
+
 	}
 }

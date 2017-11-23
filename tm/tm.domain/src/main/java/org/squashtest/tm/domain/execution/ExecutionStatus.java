@@ -405,6 +405,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	// status that aren't enabled by default for a project, but could be if the manager decided so.
 	public static final Set<ExecutionStatus> DEFAULT_DISABLED_STATUSES;
 
+	// status that are assimilated to a success. as 1.17 only SUCCESS and SETTLED
+	public static final Set<ExecutionStatus> SUCCESS_STATUSES;
+
 	private final int level;
 
 	static {
@@ -452,10 +455,19 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		TA_STATUSES_ONLY = Collections.unmodifiableSet(TAStatuses);
 
+		Set<ExecutionStatus> success = new HashSet<>(1);
+		success.add(SETTLED);
+		success.add(SUCCESS);
+
+		SUCCESS_STATUSES = success;
 	}
 
 	private ExecutionStatus(int level) {
 		this.level = level;
+	}
+
+	public static Set<ExecutionStatus> getSuccessStatusSet() {
+		return SUCCESS_STATUSES;
 	}
 
 	@Deprecated // use DEFAULT_DISABLED_STATUSES instead

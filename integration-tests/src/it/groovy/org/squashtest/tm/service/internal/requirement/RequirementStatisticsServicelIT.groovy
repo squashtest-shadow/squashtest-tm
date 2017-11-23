@@ -222,17 +222,20 @@ class RequirementStatisticsServiceIT extends DbunitServiceSpecification {
 		def stats = service.findSimplifiedCoverageStats(reqIds)
 
 		then :
-		stats.getReqVersionStats().size() == reqIds.size()
-		stats.getReqVersionStats().values().sort({it.reqVersionId}).collect({it.redactionRate}) as Set == expectedRedactionRates as Set
+		stats.getRequirementStats().size() == reqIds.size()
+		stats.getRequirementStats().values().sort({it.reqId}).collect({it.redactionRate})  == expectedRedactionRates
+		stats.getRequirementStats().values().sort({it.reqId}).collect({it.verificationRate})  == expectedVerifcationRates
+		stats.getRequirementStats().values().sort({it.reqId}).collect({it.validationRate})  == expectedValidationRates
 
 		where :
 		reqIds      		|| expectedRedactionRates | expectedVerifcationRates | expectedValidationRates
 		[]          		||[]                      |[]                        |[]
-		[-1321]     		||[0.00d]                 |[100.00d]                 |[0d]
+		[-1321]     		||[0.00d]                 |[100.00d]                 |[100d]
 		[-1311]     		||[0.00d]                 |[0d]                      |[0d]
-//		[-21,-1321] 		||[50.00d,0.00d]          |[0d]                      |[0d]
-		[-11]       		||[66.67d]                |[100.00d]             	 |[0d]
-//		[-131]       		||[33.33d]                |[0d]             		 |[0d]
-//		[-1321,-131,-11]    ||[0.00d,33.33d,66.67d]   |[0d]             		 |[0d]
+		[-21]     			||[50.00d]                |[100d]                    |[50d]
+		[-1321,-21] 		||[0.00d,50.00d]          |[100.00d,100.00d]         |[100d,50d]
+		[-11]       		||[66.67d]                |[100.00d]             	 |[20d]
+		[-131]       		||[33.33d]                |[50.00d]             	 |[25d]
+		[-1321,-131,-11]    ||[0.00d,33.33d,66.67d]   |[100.00d,50.00d,100.00d]  |[100d,25d,20d]
 	}
 }
