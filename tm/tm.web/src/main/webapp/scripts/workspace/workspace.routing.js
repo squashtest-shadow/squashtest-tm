@@ -146,6 +146,7 @@ define([], function(){
 		'requirements.coverageStats.model' :root + '/requirement-versions/{\\d+}/coverage-stats',
 
 		'requirementversions'	:			root + '/requirement-versions/{\\d+}',
+		'requirementversions.info': root + '/requirement-versions/{\\d+}/info',
 		'requirementversions.bulkupdate' : root + '/requirement-versions/{(,?\\d+)+}/bulk-update',
 
 		'campaigns.workspace' :				root + '/campaign-workspace/',
