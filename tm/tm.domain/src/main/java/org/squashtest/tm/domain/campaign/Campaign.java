@@ -92,7 +92,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Column(name = "CAMPAIGN_STATUS")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
-	private CampaignStatus status = CampaignStatus.PLANNED;
+	private CampaignStatus status = CampaignStatus.UNDEFINED;
 
 	public Campaign() {
 		super();

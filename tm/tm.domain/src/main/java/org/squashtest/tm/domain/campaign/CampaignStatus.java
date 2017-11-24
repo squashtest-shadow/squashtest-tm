@@ -23,9 +23,11 @@ package org.squashtest.tm.domain.campaign;
 import org.squashtest.tm.domain.Level;
 
 public enum CampaignStatus implements Level {
+	UNDEFINED(0),
 	PLANNED(1),
 	IN_PROGRESS(2),
-	FINISHED(3);
+	FINISHED(3),
+	ARCHIVED(4);
 
 	private static final String I18N_KEY_ROOT = "campaign.status.";
 
@@ -46,6 +48,6 @@ public enum CampaignStatus implements Level {
 	}
 
 	public static CampaignStatus defaultValue() {
-		return PLANNED;
+		return UNDEFINED;
 	}
 }

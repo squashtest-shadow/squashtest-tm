@@ -37,12 +37,12 @@
   <changeSet id="tm-1.17.0-feature-6921" author="zyang">
     <comment>Adds a status field to campaign and iteration</comment>
     <addColumn tableName="CAMPAIGN">
-      <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="PLANNED">
+      <column name="CAMPAIGN_STATUS" type="VARCHAR(30)" defaultValue="UNDEFINED">
         <constraints nullable="false"/>
       </column>
     </addColumn>
     <addColumn tableName="ITERATION">
-      <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="PLANNED">
+      <column name="ITERATION_STATUS" type="VARCHAR(30)" defaultValue="UNDEFINED">
         <constraints nullable="false"/>
       </column>
     </addColumn>

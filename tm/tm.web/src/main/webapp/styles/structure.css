@@ -1794,42 +1794,64 @@ width: 24px;
 height: 16px;
 }
 
+.campaign-status-UNDEFINED{
+	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
+	background-position : -200px -0px ;
+	width: 24px;
+	height: 16px;
+}
 .campaign-status-IN_PROGRESS{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -129px -48px ;
+	background-position : -128px -0px ;
 	width: 24px;
 	height: 16px;
 }
 .campaign-status-PLANNED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -153px -0px ;
+	background-position : -152px -0px ;
 	width: 24px;
 	height: 16px;
 }
 
 .campaign-status-FINISHED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -177px -0px ;
+	background-position : -176px -0px ;
+	width: 24px;
+	height: 16px;
+}
+.campaign-status-ARCHIVED{
+	background-image: url("../images/Icon_Blue_Navy_Uniform.png");
 	width: 24px;
 	height: 16px;
 }
 
+.iteration-status-UNDEFINED{
+	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
+	background-position : -200px -0px ;
+	width: 24px;
+	height: 16px;
+}
 .iteration-status-IN_PROGRESS{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -129px -48px ;
+	background-position : -128px -0px ;
 	width: 24px;
 	height: 16px;
 }
 .iteration-status-PLANNED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -153px -0px ;
+	background-position : -152px -0px ;
 	width: 24px;
 	height: 16px;
 }
 
 .iteration-status-FINISHED{
 	background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
-	background-position : -177px -0px ;
+	background-position : -176px -0px ;
+	width: 24px;
+	height: 16px;
+}
+.iteration-status-ARCHIVED{
+	background-image: url("../images/Icon_Blue_Navy_Uniform.png");
 	width: 24px;
 	height: 16px;
 }

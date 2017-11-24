@@ -254,7 +254,7 @@
 
               <div>
                 <span id="iteration-status-icon" style="vertical-align:middle"
-                      class="iteration-status-${iteration.status}"> &nbsp &nbsp</span>
+                      class="sq-icon iteration-status-${iteration.status}"> &nbsp &nbsp</span>
                 <span id="iteration-status">${ iterationStatusLabel }</span>
               </div>
             </div>
