@@ -22,10 +22,7 @@ package org.squashtest.tm.service.internal.requirement;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -567,17 +564,19 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 		RequirementVersionBundleStat bundle = new RequirementVersionBundleStat();
 		computeRedactionRate(requirementIds, bundle);
 		//compute verification rates
-		computeItpiByStatusRate(requirementIds, bundle, ExecutionStatus.getTerminatedStatusSet(), VERIFICATION_RATE_KEY);
+		computeItpiByStatusRate(requirementIds, bundle, ExecutionStatus.getTerminatedStatusSet(), EnumSet.allOf(ExecutionStatus.class), VERIFICATION_RATE_KEY);
 		//compute validation rates
-		computeItpiByStatusRate(requirementIds, bundle, ExecutionStatus.getSuccessStatusSet(), VALIDATION_RATE_KEY);
+		computeItpiByStatusRate(requirementIds, bundle, ExecutionStatus.getSuccessStatusSet(), ExecutionStatus.getTerminatedStatusSet(), VALIDATION_RATE_KEY);
 		return bundle;
 	}
 
 	/*
-	 * Compute the verification rate for a list of requirements.
-	 * The verification rate is defined as ratio ITPI / ITPI with an "ended" status
+	 * Compute a ratio of ITPI status from a list of requirements.
+	 * The ratio is like :
+	 * nb of ITPI in matchingStatusSet / nb of ITPI in allStatusSet.
+	 * The chosen ITPI are the most recently executed if at least one ITPI has execution or all of them is no execution date...
 	 */
-	private void computeItpiByStatusRate(Collection<Long> requirementIds, RequirementVersionBundleStat bundle, Set<ExecutionStatus> matchingStatusSet, String key) {
+	private void computeItpiByStatusRate(Collection<Long> requirementIds, RequirementVersionBundleStat bundle, Set<ExecutionStatus> matchingStatusSet,Set<ExecutionStatus> allStatusSet, String key) {
 
 		//preparing our join from RLN_RELATIONSHIP_CLOSURE to ITPI
 		TableOnConditionStep<Record> joinFromAncestorToITPI = RLN_RELATIONSHIP_CLOSURE
@@ -611,6 +610,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			.and(coalesce(ITERATION_TEST_PLAN_ITEM.DATASET_ID, 0L).eq(selectLastExecution.field(lastExecutionDS)))//coalesce to allow join if no dataset
 			.and(coalesce(ITERATION_TEST_PLAN_ITEM.LAST_EXECUTED_ON, new Timestamp(0L)).eq(selectLastExecution.field(lastExecutionDate)))//coalesce to allow join if no execution date
 			.where(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.in(requirementIds))
+			.and(ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS.in(allStatusSet))
 			.groupBy(RLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID)
 			.asTable("allITPI");
 
