@@ -51,7 +51,7 @@
  --%>
 
 
-<table id="issue-table" data-def="datakeys-id=issue-id">
+<table id="issue-table" data-def="datakeys-id=issue-id, pre-sort=0-desc">
 	<thead>
 		<tr>
 			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
@@ -119,7 +119,7 @@ require( ["common"], function(){
 					<c:if test="${not empty tableEntries.aaData}">
 					'aaData': ${json:serialize(tableEntries.aaData)},
 					</c:if>
-					'aaSorting': [0, 'asc'] [7, 'asc'],
+					'aaSorting': [0, 'desc'] [7, 'asc'],
 					'iDeferLoading': ${deferLoading},
 					"aoColumnDefs": [
 						{"bVisible": reqRefVisibility, "aTargets": [7]}

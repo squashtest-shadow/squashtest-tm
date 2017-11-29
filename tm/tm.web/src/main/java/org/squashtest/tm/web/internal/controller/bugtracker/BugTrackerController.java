@@ -20,32 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
@@ -57,12 +38,7 @@ import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
@@ -95,8 +71,14 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-
 import oslcdomain.OslcIssue;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 /**
  *
@@ -210,11 +192,7 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(EXECUTION_STEP_TYPE, stepId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, EXECUTION_STEP_TYPE, stepId);
 
 		return mav;
 	}
@@ -325,11 +303,7 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(EXECUTION_TYPE, execId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, EXECUTION_TYPE, execId);
 
 		return mav;
 
@@ -426,15 +400,17 @@ public class BugTrackerController {
 	 */
 	@RequestMapping(value = REQUIREMENT_VERSION_TYPE + "/{rvId}/{panelSource}", method = RequestMethod.GET)
 	public ModelAndView getRequirementWorkspaceIssuePanel(@PathVariable("rvId") Long rvId, Locale locale, @RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle,
-														  @PathVariable("panelSource") String panelSource) {
+															@PathVariable("panelSource") String panelSource) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(rvId);
 
 		ModelAndView mav = makeIssuePanel(requirementVersion, REQUIREMENT_VERSION_TYPE, locale, panelStyle, requirementVersion.getProject());
 
 		if (shouldGetTableData(mav)) {
+			DefaultPagingAndSorting pas = new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE);
+			pas.setSortOrder(SortOrder.DESCENDING);
 			DataTableModel issues = getKnownIssuesDataForRequirementVersion(REQUIREMENT_VERSION_TYPE, rvId, panelSource,
-				new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+				pas, "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues);
 		}
 
@@ -480,15 +456,12 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(TEST_CASE_TYPE, tcId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, TEST_CASE_TYPE, tcId);
 
 		return mav;
 
 	}
+
 
 	/**
 	 * json Data for the known issues table.
@@ -526,11 +499,7 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(ITERATION_TYPE, iterId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, ITERATION_TYPE, iterId);
 
 		return mav;
 
@@ -572,11 +541,7 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(CAMPAIGN_TYPE, campId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, CAMPAIGN_TYPE, campId);
 
 		return mav;
 	}
@@ -617,14 +582,12 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(TEST_SUITE_TYPE, testSuiteId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, TEST_SUITE_TYPE, testSuiteId);
+
 
 		return mav;
 	}
+
 
 	/**
 	 * json Data for the known issues table.
@@ -667,11 +630,7 @@ public class BugTrackerController {
 		 * issue 4178 eagerly fetch the row entries if the user is authenticated (we need the table to be shipped along
 		 * with the panel in one call)
 		 */
-		if (shouldGetTableData(mav)) {
-			DataTableModel issues = getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId,
-					new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
-			mav.addObject(MODEL_TABLE_ENTRIES, issues);
-		}
+		populateWithKnownIssuesIfNeeded(mav, CAMPAIGN_FOLDER_TYPE, campaignFolderId);
 
 		return mav;
 	}
@@ -691,6 +650,19 @@ public class BugTrackerController {
 	}
 
 	/* ************************* Generic code section ************************** */
+
+	private void populateWithKnownIssuesIfNeeded(ModelAndView mav, String entityType, Long entityId) {
+		if (shouldGetTableData(mav)) {
+			DataTableModel issues = getKnownIssuesDataInDescendingOrder(entityType, entityId);
+			mav.addObject(MODEL_TABLE_ENTRIES, issues);
+		}
+	}
+
+	private DataTableModel getKnownIssuesDataInDescendingOrder(String entityType, Long entityId) {
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE);
+		pas.setSortOrder(SortOrder.DESCENDING);
+		return getKnownIssuesData(entityType, entityId, pas, "0");
+	}
 
 	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
 	@ResponseBody

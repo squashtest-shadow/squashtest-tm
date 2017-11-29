@@ -48,7 +48,7 @@
 
  --%>
 
-<table id="issue-table" data-def="datakeys-id=id">
+<table id="issue-table" data-def="datakeys-id=id, pre-sort=0-desc">
 	<thead>
 		<tr>
 			<th data-def="select, map=remote-id, link-new-tab={url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
