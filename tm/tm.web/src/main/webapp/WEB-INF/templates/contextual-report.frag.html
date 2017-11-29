@@ -322,7 +322,7 @@
                 <label th:case="Iteration" th:text="#{label.iteration}"/>
                 <label th:case="Milestone" th:text="#{label.Milestone}"/>
                 <label th:case="tags" th:text="#{customField.inputType.TAG}"/>
-                <label th:case="option" th:text="#{label.option}"/>
+                <label th:case="option" th:text="#{label.options}"/>
                 <label th:case="*" th:text="${attribute.key}"/>
               </div>
               <div th:each="val : ${attribute.value}" >
