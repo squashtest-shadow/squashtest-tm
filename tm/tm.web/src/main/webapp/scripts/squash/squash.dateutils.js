@@ -30,6 +30,7 @@ define(["moment"], function(moment) {
  *		------------|-----------------------|-----------------------
  *		y			|		Y				|	cardinalities are the same
  *		d			|		D				|	cardinalities are the same
+ *		m			|		M				|	cardinalities are the same
  *		'T'			|		T				|	cardinalities are the same
  *		Z			|		ZZ				|	1 java 'Z' = 2 js 'Z'. Note : this one is not the iso 8601 but the rfc 822 timezone indicator
  *
@@ -43,7 +44,7 @@ define(["moment"], function(moment) {
  */
 	function _javaToJSFormat(javaFormat){
 		if (javaFormat !== undefined){
-			return javaFormat.replace(/y/g, 'Y').replace(/d/g, 'D').replace(/'T'/g, 'T').replace(/Z/g, 'ZZ');
+			return javaFormat.replace(/y/g, 'Y').replace(/d/g, 'D').replace(/m/g, 'M').replace(/'T'/g, 'T').replace(/Z/g, 'ZZ');
 		}
 		else{
 			return undefined;

@@ -410,7 +410,7 @@ class RequirementFacility extends EntityFacilitySupport {
 
 	private void doUpdateRequirementDescription(RequirementVersion reqVersion, RequirementVersion orig) {
 		String newDescription = reqVersion.getDescription();
-		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getReference())) {
+		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getDescription())) {
 			requirementVersionManagerService.changeDescription(orig.getId(), newDescription);
 		}
 	}
