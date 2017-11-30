@@ -56,26 +56,21 @@ class JooqConfigurationIT extends DbunitServiceSpecification {
 
 	@DataSet("JooqConfigurationIT.xml")
 	@IgnoreIf({ return JooqConfigurationIT.isPostgres() })
-	def "should generate request with upper case on table names for mysql and h2"() {
+	def "should generate request with good case for different databases"() {
 		when:
 		def request = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).getSQL();
 
 		then:
-		request.contains("PROJECT")
-		!request.contains("project")
-		!request.contains("Project")
-	}
+		if(isPostgres()){
+			request.contains("project")
+			!request.contains("PROJECT")
+			!request.contains("Project")
+		} else {
+			request.contains("PROJECT")
+			!request.contains("project")
+			!request.contains("Project")
+		}
 
-	@DataSet("JooqConfigurationIT.xml")
-	@IgnoreIf({ return !JooqConfigurationIT.isPostgres() })
-	def "should generate request with lower case on table names for postgresql"() {
-		when:
-		def request = dslContext.select(PROJECT.PROJECT_ID).from(PROJECT).where(PROJECT.PROJECT_ID.eq(-1L)).getSQL();
-
-		then:
-		request.contains("project")
-		!request.contains("PROJECT")
-		!request.contains("Project")
 	}
 
 
