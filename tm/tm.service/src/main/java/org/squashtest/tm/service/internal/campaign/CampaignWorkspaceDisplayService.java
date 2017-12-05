@@ -378,14 +378,9 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 			.leftJoin(ITPI).on(TSTPI.TPI_ID.eq(ITPI.ITEM_TEST_PLAN_ID))
 			.leftJoin(TCLN).on(ITPI.TCLN_ID.eq(TCLN.TCLN_ID))
 			.where(TSTPI.TEST_PLAN_ORDER.eq(0))
-			.fetchMap(TS.ID, description);
-	}
-
-	private Field<String> decodeMilestone() {
-		return org.jooq.impl.DSL.decode()
-			.when(M.STATUS.isNull().or(M.STATUS.eq(MILESTONE_STATUS_IN_PROGRESS)).or(M.STATUS.eq(MILESTONE_STATUS_FINISHED)), "true")
-			.otherwise("false")
-			.as("IS_MILESTONE_MODIFIABLE");
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(r-> r.get(TS.ID), r-> r.get(description)));
 	}
 
 	private String removeHtmlForDescription(String html) {
