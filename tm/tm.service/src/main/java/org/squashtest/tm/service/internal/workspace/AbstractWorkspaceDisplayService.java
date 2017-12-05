@@ -147,7 +147,7 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				attr.put("resId", libraryId);
 				attr.put("resType", getResType());
 				attr.put("rel", getRel());
-				attr.put("name", getClassName());
+				attr.put("name", r.get(PROJECT.NAME));
 				attr.put("id", getClassName() + '-' + libraryId);
 				attr.put("title", r.get(PROJECT.LABEL));
 				attr.put("project", r.get(PROJECT.PROJECT_ID));
