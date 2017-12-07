@@ -35,6 +35,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.synchronisation.SynchronisationStatus.NEVER_EXECUTED;
+
 @Entity
 @Table(name = "REMOTE_SYNCHRONISATION")
 public class RemoteSynchronisation {
@@ -83,6 +85,16 @@ public class RemoteSynchronisation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SERVER_ID")
 	private BugTracker server;
+
+	//status of the last sync or the running synchronisation
+	@Column(name="SYNC_STATUS")
+	@Enumerated(EnumType.STRING)
+	private SynchronisationStatus synchronisationStatus = NEVER_EXECUTED;
+
+	//Status of the last completed synchronisation
+	@Column(name="LAST_SYNC_STATUS")
+	@Enumerated(EnumType.STRING)
+	private SynchronisationStatus lastSynchronisationStatus = NEVER_EXECUTED;
 
 	public long getId() {
 		return id;
@@ -158,6 +170,22 @@ public class RemoteSynchronisation {
 
 	public void setServer(BugTracker server) {
 		this.server = server;
+	}
+
+	public SynchronisationStatus getSynchronisationStatus() {
+		return synchronisationStatus;
+	}
+
+	public void setSynchronisationStatus(SynchronisationStatus synchronisationStatus) {
+		this.synchronisationStatus = synchronisationStatus;
+	}
+
+	public SynchronisationStatus getLastSynchronisationStatus() {
+		return lastSynchronisationStatus;
+	}
+
+	public void setLastSynchronisationStatus(SynchronisationStatus lastSynchronisationStatus) {
+		this.lastSynchronisationStatus = lastSynchronisationStatus;
 	}
 
 	@Override

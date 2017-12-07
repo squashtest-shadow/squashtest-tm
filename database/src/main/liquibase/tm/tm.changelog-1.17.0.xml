@@ -163,6 +163,10 @@
 
       <column name="LAST_SYNC_DATE" type="DATETIME"/>
 
+      <column name="LAST_SYNC_STATUS" type="VARCHAR(20)"/>
+
+      <column name="SYNC_STATUS" type="VARCHAR(20)"/>
+
       <column name="REMOTE_SYNCHRONISATION_OPTIONS" type="CLOB"/>
 
     </createTable>

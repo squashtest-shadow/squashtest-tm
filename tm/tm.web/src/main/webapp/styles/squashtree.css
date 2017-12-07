@@ -73,6 +73,11 @@ li[rel="test-case"] > a > .jstree-icon{
 	background-image: url("../images/Icon_Tree_TestCase.png");  /** sprite-ref: sprites-icons; */
 }
 
+li[rel="folder"][sync-folder-type="TARGET"][sync-status="FAILURE"] > a > .jstree-icon{
+	background-image: url("../images/Sync_Folder_Failure.png"); /** sprite-ref: sprites-icons; */
+}
+
+
 @import url("testCaseTreeIcons.css");
 
 li[rel="campaign"] > a > .jstree-icon{
