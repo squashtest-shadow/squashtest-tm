@@ -21,5 +21,15 @@
 package org.squashtest.tm.domain.synchronisation;
 
 public enum SynchronisationStatus {
-	NEVER_EXECUTED,RUNNING,SUCCESS,FAILURE
+	NEVER_EXECUTED("NeverSync"),RUNNING("Running"),SUCCESS("Success"),FAILURE("Failure");
+
+	private String i18nKey;
+
+	SynchronisationStatus(String i18nKey) {
+		this.i18nKey = i18nKey;
+	}
+
+	public String getI18nKey() {
+		return i18nKey;
+	}
 }

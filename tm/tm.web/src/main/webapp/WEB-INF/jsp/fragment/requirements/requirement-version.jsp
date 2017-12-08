@@ -243,6 +243,13 @@ publish('reload.requirement.toolbar');
                 </div>
                 </c:if>
 
+          <c:if test="${not empty remoteSynchronisationStatus}">
+                <div class="display-table-row">
+                  <label for="remote-synchronisation-status"><f:message key="label.remoteSynchronisationStatus" /></label>
+                  <div class="display-table-cell" id="remote-synchronisation-status">${remoteSynchronisationStatus}</div>
+                </div>
+          </c:if>
+
 				<div class="display-table-row">
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
 					  <div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;

@@ -58,6 +58,8 @@ import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
+import org.squashtest.tm.domain.synchronisation.SynchronisationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
@@ -240,10 +242,26 @@ public class RequirementVersionModificationController {
 
 		model.addAttribute("milestoneConf", milestoneConf);
 
-		if (requirementVersion.getRequirement().isSynchronized()){
-			model.addAttribute("requirementURL", requirementVersion.getRequirement().getSyncExtender().getRemoteUrl());
-		}
+		addSynchronizedAttributes(model, requirementVersion, locale);
 
+	}
+
+	private void addSynchronizedAttributes(Model model, RequirementVersion requirementVersion, Locale locale) {
+		if (requirementVersion.getRequirement().isSynchronized()){
+			RequirementSyncExtender syncExtender = requirementVersion.getRequirement().getSyncExtender();
+			model.addAttribute("requirementURL", syncExtender.getRemoteUrl());
+			addSyncStatus(model, syncExtender, locale);
+		}
+	}
+
+	private void addSyncStatus(Model model, RequirementSyncExtender syncExtender, Locale locale) {
+		RemoteSynchronisation remoteSynchronisation = syncExtender.getRemoteSynchronisation();
+		if(remoteSynchronisation != null){
+			//we used the last sync status and not sync status because we don't want to show running status to end users
+			SynchronisationStatus status = remoteSynchronisation.getLastSynchronisationStatus();
+			String i18nStatus = i18nHelper.internationalize("label." + status.getI18nKey(), locale);
+			model.addAttribute("remoteSynchronisationStatus", i18nStatus);
+        }
 	}
 
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
