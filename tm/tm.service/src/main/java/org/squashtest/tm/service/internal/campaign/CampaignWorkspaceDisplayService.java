@@ -372,7 +372,7 @@ public class CampaignWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 
 	private Map<Long, String> getTestSuiteDescriptionList() {
 		Field<String> description = org.jooq.impl.DSL.coalesce(TCLN.DESCRIPTION, "");
-		return DSL.select(TS.ID, description)
+		return DSL.selectDistinct(TS.ID, description)
 			.from(TS)
 			.leftJoin(TSTPI).on(TS.ID.eq(TSTPI.SUITE_ID))
 			.leftJoin(ITPI).on(TSTPI.TPI_ID.eq(ITPI.ITEM_TEST_PLAN_ID))
