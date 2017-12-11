@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.search.advanced.searchinterfac
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -195,7 +196,11 @@ public abstract class SearchInterfaceDescription {
 
 			OptionBuilder optionBuilder = optionBuilder(locale);
 
-			for (JsonProject project : jsProjects) {
+			List<JsonProject> orderedProjects = jsProjects.stream()
+				.sorted(Comparator.comparing(JsonProject::getName))
+				.collect(Collectors.toList());
+
+			for (JsonProject project : orderedProjects) {
 				SearchInputPossibleValueModel projectOption = optionBuilder.label(project.getName())
 					.optionKey(String.valueOf(project.getId())).build();
 				projectField.addPossibleValue(projectOption);
