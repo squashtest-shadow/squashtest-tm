@@ -120,7 +120,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 								@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementEntityReference) {
 
-//		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = new String[0];
 
 		// #5585 : the case where elementId explicitly equals string literal "null" can and will happen

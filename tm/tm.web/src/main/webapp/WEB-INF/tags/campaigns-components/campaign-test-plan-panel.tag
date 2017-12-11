@@ -135,7 +135,7 @@
         <th class="no-user-select"
           data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
         <th class="no-user-select tp-th-filter tp-th-project-name"
-            data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+            data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs=TEST_CASE-{tc-id}">
           <f:message key="label.Location" />
         </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
@@ -149,7 +149,7 @@
           data-def="map=reference, sortable, link=${testCaseUrl}">
           <f:message key="label.Reference.short" />
         </th>
-        <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link-cookie=workspace-prefs={tc-id}">
+        <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link-cookie=workspace-prefs=TEST_CASE-{tc-id}">
           <f:message key="label.TestCase.short" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
