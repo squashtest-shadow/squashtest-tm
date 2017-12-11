@@ -229,4 +229,10 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.17.0-Issue-6967" author="jthebault">
+    <createIndex tableName="TEST_CASE_LIBRARY_NODE" indexName="tcln_name_idx">
+      <column name="NAME" />
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>

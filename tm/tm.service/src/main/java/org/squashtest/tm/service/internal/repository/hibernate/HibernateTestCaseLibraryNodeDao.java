@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
@@ -71,8 +74,23 @@ TestCaseLibraryNodeDao {
 		if (!paths.isEmpty()) {
 			// process the paths parameter : we don't want escaped '/' in there
 			List<String> effectiveParameters = unescapeSlashes(paths);
+			//
+			List<String> tclnNames = effectiveParameters.stream()
+				.map(PathUtils::splitPath)
+				.map(Arrays::asList)
+				//keeping only size > 1 ie more than just a project name
+				.filter(pathParts -> pathParts.size() > 1)
+				.map(pathParts -> pathParts.subList(1,pathParts.size()))
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+
+			if(tclnNames.isEmpty()){
+				return Collections.emptyList();
+			}
+
 			Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
 			query.setParameterList("paths", effectiveParameters);
+			query.setParameterList("tclnNames", tclnNames);
 			List<Object[]> result = query.list();
 
 			// now ensures that the results are returned in the correct order
@@ -114,8 +132,18 @@ TestCaseLibraryNodeDao {
 	@Override
 	public Long findNodeIdByPath(String path) {
 		String effectiveParameters = unescapeSlashes(path);
+
+		List<String> pathParts = Arrays.asList(PathUtils.splitPath(effectiveParameters));
+		//if size < 2 we have empty path or just a project name so return null
+		if(pathParts.size() < 2){
+			return null;
+		}
+
+		List<String> tclnNames = pathParts.subList(1, pathParts.size());
+
 		Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
 		query.setParameterList("paths", new String[] { effectiveParameters });
+		query.setParameterList("tclnNames", tclnNames);
 		List<Object[]> result = query.list();
 
 		if (result.isEmpty() || ! effectiveParameters.equals(result.get(0)[0])) {
