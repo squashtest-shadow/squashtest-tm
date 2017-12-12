@@ -125,7 +125,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
-	def "should find the ids of a path with an  slash in one folder name that wasn't escaped but we don't care"(){
+	def "should not find the ids of a path with an  slash in one folder name that wasn't escaped because now we care"(){
 
 		given :
 		def tclnpaths = [ "/Test Project-1/other folder/subother with slash / here"]
@@ -134,7 +134,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
-		res == [-252L]
+		res == [null]
 	}
 
 
@@ -157,7 +157,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 	def "should load nodes by their paths"(){
 
 		given :
-		def tclnpaths = [ "/Test Project-1/super 1", "/Test Project-1/other folder/subother with slash / here"]
+		def tclnpaths = [ "/Test Project-1/super 1", "/Test Project-1/other folder/subother with slash \\/ here"]
 
 		when :
 		def res = service.findNodesByPath(tclnpaths)
@@ -182,27 +182,27 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		res[1] == null
 		res.collect{ it?.id } == [-237L,null, -242L]
 	}
-	
+
 	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
 	def "should not find test case by paths"(){
 		given :
 		def paths  = ["/Test Project-1/super 1/sub1/sub 11","/Test Project-1/sub 11"]
-		
+
 		when  :
 		def res = service.findNodeIdsByPath(paths)
-		
+
 		then :
 		res.collect{ it } == [-242L,null]
 	}
-	
+
 	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
 	def "should not find test case by path"(){
 		given :
 		def path  = "/autre projet/larrynio"
-					
+
 		when  :
 		def res = service.findNodeIdByPath(path)
-						
+
 		then :
 		res == null;
 	}

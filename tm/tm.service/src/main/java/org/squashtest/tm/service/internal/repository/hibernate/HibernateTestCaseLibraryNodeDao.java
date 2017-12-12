@@ -20,23 +20,35 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.hibernate.Query;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.GroupConcatOrderByStep;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
+import javax.inject.Inject;
+
+import static org.jooq.impl.DSL.orderBy;
+import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.jooq.impl.DSL.groupConcat;
+import static org.jooq.impl.DSL.concat;
+
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
 public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements
 TestCaseLibraryNodeDao {
+
+	@Inject
+	private DSLContext DSL;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -71,53 +83,49 @@ TestCaseLibraryNodeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
+
 		if (!paths.isEmpty()) {
 			// process the paths parameter : we don't want escaped '/' in there
 			List<String> effectiveParameters = unescapeSlashes(paths);
 			//
-			List<String> tclnNames = effectiveParameters.stream()
-				.map(PathUtils::splitPath)
-				.map(Arrays::asList)
+			List<String> tclnNames = paths.stream()
+				.map(PathUtils::splitPath)//split path
+				.map(Arrays::asList)//into a stream of List<String>
 				//keeping only size > 1 ie more than just a project name
 				.filter(pathParts -> pathParts.size() > 1)
 				.map(pathParts -> pathParts.subList(1,pathParts.size()))
-				.flatMap(List::stream)
+				.flatMap(List::stream)//flatten the stream of List<String> to a simple stream of String
+				.map(this::unescapeSlashes)
 				.collect(Collectors.toList());
 
-			if(tclnNames.isEmpty()){
+			if(tclnNames.isEmpty()){//avoiding mysql crash with empty list...
 				return Collections.emptyList();
 			}
 
-			Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
-			query.setParameterList("paths", effectiveParameters);
-			query.setParameterList("tclnNames", tclnNames);
-			List<Object[]> result = query.list();
+			//now let's go for some SQL
+			//the basic idea here is to concat all paths for descendants witch have a name in terminal list
+			//and thus comparing theses paths with our list in having clause
+			org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode ancestor = TEST_CASE_LIBRARY_NODE.as("ancestor");
+			org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode descendant = TEST_CASE_LIBRARY_NODE.as("descendant");
+			AggregateFunction<String> groupConcatFunction = groupConcat(ancestor.NAME).orderBy(TCLN_RELATIONSHIP_CLOSURE.DEPTH.desc()).separator("/");
+			Field<String> concatPath = concat(concat("/",PROJECT.NAME),concat("/", groupConcatFunction));
 
-			// now ensures that the results are returned in the correct order
-			Long[] toReturn = new Long[effectiveParameters.size()];
+			Map<String, Long> idByPath = DSL.select(concatPath.as("path"), TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)
+				.from(TCLN_RELATIONSHIP_CLOSURE)
+				.innerJoin(ancestor).on(TCLN_RELATIONSHIP_CLOSURE.ANCESTOR_ID.eq(ancestor.TCLN_ID))
+				.innerJoin(PROJECT).on(ancestor.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+				.innerJoin(descendant).on(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID.eq(descendant.TCLN_ID))
+				.where(descendant.NAME.in(tclnNames))
+				.groupBy(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID, PROJECT.NAME)
+				.having(concatPath.in(effectiveParameters))
+				.fetch()
+				.stream()
+				.collect(Collectors.toMap(r -> r.get("path", String.class), r -> r.get(TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID)));
 
-			/*
-			 * There is one case where the database could return a path we haven't requested :
-			 * the DB is MySQL and the charset is case insensitive for select
-			 * (see http://dev.mysql.com/doc/refman/5.0/en/case-sensitivity.html)
-			 *
-			 * This leads to problem because our system is always case sensitive : MySQL could
-			 * return paths it considers valid (give or take a couple of uppercased letters)
-			 * that weren't queried for.
-			 *
-			 * That's why we test again that the result from the DB actually has a positive index
-			 * before assigning it to the result.
-			 *
-			 */
-			for (Object[] res : result) {
-				String path = (String) res[0];
-				int idx = effectiveParameters.indexOf(path);
-				if (idx>-1) {
-					toReturn[idx] = (Long) res[1];
-				}
-			}
-
-			return Arrays.asList(toReturn);
+			//this should preserve order of initial list
+			return effectiveParameters.stream()
+				.map(idByPath::get)
+				.collect(Collectors.toList());
 		} else {
 			return Collections.emptyList();
 		}
@@ -131,26 +139,7 @@ TestCaseLibraryNodeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Long findNodeIdByPath(String path) {
-		String effectiveParameters = unescapeSlashes(path);
-
-		List<String> pathParts = Arrays.asList(PathUtils.splitPath(effectiveParameters));
-		//if size < 2 we have empty path or just a project name so return null
-		if(pathParts.size() < 2){
-			return null;
-		}
-
-		List<String> tclnNames = pathParts.subList(1, pathParts.size());
-
-		Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
-		query.setParameterList("paths", new String[] { effectiveParameters });
-		query.setParameterList("tclnNames", tclnNames);
-		List<Object[]> result = query.list();
-
-		if (result.isEmpty() || ! effectiveParameters.equals(result.get(0)[0])) {
-			return null;
-		}
-
-		return (Long) result.get(0)[1];
+		return findNodeIdsByPath(Arrays.asList(path)).get(0);
 
 	}
 
