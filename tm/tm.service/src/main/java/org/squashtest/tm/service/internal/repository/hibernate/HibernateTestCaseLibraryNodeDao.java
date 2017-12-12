@@ -78,11 +78,13 @@ TestCaseLibraryNodeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
-
+		//we will make a select with jooq, flushing session as hibernate would do if the request was made in hql
+		entityManager.flush();
 		if (!paths.isEmpty()) {
 			// process the paths parameter : we don't want escaped '/' in there
 			List<String> effectiveParameters = unescapeSlashes(paths);
-			//
+
+			//get all the last node names
 			List<String> tclnNames = paths.stream()
 				.map(PathUtils::splitPath)//split path
 				.map(Arrays::asList)//into a stream of List<String>
@@ -98,7 +100,7 @@ TestCaseLibraryNodeDao {
 			}
 
 			//now let's go for some SQL
-			//the basic idea here is to concat all paths for descendants witch have a name in terminal list
+			//the basic idea here is to concat all paths for descendants witch have a name in terminal list and only them
 			//and thus comparing theses paths with our list in having clause
 			org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode ancestor = TEST_CASE_LIBRARY_NODE.as("ancestor");
 			org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode descendant = TEST_CASE_LIBRARY_NODE.as("descendant");
