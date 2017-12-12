@@ -20,16 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.hibernate.Query;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.GroupConcatOrderByStep;
-import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -37,11 +31,12 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.jooq.impl.DSL.orderBy;
-import static org.squashtest.tm.jooq.domain.Tables.*;
-import static org.jooq.impl.DSL.groupConcat;
 import static org.jooq.impl.DSL.concat;
+import static org.jooq.impl.DSL.groupConcat;
+import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
 public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements
@@ -93,8 +88,8 @@ TestCaseLibraryNodeDao {
 				.map(Arrays::asList)//into a stream of List<String>
 				//keeping only size > 1 ie more than just a project name
 				.filter(pathParts -> pathParts.size() > 1)
-				.map(pathParts -> pathParts.subList(1,pathParts.size()))
-				.flatMap(List::stream)//flatten the stream of List<String> to a simple stream of String
+				//want to keep only last element in names, ie the name of the last node in path
+				.map(pathParts -> pathParts.get(pathParts.size()-1))
 				.map(this::unescapeSlashes)
 				.collect(Collectors.toList());
 

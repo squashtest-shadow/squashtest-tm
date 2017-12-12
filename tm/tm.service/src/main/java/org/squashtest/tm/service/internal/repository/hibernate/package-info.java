@@ -827,13 +827,6 @@
 	+ "group by edge.descendantId, p.id"),
 	@NamedQuery(name = "TestCasePathEdge.findSortedParentIds", query = "select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
 	@NamedQuery(name = "TestCasePathEdge.findSortedParentNames", query = "select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
-	@NamedQuery(name = "TestCasePathEdge.findNodeIdsByPath", query = "select distinct  concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) as cp, clos.descendantId   "
-	+ " from TestCasePathEdge clos, TestCaseLibraryNode tcln"
-	+ " join tcln.project p"
-	+ " where clos.ancestorId = tcln.id and tcln.name in :tclnNames"
-	+ " group by  clos.descendantId, p.name"
-	+ " having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
-
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
 	@NamedQuery(name = "milestone.countBoundObject", query = "select mil.testCases.size + mil.requirementVersions.size + mil.campaigns.size from Milestone mil where mil.id = :milestoneId"),
