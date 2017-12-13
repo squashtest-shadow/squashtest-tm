@@ -92,7 +92,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void updateTestStepExpectedResult(long testStepId, String newExpectedResult);
 
 	@Deprecated
-	void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition);
+	@PreventConcurrent(entityType=TestCase.class)
+	void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition);
 
 	/**
 	 * Will move a list of steps to a new position.

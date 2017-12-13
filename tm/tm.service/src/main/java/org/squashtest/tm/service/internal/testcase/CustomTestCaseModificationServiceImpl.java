@@ -272,7 +272,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@Deprecated
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeTestStepPosition(long testCaseId, long testStepId, int newStepPosition) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		int index = findTestStepInTestCase(testCase, testStepId);
 
