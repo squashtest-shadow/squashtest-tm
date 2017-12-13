@@ -95,7 +95,8 @@ require( ["common"], function(){
 				$(td).html(encodedSummary);
 
 				td=$(row).find("td:eq(7)");
-				var linkTextRequirement = $("<div/>").text(data["requirement-reference"]).html();
+				var ref = data["requirement-reference"] || "-";
+				var linkTextRequirement = $("<div/>").text(ref).html();
 				var linkRequirement = $('<a></a>');
 				linkRequirement.attr('href', "${pageContext.servletContext.contextPath}"+ "/requirement-versions/" + data["requirement-id"] + "/info/");
 				linkRequirement.text(linkTextRequirement);
