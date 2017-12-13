@@ -35,7 +35,7 @@
 <f:message var="campTitle" 	key="workspace.campaign.button.label"/>
 <f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
 <f:message var="repoTitle" 	key="workspace.report.button.label"/>
-<f:message var="customReportTitle" 	key="workspace.custom-report.title"/>
+<f:message var="customReportTitle" 	key="workspace.custom-report.title.long"/>
 
 <c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
 <c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
@@ -50,7 +50,6 @@
 	<div id="nav_logo">
 		<div style="margin-bottom: 40px;">
 			<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>
-			<%--<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>--%>
 			<a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace/"			title="${customReportTitle}"></a>
 			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
 			<ul class="not-displayed width:130px;" style="max-height: 12.8em;">
