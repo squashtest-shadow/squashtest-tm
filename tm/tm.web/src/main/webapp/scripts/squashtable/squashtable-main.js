@@ -771,17 +771,17 @@ define(["jquery",
 
 			// second : what url we navigate to when clicked.
 			var url = _resolvePlaceholders.call(self, attachConf.url, data);
-			
+
 			// design the link and voila !
 			var link = '<a href="' + url + '" class="' + linkClass + '"';
-			
+
 			if (attachConf.target !== undefined){
 				link = link  + "target="+ attachConf.target;
 			}
 			link = link + '></a>';
-			
 
-		
+
+
 
 			$(cell).html(link);
 		});
@@ -1098,6 +1098,8 @@ define(["jquery",
 
 		if (conf.delegate !== undefined) { // case 1 : delegate dialog
 			deleteFunction = function () {
+				//issue 7068 and related we should not remove previously selected rows
+				self.deselectRows();
 				var row = this.parentNode.parentNode;
 				var jqRow = $(row);
 				jqRow.addClass('ui-state-row-selected');
@@ -1126,6 +1128,8 @@ define(["jquery",
 
 		} else { //case 2 : define a dialog
 			deleteFunction = function () {
+				//issue 7068 and related we should not remove previously selected rows
+				self.deselectRows();
 				var row = this.parentNode.parentNode;
 				var jqRow = $(row);
 				jqRow.addClass('ui-state-row-selected');
