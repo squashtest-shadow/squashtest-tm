@@ -21,19 +21,19 @@
 
 /*
  * Handles the page bugtracker-info.jsp
- */ 
+ */
 
-define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.basicwidgets', 'jquery.squash.formdialog'], 
+define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.basicwidgets', 'jquery.squash.formdialog'],
 		function(module, $, Backbone, CredentialManagerView, basic){
-	
+
 	var conf = module.config();
-	
+
 
 	$(function(){
 
-		// ************** basic inputs ************** 
+		// ************** basic inputs **************
 		basic.init();
-		
+
 		// the silly checkbox
 		$("#bugtracker-iframeFriendly-checkbx").on('change', function(){
 			$.ajax({
@@ -46,8 +46,8 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 			});
 		});
 
-		
-		// **************  deletion button ************** 
+
+		// **************  deletion button **************
 	  	$("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
 			var url = conf.btUrl;
 
@@ -62,24 +62,25 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 	  	$("#delete-bugtracker-button").on('click', function() {
 			var popup = $("#delete-bugtracker-popup");
 			popup.confirmDialog('open');
-		});		
-		
-	  	
+		});
+
+
 	  	// **************  rename dialog **************
 		var renameDialog = $("#rename-bugtracker-dialog");
 		renameDialog.formDialog();
-		
-		  
+
+
 		renameDialog.on('formdialogopen', function(){
 			var name = $.trim($('#bugtracker-name-header').text());
 			$("#rename-bugtracker-input").val($.trim(name));
 		});
-		
-		  
+
+
 		renameDialog.on('formdialogconfirm', function(){
 			var params = { newName : $("#rename-bugtracker-input").val() };
+			var url = conf.btUrl;
 			$.ajax({
-			  url : "${ bugtrackerUrl }",
+			  url : url,
 			  type : 'POST',
 			  dataType : 'json',
 			  data : params
@@ -88,30 +89,30 @@ define(['module', 'jquery', 'backbone', './bugtracker-info-backbone', 'squash.ba
 				renameDialog.formDialog('close');
 		    });
 		  });
-		
-		  
+
+
 		 renameDialog.on('formdialogcancel', function(){
 		 	renameDialog.formDialog('close');
 		 });
-		
-		  
+
+
 		 $("#rename-bugtracker-button").on('click', function(){
 			 renameDialog.formDialog('open');
 		 });
-		 
-		 
+
+
 		 // *************** authentication **************
 		 var authconfModel = new Backbone.Model(conf.authConf);
-		 
-		 // we don't update the data using backbone model .save() and to reflect that 
+
+		 // we don't update the data using backbone model .save() and to reflect that
 		 // we set the url separetely from the model
 		 new CredentialManagerView({
 			 model : authconfModel,
 			 btUrl : conf.btUrl
 		 })
-		 
+
 	});
 
-	
-	
+
+
 });
