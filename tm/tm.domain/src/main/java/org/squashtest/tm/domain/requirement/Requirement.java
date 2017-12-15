@@ -546,6 +546,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		this.syncExtender = syncExtender;
 	}
 
+	public void removeSyncExtender() {
+		this.mode = ManagementMode.NATIVE;
+		this.syncExtender = null;
+	}
+
 	public boolean isSynchronized() {
 		return this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null;
 	}

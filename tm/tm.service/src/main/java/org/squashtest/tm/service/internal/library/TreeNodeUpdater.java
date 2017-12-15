@@ -260,7 +260,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	private void stripSyncExtender(Requirement req) {
 		if (req.isSynchronized()) {
 			RequirementSyncExtender extender = req.getSyncExtender();
-			req.setSyncExtender(null);
+			req.removeSyncExtender();
 			syncreqDao.delete(extender);
 		}
 	}
