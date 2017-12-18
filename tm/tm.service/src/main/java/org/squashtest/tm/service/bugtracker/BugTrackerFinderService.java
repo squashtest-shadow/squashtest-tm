@@ -33,38 +33,44 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 public interface BugTrackerFinderService {
 
 	/**
-	 * 
+	 *
 	 * @return all bugtrackers the user has read access to
 	 */
 	List<BugTracker> findAll();
-	
+
 	/**
-	 * 
+	 *
+	 * @return all bugtrackers the user has read access to
+	 */
+	List<BugTracker> findByKind(String kind);
+
+	/**
+	 *
 	 * @param bugTrackerId
 	 * @return the bugTracker of the given id
 	 */
 	BugTracker findById(long bugTrackerId);
 	/**
-	 * 
+	 *
 	 * @param pageable
 	 * @return sorted list of bugtrackers
 	 */
 	Page<BugTracker> findSortedBugtrackers(Pageable pageable);
-	
+
 	/**
-	 * 
+	 *
 	 * @return a list of bugtracker kinds
 	 */
 	Set<String> findBugTrackerKinds();
-	
+
 	/**
 	 * @param bugtrackerId
 	 * @return the name of the bugtracker
 	 */
 	String findBugtrackerName(Long bugtrackerId);
-	
+
 	/**
-	 * 
+	 *
 	 * @param projectIds
 	 * @return a list of distinct BugTrackers concerned by the given projects;
 	 */

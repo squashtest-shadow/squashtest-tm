@@ -43,6 +43,7 @@ public interface BugTrackerDao extends JpaRepository<BugTracker, Long> {
 	@Override
 	Page<BugTracker> findAll(Pageable pageable);
 
+	List<BugTracker> findByKind(String kind);
 
 	/**
 	 *

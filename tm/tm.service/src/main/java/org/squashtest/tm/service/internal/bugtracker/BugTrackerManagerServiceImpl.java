@@ -87,7 +87,11 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<BugTracker> findAll() {
 		return bugTrackerDao.findAll();
+	}
 
+	@Override
+	public List<BugTracker> findByKind(String kind) {
+		return bugTrackerDao.findByKind(kind);
 	}
 
 	@Override
