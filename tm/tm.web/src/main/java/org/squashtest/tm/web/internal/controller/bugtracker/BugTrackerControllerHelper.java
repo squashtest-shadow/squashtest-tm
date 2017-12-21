@@ -311,6 +311,7 @@ public final class BugTrackerControllerHelper {
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
 			String reqRef = requirementVersion.getReference();
 			String reqId = String.valueOf(requirementVersion.getRequirement().getId());
+			String reqVersionId = String.valueOf(requirementVersion.getId());
 
 			result.put("issue-url", strUrl);
 			result.put("issue-id", issue.getId());
@@ -323,6 +324,7 @@ public final class BugTrackerControllerHelper {
 			result.put("BtProject", issue.getProject().getName());
 			result.put("requirement-reference", reqRef);
 			result.put("requirement-id", reqId);
+			result.put("current-version-id", reqVersionId);
 
 			return result;
 		}

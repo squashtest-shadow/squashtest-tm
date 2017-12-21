@@ -98,7 +98,7 @@ require( ["common"], function(){
 				var ref = data["requirement-reference"] || "-";
 				var linkTextRequirement = $("<div/>").text(ref).html();
 				var linkRequirement = $('<a></a>');
-				linkRequirement.attr('href', "${pageContext.servletContext.contextPath}"+ "/requirement-versions/" + data["requirement-id"] + "/info/");
+				linkRequirement.attr('href', "${pageContext.servletContext.contextPath}"+ "/requirement-versions/" + data["current-version-id"] + "/info/");
 				linkRequirement.text(linkTextRequirement);
 				$(td).html(linkRequirement);
 
