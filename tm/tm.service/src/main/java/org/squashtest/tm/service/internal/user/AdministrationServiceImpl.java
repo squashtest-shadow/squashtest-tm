@@ -22,10 +22,12 @@ package org.squashtest.tm.service.internal.user;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -374,6 +376,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return statistics;
 	}
 
+	@Override
+	public void saveAdministrationStatistics() {
+
+		if (shouldSaveNewStatistics()) {
+			adminDao.createNewStatistics();
+		}
+
+	}
+
 	/**
 	 * @see AdministrationService#deassociateTeams(long, List)
 	 */
@@ -532,4 +543,19 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 
 
+	private boolean shouldSaveNewStatistics(){
+		AdministrationStatistics lastRecodedStatistics = adminDao.findLastSavedStatistics();
+
+		if (lastRecodedStatistics != null) {
+			LocalDate lastSavedOn = lastRecodedStatistics.getSavedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long weeksBetween = ChronoUnit.WEEKS.between(lastSavedOn, LocalDate.now());
+			// if more than one week, should save new statistics.
+			return weeksBetween >= 1L;
+		} else {
+			return true;
+		}
+
+
+
+	}
 }

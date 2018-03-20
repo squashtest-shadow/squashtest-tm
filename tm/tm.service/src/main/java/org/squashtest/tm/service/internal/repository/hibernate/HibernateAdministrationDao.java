@@ -28,8 +28,10 @@ import org.squashtest.tm.service.internal.repository.AdministrationDao;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 
 /**
@@ -54,6 +56,21 @@ public class HibernateAdministrationDao implements AdministrationDao {
 	private static final String URL_SPLIT_SEPARATOR = "/";
 	private static final String DATABASE_NAME_EMPTY = "";
 
+	@Override
+	public AdministrationStatistics findLastSavedStatistics() {
+
+		Query query = entityManager.createNamedQuery("administration.findAllAdministrationStatistics");
+		return (AdministrationStatistics) query.setMaxResults(1).getResultList().stream().findFirst().orElse(null);
+
+	}
+
+	@Override
+	public AdministrationStatistics createNewStatistics() {
+		AdministrationStatistics statistics = findAdministrationStatistics();
+		statistics.setSavedDate(new Date());
+		entityManager.persist(statistics);
+		return statistics;
+	}
 
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {

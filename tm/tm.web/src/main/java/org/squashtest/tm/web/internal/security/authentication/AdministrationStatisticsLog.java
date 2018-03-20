@@ -18,31 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.security.authentication;
 
-import org.squashtest.tm.domain.AdministrationStatistics;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.user.AdministrationService;
 
-public interface AdministrationDao {
-	/**
-	 * will count, regardless of any right,  all projects, users, requirement, test-cases, campaigns, iterations, executions, and return them in the {@linkplain AdministrationStatistics} bean.
-	 *
-	 * @return a filled {@link AdministrationStatistics} bean
-	 */
-	AdministrationStatistics findAdministrationStatistics();
-
-	/**
-	 * Find last saved statistics administration statistics.
-	 *
-	 * @return a filled {@link AdministrationStatistics} bean
-	 */
-	AdministrationStatistics findLastSavedStatistics();
+import javax.inject.Inject;
 
 
-	/**
-	 * Create new statistics administration statistics.
-	 *
-	 * @return the administration statistics
-	 */
-	AdministrationStatistics createNewStatistics();
+@Component
+public class AdministrationStatisticsLog implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 
+	@Inject
+	private AdministrationService administrationService;
+
+	@Override
+	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent interactiveAuthenticationSuccessEvent) {
+		administrationService.saveAdministrationStatistics();
+	}
 }

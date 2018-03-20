@@ -54,6 +54,8 @@ public interface AdministrationService extends UserManagerService {
 	 */
 	AdministrationStatistics findAdministrationStatistics();
 
+	void saveAdministrationStatistics();
+
 	// TODO use a project finder where this method is used
 	List<Project> findAllProjects();
 
