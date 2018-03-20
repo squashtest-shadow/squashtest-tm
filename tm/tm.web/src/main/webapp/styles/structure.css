@@ -1462,6 +1462,10 @@ div.information-panel p {
 	background-image :url(../images/Button_Log_small.png);
 }
 
+.admin-statistics-icon-small{
+	background-image :url(../images/Button_Statistics_small.png);
+}
+
 #admin-link-pane  span.admin-section-label {
 	position:absolute;
 	z-index:5;

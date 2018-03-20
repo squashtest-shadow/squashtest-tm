@@ -201,6 +201,8 @@ requirejs.config({
         "jqplot-legend": "lib/jqplot/plugins/jqplot.enhancedLegendRenderer.min",
         // "jqplot-point-labels" : "lib/jqplot/plugins/jqplot.pointLabels",
         "jqplot-point-labels": "lib/jqplot/plugins/jqplot.pointLabels.min",
+				//"jqplot-cursor": "lib/jqplot/plugins/jqplot.cursor.min",
+				"jqplot-cursor": "lib/jqplot/plugins/jqplot.cursor",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
         "moment": "lib/momentjs/moment-with-locales.min",
         "is": "lib/is/is.min",
@@ -386,7 +388,8 @@ requirejs.config({
         "jqplot-bar": ["jquery", "jqplot-core"],
         "jqplot-legend": ["jquery", "jqplot-core"],
         "jqplot-point-labels": ["jquery", "jqplot-core"],
-        "jqplot-canvas-fonts": ["jquery", "jqplot-core"],
+				"jqplot-cursor": ["jquery", "jqplot-core"],
+				"jqplot-canvas-fonts": ["jquery", "jqplot-core"],
         "jqplot-canvas-label": ["jquery", "jqplot-core", "jqplot-canvas-fonts"],
         "jqplot-canvas-ticks": ["jquery", "jqplot-core", "jqplot-canvas-fonts"],
         "jqplot-highlight": {

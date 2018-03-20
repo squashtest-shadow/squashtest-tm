@@ -51,7 +51,7 @@
 				"jquery.squash.oneshotdialog", "jquery.squash.squashbutton", "jquery.squash.jeditable",
 				"jquery.cookie", "jquery.tagit", "jquery.switchButton",
 				"jqplot-core", "jqplot-pie", "jqplot-donut", "jqplot-dates", "jqplot-category", "jqplot-bar", "jqplot-legend",
-				"jqplot-point-labels", "jqplot-canvas-fonts", "jqplot-canvas-label", "jqplot-canvas-ticks", "jqplot-highlight",
+				"jqplot-point-labels", "jqplot-canvas-fonts", "jqplot-canvas-label", "jqplot-canvas-ticks", "jqplot-highlight","jqplot-cursor",
 				"squash.KeyEventListener",
 				// AMD
 				"domReady", "jquery", "squash.cssloader", "squash.translator", "squash.resizer",

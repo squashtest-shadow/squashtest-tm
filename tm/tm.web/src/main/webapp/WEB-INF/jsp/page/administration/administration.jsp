@@ -39,6 +39,8 @@
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
 <c:url var="logfileUrl"               value="/administration/log-file" />
+<c:url var="statisticsAnalysis"       value="/administration/statistics-analysis" />
+
 
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">
@@ -193,10 +195,16 @@
               <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span>
             </a>
 
+             <a href="${ statisticalAnalysis }" class="unstyledLink ">
+               <span id="statistical-analysis-admin" class="admin-section-icon admin-statistics-icon-small"></span>
+               <span class="admin-section-label"><f:message key="label.StatisticalAnalysis" /></span>
+             </a>
+
             <a href="${ logfileUrl }" class="unstyledLink ">
               <span id="logfile-admin" class="admin-section-icon admin-logfile-icon-small"></span>
               <span class="admin-section-label"><f:message key="label.DownloadLogfile" /></span>
             </a>
+
           </sec:authorize>
         </div>
       </div>
