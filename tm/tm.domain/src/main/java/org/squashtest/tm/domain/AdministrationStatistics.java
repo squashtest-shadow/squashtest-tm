@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -39,18 +41,44 @@ import java.util.Date;
  * @author mpagnon
  *
  * **/
+@Entity
+@Table(name = "ADMINISTRATION_STATISTICS")
 public class AdministrationStatistics {
-	private long projectsNumber;
-	private long usersNumber;
-	private long requirementsNumber;
-	private long testCasesNumber;
-	private long campaignsNumber;
-	private long iterationsNumber;
-	private long executionsNumber;
+	@Id
+	@Column(name = "STATISTICS_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "administration_statistics_statistics_id_seq")
+	@SequenceGenerator(name = "administration_statistics_statistics_id_seq", sequenceName = "administration_statistics_statistics_id_seq", allocationSize = 1)
+	private Long id;
+
+	private Long projectsNumber;
+
+	private Long usersNumber;
+
+	private Long requirementsNumber;
+
+	private Long testCasesNumber;
+
+	private Long campaignsNumber;
+
+	private Long iterationsNumber;
+
+	private Long executionsNumber;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date requirementIndexingDate;
+
+	@Column(name = "TEST_CASE_INDEXING_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date testcaseIndexingDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date campaignIndexingDate;
+
 	private BigInteger databaseSize;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
+	private Date savedDate;
 
 	/**
 	 * Will read the <code>Object[]</code> param and fill it's properties with the following "index/property" mapping :
@@ -64,7 +92,7 @@ public class AdministrationStatistics {
 	 * <li>6/executionsNumber</li>
 	 * </ul>
 	 *
-	 * @param result
+	 * @param resultParam
 	 */
 	public AdministrationStatistics(Object[] resultParam, BigInteger databaseSize) {
 		Object[] result = resultParam.clone();
@@ -76,6 +104,17 @@ public class AdministrationStatistics {
 		this.iterationsNumber = (Long) result[5];
 		this.executionsNumber = (Long) result[6];
 		this.databaseSize = databaseSize;
+	}
+
+	public AdministrationStatistics() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public long getProjectsNumber() {
@@ -164,5 +203,41 @@ public class AdministrationStatistics {
 
 	public void setDatabaseSize(BigInteger databaseSize) {
 		this.databaseSize = databaseSize;
+	}
+
+	public Date getSavedDate() {
+		return savedDate;
+	}
+
+	public void setSavedDate(Date savedDate) {
+		this.savedDate = savedDate;
+	}
+
+	public void setProjectsNumber(Long projectsNumber) {
+		this.projectsNumber = projectsNumber;
+	}
+
+	public void setUsersNumber(Long usersNumber) {
+		this.usersNumber = usersNumber;
+	}
+
+	public void setRequirementsNumber(Long requirementsNumber) {
+		this.requirementsNumber = requirementsNumber;
+	}
+
+	public void setTestCasesNumber(Long testCasesNumber) {
+		this.testCasesNumber = testCasesNumber;
+	}
+
+	public void setCampaignsNumber(Long campaignsNumber) {
+		this.campaignsNumber = campaignsNumber;
+	}
+
+	public void setIterationsNumber(Long iterationsNumber) {
+		this.iterationsNumber = iterationsNumber;
+	}
+
+	public void setExecutionsNumber(Long executionsNumber) {
+		this.executionsNumber = executionsNumber;
 	}
 }
