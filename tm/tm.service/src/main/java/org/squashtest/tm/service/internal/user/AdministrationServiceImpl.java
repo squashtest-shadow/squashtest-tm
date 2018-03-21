@@ -377,6 +377,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
+	public List<AdministrationStatistics> findAllAdministrationStatistics() {
+		return adminDao.findAll();
+	}
+
+	@Override
 	public void saveAdministrationStatistics() {
 
 		if (shouldSaveNewStatistics()) {

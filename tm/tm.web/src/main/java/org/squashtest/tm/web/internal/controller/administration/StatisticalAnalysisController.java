@@ -26,6 +26,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+
+import javax.inject.Inject;
 
 @Controller
 @RequestMapping("/administration/statistical-analysis")
@@ -33,11 +37,13 @@ public class StatisticalAnalysisController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalAnalysisController.class);
 
+	@Inject
+	AdministrationService administrationService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView administration() {
 		ModelAndView mav = new ModelAndView("page/administration/statistical-analysis");
-
-
+		mav.addObject("statsHistory", JsonHelper.serialize(administrationService.findAllAdministrationStatistics()));
 		return mav;
 	}
 

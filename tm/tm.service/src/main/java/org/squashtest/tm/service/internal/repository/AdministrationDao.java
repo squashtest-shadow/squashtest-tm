@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.AdministrationStatistics;
 
+import java.util.List;
+
 public interface AdministrationDao {
 	/**
 	 * will count, regardless of any right,  all projects, users, requirement, test-cases, campaigns, iterations, executions, and return them in the {@linkplain AdministrationStatistics} bean.
@@ -29,6 +31,8 @@ public interface AdministrationDao {
 	 * @return a filled {@link AdministrationStatistics} bean
 	 */
 	AdministrationStatistics findAdministrationStatistics();
+
+	List<AdministrationStatistics> findAll();
 
 	/**
 	 * Find last saved statistics administration statistics.

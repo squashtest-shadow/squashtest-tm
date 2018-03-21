@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -70,6 +71,12 @@ public class HibernateAdministrationDao implements AdministrationDao {
 		statistics.setSavedDate(new Date());
 		entityManager.persist(statistics);
 		return statistics;
+	}
+
+	@Override
+	public List<AdministrationStatistics> findAll() {
+		Query query = entityManager.createNamedQuery("administration.findAllAdministrationStatistics");
+		return query.getResultList();
 	}
 
 	@Override

@@ -27,6 +27,8 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+
 
 <s:url var="administrationUrl" value="/administration"/>
 
@@ -36,12 +38,19 @@
 <f:message var="addClientTitle" key="label.addClientTitle"/>
 <f:message var="deleteClientTitle" key="label.deleteClientTitle"/>
 
-<layout:info-page-layout titleKey="label.StatisticsAnalysis" isSubPaged="true" main="advanced-config-page">
+<layout:info-page-layout titleKey="label.StatisticalAnalysis" isSubPaged="true" main="advanced-config-page">
   <jsp:attribute name="head">
   <script type="text/javascript">
     squashtm = squashtm || {};
     squashtm.appRoot = '<c:url value="/" />';
+    squashtm.statisticalAnalysis = {
+      data: {
+        statsHistory : ${statsHistory}
+      }
+    };
   </script>
+    <script src="<c:url value='/scripts/statistical-analysis.js' />"></script>
+
   <comp:sq-css name="squash.grey.css"/>
   </jsp:attribute>
 
@@ -74,6 +83,7 @@
       </div>
 
       <div class="tg-body">
+        <div id="chart-display-area" style="height: 500px;background-color:white" />
       </div>
 
 

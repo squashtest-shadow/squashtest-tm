@@ -39,7 +39,7 @@
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
 <c:url var="logfileUrl"               value="/administration/log-file" />
-<c:url var="statisticsAnalysis"       value="/administration/statistics-analysis" />
+<c:url var="statisticalAnalysis"       value="/administration/statistical-analysis" />
 
 
 <layout:info-page-layout titleKey="label.administration">
