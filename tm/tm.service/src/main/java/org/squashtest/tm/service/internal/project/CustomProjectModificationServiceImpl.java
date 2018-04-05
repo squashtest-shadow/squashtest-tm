@@ -104,4 +104,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return manageableProjects;
 	}
 
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	public List<Project> findAllOrderedByName() {
+		return projectDao.findAllByOrderByName();
+	}
+
+
 }

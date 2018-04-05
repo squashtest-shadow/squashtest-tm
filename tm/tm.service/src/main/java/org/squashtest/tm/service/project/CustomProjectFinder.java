@@ -40,4 +40,6 @@ public interface CustomProjectFinder {
 	List<Project> findAllReadable();
 
 	List<GenericProject> findAllICanManage();
+
+	List<Project> findAllOrderedByName();
 }
