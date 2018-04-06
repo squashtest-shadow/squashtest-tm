@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.16.0.IT6-SNAPSHOT</version>
+    <version>1.16.2.RC2-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
@@ -269,7 +269,7 @@
       </plugin>
 
       <plugin>
-        <!--  disabling surefire inherited from parent, because it should not run tests : 
+        <!--  disabling surefire inherited from parent, because it should not run tests :
       		that's the job of maven-failsafe-plugin
       	 -->
         <groupId>org.apache.maven.plugins</groupId>
