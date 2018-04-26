@@ -61,7 +61,8 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		this.features = features;
 	}
 
-	private static class ManagerDelegator implements InvocationHandler {
+	private final static class ManagerDelegator implements InvocationHandler {
+
 		private final SquashUserDetailsManagerProxyFactory context;
 
 		private ManagerDelegator(SquashUserDetailsManagerProxyFactory context) {
@@ -75,11 +76,15 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
+				
 				return method.invoke(context.getCurrentManager(), args);
+
 			} catch (InvocationTargetException e) {
 				throw e.getCause();
 			}
 		}
+		
+		
 	}
 
 	/**

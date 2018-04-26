@@ -18,7 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.project;
+package org.squashtest.tm.service.internal.project
+
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.exception.project.LockedParameterException
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 
 import javax.persistence.EntityManager;
 
@@ -50,29 +58,40 @@ import spock.lang.Specification
  *
  */
 class CustomGenericProjectManagerImplTest extends Specification {
+
 	CustomGenericProjectManagerImpl manager = new CustomGenericProjectManagerImpl()
+
 	EntityManager em = Mock()
 	Session session = Mock()
-	ObjectIdentityService objectIdentityService = Mock()
+
 	GenericProjectDao genericProjectDao = Mock()
+	ProjectDao projectDao = Mock()
+	ProjectTemplateDao templateDao = Mock()
+	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
+
+	ObjectIdentityService objectIdentityService = Mock()
 	InfoListFinderService infoListService = Mock()
 	ProjectsPermissionManagementService permissionsManager = Mock()
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	TestAutomationProjectManagerService taProjectService = Mock()
-	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
 
 	def setup() {
 		manager.em = em
 		em.unwrap(_) >> session
-		manager.objectIdentityService = Mock(ObjectIdentityService)
+
 		manager.genericProjectDao = genericProjectDao
+		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
+		manager.templateDao = templateDao
+		manager.projectDao = projectDao
+
+		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.infoListService = infoListService
 		manager.permissionsManager = permissionsManager
 		manager.customFieldBindingModificationService = customFieldBindingModificationService
 		manager.permissionEvaluationService = permissionEvaluationService
 		manager.taProjectService = taProjectService
-		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
+
 	}
 
 	def "should not persist project with name in use"() {
@@ -108,7 +127,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should not change project's name to name in use"() {
 		given:
 		Project project = new Project()
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NAME CLASH") >> 1L
@@ -123,7 +142,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should change a project's name to its own name"() {
 		given:
 		Project project = new Project(name: "HASHTAG NO NAME CLASH")
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 
 		and:
 		genericProjectDao.countByName("HASHTAG NO NAME CLASH") >> 1L
@@ -139,7 +158,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		given:
 		Project project = new Project()
 		CustomReportLibrary crl = new CustomReportLibrary()
-		genericProjectDao.findById(10L) >> project
+		genericProjectDao.findOne(10L) >> project
 		project.getCustomReportLibrary() >> crl
 		customReportLibraryNodeDao.findNodeFromEntity(_) >> new CustomReportLibraryNode()
 
@@ -152,14 +171,18 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 		notThrown NameAlreadyInUseException
 	}
-	
-	def "should add projet and copy all settings from template except milestones"(){
+
+	def "should add projet and copy all settings from template except milestones"() {
+
 		given: "a template project"
+
 		ProjectTemplate template = Mock()
 		Project project = Mock()
+
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -176,12 +199,14 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		binding.getBugtracker() >> bugtracker
 
 		and: "a project"
+
 		project.getId()>> 2L
 		project.getClass()>> Project.class
 		project.getTestAutomationServer() >> testAutomationServer
-		
-		
+
+
 		and:"a conf object"
+
 		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
 		params.setCopyPermissions(true)
 		params.setCopyCUF(true)
@@ -189,11 +214,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(true)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(true)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
+
 		manager.synchronizeGenericProject(project, template, params)
 
 		then:
+
 		1* permissionsManager.copyAssignedUsers(project,template)
 		1* project.setBugtrackerBinding(_)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
@@ -201,15 +231,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		1* project.setAllowTcModifDuringExec(_)
 	}
-	
-	def "should add projet and copy all settings but custom fields binging from template"(){
+
+	def "should add projet and copy all settings but custom fields binding from template"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		TestAutomationProject automationProject = Mock()
@@ -239,6 +270,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(true)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(true)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
 		manager.synchronizeGenericProject(project, template, params)
@@ -251,15 +285,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		1* project.setAllowTcModifDuringExec(_)
 	}
-	
+
 	def "should add projet and copy only infolists"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
 		Project project = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		genericProjectDao.findById(1L) >> template
-		genericProjectDao.findById(2L) >> project
+		genericProjectDao.findOne(1L) >> template
+		genericProjectDao.findOne(2L) >> project
 		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
 
 		and: "a project"
@@ -275,6 +310,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		params.setCopyAutomatedProjects(false)
 		params.setCopyInfolists(true)
 		params.setCopyMilestone(false)
+		params.setCopyAllowTcModifFromExec(false)
+		params.setCopyOptionalExecStatuses(false)
+		params.setCopyPlugins(false)
 
 		when:
 		manager.synchronizeGenericProject(project, template, params)
@@ -287,5 +325,335 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		1* project.setRequirementCategories(_);
 		1* project.setTestCaseNatures(_);
 		1* project.setTestCaseTypes(_);
+		0* project.setAllowTcModifDuringExec(_)
+	}
+
+	def "#disassociateFromTemplate - Should disassociate a Project from a Template"() {
+
+		given:
+
+		Project project = new Project()
+		ProjectTemplate template = new ProjectTemplate()
+		project.setTemplate(template)
+
+		and:
+
+		genericProjectDao.findOne(_) >> project
+
+		when:
+
+		manager.disassociateFromTemplate(1L)
+
+		then:
+
+		project.getTemplate() == null
+	}
+
+	def "#associateToTemplate - Should associate a persisted Project to a Template"() {
+
+		given:
+
+		Project project = Mock(Project)
+		project.getId() >> 1L
+		ProjectTemplate template = Mock(ProjectTemplate);
+		template.getId() >> 2L
+
+		InfoList categoryList = Mock()
+		InfoList natureList = Mock()
+		InfoList typeList = Mock()
+
+		template.getRequirementCategories() >> categoryList
+		template.getTestCaseNatures() >> natureList
+		template.getTestCaseTypes() >> typeList
+
+		template.allowTcModifDuringExec() >> true
+
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		templateLibrary.enableStatus(ExecutionStatus.SETTLED)
+		templateLibrary.disableStatus(ExecutionStatus.UNTESTABLE)
+
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		projectLibrary.disableStatus(ExecutionStatus.SETTLED)
+		projectLibrary.enableStatus(ExecutionStatus.UNTESTABLE)
+
+		template.getCampaignLibrary() >> templateLibrary
+		project.getCampaignLibrary() >> projectLibrary
+
+		and:
+
+		projectDao.findOne(_) >> project
+		templateDao.findOne(_) >> template
+		genericProjectDao.findOne(1L) >> project
+		genericProjectDao.findOne(2L) >> template
+
+		when:
+
+		manager.associateToTemplate(1L, 2L)
+
+		then:
+
+		1 * project.setTemplate(template)
+
+		1 * customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
+
+		1 * project.setRequirementCategories(categoryList)
+		1 * project.setTestCaseNatures(natureList)
+		1 * project.setTestCaseTypes(typeList)
+
+		1 * project.setAllowTcModifDuringExec(true)
+
+		project.getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED)
+		!project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE)
+	}
+
+	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Project"() {
+
+		given:
+
+		Project project = Mock()
+		project.getId() >> 44L
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = [ExecutionStatus.UNTESTABLE]
+		library.setDisabledStatuses(disabledStatuses)
+		project.getCampaignLibrary() >> library
+
+		and:
+
+		genericProjectDao.findOne(44L) >> project
+		genericProjectDao.isProjectTemplate(44L) >> false
+
+		when:
+
+		manager.enableExecutionStatus(44L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		library.allowsStatus(ExecutionStatus.UNTESTABLE)
+	}
+
+	def "#enableExecutionStatus - Should not enable an ExecutionStatus because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setTemplate(template)
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = [ExecutionStatus.UNTESTABLE]
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(44L) >> project
+
+		when:
+
+		manager.enableExecutionStatus(44L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		thrown LockedParameterException
+	}
+
+	def "#enableExecutionStatus - Should enable an ExecutionStatus in a Template and propagate it to its bound Project"() {
+
+		given:
+
+		ProjectTemplate template = Mock(ProjectTemplate)
+		template.getId() >> 404L
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledTemplateStatuses = [ExecutionStatus.UNTESTABLE]
+		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
+		template.getCampaignLibrary() >> templateLibrary
+
+		Project project = new Project()
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledProjectStatuses = [ExecutionStatus.UNTESTABLE]
+		projectLibrary.setDisabledStatuses(disabledProjectStatuses)
+		project.setCampaignLibrary(projectLibrary)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.isProjectTemplate(404L) >> true
+		projectDao.findAllBoundToTemplate(404L) >> [project]
+
+		when:
+
+		manager.enableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		templateLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+		projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+
+	}
+
+	def "#disableExecutionStatus - Should disable an ExecutionStatus in a Project"() {
+
+		given:
+
+		Project project = Mock()
+		project.getId() >> 404L
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = []
+		library.setDisabledStatuses(disabledStatuses)
+		project.getCampaignLibrary() >> library
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+		genericProjectDao.isProjectTemplate(404L) >> false
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		!library.allowsStatus(ExecutionStatus.UNTESTABLE)
+	}
+
+	def "#disableExecutionStatus - Should not disable an ExecutionStatus because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setTemplate(template)
+		CampaignLibrary library = new CampaignLibrary()
+		Set<ExecutionStatus> disabledStatuses = []
+		library.setDisabledStatuses(disabledStatuses)
+		project.setCampaignLibrary(library)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		thrown LockedParameterException
+	}
+
+	def "#disableExecutionStatus - Should disable an ExecutionStatus in a Template and propagate it to its bound Project"() {
+
+		given:
+
+		ProjectTemplate template = Mock()
+		template.getId() >> 404L
+		CampaignLibrary templateLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledTemplateStatuses = []
+		templateLibrary.setDisabledStatuses(disabledTemplateStatuses)
+		template.getCampaignLibrary() >> templateLibrary
+
+		Project project = new Project()
+		CampaignLibrary projectLibrary = new CampaignLibrary()
+		Set<ExecutionStatus> disabledProjectStatuses = []
+		projectLibrary.setDisabledStatuses(disabledProjectStatuses)
+		project.setCampaignLibrary(projectLibrary)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		genericProjectDao.isProjectTemplate(404L) >> true
+		projectDao.findAllBoundToTemplate(404L) >> [project]
+
+		when:
+
+		manager.disableExecutionStatus(404L, ExecutionStatus.UNTESTABLE)
+
+		then:
+
+		!templateLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+		!projectLibrary.allowsStatus(ExecutionStatus.UNTESTABLE)
+
+	}
+
+	def "#changeAllowTcModifDuringExec - Should change TC-Modif-During-Exec parameter in a Project"() {
+
+		given:
+
+		Project project = new Project()
+		project.setAllowTcModifDuringExec(false)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		project.allowTcModifDuringExec()
+
+	}
+
+	def "#changeAllowTcModifDuringExec - Should not change TC-Modif-During-Exec parameter because the Project is bound to a Template"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+
+		Project project = new Project()
+		project.setAllowTcModifDuringExec(false)
+		project.setTemplate(template)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> project
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		thrown LockedParameterException
+
+	}
+
+	def "#changeAllowTcModifDuringExec - Should change TC-Modif-During-Exec parameter in a Template and propagate it to its bound Projects"() {
+
+		given:
+
+		ProjectTemplate template = new ProjectTemplate()
+		template.setAllowTcModifDuringExec(false)
+
+		Project project1 = new Project()
+		Project project2 = new Project()
+		project1.setAllowTcModifDuringExec(false)
+		project2.setAllowTcModifDuringExec(false)
+
+		and:
+
+		genericProjectDao.findOne(404L) >> template
+		templateDao.propagateAllowTcModifDuringExec(404L, true) >> {
+			args ->
+				if(args[1]) {
+					project1.setAllowTcModifDuringExec(true)
+					project2.setAllowTcModifDuringExec(true)
+				}
+		}
+
+		when:
+
+		manager.changeAllowTcModifDuringExec(404L, true)
+
+		then:
+
+		template.allowTcModifDuringExec()
+		project1.allowTcModifDuringExec()
+		project2.allowTcModifDuringExec()
+
+
 	}
 }

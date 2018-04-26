@@ -27,46 +27,89 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.service.infolist.InfoListBindingManagerService;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+
+import java.util.Collection;
 
 @Transactional
 @Service("squashtest.tm.service.InfoListBindingManagerService")
 public class InfoListBindingManagerServiceImpl implements InfoListBindingManagerService {
 
 	@Inject
-	private GenericProjectDao projectDao;
+	private GenericProjectDao genericProjectDao;
+	@Inject
+	private ProjectDao projectDao;
 	@Inject
 	private InfoListDao infoListDao;
-	
+
 	@Override
 	public void bindListToProjectReqCategory(long infoListId, long projectId) {
-		GenericProject project = projectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
-		InfoListItem defaultItem = infoList.getDefaultItem();	
+		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setRequirementCategories(infoList);
 		infoListDao.setDefaultCategoryForProject(projectId, defaultItem);
+
+		/*If the GenericProject is a Template, modifications are propagated. */
+		if(ProjectHelper.isTemplate(project)) {
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
+			for(Project boundProject : boundProjects) {
+				boundProject.setRequirementCategories(infoList);
+				infoListDao.setDefaultCategoryForProject(boundProject.getId(), defaultItem);
+			}
+		}
 	}
 
 	@Override
 	public void bindListToProjectTcNature(long infoListId, long projectId) {
-		GenericProject project = projectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseNatures(infoList);
 		infoListDao.setDefaultNatureForProject(projectId, defaultItem);
+
+		if(ProjectHelper.isTemplate(project)) {
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
+			for(Project boundProject : boundProjects) {
+				boundProject.setTestCaseNatures(infoList);
+				infoListDao.setDefaultNatureForProject(boundProject.getId(), defaultItem);
+			}
+		}
 	}
 
 	@Override
 	public void bindListToProjectTcType(long infoListId, long projectId) {
-		GenericProject project = projectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
+		/* If Project is a bound Project, modifications must be done in the Template. */
+		checkIfParameterIsModifiable(project);
 		InfoList infoList = infoListDao.findOne(infoListId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
 		project.setTestCaseTypes(infoList);
 		infoListDao.setDefaultTypeForProject(projectId, defaultItem);
-	}
-	
 
+		if(ProjectHelper.isTemplate(project)) {
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(projectId);
+			for(Project boundProject : boundProjects) {
+				boundProject.setTestCaseTypes(infoList);
+				infoListDao.setDefaultTypeForProject(boundProject.getId(), defaultItem);
+			}
+		}
+	}
+
+	private void checkIfParameterIsModifiable(GenericProject genericProject) {
+		if(genericProject.isBoundToTemplate()) {
+			throw new LockedParameterException();
+		}
+	}
 
 }

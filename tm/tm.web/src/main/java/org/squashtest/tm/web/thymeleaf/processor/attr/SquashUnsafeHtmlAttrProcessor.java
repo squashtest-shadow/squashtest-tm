@@ -20,83 +20,101 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
+import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanHtml;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.exceptions.TemplateEngineException;
-import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.processor.IProcessor;
-import org.thymeleaf.processor.attr.AbstractChildrenModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
-import org.thymeleaf.templatemode.ITemplateModeHandler;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.AttributeName;
+import org.thymeleaf.engine.TemplateModel;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
+import org.thymeleaf.processor.element.IElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.IStandardExpression;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
-import java.util.List;
+
 
 /**
+ * <p>This processor ensures that the given html will be cleaned of harmful content.</p>
+ * 
+ *  <p>
+ *  	Note that this class was repurposed after migration to Thymeleaf 3. Its prior use was to
+ *  make Thymeleaf accept malformed html (it would crash otherwise, for instance with unbalanced tags).
+ *  This is no longer necessary since the legacy html 5 parser (which is now {@link TemplateMode#LEGACYHTML5})
+ *  is now the default for html content.
+ *  </p>
+ *
+ */
+/*
+ * (History comment)
+ * 
  * This processor processes "unsafe-html" attributes. The attribute value is expected to be a potentially unbalanced
  * html fragment. This processor uses the LEGACYHTML5 parser to balance the html fragment and then replace this
  * element's inner html by this balanced html fragment.
  *
  * @author Gregory Fouquet
  */
-public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifierAttrProcessor implements IProcessor {
+public final class SquashUnsafeHtmlAttrProcessor extends AbstractAttributeTagProcessor implements IElementTagProcessor {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashUnsafeHtmlAttrProcessor.class);
 
-	/**
-	 * @param attribute
-	 */
-	public SquashUnsafeHtmlAttrProcessor() {
-		super("unsafe-html");
-	}
+	// a couple of mnemonics to clarify the semantic on the constructor parameters
+	private static final String ATTRIBUTE_NAME = "unsafe-html";
+	private static final int PRECEDENCE = 1200;
 
 	/**
-	 * Returns the html attribute of the processed argument parsed using the legacy html5 (tag balancing) parser.
-	 *
-	 * @see org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor#getText(org.thymeleaf.Arguments,
-	 * org.thymeleaf.dom.Element, java.lang.String)
+	 * @param dialectPrefix the dialect prefix
 	 */
+	public SquashUnsafeHtmlAttrProcessor(String dialectPrefix) {
+		super(TemplateMode.HTML,
+			dialectPrefix,
+			MATCH_ANY_TAG,
+			NO_TAG_PREFIX,
+			ATTRIBUTE_NAME,
+			REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE,
+			PRECEDENCE,
+			REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED);
+	}
+
+
+	// TODO: noop ?
 	@Override
-	protected List<Node> getModifiedChildren(final Arguments arguments, final Element element,
-											 final String attributeName) {
-		final String attributeValue = element.getAttributeValue(attributeName);
-		LOGGER.trace("Will process attribute value {} of element {}", attributeValue, element);
+	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName,
+							 String attributeValue, IElementTagStructureHandler structureHandler) {
 
-		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
+		LOGGER.trace("Will process attribute value {} of element {}", attributeValue, tag);
 
-		try {
-			final Configuration configuration = arguments.getConfiguration();
-			final ITemplateModeHandler templateModeHandler = configuration.getTemplateModeHandler("LEGACYHTML5");
+		final IEngineConfiguration configuration = context.getConfiguration();
+		final IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
+		final IStandardExpression expression = parser.parseExpression(context, attributeValue);
 
-			String string = fragment == null ? "" : fragment.toString();
-			List<Node> parsedFragment = templateModeHandler.getTemplateParser().parseFragment(configuration,
-				string);
+		final Object html = expression.execute(context);
+		final String htmlString = html == null ? "" : cleanHtml(html.toString());
 
-			// we cannot lookup the template repository because it is backed by the main template parser. yet the
-			// fragment should change quite frequently.
-			for (final Node node : parsedFragment) {
-				node.setProcessable(false);
-			}
+		
+		final TemplateModel parsed = configuration.getTemplateManager().parseString(
+			context.getTemplateData(),
+			htmlString,
+			0,
+			0,
+			null,
+			false
+		);
+		
+		structureHandler.setBody(parsed, false);
 
-			return parsedFragment;
-
-		} catch (final TemplateEngineException e) {
-			throw e; // NOSONAR we wanna catch any exception but TemplateEngineException
-		} catch (final Exception e) {
-			throw new TemplateProcessingException("An error happened during parsing of unsafe html: \""
-				+ element.getAttributeValue(attributeName) + "\"", e);
-		}
+	
+		
 
 	}
 
-	/**
-	 * @see org.thymeleaf.processor.AbstractProcessor#getPrecedence()
-	 */
-	@Override
-	public int getPrecedence() {
-		// less precedence than StandardTextAttrProcessor so, if both attrs exist, this one will be the last applied
-		return 1000;
-	}
 }

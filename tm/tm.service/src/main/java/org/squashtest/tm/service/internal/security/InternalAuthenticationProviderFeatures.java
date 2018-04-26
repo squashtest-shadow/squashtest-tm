@@ -18,49 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.helper;
+package org.squashtest.tm.service.internal.security;
 
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.project.ProjectVisitor;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 
 /**
- * Helper methods for Project view generation.
+ * Features of Squash internal (db-based) authentication provider.
  * 
  * @author Gregory Fouquet
  * 
  */
-public final class ProjectHelper {
-	private ProjectHelper() {
-		super();
+//@ApplicationComponent
+@Component
+public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
+	/**
+	 * @return false
+	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#isManagedPassword()
+	 */
+	@Override
+	public boolean isManagedPassword() {
+		return false;
 	}
 
 	/**
-	 * We cannot use instanceof in el, hence this helper method.
-	 * Also, we need to visit the object (potential hibernate proxy) to get its actual type.
-	 * 
-	 * @param project
-	 * @return <code>true</code> if project is an instance of {@link ProjectTemplate}
+	 * @return "internal"
+	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#getProviderName()
 	 */
-	public static boolean isTemplate(GenericProject project) {
-		final boolean[] res = { false };
-
-		project.accept(new ProjectVisitor() {
-
-			@Override
-			public void visit(ProjectTemplate projectTemplate) {
-				res[0] = true;
-
-			}
-
-			@Override
-			public void visit(Project project) {
-				res[0] = false;
-
-			}
-		});
-
-		return res[0];
+	@Override
+	public String getProviderName() {
+		return "internal";
 	}
+
+	/**
+	 * @return false
+	 * @see org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures#shouldCreateMissingUser()
+	 */
+	@Override
+	public boolean shouldCreateMissingUser() {
+		return false;
+	}
+
 }

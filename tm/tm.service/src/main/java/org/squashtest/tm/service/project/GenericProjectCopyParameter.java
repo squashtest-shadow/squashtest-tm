@@ -27,6 +27,7 @@ package org.squashtest.tm.service.project;
  */
 public class GenericProjectCopyParameter {
 
+	private boolean keepTemplateBinding;
 	private boolean copyPermissions;
 	private boolean copyCUF;
 	private boolean copyBugtrackerBinding;
@@ -34,26 +35,19 @@ public class GenericProjectCopyParameter {
 	private boolean copyInfolists;
 	private boolean copyMilestone;
 	private boolean copyAllowTcModifFromExec;
+	private boolean copyOptionalExecStatuses;
+	private boolean copyPlugins;
 
 	public GenericProjectCopyParameter() {
 		//default constructor
 	}
 
-
-	public GenericProjectCopyParameter(boolean copyPermissions,
-			boolean copyCUF, boolean copyBugtrackerBinding,
-			boolean copyAutomatedProjects, boolean copyInfolists,
-			boolean copyMilestone, boolean copyAllowTcModifFromExec) {
-		this.copyPermissions = copyPermissions;
-		this.copyCUF = copyCUF;
-		this.copyBugtrackerBinding = copyBugtrackerBinding;
-		this.copyAutomatedProjects = copyAutomatedProjects;
-		this.copyInfolists = copyInfolists;
-		this.copyMilestone = copyMilestone;
-		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
+	public boolean isKeepTemplateBinding() {
+		return keepTemplateBinding;
 	}
-
-
+	public void setKeepTemplateBinding(boolean keepTemplateBinding) {
+		this.keepTemplateBinding = keepTemplateBinding;
+	}
 
 	public boolean isCopyPermissions() {
 		return copyPermissions;
@@ -61,30 +55,35 @@ public class GenericProjectCopyParameter {
 	public void setCopyPermissions(boolean copyPermissions) {
 		this.copyPermissions = copyPermissions;
 	}
+
 	public boolean isCopyCUF() {
 		return copyCUF;
 	}
 	public void setCopyCUF(boolean copyCUF) {
 		this.copyCUF = copyCUF;
 	}
+
 	public boolean isCopyBugtrackerBinding() {
 		return copyBugtrackerBinding;
 	}
 	public void setCopyBugtrackerBinding(boolean copyBugtrackerBinding) {
 		this.copyBugtrackerBinding = copyBugtrackerBinding;
 	}
+
 	public boolean isCopyAutomatedProjects() {
 		return copyAutomatedProjects;
 	}
 	public void setCopyAutomatedProjects(boolean copyAutomatedProjects) {
 		this.copyAutomatedProjects = copyAutomatedProjects;
 	}
+
 	public boolean isCopyInfolists() {
 		return copyInfolists;
 	}
 	public void setCopyInfolists(boolean copyInfolists) {
 		this.copyInfolists = copyInfolists;
 	}
+
 	public boolean isCopyMilestone() {
 		return copyMilestone;
 	}
@@ -95,8 +94,21 @@ public class GenericProjectCopyParameter {
 	public boolean isCopyAllowTcModifFromExec() {
 		return copyAllowTcModifFromExec;
 	}
-
 	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
 		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
+	}
+
+	public boolean isCopyOptionalExecStatuses() {
+		return copyOptionalExecStatuses;
+	}
+	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
+		this.copyOptionalExecStatuses = copyOptionalExecStatuses;
+	}
+
+	public boolean isCopyPlugins() {
+		return copyPlugins;
+	}
+	public void setCopyPlugins(boolean copyPlugins) {
+		this.copyPlugins = copyPlugins;
 	}
 }

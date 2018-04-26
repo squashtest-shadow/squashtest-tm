@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet
@@ -32,15 +33,13 @@ import org.squashtest.tm.domain.project.Project;
  */
 public interface CustomGenericProjectDao {
 	/**
-	 * Coerces the template of given id into a projet. This method evicts the template from the session cache, yet it
-	 * should not be invoked when the template is loaded.
+	 * Coerces the Project of given id into a ProjectTemplate. This method evicts the Project from the session cache,
+	 * yet it should not be invoked when the template is loaded.
 	 *
 	 * @param templateId
 	 * @return the coerced project.
 	 */
-	Project coerceTemplateIntoProject(long templateId);
-
-
+	ProjectTemplate coerceProjectIntoTemplate(long templateId);
 
 	/**
 	 * Tells whether the project of id 'projectId' is a project template or not
@@ -57,4 +56,17 @@ public interface CustomGenericProjectDao {
 	 * @return
 	 */
 	<T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering);
+
+	/**
+	 * Tells if a {@linkplain GenericProject} is bound to a {@linkplain ProjectTemplate}.
+	 * @param genericProjectId
+	 * @return
+	 */
+	boolean isBoundToATemplate(long genericProjectId);
+
+	/**
+	 * Tells if one of the given {@linkplain CustomFieldBinding} is bound to a Project which is bound to a Template.
+	 * @return
+	 */
+	boolean oneIsBoundToABoundProject(Collection<Long> bindingIds);
 }

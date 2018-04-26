@@ -20,43 +20,44 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+
+import javax.inject.Inject;
+import java.util.*;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Service("squashtest.tm.service.CustomFieldBindingService")
 @Transactional
 public class CustomFieldBindingModificationServiceImpl implements CustomFieldBindingModificationService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingModificationService.class);
 
 	@Inject
 	private CustomFieldDao customFieldDao;
@@ -69,6 +70,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
+
+	@Inject
+	private ProjectDao projectDao;
 
 	@Inject
 	private ApplicationEventPublisher eventPublisher;
@@ -130,11 +134,45 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public void createNewBindings(CustomFieldBindingModel[] bindingModels) {
+
+		for (CustomFieldBindingModel model : bindingModels) {
+
+			long projectId = model.getProjectId();
+			if(genericProjectDao.isBoundToATemplate(projectId)) {
+				throw new LockedParameterException();
+			}
+			long fieldId = model.getCustomField().getId();
+			BindableEntity entity = model.getBoundEntity().toDomain();
+
+			addNewCustomFieldBinding(projectId, entity, fieldId, null);
+
+			/* Modifications propagation to bound Projects if the GenericProject is a Template. */
+			if(genericProjectDao.isProjectTemplate(projectId)) {
+				propagateCufBindingCreationToBoundProjects(projectId, entity, fieldId);
+			}
+		}
+	}
+
+	private void propagateCufBindingCreationToBoundProjects(long templateId, BindableEntity entity, long cufId) {
+		Collection<Long> boundProjectsIds = projectDao.findAllIdsBoundToTemplate(templateId);
+		for(Long boundProjectId : boundProjectsIds) {
+			if(!customFieldBindingDao.cufBindingAlreadyExists(boundProjectId, entity, cufId)) {
+				addNewCustomFieldBinding(boundProjectId, entity, cufId, null);
+			}
+		}
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
-			CustomFieldBinding newBinding) {
-		createBinding(projectId, entity, customFieldId, newBinding);
-		if(! genericProjectDao.isProjectTemplate(projectId)){
+										 Set<RenderingLocation> locations) {
+
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		CustomFieldBinding newBinding = createBinding(genericProject, entity, customFieldId, locations);
+		/* Create all the cufValues for the existing Entities. */
+		if (!genericProjectDao.isProjectTemplate(projectId)) {
 			customValueService.cascadeCustomFieldValuesCreation(newBinding);
 		}
 	}
@@ -156,9 +194,26 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
-		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
-		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
-		eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIds));
+		if(!bindingIds.isEmpty()) {
+			if(genericProjectDao.oneIsBoundToABoundProject(bindingIds)) {
+				throw new LockedParameterException();
+			}
+			doRemoveCustomFieldBindings(bindingIds);
+		}
+	}
+
+	@Override
+	public void doRemoveCustomFieldBindings(List<Long> bindingIds) {
+		/* If the given bindings are removed from a ProjectTemplate, we have to propagate the deletion to the
+		 * equivalent bindings in the bound Projects. */
+		if(!bindingIds.isEmpty()) {
+			List<Long> bindingIdsToRemove = new ArrayList<>(bindingIds);
+			bindingIdsToRemove.addAll(customFieldBindingDao.findEquivalentBindingsForBoundProjects(bindingIds));
+
+			customValueService.cascadeCustomFieldValuesDeletion(bindingIdsToRemove);
+			customFieldBindingDao.removeCustomFieldBindings(bindingIdsToRemove);
+			eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIdsToRemove));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,11 +223,11 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
 		List<Long> bindingIds = new LinkedList<>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
-		removeCustomFieldBindings(bindingIds);
+		doRemoveCustomFieldBindings(bindingIds);
 	}
 
 	/**
-	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
+	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(GenericProject, GenericProject)
 	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -188,37 +243,42 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	}
 
-	private void createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
+	private CustomFieldBinding createBinding(GenericProject genericProject, BindableEntity entity, long customFieldId,
+							   Set<RenderingLocation> locations) {
 
-		GenericProject project = genericProjectDao.findById(projectId);
-		CustomField field = customFieldDao.findById(customFieldId);
-		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
+			CustomFieldBinding newBinding = new CustomFieldBinding();
+			CustomField field = customFieldDao.findById(customFieldId);
+			Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(genericProject.getId(), entity) + 1;
 
-		newBinding.setBoundProject(project);
-		newBinding.setBoundEntity(entity);
-		newBinding.setCustomField(field);
-		newBinding.setPosition(newIndex.intValue());
+			newBinding.setBoundProject(genericProject);
+			newBinding.setBoundEntity(entity);
+			newBinding.setCustomField(field);
+			newBinding.setPosition(newIndex.intValue());
+			if(locations != null) { newBinding.setRenderingLocations(locations); }
 
-		customFieldBindingDao.save(newBinding);
-		eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));
+			customFieldBindingDao.save(newBinding);
+			eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));
+
+			return newBinding;
 	}
 
 	/**
-	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
+	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(GenericProject, GenericProject)
 	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void copyCustomFieldsSettingsFromTemplate(GenericProject target, GenericProject source) {
-		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(source.getId());
-		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {
+
+		List<CustomFieldBinding> templateCustomFieldBindings = findCustomFieldsForGenericProject(source.getId());
+		for (CustomFieldBinding templateCustomFieldBinding : templateCustomFieldBindings) {
 			long projectId = target.getId();
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
-			CustomFieldBinding newBinding = new CustomFieldBinding();
-			newBinding.setRenderingLocations( templateCustomFieldBinding.copyRenderingLocations());
-			addNewCustomFieldBinding(projectId, entity, customFieldId, newBinding);
+
+			if (!customFieldBindingDao.cufBindingAlreadyExists(projectId, entity, customFieldId)) {
+				Set<RenderingLocation> locations = templateCustomFieldBinding.copyRenderingLocations();
+				addNewCustomFieldBinding(projectId, entity, customFieldId, locations);
+			}
 		}
-
 	}
-
 }

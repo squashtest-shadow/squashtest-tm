@@ -49,6 +49,21 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 			// the info panel
 			infopanel.init();
 
+			var btnlang = translator.get({
+					resume: 'execution.execute.resume.button.label',
+					resumeOER: 'execution.execute.IEO.resume.button.label'
+			});
+
+			// Issue 7365
+			// Before, if condition was
+			// "config.basic.isTestCaseDeleted && $("#execute-execution-button").val()!= btnlang.resume".
+			// Didn't see the necessity of condition $("#execute-execution-button").val()!= btnlang.resume
+			// and it interfere with expected behavior of buttons so it has been removed.
+			if (config.basic.isTestCaseDeleted) {
+				$("#execute-execution-button").prop('disabled', true);
+				$("#ieo-execution-button").prop('disabled', true);
+			}
+
 			// the execute-execution button
 			squashtm.execution.updateBtnlabelFromTable = function () {
 
@@ -56,15 +71,14 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				// 99.9% of the time we want the btn to display "resume" when statuses are updated
 				// because an execution rarely walks back to 'ready' status, so I'll be lazy here
 
-				var btnlang = translator.get({
-					resume: 'execution.execute.resume.button.label',
-					resumeOER: 'execution.execute.IEO.resume.button.label'
-				});
-
 				$("#execute-execution-button").val(btnlang.resume);
 				$("#ieo-execution-button").val(btnlang.resumeOER);
+				$("#execute-execution-button").prop('disabled', false);
+        $("#ieo-execution-button").prop('disabled', false);
 
 			}
+
+
 
 			var runnerUrl = routing.buildURL('executions.runner', config.basic.executionId);
 			var dryRunStart = function () {

@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -33,9 +29,18 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.squashtest.tm.service.project.GenericProjectManagerService.ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * @author Gregory Fouquet
@@ -63,9 +68,9 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 *
-	 * @param templateId
+	 * @param projectId
 	 */
-	void coerceTemplateIntoProject(long templateId);
+	void coerceProjectIntoTemplate(long projectId);
 
 	/************************************************************************************************/
 	void deleteProject(long projectId);
@@ -174,7 +179,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	// ***************************** status management *************************
 
 	/**
-	 * Enables an execution status for a project
+	 * Check User permissions and check if the parameter can be modified.
+	 * Then enables an execution status for a project.
 	 *
 	 * @param projectId
 	 * @param executionStatus
@@ -182,12 +188,24 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void enableExecutionStatus(long projectId, ExecutionStatus executionStatus);
 
 	/**
-	 * Disables an execution status for a project
+	 * Enabled an execution status for a project.*/
+	void doEnableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus);
+
+	/**
+	 * Check the action can be done, check permission.
+	 * Then disables an execution status for a project.
 	 *
 	 * @param projectId
 	 * @param executionStatus
 	 */
 	void disableExecutionStatus(long projectId, ExecutionStatus executionStatus);
+
+	/**
+	 * Disables and execution status for a project.
+	 * @param genericProject
+	 * @param executionStatus
+	 */
+	void doDisableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus);
 
 	/**
 	 * Returns the list of enabled execution statuses given a project.
@@ -228,4 +246,18 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	GenericProject synchronizeGenericProject(GenericProject target,
 			GenericProject source, GenericProjectCopyParameter params);
+
+	/**
+	 * Copy the CustomFields, InfoLists, OptionalExecStatuses, ExecParams from Template to the Project. */
+	GenericProject synchronizeProjectFromTemplate(Project target, ProjectTemplate source);
+
+	void disassociateFromTemplate(long projectId);
+
+	/**
+	 * Associates the given {@link Project} with the given {@link ProjectTemplate}.
+	 * This action implies copying CustomFields, InfoLists, ExeParams and ExecStatuses from the Template. */
+	void associateToTemplate(long projectId, long templateId);
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeAllowTcModifDuringExec(long projectId, boolean active);
 }

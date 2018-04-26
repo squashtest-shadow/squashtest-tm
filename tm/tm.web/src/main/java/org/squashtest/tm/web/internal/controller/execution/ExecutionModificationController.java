@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -127,6 +128,7 @@ public class ExecutionModificationController {
 	@Inject
 	private CustomFieldJsonConverter converter;
 
+
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
@@ -138,6 +140,9 @@ public class ExecutionModificationController {
 
 		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
+		// 7137 - adding the referenced test case in order to know if it is deleted, might be useful so not a boolean
+		TestCase referencedTc = execution.getReferencedTestCase();
+
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 
@@ -162,6 +167,7 @@ public class ExecutionModificationController {
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
+		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 
@@ -426,7 +432,7 @@ public class ExecutionModificationController {
 
 		for (CustomField field : stepCufs) {
 			models.add(converter.toJson(field));
-		}
+			}
 
 		return models;
 	}
@@ -502,5 +508,6 @@ public class ExecutionModificationController {
 	private JsonExecutionInfo createJsonExecutionStep(ExecutionStep item) {
 		return new JsonExecutionInfo(item.getLastExecutedOn(), item.getLastExecutedBy(), item.getExecutionStatus(), null, null);
 	}
+
 
 }

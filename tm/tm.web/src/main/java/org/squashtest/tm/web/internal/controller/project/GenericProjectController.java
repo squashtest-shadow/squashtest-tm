@@ -49,7 +49,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderServi
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
-import org.squashtest.tm.web.internal.helper.ProjectHelper;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;
@@ -176,6 +176,21 @@ public class GenericProjectController {
 		}
 		return new RenameModel(HtmlUtils.htmlEscape(newName));
 	}
+
+	@RequestMapping(value = PROJECT_ID_URL + "/associate-template", method = RequestMethod.POST)
+	@ResponseBody
+	public void associateTemplate(@PathVariable long projectId, @RequestParam long templateId) {
+		projectManager.associateToTemplate(projectId, templateId);
+		LOGGER.info("Project modification : associating {} with template {}", projectId, templateId);
+	}
+
+	@RequestMapping(value = PROJECT_ID_URL + "/disassociate-template", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void disassociateTemplate(@PathVariable long projectId) {
+		projectManager.disassociateFromTemplate(projectId);
+		LOGGER.info("Disassociating project of ID {} from its template.", projectId);
+	}
+
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"isActive"})
 	@ResponseBody

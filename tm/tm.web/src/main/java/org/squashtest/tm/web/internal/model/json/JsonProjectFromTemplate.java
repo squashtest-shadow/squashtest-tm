@@ -31,11 +31,8 @@ import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 public class JsonProjectFromTemplate {
 
 	private Project project;
-
 	private long templateId;
-
 	private GenericProjectCopyParameter params;
-
 	private boolean fromTemplate;
 
 	public JsonProjectFromTemplate() {
@@ -47,7 +44,6 @@ public class JsonProjectFromTemplate {
 	public String getLabel() {
 		return project.getLabel();
 	}
-
 	public void setLabel(String label) {
 		project.setLabel(label);
 	}
@@ -55,7 +51,6 @@ public class JsonProjectFromTemplate {
 	public String getDescription() {
 		return project.getDescription();
 	}
-
 	public void setDescription(String description) {
 		project.setDescription(description);
 	}
@@ -64,7 +59,6 @@ public class JsonProjectFromTemplate {
 	public String getName() {
 		return project.getName();
 	}
-
 	public void setName(String name) {
 		project.setName(name.trim());
 	}
@@ -72,7 +66,6 @@ public class JsonProjectFromTemplate {
 	public Project getProject() {
 		return project;
 	}
-
 	public void setProject(Project project) {
 		this.project = project;
 	}
@@ -80,9 +73,15 @@ public class JsonProjectFromTemplate {
 	public long getTemplateId() {
 		return templateId;
 	}
-
 	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
+	}
+
+	public boolean isKeepTemplateBinding() {
+		return params.isKeepTemplateBinding();
+	}
+	public void setKeepTemplateBinding(boolean keepTemplateBinding) {
+		params.setKeepTemplateBinding(keepTemplateBinding);
 	}
 
 	public boolean isCopyPermissions() {
@@ -91,30 +90,35 @@ public class JsonProjectFromTemplate {
 	public void setCopyPermissions(boolean copyPermissions) {
 		params.setCopyPermissions(copyPermissions);
 	}
+
 	public boolean isCopyCUF() {
 		return params.isCopyCUF();
 	}
 	public void setCopyCUF(boolean copyCUF) {
 		params.setCopyCUF(copyCUF);
 	}
+
 	public boolean isCopyBugtrackerBinding() {
 		return params.isCopyBugtrackerBinding();
 	}
 	public void setCopyBugtrackerBinding(boolean copyBugtrackerBinding) {
 		params.setCopyBugtrackerBinding(copyBugtrackerBinding);
 	}
+
 	public boolean isCopyAutomatedProjects() {
 		return params.isCopyAutomatedProjects();
 	}
 	public void setCopyAutomatedProjects(boolean copyAutomatedProjects) {
 		params.setCopyAutomatedProjects(copyAutomatedProjects);
 	}
+
 	public boolean isCopyInfolists() {
 		return params.isCopyInfolists();
 	}
 	public void setCopyInfolists(boolean copyInfolists) {
 		params.setCopyInfolists(copyInfolists);
 	}
+
 	public boolean isCopyMilestone() {
 		return params.isCopyMilestone();
 	}
@@ -125,7 +129,6 @@ public class JsonProjectFromTemplate {
 	public GenericProjectCopyParameter getParams() {
 		return params;
 	}
-
 	public void setParams(GenericProjectCopyParameter params) {
 		this.params = params;
 	}
@@ -133,7 +136,6 @@ public class JsonProjectFromTemplate {
 	public boolean isFromTemplate() {
 		return fromTemplate;
 	}
-
 	public void setFromTemplate(boolean fromTemplate) {
 		this.fromTemplate = fromTemplate;
 	}
@@ -141,8 +143,21 @@ public class JsonProjectFromTemplate {
 	public boolean isCopyAllowTcModifFromExec() {
 		return params.isCopyAllowTcModifFromExec();
 	}
-
 	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
 		params.setCopyAllowTcModifFromExec(copyAllowTcModifFromExec);
+	}
+
+	public boolean isCopyOptionalExecStatuses() {
+		return params.isCopyOptionalExecStatuses();
+	}
+	public void setCopyOptionalExecStatuses(boolean copyOptionalExecStatuses) {
+		params.setCopyOptionalExecStatuses(copyOptionalExecStatuses);
+	}
+
+	public boolean isCopyPlugins() {
+		return params.isCopyPlugins();
+	}
+	public void setCopyPlugins(boolean copyPlugins) {
+		params.setCopyPlugins(copyPlugins);
 	}
 }

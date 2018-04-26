@@ -18,13 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.connectionhistory;
+
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+
+import java.io.File;
 
 /**
  * @author aguilhem
  */
-public interface ConnectionLogService {
+public interface ConnectionLogExportService {
 
-	void addSuccessfulConnectionLog(String login);
-	void addFailedConnectionLog(String login);
+	/**
+	 * Create a file with connection log data based on a filtering
+	 * @param filtering the {@link ColumnFiltering} to apply for {@link org.squashtest.tm.domain.users.ConnectionLog} search
+	 * @return a {@link File} with requested {@link org.squashtest.tm.domain.users.ConnectionLog}
+	 */
+	File exportConnectionLogsToCsv(ColumnFiltering filtering);
 }

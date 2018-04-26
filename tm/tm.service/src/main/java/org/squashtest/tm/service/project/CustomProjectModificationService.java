@@ -33,18 +33,26 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
  */
 public interface CustomProjectModificationService extends CustomProjectFinder {
 	/**
-	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
+	 * Will persist the new {@linkplain Project} and bind it to the given {@linkplain ProjectTemplate}.
+	 * All the project parameters will be copied from the ProjectTemplate according to the given {@linkplain GenericProjectCopyParameter}.
 	 *
-	 * @param newProject : the new {@link Project} entity to persist
-	 * @param templateId : the id of the {@link ProjectTemplate} to copy the settings from
-	 * @param params : conf object containing the following params :
-	 *  copyAssignedUsers : whether to copy the Template's assigned Users or not
-	 *  copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
-	 *  copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
-	 *  copyTestAutomationSettings : whether to copy the Template's automation settings or not
-	 *  copyInfolists : whether to use the Template's custom categories/natures/types
-	 *  copyMilestone
-	 * @return the persisted new {@link Project}
+	 * @param newProject The new {@link Project} entity to persist
+	 * @param templateId The id of the {@link ProjectTemplate} to which the Project will be bound and copied
+	 * @param params Conf object containing the following params :
+	 *  <ul>
+	 *  <li>copyPermissions : whether to copy the Template's assigned Users or not</li>
+	 *  <li>copyCUF : whether to copy the Template's CustomFields settings or not</li>
+	 *  <li>copyBugtrackerBinding : whether to copy the Template's bug-tracker settings or not</li>
+	 *  <li>copyAutomatedProjects : whether to copy the Template's automation settings or not</li>
+	 *  <li>copyInfolists : whether to use the Template's custom categories/natures/types</li>
+	 *  <li>copyMilestone : whether to use the Template's milestone settings or not</li>
+	 *  <li>copyAllowTcModifFromExec : whether to copy the Template's Test-Case-Modification-During-Execution parameters</li>
+	 *  <li>copyOptionalExecStatuses : whether to copy the Template's optional execution statuses configuration</li>
+	 *  <li>copyPlugins : whether to copy the Template's plugins configuration</li>
+	 *	</ul>
+	 *
+	 * @return The persisted new {@link Project}
+	 *
 	 */
 	Project addProjectFromTemplate(Project newProject, long templateId, GenericProjectCopyParameter params) throws NameAlreadyInUseException;
 

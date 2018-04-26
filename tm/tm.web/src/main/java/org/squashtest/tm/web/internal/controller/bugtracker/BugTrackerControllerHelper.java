@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -49,6 +44,13 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 // XSS OK - bflessel
 @Component
@@ -313,13 +315,13 @@ public final class BugTrackerControllerHelper {
 			String strUrl = HTMLCleanupUtils.cleanHtml(service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm());
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
-			String reqRef =HTMLCleanupUtils.cleanHtml(requirementVersion.getReference());
+			String reqRef = HTMLCleanupUtils.cleanHtml(requirementVersion.getReference());
 			String reqId = String.valueOf(requirementVersion.getRequirement().getId());
 			String reqVersionId = String.valueOf(requirementVersion.getId());
 
 			result.put(ISSUE_URL, strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("issue-summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
@@ -370,7 +372,7 @@ public final class BugTrackerControllerHelper {
 
 			result.put(ISSUE_URL, strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("issue-summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
@@ -419,7 +421,7 @@ public final class BugTrackerControllerHelper {
 
 			row.put("url", url);
 			row.put("remote-id", issue.getId());
-			row.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			row.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			row.put("priority", findPriority(issue));
 			row.put("status", findStatus(issue));
 			row.put("assignee", findAssignee(issue));
@@ -465,7 +467,7 @@ public final class BugTrackerControllerHelper {
 					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("priority", findPriority(issue));
 			result.put("status", findStatus(issue));
 			result.put("assignee", findAssignee(issue));
@@ -504,7 +506,7 @@ public final class BugTrackerControllerHelper {
 					.toExternalForm()));
 
 			result.put("remote-id", issue.getId());
-			result.put("summary", HTMLCleanupUtils.cleanHtml(issue.getSummary()));
+			result.put("summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
 			result.put("priority", findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());

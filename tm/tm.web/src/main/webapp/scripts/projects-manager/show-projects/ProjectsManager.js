@@ -76,7 +76,9 @@ define([ "jquery","underscore", "backbone","handlebars", "./ProjectsTable", "./N
 								copyAutomatedProjects: true,
 								copyInfolists:true,
 								copyMilestone:true,
-								copyAllowTcModifFromExec:true
+								copyAllowTcModifFromExec:true,
+								copyOptionalExecStatuses: true,
+								copyPlugins: true
 							};
 						},
 						url : function () {

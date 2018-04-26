@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.18.0.IT2-SNAPSHOT</version>
+    <version>1.18.0.IT4-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm-bom</artifactId>
@@ -46,8 +46,14 @@
     <spock.version>1.1-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.14.RELEASE</spring-security-oauth2.version>
     <spring-security.version>4.1.4.RELEASE</spring-security.version>
-    <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+    <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+    <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+
+    <!-- THYMELEAF STACK VERSION OVERRIDE (see https://docs.spring.io/spring-boot/docs/1.4.7.RELEASE/reference/htmlsingle/#howto-use-thymeleaf-3) -->
+    <thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
+    <!-- /THYMELEAF STACK VERSION OVERRIDE  -->
     <tomcat.version>8.0.23</tomcat.version>
+
     <unitils.version>3.4.2</unitils.version>
     <validation-api.version>1.1.0.Final</validation-api.version>
     <xml-resolver.version>1.2</xml-resolver.version>
@@ -153,39 +159,12 @@
         	 -->
 
           <exclusion>
-            <!--
-          	pulled by itext. The bouncycastle jars have changed groupid
-          	from "bouncycastle" to "org.bouncycastle", furthermore they also
-          	changed their versioning convention from 'majorminor' to 'major.minor'.
-          	The artifact ids are however left unchanged.
-
-          	The itext pom states that artifacts "bcmail-jdk14", "bcprov-jdk14" and
-          	"bctsp-jdk14", all from groupid "bouncycastle", are used. However
-          	for some reason, Maven actually resolves "bctsp-jdk14" with groupid
-          	"org.bouncycastle", that itself pulls the other two with the name
-          	groupid, leading to double inclusion of those jars (no name conflict
-          	though because the different versioning convention made their name different
-          	too). And of course they are binary equals, but at least it doesn't induce
-          	Heisenbugs when the classes are laoded.
-
-          	Because of that, we must manually remove "bouncycastle:bcprov-jdk14" and
-          	"bouncycastle:bcmail-jdk14" and let "org.bouncycastle:bcstp-jdk14" pull
-          	the other two with the same groupid.
-
-          	This is of course hazardous because no one really knows why
-          	"org.bouncycastle:bctsp-jdk14" is resolved instead of
-          	"bouncycastle:bctsp-jdk14" and that might break one day.
-
-          	Maven drives me nuts.
-          	-->
+            <!-- 
+		  		Pulled by itext. But no we wont do xmlsecurity in our documents
+		  		so we just exclude them. 
+		  	-->
             <groupId>bouncycastle</groupId>
-            <artifactId>bcprov-jdk14</artifactId>
-          </exclusion>
-
-          <exclusion>
-            <!-- see the comment above -->
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcmail-jdk14</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
 
           <exclusion>
@@ -364,6 +343,8 @@
         <version>${spring.boot.version}</version>
       </dependency>
 
+      <!-- /THYMELEAF STACK VERSION OVERRIDE -->
+
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
@@ -382,10 +363,29 @@
         <version>${spring-security.version}</version>
       </dependency>
 
+      <!-- THYMELEAF STACK VERSION OVERRIDE -->
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf</artifactId>
+        <version>${thymeleaf.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>thymeleaf-extras-springsecurity4</artifactId>
         <version>${thymeleaf-extras-springsecurity4.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>nz.net.ultraq.thymeleaf</groupId>
+        <artifactId>thymeleaf-layout-dialect</artifactId>
+        <version>${thymeleaf-layout-dialect.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf-spring4</artifactId>
+        <version>${thymeleaf.version}</version>
       </dependency>
 
       <dependency>

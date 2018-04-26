@@ -18,20 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
+package org.squashtest.csp.h2.triggers;
 
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.users.ConnectionLog;
+import org.h2.tools.TriggerAdapter;
 
-import java.util.List;
+import java.sql.*;
 
 /**
- * @author aguilhem
+ *  Triggered after a new TestCaseLibraryNode had been inserted. It will insert into the relationship
+ *  closure table the self-reference (the distance of a node with itself is always 0).
+ *
+ *
+ * @author bsiri
+ *
  */
-public interface CustomConnectionLogFinderService {
+public class TCLNAfterDeletingDatasets extends TriggerAdapter {
 
-	PagedCollectionHolder<List<ConnectionLog>> findAllFiltered(PagingAndSorting paging, ColumnFiltering columnFiltering);
+	private static final String SQL =
+		"UPDATE " +
+			"TEST_CASE_LIBRARY_NODE TCLN " +
+			"SET " +
+			"TCLN.LAST_MODIFIED_ON = NOW() " +
+			"WHERE " +
+			"TCLN.TCLN_ID = ?;";
+
+
+	@Override
+	public void fire(Connection conn, ResultSet oldRow, ResultSet newRow)
+			throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(SQL);
+		Long id = oldRow.getLong("TEST_CASE_ID");
+		stmt.setLong(1,id);
+		stmt.execute();
+	}
 }

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-tm</artifactId>
-    <version>1.18.0.IT2-SNAPSHOT</version>
+    <version>1.18.0.IT4-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -44,6 +44,7 @@
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+
   </properties>
 
   <dependencyManagement>
@@ -59,6 +60,7 @@
   </dependencyManagement>
 
   <dependencies>
+
     <!-- dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
@@ -203,10 +205,20 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
 
-    <dependency>
+    <!--
+      EXPERIMENTAL (1.18 dev) : removed cyberneko because it was needed for the legacy HTML5 mode of Thymeleaf 2, which is not required
+      anymore in thymeleaf 3.
+
+      If nothing breaks, then we can safely assume that we can dispose of that library.
+
+      Be mindful that it transitively pulled xerces:xercesImpl and xml-apis:xml-apis in a version that could be
+      required by a couple of plugins. If the plugins break, consider bundling with them those libraries at their
+      required versions.
+
+    dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
-    </dependency>
+    </dependency -->
 
     <!-- dependency>
       <groupId>org.objenesis</groupId>
@@ -239,11 +251,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
     <dependency>
@@ -290,6 +297,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -335,6 +343,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
 

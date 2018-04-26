@@ -481,7 +481,6 @@
 
 	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
 
-
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 	@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
@@ -496,6 +495,12 @@
 	@NamedQuery(name = "GenericProject.countByName", query = "select count(p) from GenericProject p where p.name = ?1"),
 	@NamedQuery(name = "GenericProject.findTestAutomationServer", query = "select p.testAutomationServer from GenericProject p where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.findBoundTemplateId", query = "select t.id from GenericProject p join p.template t where p.id = :projectId"),
+	@NamedQuery(name = "GenericProject.findBoundTemplateIdsFromBindingIds", query = "select t.id from CustomFieldBinding cfb join cfb.boundProject p join p.template t where cfb.id in (:bindingIds)"),
+
+
+	// Project Template
+	@NamedQuery(name = "ProjectTemplate.propagateAllowTcModifDuringExec", query = "update GenericProject set allowTcModifDuringExec = :active where template.id = :templateId"),
 
 	//Project
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
@@ -506,11 +511,14 @@
 	@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
 	@NamedQuery(name = "project.countNonFolderInCustomReport", query = "select count(crln) from CustomReportLibraryNode crln where crln.library.project.id = :projectId and crln.entityType not in ('LIBRARY','FOLDER')"),
 	@NamedQuery(name = "Project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
-		@NamedQuery(name = "Project.findAllUsersWhoCreatedTestCases", query = "select distinct tc.audit.createdBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.createdBy asc"),
+	@NamedQuery(name = "Project.findAllUsersWhoCreatedTestCases", query = "select distinct tc.audit.createdBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.createdBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoCreatedRequirementVersions", query = "select distinct rv.audit.createdBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.createdBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),
 	@NamedQuery(name = "Project.findAllAuthorizedUsersForProject", query = "select distinct c.audit from Campaign c join c.project p where p.id in :projectIds"),
+	@NamedQuery(name = "Project.findAllBoundToTemplate", query = "from Project p where p.template.id = :templateId"),
+	@NamedQuery(name = "Project.findAllIdsBoundToTemplate", query = "select p.id from Project p where p.template.id = :templateId"),
+	@NamedQuery(name = "Project.unbindAllFromTemplate", query = "update Project set template = null where template.id = :templateId"),
 
 	//Attachement et al
 	@NamedQuery(name = "attachment.getAttachmentAndContentIdsFromList", query = "select attachment.id, content.id from AttachmentList list join list.attachments attachment join attachment.content content where list.id in (:listIds) group by attachment.id, content.id"),
@@ -700,8 +708,8 @@
 	@NamedQuery(name = "CustomFieldBinding.findAllAlike", query = "select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntity", query = "select cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId = :entityId and cfv.boundEntityType = :entityType "),
 	@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntities", query = "select cfv.boundEntityId, cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "),
-
-
+	@NamedQuery(name = "CustomFieldBinding.cufBindingAlreadyExists", query = "select count(*) from CustomFieldBinding cfb where cfb.customField.id = :cufId and cfb.boundEntity = :boundEntity and cfb.boundProject.id = :projectId"),
+	@NamedQuery(name = "CustomFieldBinding.findEquivalentBindingsForBoundProjects", query = "select equivalent_cfb.id from CustomFieldBinding original_cfb, CustomFieldBinding equivalent_cfb where original_cfb.boundEntity = equivalent_cfb.boundEntity and original_cfb.customField.id = equivalent_cfb.customField.id and original_cfb.id in (:cufBindingIds) and equivalent_cfb.id not in (:cufBindingIds) and equivalent_cfb.boundProject.template.id = original_cfb.boundProject.id"),
 
 	//CustomFieldValue
 	@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),

@@ -87,10 +87,11 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 * The current dynamic component, for internal use only.
 	 */
 	private COMPONENT proxy;
-
-	public final synchronized void setComponentType(Class<COMPONENT> componentType) {
+	
+	public AbstractDynamicComponentFactoryBean(Class<COMPONENT> componentType){
 		this.componentType = componentType;
 	}
+
 
 	protected final synchronized void initializeFactory() {
 		LOGGER.info("Initializing Dynamic component of type {}", componentType.getSimpleName()); // NOSONAR
@@ -163,7 +164,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 		}
 
 		LOGGER.info("Dynamic component {} is bound to delegate to custom implementation named {}",
-				componentType.getSimpleName(), customImplementationBeanName);
+				componentType.getSimpleName(), beanName);
 
 		return new DeferredLookupCustomImplementationProvider(beanFactory, beanName);
 	}

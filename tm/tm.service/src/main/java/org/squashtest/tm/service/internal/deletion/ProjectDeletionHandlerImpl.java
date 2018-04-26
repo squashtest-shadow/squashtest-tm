@@ -49,6 +49,7 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -94,7 +95,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	@Override
 	public void deleteProject(long projectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 
 		project.accept(new ProjectVisitor() {
 			@Override
@@ -108,41 +109,39 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 			}
 		});
 
+		// This must be done before removing the cufBindings to avoid deletion cascading
+		if(ProjectHelper.isTemplate(project)) {
+			projectDao.unbindAllFromTemplate(project.getId());
+		}
+
 		milestoneBindingManager.unbindAllMilestonesFromProject(project);
 		bindingService.removeCustomFieldBindings(projectId);
-
 
 		doDeleteProject(projectId);
 
 	}
 
 	@Override
-	public void checkProjectContainsOnlyFolders(Project project) {
-		Long nonFolder = projectDao.countNonFoldersInProject(project.getId());
-		LOGGER.debug("The project #{} contains {} non folder library nodes", project.getId(), nonFolder);
+	public void checkProjectContainsOnlyFolders(long projectId){
+		Long nonFolder = projectDao.countNonFoldersInProject(projectId);
+		LOGGER.debug("The project #{} contains {} non folder library nodes", projectId, nonFolder);
 		if (nonFolder > 0L) {
 			throw new CannotDeleteProjectException("non-folders are found in the project");
 		}
+	}
 
+	@Override
+	public void checkProjectContainsOnlyFolders(Project project) {
+		checkProjectContainsOnlyFolders(project.getId());
 	}
 
 	private void doDeleteProject(long projectId) {
 		LOGGER.debug("The project #" + projectId + " is being deleted");
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 
-		CampaignLibrary campaignLibrary = project.getCampaignLibrary();
-		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);
-
-		TestCaseLibrary testCaseLibrary = project.getTestCaseLibrary();
-		deleteLibraryContent(testCaseLibrary, testCaseDeletionHandker);
-
-		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
-		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
-
-		//deleting the node associated to custom report library
+		deleteAllLibrariesContent(project);
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
-		deleteCustomReportLibraryContent(customReportLibrary);
-
+		deleteCustomReportLibrary(customReportLibrary);
 
 		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.findById(projectId);
@@ -162,10 +161,28 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		genericProjectDao.delete(project);
 	}
 
+	@Override
+	public void deleteAllLibrariesContent(GenericProject genericProject) {
+		CampaignLibrary campaignLibrary = genericProject.getCampaignLibrary();
+		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);
+
+		TestCaseLibrary testCaseLibrary = genericProject.getTestCaseLibrary();
+		deleteLibraryContent(testCaseLibrary, testCaseDeletionHandker);
+
+		RequirementLibrary requirementLibrary = genericProject.getRequirementLibrary();
+		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
+
+		CustomReportLibrary customReportLibrary = genericProject.getCustomReportLibrary();
+		deleteCustomReportLibraryContent(customReportLibrary);
+	}
+
 	private void deleteCustomReportLibraryContent(CustomReportLibrary customReportLibrary) {
 		//1 delete library content ie folders as we cannot have other things because eit was checked early
 		List<Long> descendantIds = crlnDao.findAllNodeIdsForLibraryEntity(customReportLibrary.getId());
 		crlnService.delete(descendantIds);
+	}
+
+	private void deleteCustomReportLibrary(CustomReportLibrary customReportLibrary) {
 		//2 Check if node exist because of Issue 6499 which was basically executing only part of the process (Thanks to the re-indexation optimization mess)
 		if(crlnDao.countNodeFromEntity(customReportLibrary).equals(1L)){
 			//3 delete the node representing the library. The deletion of the CustomReportLibrary entity will be handled by cascade delete on Project in the last part of the deletion process
@@ -214,7 +231,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		});
 	}
 
-	private void removeProjectFromFilters(Project project) {
+	@Override
+	public void removeProjectFromFilters(Project project) {
 		List<ProjectFilter> projectFilters = projectFilterDao.findByProjectsId(project.getId());
 		for (ProjectFilter projectFilter : projectFilters) {
 			projectFilter.removeProject(project);

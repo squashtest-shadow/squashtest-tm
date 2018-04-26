@@ -18,22 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
+package org.squashtest.tm.exception.project;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.users.ConnectionLog;
+public class LockedParameterException extends RuntimeException {
 
-import java.util.List;
+	public LockedParameterException() {
+		super();
+	}
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-
-/**
- * {@link ConnectionLog} retrieval methods
- * @author aguilhem
- */
-@Transactional(readOnly = true)
-public interface ConnectionLogFinderService extends CustomConnectionLogFinderService {
-	List<ConnectionLog> findAll();
+	public LockedParameterException(String message) {
+		super(message);
+	}
 }

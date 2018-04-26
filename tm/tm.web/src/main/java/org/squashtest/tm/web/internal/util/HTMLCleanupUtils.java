@@ -70,14 +70,6 @@ public final class HTMLCleanupUtils {
 		return StringUtils.EMPTY;
 	}
 
-	public static String getBriefText(String text, int maxLength) {
-		text = htmlToText(text);
-		if (text.length() > maxLength) {
-			text = text.substring(0, maxLength - 3) + "...";
-		}
-		return text;
-	}
-
 	public static String getCleanedBriefText(String text, int maxLength) {
 		text = htmlToText(cleanHtml(text));
 		if (text.length() > maxLength) {
@@ -92,8 +84,15 @@ public final class HTMLCleanupUtils {
 			outputSettings.prettyPrint(false);
 			outputSettings.outline(false);
 			return Jsoup.clean(unsecureHtml, "", Whitelist.relaxed()
-				.addAttributes("p", "style")
-				.addAttributes("span","style","class")
+					.addAttributes("a", "accesskey", "charset", "class", "dir", "lang", "name", "rel", "style", "tabindex", "target", "type")
+					.addProtocols("img", "src", "cid", "data", "http", "https")
+					.addAttributes("img", "class", "dir", "lang", "longdesc", "style")
+					.addAttributes("li", "class", "style")
+					.addAttributes("p", "class", "style")
+					.addAttributes("span", "class", "style")
+					.addAttributes("table", "align", "border", "cellpadding", "cellspacing", "class", "dir", "style")
+					.addAttributes("ul", "class", "style")
+					.addAttributes("ol", "class", "style")
 				, outputSettings);
 		}
 		return StringUtils.EMPTY;

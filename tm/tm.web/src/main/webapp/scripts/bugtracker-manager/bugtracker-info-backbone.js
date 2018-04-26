@@ -80,7 +80,8 @@ per se. The implementation varies according to the selected authentication proto
   * main div : #bt-auth-creds-messagezone
   * the failure notification : #bt-auth-failure
   * warning notification : #bt-auth-warning
-  * success notification : #bt-auth-success
+  * test success notification : #bt-auth-success
+  * save success notification : #bt-auth-save-success
 
 Failure are for unrecoverable errors while warnings are for other less fatal errors.
 
@@ -255,14 +256,17 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		$failPane : null,
 		$warnPane : null,
 		$succPane : null,
+		$saveSuccPane : null,
 
 
 		initialize : function(){
 			this.$failPane = $("#bt-auth-failure");
 			this.$warnPane = $("#bt-auth-warning");
 			this.$succPane = $("#bt-auth-info");
+			this.$saveSuccPane = $("#bt-auth-save-info");
 
 			this.listenTo(radio, 'bt-auth-success', this.showSuccess);
+			this.listenTo(radio, 'bt-auth-save-success', this.showSaveSuccess);
 			this.listenTo(radio, 'bt-auth-warning', this.showWarning);
 			this.listenTo(radio, 'bt-auth-failure', this.showFailure);
 		},
@@ -276,7 +280,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		allPanes : function(){
-			return [this.$failPane, this.$warnPane, this.$succPane];
+			return [this.$failPane, this.$warnPane, this.$succPane, this.$saveSuccPane];
 		},
 
 		showPane : function(paneName){
@@ -289,6 +293,10 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		showSuccess : function(){
 			this.showPane('$succPane');
+		},
+
+		showSaveSuccess : function(){
+			this.showPane('$saveSuccPane');
 		},
 
 		showWarning : function(msg){
@@ -304,7 +312,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 
 	// ********************* The application credentials view **************************
-
 
 	// TODO : actually handle the dropdown list when more protocols are supported
 	var MainView = Backbone.View.extend({
@@ -407,15 +414,18 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		},
 
 		test : function(){
-			this.postCredentials('/credentials/validator');
+			this.postCredentials('test');
 		},
 
 		save : function(){
-			this.postCredentials('/credentials');
+			this.postCredentials('save');
 		},
 
-		postCredentials : function(urlSuffix){
+		// 7156 : to avoid false login/password, we need to test before saving
+		// now this function has the action type in argument 'test' or 'save'
+		postCredentials : function(action){
 			var self = this;
+			var urlSuffix = '/credentials/validator';
 			var url = this.btUrl + urlSuffix;
 			var creds = this.model.get('credentials').attributes;
 
@@ -432,7 +442,24 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				contentType : 'application/json'
 			})
 			.done(function(){
-				radio.trigger('bt-auth-success');
+				if (action == 'save') {
+					url = url.replace('/validator', '');
+					$.ajax({
+						url : url,
+						type : 'POST',
+						data : JSON.stringify(payload),
+						contentType : 'application/json'
+					})
+					.done(function(){
+						radio.trigger('bt-auth-save-success');
+					})
+					.fail(function(xhr){
+						xhr.errorIsHandled = true;
+						radio.trigger('bt-auth-warning', notification.getErrorMessage(xhr));
+					});
+				} else {
+					radio.trigger('bt-auth-success');
+				}
 			})
 			.fail(function(xhr){
 				xhr.errorIsHandled = true;
@@ -443,7 +470,6 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			});
 		}
 	});
-
 
 
 

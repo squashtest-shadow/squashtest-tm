@@ -86,17 +86,13 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.project.LockedParameterException;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
-import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
-import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.PartyDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -113,7 +109,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
-
+	@Inject
+	private ProjectDao projectDao;
+	@Inject
+	private ProjectTemplateDao templateDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -252,18 +251,22 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setTestCaseTypes(defaultTypes);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
-	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void coerceTemplateIntoProject(long templateId) {
-		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
+	public void coerceProjectIntoTemplate(long projectId) {
 
-		objectIdentityService.addObjectIdentity(templateId, Project.class);
-		permissionsManager.copyAssignedUsersFromTemplate(project, templateId);
-		permissionsManager.removeAllPermissionsFromProjectTemplate(templateId);
-		objectIdentityService.removeObjectIdentity(templateId, ProjectTemplate.class);
+		Project project = projectDao.findOne(projectId);
+
+		projectDeletionHandler.checkProjectContainsOnlyFolders(projectId);
+		projectDeletionHandler.deleteAllLibrariesContent(project);
+		projectDeletionHandler.removeProjectFromFilters(project);
+
+		ProjectTemplate template = genericProjectDao.coerceProjectIntoTemplate(projectId);
+
+		objectIdentityService.addObjectIdentity(projectId, ProjectTemplate.class);
+		permissionsManager.copyAssignedUsersFromProjectToTemplate(template, projectId);
+		permissionsManager.removeAllPermissionsFromProject(projectId);
+		objectIdentityService.removeObjectIdentity(projectId, Project.class);
 	}
 
 	@Override
@@ -273,25 +276,41 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void associateToTemplate(long projectId, long templateId) {
+		Project project = projectDao.findOne(projectId);
+		ProjectTemplate template = templateDao.findOne(templateId);
+		project.setTemplate(template);
+		synchronizeProjectFromTemplate(project, template);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void disassociateFromTemplate(long projectId) {
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		genericProject.setTemplate(null);
+	}
+
+	@Override
 	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.tm.domain.project.Project' , 'MANAGEMENT')"
 			+ " or hasPermission(#projectId, 'org.squashtest.tm.domain.project.ProjectTemplate' , 'MANAGEMENT')"
 			+ OR_HAS_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(genericProject);
 		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
 	}
 
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(genericProject);
 		permissionsManager.addNewPermissionToProject(userId, projectId, permission);
 	}
 
 	@Override
 	public void removeProjectPermission(long userId, long projectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(genericProject);
 		permissionsManager.removeProjectPermission(userId, projectId);
 
@@ -328,7 +347,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
-		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
+		GenericProject genericProject = genericProjectDao.findOne(tmProjectId);
 		checkManageProjectOrAdmin(genericProject);
 
 		taProjectService.deleteAllForTMProject(tmProjectId);
@@ -344,7 +363,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
 
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		bindTestAutomationProject(taProject, genericProject);
 	}
 
@@ -392,14 +411,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(genericProject);
 		return genericProjectDao.findBoundTestAutomationProjects(projectId);
 	}
 
 	@Override
 	public void unbindTestAutomationProject(long projectId, long taProjectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(genericProject);
 		genericProject.unbindTestAutomationProject(taProjectId);
 
@@ -461,7 +480,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
 
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		BugTracker newBugtracker = bugTrackerDao.findOne(newBugtrackerId);
 		if (newBugtracker != null) {
@@ -504,7 +523,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void removeBugTracker(long projectId) {
 		LOGGER.debug("removeBugTracker for project " + projectId);
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
@@ -563,21 +582,53 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		GenericProject project = genericProjectDao.findById(projectId);
-		checkManageProjectOrAdmin(project);
-		project.getCampaignLibrary().enableStatus(executionStatus);
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		checkManageProjectOrAdmin(genericProject);
+		// Parameter is locked if it is a bound Project
+		if(genericProject.isBoundToTemplate()) {
+			throw new LockedParameterException();
+		}
+		doEnableExecutionStatus(genericProject, executionStatus);
+	}
+
+	@Override
+	public void doEnableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus) {
+		genericProject.getCampaignLibrary().enableStatus(executionStatus);
+		if (genericProjectDao.isProjectTemplate(genericProject.getId())) {
+			/* TODO: Optimize with a request. */
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(genericProject.getId());
+			for (Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().enableStatus(executionStatus);
+			}
+		}
 	}
 
 	@Override
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
+		// Parameter is locked if the Project is bound to a Template
+		if(project.isBoundToTemplate()) {
+			throw new LockedParameterException();
+		}
 		checkManageProjectOrAdmin(project);
-		project.getCampaignLibrary().disableStatus(executionStatus);
+		doDisableExecutionStatus(project, executionStatus);
+	}
+
+	@Override
+	public void doDisableExecutionStatus(GenericProject genericProject, ExecutionStatus executionStatus) {
+		genericProject.getCampaignLibrary().disableStatus(executionStatus);
+		/* If the GenericProject is a Template, propagate modification to bound Projects. */
+		if (genericProjectDao.isProjectTemplate(genericProject.getId())) {
+			Collection<Project> boundProjects = projectDao.findAllBoundToTemplate(genericProject.getId());
+			for (Project boundProject : boundProjects) {
+				boundProject.getCampaignLibrary().disableStatus(executionStatus);
+			}
+		}
 	}
 
 	@Override
 	public Set<ExecutionStatus> enabledExecutionStatuses(long projectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 
 		Set<ExecutionStatus> statuses = new HashSet<>();
@@ -593,7 +644,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public Set<ExecutionStatus> disabledExecutionStatuses(long projectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		return project.getCampaignLibrary().getDisabledStatuses();
 	}
@@ -787,7 +838,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	private PluginReferencer<?> findLibrary(long projectId, WorkspaceType workspace) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 
 		switch (workspace) {
 		case TEST_CASE_WORKSPACE:
@@ -819,7 +870,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	@Override
 	public void changeName(long projectId, String newName) {
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		if (StringUtils.equals(project.getName(), newName)) {
 			return;
 		}
@@ -832,9 +883,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		node.setName(newName);
 	}
 
-
-
-
 	private void copyMilestone(GenericProject target, GenericProject source) {
 
 		List<Milestone> milestones = getOnlyBindableMilestones(source.getMilestones());
@@ -845,9 +893,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			milestone.addProjectToPerimeter(target);
 		}
 	}
-
-
-
 
 	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
 		List<Milestone> bindableMilestones = new ArrayList<>();
@@ -890,6 +935,33 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		target.setTestCaseTypes(source.getTestCaseTypes());
 	}
 
+	private void copyExecutionStatuses(GenericProject target, GenericProject source) {
+
+		Set<ExecutionStatus> enabledStatuses = enabledExecutionStatuses(source.getId());
+		Set<ExecutionStatus> disabledStatuses = disabledExecutionStatuses(source.getId());
+
+		for(ExecutionStatus execStatusToEnable : enabledStatuses) {
+			doEnableExecutionStatus(target, execStatusToEnable);
+		}
+		for(ExecutionStatus execStatusToDisable : disabledStatuses) {
+			doDisableExecutionStatus(target, execStatusToDisable);
+		}
+	}
+
+	private void copyPlugins(GenericProject target, GenericProject source) {
+		/* Passer par WorkspaceWizardManager pour aussi désactiver ?
+		* -> A Tester. */
+		for(String pluginId : source.getRequirementLibrary().getEnabledPlugins()) {
+			target.getRequirementLibrary().enablePlugin(pluginId);
+		}
+		for(String pluginId : source.getTestCaseLibrary().getEnabledPlugins()) {
+			target.getTestCaseLibrary().enablePlugin(pluginId);
+		}
+		for(String pluginId : source.getCampaignLibrary().getEnabledPlugins()) {
+			target.getCampaignLibrary().enablePlugin(pluginId);
+		}
+	}
+
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	@Override
 	public GenericProject synchronizeGenericProject(GenericProject target,
@@ -913,19 +985,33 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (params.isCopyMilestone()) {
 			copyMilestone(target, source);
 		}
-
 		if (params.isCopyAllowTcModifFromExec()) {
 			target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		}
+		if(params.isCopyOptionalExecStatuses()) {
+			copyExecutionStatuses(target, source);
+		}
+		if(params.isCopyPlugins()) {
+			copyPlugins(target, source);
 		}
 
 		return target;
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	@Override
+	public GenericProject synchronizeProjectFromTemplate(Project target, ProjectTemplate source) {
+		copyCustomFieldsSettings(target, source);
+		copyInfolists(target, source);
+		target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		copyExecutionStatuses(target, source);
+		return target;
+	}
 
 	@Override
 	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {
 
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findOne(projectId);
 		checkManageProjectOrAdmin(project);
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
@@ -934,4 +1020,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	}
 
+	@Override
+	public void changeAllowTcModifDuringExec(long projectId, boolean active) {
+		GenericProject genericProject = genericProjectDao.findOne(projectId);
+		if(!genericProject.isBoundToTemplate()) {
+			genericProject.setAllowTcModifDuringExec(active);
+			/* If project is a Template, propagate on all the bound projects. */
+			if (ProjectHelper.isTemplate(genericProject)) {
+				templateDao.propagateAllowTcModifDuringExec(projectId, active);
+			}
+		} else {
+			throw new LockedParameterException();
+		}
+	}
 }

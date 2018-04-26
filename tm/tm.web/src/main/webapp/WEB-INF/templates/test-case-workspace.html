@@ -239,8 +239,6 @@
 
   </div>
   <!-- _____________________TEST CASE TREE POPUPS______________________________ -->
-  <!-- 		<wkp:tc-tree-popups/> -->
-
 
   <div id="treepopups-definition" class="not-displayed">
 
@@ -466,9 +464,9 @@
                     <label th:text="#{dialog.import.project.message}">project</label>
                   </div>
                   <div class="display-table-cell">
-                    <select id="import-project-list" name="projectId">
+                    <select id="import-project-list" name="projectId" style="width:90%;">
                       <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
-                        th:text="${lib.project.name}">project name</option>
+                        th:utext="${lib.project.name}">project name</option>
                     </select>
                     <div class="icon-helper no-print small-margin-left" th:title="#{message.import.info.targetproject}"></div>
                   </div>
