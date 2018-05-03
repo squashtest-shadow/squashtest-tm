@@ -1066,6 +1066,91 @@
     </addColumn>
   </changeSet>
 
-  
+    <changeSet id="tm-1.18.0-SQTM-194" author="aguilhem">
+      <comment>Creates sub-tables for Dataset and Parameter</comment>
+
+      <addColumn tableName="DATASET">
+        <column name="DATASET_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
+      </addColumn>
+
+      <createTable tableName="TEST_CASE_DATASET">
+        <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+          <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_dataset_local"/>
+        </column>
+        <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_test_case_dataset"/>
+        </column>
+        <column name="DATASET_ORDER" type="int"
+                remarks="numéro d'ordre d'un dataset dans la liste des dataset d'une execution.">
+          <constraints nullable="false" />
+        </column>
+
+      </createTable>
+
+      <addUniqueConstraint tableName="TEST_CASE_DATASET" columnNames="TEST_CASE_ID, DATASET_ORDER"
+                           constraintName="uc_test_case_dataset_order"/>
+
+      <addColumn tableName="PARAMETER">
+        <column name="PARAM_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
+      </addColumn>
+
+      <createTable tableName="TEST_CASE_PARAMETER">
+        <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+          <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_parameter_entity_bound"/>
+        </column>
+        <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+          <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_test_case_parameter"/>
+        </column>
+        <column name="PARAM_ORDER" type="int"
+                remarks="numéro d'ordre d'un parametre dans la liste des parametres d'une execution.">
+          <constraints nullable="false" />
+        </column>
+      </createTable>
+
+      <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
+                           constraintName="uc_test_case_param_order"/>
+
+      <createTable tableName="DATASET_PARAMETER">
+        <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+          <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_dataset_parameter"/>
+        </column>
+        <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_dataset_parameter"/>
+        </column>
+        <column name="PARAM_ORDER" type="int"
+                remarks="numero d'ordre d'un parametre dans la liste des parametres d'un dataset global.">
+          <constraints nullable="false" />
+        </column>
+      </createTable>
+
+      <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
+                           constraintName="uc_dataset_param_order"/>
+
+      <createTable tableName="DATASET_RELATIONSHIP">
+        <column name="ancestor_id" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_ancestor"/>
+        </column>
+        <column name="descendant_id" type="BIGINT" remarks="cle etrangere vers le noeud enfant">
+        <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_descendant"/>
+        </column>
+        <column name="content_order" type="BIGINT" remarks="numero d'ordre dans son parent"/>
+      </createTable>
+
+      <createTable tableName="DATASET_RELATIONSHIP_CLOSURE">
+        <column name="ancestor_id" type="BIGINT" remarks="cle etrangere vers le noeud parent. Peut etre un lien vers lui-meme.">
+          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_closure_ancestor"/>
+        </column>
+        <column name="descendant_id" type="BIGINT" remarks="cle etrangere vers le noeud enfant. Peut etre un lien vers lui-meme.">
+          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_descendant"/>
+        </column>
+        <column name="depth" type="SMALLINT" remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+          <constraints nullable="false" />
+        </column>
+      </createTable>
+
+      <dropColumn tableName="DATASET" columnName="TEST_CASE_ID"/>
+      <dropColumn tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+    </changeSet>
+
 
 </databaseChangeLog>
