@@ -1073,6 +1073,8 @@
         <column name="DATASET_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
       </addColumn>
 
+      <!--TEST_CASE_DATASET junction table-->
+
       <createTable tableName="TEST_CASE_DATASET">
         <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
           <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_dataset_local"/>
@@ -1094,6 +1096,8 @@
         <column name="PARAM_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
       </addColumn>
 
+      <!--TEST_CASE_PARAMETER junction table-->
+
       <createTable tableName="TEST_CASE_PARAMETER">
         <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
           <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_parameter_entity_bound"/>
@@ -1110,6 +1114,8 @@
       <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
                            constraintName="uc_test_case_param_order"/>
 
+      <!--DATASET_PARAMETER junction table-->
+
       <createTable tableName="DATASET_PARAMETER">
         <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
           <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_dataset_parameter"/>
@@ -1125,6 +1131,8 @@
 
       <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
                            constraintName="uc_dataset_param_order"/>
+
+      <!--DATASET relationship-->
 
       <createTable tableName="DATASET_RELATIONSHIP">
         <column name="ancestor_id" type="BIGINT" remarks="cle etrangere vers le noeud parent">
@@ -1148,9 +1156,79 @@
         </column>
       </createTable>
 
-      <dropColumn tableName="DATASET" columnName="TEST_CASE_ID"/>
-      <dropColumn tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+      <!-- DATASET_LIBRARY TABLE -->
+
+      <createTable tableName="DATASET_LIBRARY">
+        <column name="DL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+          <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY" />
+        </column>
+      </createTable>
+
+      <createIndex tableName="DATASET_LIBRARY" indexName="IDX_DATASET_LIBRARY">
+        <column name="DL_ID" />
+      </createIndex>
+
+      <!--DATASET_LIBRARY_NODE_TABLE-->
+
+      <createTable tableName="DATASET_LIBRARY_NODE">
+        <column name="DLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+          <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY_NODE" />
+        </column>
+
+        <column name="NAME" type="VARCHAR(255)"/>
+
+        <column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+
+        <column name="ENTITY_ID" type="BIGINT"/>
+
+        <column name="DL_ID" type="BIGINT" remarks="fk to the containing DATASET_LIBRARY">
+          <constraints nullable="true" foreignKeyName="fk_dln_dataset_library_dl_id" references="DATASET_LIBRARY(DL_ID)" />
+        </column>
+
+      </createTable>
+
     </changeSet>
+
+  <!-- DATASET_LIBRARY_NODE Relationship -->
+
+  <comment>This table contains the relations between two datasets nodes. If a node is root, parent id will be null and descendant id will be itself.
+    a given node can be referenced as descendant only one time so we can map the join with hibernate</comment>
+  <createTable tableName="DLN_RELATIONSHIP">
+
+    <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+      <constraints nullable="true" foreignKeyName="fk_dln_relationship_ancestor" references="DATASET_LIBRARY_NODE(DLN_ID)" />
+    </column>
+
+    <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+      <constraints nullable="false" foreignKeyName="fk_dln_relationship_descendant" references="DATASET_LIBRARY_NODE(DLN_ID)" />
+    </column>
+
+    <column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+    </column>
+  </createTable>
+
+  <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_descendant">
+    <column name="DESCENDANT_ID" />
+  </createIndex>
+
+  <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_ancestor">
+    <column name="ANCESTOR_ID" />
+  </createIndex>
+
+  <createTable tableName="DATASET_FOLDER">
+    <column name="DF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+      <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DF_ID" />
+    </column>
+
+    <column name="NAME" type="VARCHAR(255)"/>
+
+    <column name="DESCRIPTION" type="CLOB"/>
+
+    <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+      <constraints nullable="false" foreignKeyName="fk_project_dataset_folder_project_id" references="PROJECT(PROJECT_ID)" />
+    </column>
+
+  </createTable>
 
 
 </databaseChangeLog>
