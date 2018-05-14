@@ -1046,7 +1046,7 @@
     </createTable>
 
     <createIndex tableName="SCRIPTED_EXECUTION_EXTENDER" indexName="scripted_execution_extender_execution_id_idx">
-      <column name="EXECUTION_ID" />
+      <column name="EXECUTION_ID"/>
     </createIndex>
 
     <addColumn tableName="TEST_CASE">
@@ -1066,169 +1066,248 @@
     </addColumn>
   </changeSet>
 
-    <changeSet id="tm-1.18.0-SQTM-194" author="aguilhem">
-      <comment>Creates sub-tables for Dataset and Parameter</comment>
 
-      <addColumn tableName="DATASET">
-        <column name="DATASET_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
-      </addColumn>
+  <changeSet id="tm-1.18.0-SQTM-194-1" author="aguilhem">
+    <comment>Creates sub-tables for Dataset and Parameter</comment>
 
-      <!--TEST_CASE_DATASET junction table-->
+    <addColumn tableName="DATASET">
+      <column name="DATASET_TYPE" type="VARCHAR(255)" defaultValue="TC"/>
+    </addColumn>
 
-      <createTable tableName="TEST_CASE_DATASET">
-        <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
-          <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_dataset_local"/>
-        </column>
-        <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
-          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_test_case_dataset"/>
-        </column>
-        <column name="DATASET_ORDER" type="int"
-                remarks="numéro d'ordre d'un dataset dans la liste des dataset d'une execution.">
-          <constraints nullable="false" />
-        </column>
+    <!--TEST_CASE_DATASET junction table-->
 
-      </createTable>
+    <createTable tableName="TEST_CASE_DATASET">
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+        <constraints nullable="false" references="TEST_CASE(TCLN_ID)"
+                     foreignKeyName="fk_test_case_test_case_dataset_local"/>
+      </column>
+      <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+        <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_test_case_dataset"/>
+      </column>
+      <column name="DATASET_ORDER" type="int"
+              remarks="order of this dataset inside tc datasets">
+        <!--<constraints nullable="false"/>-->
+      </column>
 
-      <addUniqueConstraint tableName="TEST_CASE_DATASET" columnNames="TEST_CASE_ID, DATASET_ORDER"
-                           constraintName="uc_test_case_dataset_order"/>
+    </createTable>
 
-      <addColumn tableName="PARAMETER">
-        <column name="PARAM_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
-      </addColumn>
+    <!--<addUniqueConstraint tableName="TEST_CASE_DATASET" columnNames="TEST_CASE_ID, DATASET_ORDER"-->
+                         <!--constraintName="uc_test_case_dataset_order"/>-->
 
-      <!--TEST_CASE_PARAMETER junction table-->
+    <addColumn tableName="PARAMETER">
+      <column name="PARAM_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
+    </addColumn>
 
-      <createTable tableName="TEST_CASE_PARAMETER">
-        <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
-          <constraints nullable="false" references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_test_case_test_case_parameter_entity_bound"/>
-        </column>
-        <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
-          <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_test_case_parameter"/>
-        </column>
-        <column name="PARAM_ORDER" type="int"
-                remarks="numéro d'ordre d'un parametre dans la liste des parametres d'une execution.">
-          <constraints nullable="false" />
-        </column>
-      </createTable>
+    <!--TEST_CASE_PARAMETER junction table-->
 
-      <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
-                           constraintName="uc_test_case_param_order"/>
+    <createTable tableName="TEST_CASE_PARAMETER">
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+        <constraints nullable="false" references="TEST_CASE(TCLN_ID)"
+                     foreignKeyName="fk_test_case_test_case_parameter_entity_bound"/>
+      </column>
+      <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+        <constraints nullable="false" references="PARAMETER(PARAM_ID)"
+                     foreignKeyName="fk_parameter_test_case_parameter"/>
+      </column>
+      <column name="PARAM_ORDER" type="int"
+              remarks="numéro d'ordre d'un parametre dans la liste des parametres d'un cas de test.">
+        <!--<constraints nullable="false"/>-->
+      </column>
+    </createTable>
 
-      <!--DATASET_PARAMETER junction table-->
+    <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
+                         constraintName="uc_test_case_param_order"/>
 
-      <createTable tableName="DATASET_PARAMETER">
-        <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
-          <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_dataset_parameter"/>
-        </column>
-        <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
-          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_dataset_parameter"/>
-        </column>
-        <column name="PARAM_ORDER" type="int"
-                remarks="numero d'ordre d'un parametre dans la liste des parametres d'un dataset global.">
-          <constraints nullable="false" />
-        </column>
-      </createTable>
+    <!--DATASET_PARAMETER junction table-->
 
-      <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
-                           constraintName="uc_dataset_param_order"/>
+    <createTable tableName="DATASET_PARAMETER">
+      <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+        <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_dataset_parameter"/>
+      </column>
+      <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+        <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_dataset_parameter"/>
+      </column>
+      <column name="PARAM_ORDER" type="int"
+              remarks="numero d'ordre d'un parametre dans la liste des parametres d'un dataset global.">
+        <!--<constraints nullable="false"/>-->
+      </column>
+    </createTable>
 
-      <!--DATASET relationship-->
+    <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
+                         constraintName="uc_dataset_param_order"/>
 
-      <createTable tableName="DATASET_RELATIONSHIP">
-        <column name="ancestor_id" type="BIGINT" remarks="cle etrangere vers le noeud parent">
-          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_ancestor"/>
-        </column>
-        <column name="descendant_id" type="BIGINT" remarks="cle etrangere vers le noeud enfant">
-        <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_descendant"/>
-        </column>
-        <column name="content_order" type="BIGINT" remarks="numero d'ordre dans son parent"/>
-      </createTable>
+    <!--DATASET relationship-->
 
-      <createTable tableName="DATASET_RELATIONSHIP_CLOSURE">
-        <column name="ancestor_id" type="BIGINT" remarks="cle etrangere vers le noeud parent. Peut etre un lien vers lui-meme.">
-          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_closure_ancestor"/>
-        </column>
-        <column name="descendant_id" type="BIGINT" remarks="cle etrangere vers le noeud enfant. Peut etre un lien vers lui-meme.">
-          <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_relationship_descendant"/>
-        </column>
-        <column name="depth" type="SMALLINT" remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
-          <constraints nullable="false" />
-        </column>
-      </createTable>
+    <createTable tableName="DATASET_RELATIONSHIP">
+      <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+        <constraints nullable="false" references="DATASET(DATASET_ID)"
+                     foreignKeyName="fk_dataset_relationship_ancestor"/>
+      </column>
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers le noeud enfant">
+        <constraints nullable="false" references="DATASET(DATASET_ID)"
+                     foreignKeyName="fk_dataset_relationship_descendant"/>
+      </column>
+      <column name="CONTENT_ORDER" type="BIGINT" remarks="numero d'ordre dans son parent"/>
+    </createTable>
 
-      <!-- DATASET_LIBRARY TABLE -->
 
-      <createTable tableName="DATASET_LIBRARY">
-        <column name="DL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
-          <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY" />
-        </column>
-      </createTable>
 
-      <createIndex tableName="DATASET_LIBRARY" indexName="IDX_DATASET_LIBRARY">
-        <column name="DL_ID" />
-      </createIndex>
+    <createTable tableName="DATASET_RELATIONSHIP_CLOSURE">
+      <column name="ANCESTOR_ID" type="BIGINT"
+              remarks="cle etrangere vers le noeud parent. Peut etre un lien vers lui-meme.">
+        <constraints nullable="false" references="DATASET(DATASET_ID)"
+                     foreignKeyName="fk_dataset_relationship_closure_ancestor"/>
+      </column>
+      <column name="DESCENDANT_ID" type="BIGINT"
+              remarks="cle etrangere vers le noeud enfant. Peut etre un lien vers lui-meme.">
+        <constraints nullable="false" references="DATASET(DATASET_ID)"
+                     foreignKeyName="fk_dataset_relationship_closure_descendant"/>
+      </column>
+      <column name="DEPTH" type="SMALLINT"
+              remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-      <!--DATASET_LIBRARY_NODE_TABLE-->
+    <!-- DATASET_LIBRARY TABLE -->
 
-      <createTable tableName="DATASET_LIBRARY_NODE">
-        <column name="DLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
-          <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY_NODE" />
-        </column>
+    <createTable tableName="DATASET_LIBRARY">
+      <column name="DL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY"/>
+      </column>
+    </createTable>
 
-        <column name="NAME" type="VARCHAR(255)"/>
+    <createIndex tableName="DATASET_LIBRARY" indexName="IDX_DATASET_LIBRARY">
+      <column name="DL_ID"/>
+    </createIndex>
 
-        <column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+    <!--DATASET_LIBRARY_NODE_TABLE-->
 
-        <column name="ENTITY_ID" type="BIGINT"/>
+    <createTable tableName="DATASET_LIBRARY_NODE">
+      <column name="DLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY_NODE"/>
+      </column>
 
-        <column name="DL_ID" type="BIGINT" remarks="fk to the containing DATASET_LIBRARY">
-          <constraints nullable="true" foreignKeyName="fk_dln_dataset_library_dl_id" references="DATASET_LIBRARY(DL_ID)" />
-        </column>
+      <column name="NAME" type="VARCHAR(255)"/>
 
-      </createTable>
+      <column name="ENTITY_TYPE" type="VARCHAR(50)"/>
 
-    </changeSet>
+      <column name="ENTITY_ID" type="BIGINT"/>
 
-  <!-- DATASET_LIBRARY_NODE Relationship -->
+      <column name="DL_ID" type="BIGINT" remarks="fk to the containing DATASET_LIBRARY">
+        <constraints nullable="true" foreignKeyName="fk_dln_dataset_library_dl_id" references="DATASET_LIBRARY(DL_ID)"/>
+      </column>
 
-  <comment>This table contains the relations between two datasets nodes. If a node is root, parent id will be null and descendant id will be itself.
-    a given node can be referenced as descendant only one time so we can map the join with hibernate</comment>
-  <createTable tableName="DLN_RELATIONSHIP">
+    </createTable>
 
-    <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
-      <constraints nullable="true" foreignKeyName="fk_dln_relationship_ancestor" references="DATASET_LIBRARY_NODE(DLN_ID)" />
-    </column>
+    <createTable tableName="DATASET_FOLDER">
+      <column name="DF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DF_ID"/>
+      </column>
 
-    <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
-      <constraints nullable="false" foreignKeyName="fk_dln_relationship_descendant" references="DATASET_LIBRARY_NODE(DLN_ID)" />
-    </column>
+      <column name="NAME" type="VARCHAR(255)"/>
 
-    <column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
-    </column>
-  </createTable>
+      <column name="DESCRIPTION" type="CLOB"/>
 
-  <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_descendant">
-    <column name="DESCENDANT_ID" />
-  </createIndex>
+      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+        <constraints nullable="false" foreignKeyName="fk_project_dataset_folder_project_id"
+                     references="PROJECT(PROJECT_ID)"/>
+      </column>
 
-  <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_ancestor">
-    <column name="ANCESTOR_ID" />
-  </createIndex>
+    </createTable>
 
-  <createTable tableName="DATASET_FOLDER">
-    <column name="DF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
-      <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DF_ID" />
-    </column>
 
-    <column name="NAME" type="VARCHAR(255)"/>
+    <!-- DATASET_LIBRARY_NODE Relationship -->
 
-    <column name="DESCRIPTION" type="CLOB"/>
+    <comment>This table contains the relations between two datasets nodes. If a node is root, parent id will be null and
+      descendant id will be itself.
+      a given node can be referenced as descendant only one time so we can map the join with hibernate
+    </comment>
+    <createTable tableName="DLN_RELATIONSHIP">
 
-    <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
-      <constraints nullable="false" foreignKeyName="fk_project_dataset_folder_project_id" references="PROJECT(PROJECT_ID)" />
-    </column>
+      <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+        <constraints nullable="true" foreignKeyName="fk_dln_relationship_ancestor"
+                     references="DATASET_LIBRARY_NODE(DLN_ID)"/>
+      </column>
 
-  </createTable>
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+        <constraints nullable="false" foreignKeyName="fk_dln_relationship_descendant"
+                     references="DATASET_LIBRARY_NODE(DLN_ID)"/>
+      </column>
 
+      <column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+      </column>
+    </createTable>
+
+    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_descendant">
+      <column name="DESCENDANT_ID"/>
+    </createIndex>
+
+    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_ancestor">
+      <column name="ANCESTOR_ID"/>
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-2" author="jthebault">
+    <comment>Changeset for data migration : The test case referenced by a dataset is not a simple fk anymore</comment>
+    <sql>
+      insert into TEST_CASE_DATASET(TEST_CASE_ID,DATASET_ID,DATASET_ORDER)
+       select TEST_CASE_ID,DATASET_ID, 0 from DATASET
+       order by TEST_CASE_ID,DATASET_ID;
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-3-h2" author="jthebault" dbms="h2">
+  <sql>
+    update TEST_CASE_DATASET TCD
+    set DATASET_ORDER = (SELECT SUB_QUERY.ORDER_DEF
+    from(
+    select  DS1.TEST_CASE_ID as TC_ID,
+    DS1.DATASET_ID as DS_ID,
+    count (*) -1 as ORDER_DEF
+    from TEST_CASE_DATASET DS1
+    inner join TEST_CASE_DATASET DS2
+    on DS1.TEST_CASE_ID = DS2.TEST_CASE_ID and DS1.DATASET_ID >= DS2.DATASET_ID
+    group by DS1.TEST_CASE_ID, DS1.DATASET_ID
+    ) as SUB_QUERY
+    where SUB_QUERY.TC_ID = TCD.TEST_CASE_ID and SUB_QUERY.DS_ID=TCD.DATASET_ID);
+  </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-3-mysql" author="jthebault" dbms="mysql">
+    <sql>
+      update TEST_CASE_DATASET AS TCD
+        inner JOIN (
+          select
+            DS1.TEST_CASE_ID as TC_ID,
+            DS1.DATASET_ID   as DS_ID,
+            (count(*) - 1)   as ORDER_DEF
+          from TEST_CASE_DATASET DS1
+            inner join TEST_CASE_DATASET DS2
+              on DS1.TEST_CASE_ID = DS2.TEST_CASE_ID and DS1.DATASET_ID >= DS2.DATASET_ID
+          group by DS1.TEST_CASE_ID, DS1.DATASET_ID
+        ) as SUB_QUERY on SUB_QUERY.TC_ID = TCD.TEST_CASE_ID and SUB_QUERY.DS_ID = TCD.DATASET_ID
+      set TCD.DATASET_ORDER = SUB_QUERY.ORDER_DEF;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-3-postgresql" author="jthebault" dbms="postgresql">
+    <sql>
+      update TEST_CASE_DATASET TCD
+      set DATASET_ORDER = SUB_QUERY.ORDER_DEF
+      from(
+        select  DS1.TEST_CASE_ID as TC_ID,
+                DS1.DATASET_ID as DS_ID,
+                count (*) -1 as ORDER_DEF
+        from TEST_CASE_DATASET DS1
+          inner join TEST_CASE_DATASET DS2
+            on DS1.TEST_CASE_ID = DS2.TEST_CASE_ID and DS1.DATASET_ID >= DS2.DATASET_ID
+        group by DS1.TEST_CASE_ID, DS1.DATASET_ID
+      ) as SUB_QUERY
+      where SUB_QUERY.TC_ID = TCD.TEST_CASE_ID and SUB_QUERY.DS_ID=TCD.DATASET_ID;
+    </sql>
+  </changeSet>
 
 </databaseChangeLog>

@@ -27,6 +27,7 @@
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
   <include file="tm.data-1.18.0-feat-7183.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.18.0-feat-SQTM-194.xml" relativeToChangelogFile="true" />
 
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.18.0.xml"
@@ -116,6 +117,54 @@
       </sqlCheck>
     </preConditions>
     <comment>We check that there are no duplicates for (CAMPAIGN_ID, TEST_PLAN_ORDER)</comment>
+  </changeSet>
+
+
+
+  <changeSet id="tm-1.18.0-feature-SQTM-194.1-test" author="jthebault" dbms="mysql,postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="4">
+        select count(*) from TEST_CASE_DATASET where TEST_CASE_ID = 1;
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-feature-SQTM-194.3-test" author="jthebault" dbms="mysql,postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 1 and DATASET_ID=1;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 1 and DATASET_ID=2;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 1 and DATASET_ID=3;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="3">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 1 and DATASET_ID=25;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 2 and DATASET_ID=4;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 2 and DATASET_ID=13;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 2 and DATASET_ID=18;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        select DATASET_ORDER from TEST_CASE_DATASET where TEST_CASE_ID = 3;
+      </sqlCheck>
+
+
+    </preConditions>
   </changeSet>
 
 </databaseChangeLog>

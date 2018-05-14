@@ -20,53 +20,30 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.dataset.AbstractDataset;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
+import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
+import static org.squashtest.tm.domain.testcase.Dataset.DATASET_TYPE;
 
 @Auditable
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
-public class Dataset implements Identified {
+@DiscriminatorValue(DATASET_TYPE)
+public class Dataset extends AbstractDataset  {
+
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
-	@Id
-	@Column(name = "DATASET_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_dataset_id_seq")
-	@SequenceGenerator(name = "dataset_dataset_id_seq", sequenceName = "dataset_dataset_id_seq", allocationSize = 1)
-	private Long id;
-
-	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
-	private String name;
-
+	static final String DATASET_TYPE = "TC";
 
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
-
-	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")
-	private Set<DatasetParamValue> parameterValues = new HashSet<>(0);
 
 	public Dataset() {
 	}
@@ -78,37 +55,12 @@ public class Dataset implements Identified {
 		this.testCase.addDataset(this);
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public TestCase getTestCase() {
 		return testCase;
 	}
 
 	public void setTestCase(@NotNull TestCase testCase) {
 		this.testCase = testCase;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	public Set<DatasetParamValue> getParameterValues() {
-		return Collections.unmodifiableSet(this.parameterValues);
-	}
-
-	public void addParameterValue(@NotNull DatasetParamValue datasetParamValue) {
-		this.parameterValues.add(datasetParamValue);
-	}
-
-	public void removeParameterValue(@NotNull DatasetParamValue datasetParamValue) {
-		this.parameterValues.remove(datasetParamValue);
 	}
 
 }
