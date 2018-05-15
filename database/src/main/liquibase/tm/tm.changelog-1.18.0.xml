@@ -1077,22 +1077,21 @@
     <!--TEST_CASE_DATASET junction table-->
 
     <createTable tableName="TEST_CASE_DATASET">
-      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="fk to table TEST_CASE">
         <constraints nullable="false" references="TEST_CASE(TCLN_ID)"
                      foreignKeyName="fk_test_case_test_case_dataset_local"/>
       </column>
-      <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+      <column name="DATASET_ID" type="BIGINT" remarks="fk to table DATASET">
         <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_test_case_dataset"/>
       </column>
       <column name="DATASET_ORDER" type="int"
               remarks="order of this dataset inside tc datasets">
-        <!--<constraints nullable="false"/>-->
+        <constraints nullable="false"/>
       </column>
 
     </createTable>
 
-    <!--<addUniqueConstraint tableName="TEST_CASE_DATASET" columnNames="TEST_CASE_ID, DATASET_ORDER"-->
-                         <!--constraintName="uc_test_case_dataset_order"/>-->
+
 
     <addColumn tableName="PARAMETER">
       <column name="PARAM_TYPE" type="VARCHAR(255)" defaultValue="LOCAL"/>
@@ -1101,65 +1100,63 @@
     <!--TEST_CASE_PARAMETER junction table-->
 
     <createTable tableName="TEST_CASE_PARAMETER">
-      <column name="TEST_CASE_ID" type="BIGINT" remarks="cle etrangere vers la table TEST_CASE">
+      <column name="TEST_CASE_ID" type="BIGINT" remarks="fk to table TEST_CASE">
         <constraints nullable="false" references="TEST_CASE(TCLN_ID)"
                      foreignKeyName="fk_test_case_test_case_parameter_entity_bound"/>
       </column>
-      <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+      <column name="PARAM_ID" type="BIGINT" remarks="fk to table PARAMETER">
         <constraints nullable="false" references="PARAMETER(PARAM_ID)"
                      foreignKeyName="fk_parameter_test_case_parameter"/>
       </column>
       <column name="PARAM_ORDER" type="int"
-              remarks="numéro d'ordre d'un parametre dans la liste des parametres d'un cas de test.">
-        <!--<constraints nullable="false"/>-->
+              remarks="order of this parameter inside tc datasets">
+        <constraints nullable="false"/>
       </column>
     </createTable>
 
-    <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
-                         constraintName="uc_test_case_param_order"/>
+
 
     <!--DATASET_PARAMETER junction table-->
 
     <createTable tableName="DATASET_PARAMETER">
-      <column name="PARAM_ID" type="BIGINT" remarks="cle etrangere vers la table PARAMETER">
+      <column name="PARAM_ID" type="BIGINT" remarks="fk to table PARAMETER">
         <constraints nullable="false" references="PARAMETER(PARAM_ID)" foreignKeyName="fk_parameter_dataset_parameter"/>
       </column>
-      <column name="DATASET_ID" type="BIGINT" remarks="cle etrangere vers la table DATASET">
+      <column name="DATASET_ID" type="BIGINT" remarks="fk to table DATASET">
         <constraints nullable="false" references="DATASET(DATASET_ID)" foreignKeyName="fk_dataset_dataset_parameter"/>
       </column>
       <column name="PARAM_ORDER" type="int"
-              remarks="numero d'ordre d'un parametre dans la liste des parametres d'un dataset global.">
-        <!--<constraints nullable="false"/>-->
+              remarks="order of this parameter inside global dataset parameters">
+        <constraints nullable="false"/>
       </column>
     </createTable>
 
-    <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
-                         constraintName="uc_dataset_param_order"/>
+
 
     <!--DATASET relationship-->
 
     <createTable tableName="DATASET_RELATIONSHIP">
-      <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+      <column name="ANCESTOR_ID" type="BIGINT" remarks="fk to parent node">
         <constraints nullable="false" references="DATASET(DATASET_ID)"
                      foreignKeyName="fk_dataset_relationship_ancestor"/>
       </column>
-      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers le noeud enfant">
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="fk to child node">
         <constraints nullable="false" references="DATASET(DATASET_ID)"
                      foreignKeyName="fk_dataset_relationship_descendant"/>
       </column>
-      <column name="CONTENT_ORDER" type="BIGINT" remarks="numero d'ordre dans son parent"/>
+      <column name="CONTENT_ORDER" type="BIGINT" remarks="order in parent content"/>
     </createTable>
 
 
 
     <createTable tableName="DATASET_RELATIONSHIP_CLOSURE">
       <column name="ANCESTOR_ID" type="BIGINT"
-              remarks="cle etrangere vers le noeud parent. Peut etre un lien vers lui-meme.">
+              remarks="fk to parent node. Can be fk to itself with a 0 depht">
         <constraints nullable="false" references="DATASET(DATASET_ID)"
                      foreignKeyName="fk_dataset_relationship_closure_ancestor"/>
       </column>
       <column name="DESCENDANT_ID" type="BIGINT"
-              remarks="cle etrangere vers le noeud enfant. Peut etre un lien vers lui-meme.">
+              remarks="fk to child node. Can be fk to itself with a 0 depht">
         <constraints nullable="false" references="DATASET(DATASET_ID)"
                      foreignKeyName="fk_dataset_relationship_closure_descendant"/>
       </column>
@@ -1201,7 +1198,7 @@
     </createTable>
 
     <createTable tableName="DATASET_FOLDER">
-      <column name="DF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+      <column name="DF_ID" type="BIGINT" autoIncrement="true" remarks="generated pk">
         <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DF_ID"/>
       </column>
 
@@ -1209,7 +1206,7 @@
 
       <column name="DESCRIPTION" type="CLOB"/>
 
-      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+      <column name="PROJECT_ID" type="BIGINT" remarks="fk to project">
         <constraints nullable="false" foreignKeyName="fk_project_dataset_folder_project_id"
                      references="PROJECT(PROJECT_ID)"/>
       </column>
@@ -1225,26 +1222,53 @@
     </comment>
     <createTable tableName="DLN_RELATIONSHIP">
 
-      <column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+      <column name="ANCESTOR_ID" type="BIGINT" remarks="fk to parent node">
         <constraints nullable="true" foreignKeyName="fk_dln_relationship_ancestor"
                      references="DATASET_LIBRARY_NODE(DLN_ID)"/>
       </column>
 
-      <column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="fk to child">
         <constraints nullable="false" foreignKeyName="fk_dln_relationship_descendant"
                      references="DATASET_LIBRARY_NODE(DLN_ID)"/>
       </column>
 
-      <column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+      <column name="CONTENT_ORDER" type="BIGINT" remarks="content order">
       </column>
     </createTable>
 
-    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_descendant">
+    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_dln_relationship_descendant">
       <column name="DESCENDANT_ID"/>
     </createIndex>
 
-    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_Dln_relationship_ancestor">
+    <createIndex tableName="DLN_RELATIONSHIP" indexName="idx_dln_relationship_ancestor">
       <column name="ANCESTOR_ID"/>
+    </createIndex>
+
+    <createTable tableName="DLN_RELATIONSHIP_CLOSURE">
+      <column name="ANCESTOR_ID" type="BIGINT"
+              remarks="fk to parent node. Can be fk to itself with a 0 depht">
+        <constraints nullable="false" references="DATASET_LIBRARY_NODE(DLN_ID)"
+                     foreignKeyName="fk_dln_relationship_closure_ancestor"/>
+      </column>
+      <column name="DESCENDANT_ID" type="BIGINT"
+              remarks="fk to child node. Can be fk to itself with a 0 depht">
+        <constraints nullable="false" references="DATASET_LIBRARY_NODE(DLN_ID)"
+                     foreignKeyName="fk_dln_relationship_closure_descendant"/>
+      </column>
+      <column name="DEPTH" type="SMALLINT"
+              remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="DLN_RELATIONSHIP_CLOSURE"
+                 indexName="idx_dln_relationship_clos_desc">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="DLN_RELATIONSHIP_CLOSURE"
+                 indexName="idx_dln_relationship_clos_anc">
+      <column name="ANCESTOR_ID" />
     </createIndex>
 
   </changeSet>
@@ -1264,14 +1288,14 @@
     update TEST_CASE_DATASET TCD
     set DATASET_ORDER = (SELECT SUB_QUERY.ORDER_DEF
     from(
-    select  DS1.TEST_CASE_ID as TC_ID,
-    DS1.DATASET_ID as DS_ID,
-    count (*) -1 as ORDER_DEF
-    from TEST_CASE_DATASET DS1
-    inner join TEST_CASE_DATASET DS2
-    on DS1.TEST_CASE_ID = DS2.TEST_CASE_ID and DS1.DATASET_ID >= DS2.DATASET_ID
-    group by DS1.TEST_CASE_ID, DS1.DATASET_ID
-    ) as SUB_QUERY
+      select  DS1.TEST_CASE_ID as TC_ID,
+              DS1.DATASET_ID as DS_ID,
+              count (*) -1 as ORDER_DEF
+      from TEST_CASE_DATASET DS1
+        inner join TEST_CASE_DATASET DS2
+          on DS1.TEST_CASE_ID = DS2.TEST_CASE_ID and DS1.DATASET_ID >= DS2.DATASET_ID
+      group by DS1.TEST_CASE_ID, DS1.DATASET_ID
+      ) as SUB_QUERY
     where SUB_QUERY.TC_ID = TCD.TEST_CASE_ID and SUB_QUERY.DS_ID=TCD.DATASET_ID);
   </sql>
   </changeSet>
@@ -1308,6 +1332,108 @@
       ) as SUB_QUERY
       where SUB_QUERY.TC_ID = TCD.TEST_CASE_ID and SUB_QUERY.DS_ID=TCD.DATASET_ID;
     </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-4" author="jthebault">
+    <comment>Changeset for data migration : The test case referenced by a paramter is not a simple fk anymore</comment>
+    <sql>
+      insert into TEST_CASE_PARAMETER(TEST_CASE_ID,PARAM_ID,PARAM_ORDER)
+      select TEST_CASE_ID,PARAM_ID, 0 from PARAMETER
+      order by TEST_CASE_ID,PARAM_ID;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-5-h2" author="jthebault" dbms="h2">
+    <sql>
+      update TEST_CASE_PARAMETER TCP
+      set PARAM_ORDER = (SELECT SUB_QUERY.ORDER_DEF
+      from(
+        select  TP1.TEST_CASE_ID as TC_ID,
+                TP1.PARAM_ID as PR_ID,
+                count (*) -1 as ORDER_DEF
+        from TEST_CASE_PARAMETER TP1
+          inner join TEST_CASE_PARAMETER TP2
+            on TP1.TEST_CASE_ID = TP2.TEST_CASE_ID and TP1.PARAM_ID >= TP2.PARAM_ID
+        group by TP1.TEST_CASE_ID, TP1.PARAM_ID
+        ) as SUB_QUERY
+      where SUB_QUERY.TC_ID = TCP.TEST_CASE_ID and SUB_QUERY.PR_ID=TCP.PARAM_ID);
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-5-mysql" author="jthebault" dbms="mysql">
+    <sql>
+      update TEST_CASE_PARAMETER AS TCP
+      inner JOIN (
+        select
+          TP1.TEST_CASE_ID as TC_ID,
+          TP1.PARAM_ID   as PR_ID,
+          (count(*) - 1)   as ORDER_DEF
+        from TEST_CASE_PARAMETER TP1
+          inner join TEST_CASE_PARAMETER TP2
+            on TP1.TEST_CASE_ID = TP2.TEST_CASE_ID and TP1.PARAM_ID >= TP2.PARAM_ID
+        group by TP1.TEST_CASE_ID, TP1.PARAM_ID
+        ) as SUB_QUERY on SUB_QUERY.TC_ID = TCP.TEST_CASE_ID and SUB_QUERY.PR_ID = TCP.PARAM_ID
+      set TCP.PARAM_ORDER = SUB_QUERY.ORDER_DEF;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-5-postgresql" author="jthebault" dbms="postgresql">
+    <sql>
+      update TEST_CASE_PARAMETER TCP
+      set PARAM_ORDER = SUB_QUERY.ORDER_DEF
+      from(
+        select  TP1.TEST_CASE_ID as TC_ID,
+                TP1.PARAM_ID as PR_ID,
+                count (*) -1 as ORDER_DEF
+        from TEST_CASE_PARAMETER TP1
+          inner join TEST_CASE_PARAMETER TP2
+            on TP1.TEST_CASE_ID = TP2.TEST_CASE_ID and TP1.PARAM_ID >= TP2.PARAM_ID
+        group by TP1.TEST_CASE_ID, TP1.PARAM_ID
+        ) as SUB_QUERY
+      where SUB_QUERY.TC_ID = TCP.TEST_CASE_ID and SUB_QUERY.PR_ID=TCP.PARAM_ID;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-6" author="jthebault" dbms="h2">
+    <addUniqueConstraint tableName="TEST_CASE_PARAMETER" columnNames="TEST_CASE_ID, PARAM_ORDER"
+                          constraintName="uc_test_case_param_order"/>
+
+    <addUniqueConstraint tableName="TEST_CASE_DATASET" columnNames="TEST_CASE_ID, DATASET_ORDER"
+                          constraintName="uc_test_case_dataset_order"/>
+
+    <addUniqueConstraint tableName="DATASET_PARAMETER" columnNames="DATASET_ID, PARAM_ORDER"
+                          constraintName="uc_dataset_param_order"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-7-h2" author="jthebault" dbms="h2">
+    <dropUniqueConstraint tableName="PARAMETER" constraintName="CONSTRAINT_1A96" uniqueColumns="NAME,TEST_CASE_ID"/>
+    <dropForeignKeyConstraint baseTableName="PARAMETER" constraintName="FK_PARAMETER_TEST_CASE"/>
+    <dropColumn tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+
+    <dropUniqueConstraint tableName="DATASET" constraintName="CONSTRAINT_80D"/>
+    <dropForeignKeyConstraint baseTableName="DATASET" constraintName="FK_DATASET_TEST_CASE"/>
+    <dropColumn tableName="DATASET" columnName="TEST_CASE_ID"/>
+
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-7-mysql" author="jthebault" dbms="mysql">
+    <dropUniqueConstraint tableName="PARAMETER" constraintName="NAME" uniqueColumns="NAME,TEST_CASE_ID"/>
+    <dropForeignKeyConstraint baseTableName="PARAMETER" constraintName="fk_parameter_test_case"/>
+    <dropColumn tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+
+    <dropUniqueConstraint tableName="DATASET" constraintName="NAME" uniqueColumns="NAME,TEST_CASE_ID"/>
+    <dropForeignKeyConstraint baseTableName="DATASET" constraintName="fk_dataset_test_case"/>
+    <dropColumn tableName="DATASET" columnName="TEST_CASE_ID"/>
+  </changeSet>
+
+  <changeSet id="tm-1.18.0-SQTM-194-7-postgresql" author="jthebault" dbms="postgresql">
+    <dropUniqueConstraint tableName="PARAMETER" constraintName="parameter_name_test_case_id_key" uniqueColumns="NAME,TEST_CASE_ID"/>
+    <dropForeignKeyConstraint baseTableName="PARAMETER" constraintName="FK_PARAMETER_TEST_CASE"/>
+    <dropColumn tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+
+    <dropUniqueConstraint tableName="DATASET" constraintName="dataset_name_test_case_id_key" uniqueColumns="NAME,TEST_CASE_ID"/>
+    <dropForeignKeyConstraint baseTableName="DATASET" constraintName="fk_dataset_test_case"/>
+    <dropColumn tableName="DATASET" columnName="TEST_CASE_ID"/>
   </changeSet>
 
 </databaseChangeLog>
