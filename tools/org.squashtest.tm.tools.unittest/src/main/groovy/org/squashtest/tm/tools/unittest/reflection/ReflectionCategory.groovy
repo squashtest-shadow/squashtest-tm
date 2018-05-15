@@ -19,27 +19,43 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.tools.unittest.reflection
+
+import java.lang.reflect.Field
+
 /**
  * Category which defines a tiny DSL to set private properties of an object.
- * Usage: 
- * use(ReflectionCategory) {
- * 	TargetClass.set field: "fieldName", of: targetObject, to: newValue
+ * Usage:
+ * use(ReflectionCategory) {* 	TargetClass.set field: "fieldName", of: targetObject, to: newValue
  * 	TargetClass.get field: "fieldName", of: targetObject
- * }
- * @param clazz
+ *}* @param clazz
  * @param args
  * @return
  */
 class ReflectionCategory {
 	static def set(Class<?> clazz, def args) {
-		def field = clazz.getDeclaredField(args['field'])
+		Field field = findField(clazz, args)
 		field.accessible = true
 		field.set args['of'], args['to']
 	}
 
-	static def get(Class<?> clazz, def args) {
-		def field = clazz.getDeclaredField(args['field'])
+	private static Field get(Class<?> clazz, args) {
+		Field field = findField(clazz, args)
 		field.accessible = true
 		field.get args['of']
+	}
+
+	static Field findField(Class<?> clazz, def args) {
+		List<String> declaredFieldNames = clazz.getDeclaredFields().collect { it.name }.toList()
+		String fieldName = args['field']
+		if (declaredFieldNames.contains(fieldName)) {
+			return clazz.getDeclaredField(fieldName)
+		} else {
+			def superclass = (Class)clazz.getGenericSuperclass()
+			if (superclass == null || Object.class == superclass) {
+				throw new NoSuchFieldException(fieldName)
+			} else {
+				return findField(superclass,args)
+			}
+		}
 	}
 }
