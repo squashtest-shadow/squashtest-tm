@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.domain.testcase.Dataset.DATASET_TYPE;
 
-@Auditable
 @Entity
 @DiscriminatorValue(DATASET_TYPE)
 public class Dataset extends AbstractDataset  {

@@ -47,7 +47,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 @Entity
-@Auditable
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
