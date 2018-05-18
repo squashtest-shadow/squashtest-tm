@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@Auditable
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DATASET_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Entity

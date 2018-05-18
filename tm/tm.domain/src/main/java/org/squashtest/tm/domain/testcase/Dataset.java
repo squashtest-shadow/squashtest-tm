@@ -21,16 +21,11 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.dataset.AbstractDataset;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 import static org.squashtest.tm.domain.testcase.Dataset.DATASET_TYPE;
 
 @Entity
@@ -40,8 +35,8 @@ public class Dataset extends AbstractDataset  {
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	static final String DATASET_TYPE = "TC";
 
-	@ManyToOne
-	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name = "TEST_CASE_DATASET", joinColumns = @JoinColumn(name = "DATASET_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID",updatable = false, insertable = false))
 	private TestCase testCase;
 
 	public Dataset() {
@@ -50,8 +45,9 @@ public class Dataset extends AbstractDataset  {
 	public Dataset(String name, @NotNull TestCase testCase) {
 		super();
 		this.name = name;
-		this.testCase = testCase;
-		this.testCase.addDataset(this);
+		// DO NOT SET THIS SIDE OF ASSOCIATION, HIBERNATE WILL GENERATE INCORRECT SQL REQUE§T
+//		this.testCase = testCase;
+		testCase.addDataset(this);
 	}
 
 	public TestCase getTestCase() {

@@ -26,19 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -51,7 +39,6 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "NAME", "TEST_CASE_ID" }) })
 public class Parameter implements Identified {
 
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
@@ -79,8 +66,8 @@ public class Parameter implements Identified {
 	@Type(type="org.hibernate.type.TextType")
 	private String description = "";
 
-	@ManyToOne
-	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name = "TEST_CASE_PARAMETER", joinColumns = @JoinColumn(name = "TEST_CASE_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "PARAM_ID", insertable = false, updatable = false))
 	private TestCase testCase;
 
 	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })

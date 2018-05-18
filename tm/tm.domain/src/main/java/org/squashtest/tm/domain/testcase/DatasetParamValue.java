@@ -20,22 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
+import org.squashtest.tm.domain.Identified;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.audit.Auditable;
-
-@Auditable
 @Entity
 public class DatasetParamValue implements Identified {
 	@Id

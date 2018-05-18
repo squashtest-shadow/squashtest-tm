@@ -207,7 +207,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		 */
 		for (TestCase testCase : testCases) {
 
-			Set<Dataset> datasets = testCase.getDatasets();
+			List<Dataset> datasets = testCase.getDatasets();
 
 			if (datasets.isEmpty()){
 				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);

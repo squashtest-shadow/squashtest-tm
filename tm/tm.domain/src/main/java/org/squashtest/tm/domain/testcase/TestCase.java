@@ -111,18 +111,20 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
-	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
-	@OrderBy("name")
+	@OneToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name = "TEST_CASE_PARAMETER", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "PARAM_ID"))
+	@OrderColumn(name = "PARAM_ORDER")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<>(0);
 
 	@NotNull
-	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
-	@OrderBy("name")
+	@OneToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name = "TEST_CASE_DATASET", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "DATASET_ID"))
+	@OrderColumn(name = "DATASET_ORDER")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private Set<Dataset> datasets = new HashSet<>(0);
+	private List<Dataset> datasets = new ArrayList<>(0);
 
 	@NotNull
 	@Enumerated(STRING)
@@ -715,7 +717,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	}
 
-	public Set<Dataset> getDatasets() {
+	public List<Dataset> getDatasets() {
 		return datasets;
 	}
 

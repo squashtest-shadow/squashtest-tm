@@ -32,21 +32,21 @@ import org.squashtest.tm.domain.testcase.TestCase
 
 class DatasetMappingIT extends DbunitMappingSpecification {
 
-	def "should not persist a nameless dataset"(){
+	def "should not persist a nameless dataset"() {
 
 		given:
-                    // the nature and type might not be the correct system list items
-                    // however it is good enough for our purposes
-                    def nat = doInTransaction {it.load(InfoListItem.class, 1l)}
-                    def type = doInTransaction {it.load(InfoListItem.class, 2L)}
+		// the nature and type might not be the correct system list items
+		// however it is good enough for our purposes
+		def nat = doInTransaction { it.load(InfoListItem.class, 1l) }
+		def type = doInTransaction { it.load(InfoListItem.class, 2L) }
 
-                and :
+		and:
 
-		TestCase tc = new TestCase(name: "description", nature : nat, type : type)
-                doInTransaction { it.persist tc }
+		TestCase tc = new TestCase(name: "description", nature: nat, type: type)
+		doInTransaction { it.persist tc }
 
 		when:
-		Dataset ds = new Dataset(testCase:tc)
+		Dataset ds = new Dataset(testCase: tc)
 		doInTransaction({ session ->
 			session.persist(ds)
 		})
@@ -54,7 +54,35 @@ class DatasetMappingIT extends DbunitMappingSpecification {
 		then:
 		thrown(ConstraintViolationException)
 
-		cleanup :
+		cleanup:
+		deleteFixture tc
+	}
+
+	def "should persist a dataset"() {
+
+		given:
+		// the nature and type might not be the correct system list items
+		// however it is good enough for our purposes
+		def nat = doInTransaction { it.load(InfoListItem.class, 1l) }
+		def type = doInTransaction { it.load(InfoListItem.class, 2L) }
+		TestCase tc = null;
+
+		when:
+		doInTransaction({ session ->
+			tc = new TestCase(name:"description", nature: nat, type: type)
+			session.persist(tc)
+			session.flush()
+			Dataset ds = new Dataset("toto", tc)
+			session.persist(ds)
+		})
+
+		then:
+		doInTransaction({ session ->
+			TestCase persistedTc = session.load(TestCase.class, tc.id)
+			persistedTc.getDatasets().size() == 1
+		})
+
+		cleanup:
 		deleteFixture tc
 	}
 
