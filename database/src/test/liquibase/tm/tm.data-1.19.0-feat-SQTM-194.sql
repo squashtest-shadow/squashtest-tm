@@ -1,5 +1,5 @@
 
--- Feature 7183 when ordered lists have duplicate indices for order column
+-- Feature SQTM-194
 
 -- create test cases
 

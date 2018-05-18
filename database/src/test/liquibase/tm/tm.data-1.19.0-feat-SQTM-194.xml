@@ -26,7 +26,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <changeSet id="tm.data-1.18.0-feat-SQTM-194" author="jthebault">
-    <sqlFile path="tm.data-1.18.0-feat-SQTM-194.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+  <changeSet id="tm.data-1.19.0-feat-SQTM-194" author="jthebault">
+    <sqlFile path="tm.data-1.19.0-feat-SQTM-194.sql" relativeToChangelogFile="true" endDelimiter=";"/>
   </changeSet>
 </databaseChangeLog>
