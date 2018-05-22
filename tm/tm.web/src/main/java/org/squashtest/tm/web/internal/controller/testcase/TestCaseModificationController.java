@@ -727,7 +727,7 @@ public class TestCaseModificationController {
 	 * @param datasets
 	 * @return a list of Object[] with each object representing a dataset's information
 	 */
-	private List<Object[]> getParamValuesById(Set<Dataset> datasets) {
+	private List<Object[]> getParamValuesById(List<Dataset> datasets) {
 		List<Object[]> result = new ArrayList<>(datasets.size());
 
 		for (Dataset dataset : datasets) {

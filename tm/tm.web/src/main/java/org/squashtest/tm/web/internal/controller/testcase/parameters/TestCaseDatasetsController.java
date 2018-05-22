@@ -189,7 +189,7 @@ public class TestCaseDatasetsController {
 	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
 		Sorting sorting = new DataTableSorting(params, datasetsTableMapper);
-		Set<Dataset> datasets = testCase.getDatasets();
+		List<Dataset> datasets = testCase.getDatasets();
 		List<Dataset> datasetsList = new ArrayList<>(datasets);
 		if (sorting.getSortedAttribute() != null && "Parameter.name".equals(sorting.getSortedAttribute())) {
 			Collections.sort(datasetsList, new DatasetNameComparator(sorting.getSortOrder()));
