@@ -213,12 +213,12 @@
 
     <createTable tableName="DLN_RELATIONSHIP_CLOSURE">
       <column name="ANCESTOR_ID" type="BIGINT"
-              remarks="fk to parent node. Can be fk to itself with a 0 depht">
+              remarks="fk to parent node. Can be fk to itself with a 0 depth">
         <constraints nullable="false" references="DATASET_LIBRARY_NODE(DLN_ID)"
                      foreignKeyName="fk_dln_relationship_closure_ancestor"/>
       </column>
       <column name="DESCENDANT_ID" type="BIGINT"
-              remarks="fk to child node. Can be fk to itself with a 0 depht">
+              remarks="fk to child node. Can be fk to itself with a 0 depth">
         <constraints nullable="false" references="DATASET_LIBRARY_NODE(DLN_ID)"
                      foreignKeyName="fk_dln_relationship_closure_descendant"/>
       </column>
