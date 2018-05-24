@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <!-- see org.squashtest.tm.service.internal.batchimport.FacilityImplIT for dataset description -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
   <ACL_CLASS ID="-1" CLASSNAME="org.squashtest.tm.domain.project.Project" />
   <ACL_CLASS ID="-2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary" />
@@ -321,7 +321,7 @@
     ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2014-03-07 11:29:41.0"
     CL_ID="-14" TCL_ID="-14" RL_ID="-14"  ATTACHMENT_LIST_ID="-901" PROJECT_TYPE="P" />
   <PROJECT PROJECT_ID="-15" NAME="autre project" DESCRIPTION="" LABEL="" ACTIVE="true" CREATED_BY="admin"
-    CREATED_ON="2014-03-07 11:29:31.0" CL_ID="-15" TCL_ID="-15" RL_ID="-15" 
+    CREATED_ON="2014-03-07 11:29:31.0" CL_ID="-15" TCL_ID="-15" RL_ID="-15"
     ATTACHMENT_LIST_ID="-924" PROJECT_TYPE="P" />
   <TEST_CASE_LIBRARY_NODE TCLN_ID="-240" DESCRIPTION="" NAME="dossier 1" CREATED_BY="admin"
     CREATED_ON="2014-03-07 11:22:54.0" PROJECT_ID="-14" ATTACHMENT_LIST_ID="-906" />
@@ -472,16 +472,26 @@
 
 
   <!-- those one are uppercase because otherwise it would clash with the dbunit <dataset> tag -->
-  <DATASET DATASET_ID="-1" NAME="dataset with slash" TEST_CASE_ID="-244" />
-  <DATASET DATASET_ID="-2" NAME="ultimate ds" TEST_CASE_ID="-246" />
+  <DATASET DATASET_ID="-1" NAME="dataset with slash" DATASET_TYPE="TC" />
+  <TEST_CASE_DATASET TEST_CASE_ID="-244" DATASET_ID="-1" DATASET_ORDER="0"/>
 
-  <PARAMETER PARAM_ID="-6" NAME="param_test_3" TEST_CASE_ID="-245"
+  <DATASET DATASET_ID="-2" NAME="ultimate ds" DATASET_TYPE="TC" />
+  <TEST_CASE_DATASET TEST_CASE_ID="-246" DATASET_ID="-2" DATASET_ORDER="0"/>
+
+  <PARAMETER PARAM_ID="-6" NAME="param_test_3" PARAM_TYPE="LOCAL"
     DESCRIPTION="&lt;p&gt;&#xA;&#09;c&amp;#39;est un param test 3&lt;/p&gt;&#xA;" />
-  <PARAMETER PARAM_ID="-7" NAME="reparam_test_3" TEST_CASE_ID="-245"
+  <TEST_CASE_PARAMETER TEST_CASE_ID="-245" PARAM_ID="-6" PARAM_ORDER="0"/>
+
+  <PARAMETER PARAM_ID="-7" NAME="reparam_test_3" PARAM_TYPE="LOCAL"
     DESCRIPTION="&lt;p&gt;&#xA;&#09;encore un param test 3&lt;/p&gt;&#xA;" />
-  <PARAMETER PARAM_ID="-8" NAME="param_test_0" TEST_CASE_ID="-244" DESCRIPTION="" />
-  <PARAMETER PARAM_ID="-9" NAME="param_A" TEST_CASE_ID="-246"
+  <TEST_CASE_PARAMETER TEST_CASE_ID="-245" PARAM_ID="-7" PARAM_ORDER="1"/>
+
+  <PARAMETER PARAM_ID="-8" NAME="param_test_0" PARAM_TYPE="LOCAL" DESCRIPTION="" />
+  <TEST_CASE_PARAMETER TEST_CASE_ID="-244" PARAM_ID="-8" PARAM_ORDER="0"/>
+
+  <PARAMETER PARAM_ID="-9" NAME="param_A" PARAM_TYPE="LOCAL"
     DESCRIPTION="&lt;p&gt;&#xA;&#09;param&amp;egrave;tre test A&lt;/p&gt;&#xA;" />
+  <TEST_CASE_PARAMETER TEST_CASE_ID="-246" PARAM_ID="-9" PARAM_ORDER="0"/>
 
 
   <DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-9" DATASET_ID="-1" PARAM_ID="-7" PARAM_VALUE="p2" />

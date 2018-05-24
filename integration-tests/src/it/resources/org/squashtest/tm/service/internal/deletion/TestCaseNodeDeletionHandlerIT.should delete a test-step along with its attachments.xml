@@ -23,17 +23,17 @@
 -->
 <!-- depends on NodeDeletionDao.general.dbsetup.xml -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
 
-	<!-- ============================ attachment lists (unattached to anything) 
+	<!-- ============================ attachment lists (unattached to anything)
 		===================== -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/> <!-- FOR FOLDER 1 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11" /> <!-- FOR TEST CASE 1 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12" /> <!-- FOR TEST CASE 2 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-111" /> <!-- FOR TEST STEPS OF TEST CASE 1 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-121" /> <!-- FOR TEST STEPS OF TEST CASE 2 -->
-	
+
 
 	<!-- ============================ attachment_content ============================================ -->
 
@@ -128,11 +128,13 @@
 	<TEST_CASE_STEPS TEST_CASE_ID="-12" STEP_ID="-121"
 		STEP_ORDER="0" /> <!-- TEST CASE 2 STEP 1 -->
 
-	<PARAMETER PARAM_ID="-112" NAME="param104" TEST_CASE_ID="-11" DESCRIPTION="param104"/>
-		
-	<DATASET DATASET_ID="-112" NAME="dataset1" TEST_CASE_ID="-11"/>
-	
+	<PARAMETER PARAM_ID="-112" NAME="param104" PARAM_TYPE="LOCAL" DESCRIPTION="param104"/>
+  <TEST_CASE_PARAMETER TEST_CASE_ID="-11" PARAM_ID="-112" PARAM_ORDER="0"/>
+
+	<DATASET DATASET_ID="-112" NAME="dataset1" DATASET_TYPE="TC"/>
+  <TEST_CASE_DATASET TEST_CASE_ID="-11" DATASET_ID="-112" DATASET_ORDER="0"/>
+
 	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-112" DATASET_ID="-112" PARAM_ID="-112" PARAM_VALUE=""/>
-	
+
 
 </dataset>
