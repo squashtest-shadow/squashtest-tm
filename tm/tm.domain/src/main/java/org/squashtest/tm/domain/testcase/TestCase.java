@@ -116,7 +116,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OrderColumn(name = "PARAM_ORDER")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private Set<Parameter> parameters = new HashSet<>(0);
+	private List<Parameter> parameters = new ArrayList<>(0);
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.ALL})
@@ -697,7 +697,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	// =====================Parameter Section====================
-	public Set<Parameter> getParameters() {
+	public List<Parameter> getParameters() {
 		return parameters;
 	}
 

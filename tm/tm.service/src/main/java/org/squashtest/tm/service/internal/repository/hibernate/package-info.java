@@ -443,8 +443,10 @@
 
 
 	//TestParameters
-	@NamedQuery(name = "Parameter.findOwnParametersByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
-	@NamedQuery(name = "Parameter.findOwnParametersByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
+
+//	@NamedQuery(name = "Parameter.findOwnParametersByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name, parameter.name "),
+	@NamedQuery(name = "Parameter.findOwnParametersByTestCases", query = "select p from TestCase tc inner join tc.parameters p where tc.id in (:testCaseIds) order by tc.name, index(p) "),
+	@NamedQuery(name = "Parameter.findOwnParametersByTestCase", query = "select parameter from Parameter as parameter inner join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
 	@NamedQuery(name = "Parameter.findOwnParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
 	@NamedQuery(name = "Parameter.removeAllByTestCaseIds", query = "delete Parameter pm where pm.testCase.id in (:testCaseIds)"),
 	@NamedQuery(name = "Parameter.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.parameter in (select pm from Parameter pm where pm.testCase.id in (:testCaseIds))"),

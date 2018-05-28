@@ -67,7 +67,7 @@ public class Parameter implements Identified {
 	private String description = "";
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "TEST_CASE_PARAMETER", joinColumns = @JoinColumn(name = "TEST_CASE_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "PARAM_ID", insertable = false, updatable = false))
+	@JoinTable(name = "TEST_CASE_PARAMETER", joinColumns = @JoinColumn(name = "PARAM_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", insertable = false, updatable = false))
 	private TestCase testCase;
 
 	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })
@@ -84,8 +84,8 @@ public class Parameter implements Identified {
 
 	public Parameter(String name, @NotNull TestCase testCase) {
 		this(name);
-		this.testCase = testCase;
-		this.testCase.addParameter(this);
+//		this.testCase = testCase;
+		testCase.addParameter(this);
 	}
 
 	/**
@@ -146,8 +146,8 @@ public class Parameter implements Identified {
 	 * @param testCase
 	 */
 	public void setTestCase(@NotNull TestCase testCase) {
-		this.testCase = testCase;
-		this.testCase.addParameter(this);
+//		this.testCase = testCase;
+		testCase.addParameter(this);
 	}
 
 	@Override
