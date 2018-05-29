@@ -140,7 +140,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		//Squash TM 1.19: we need to remove parameter from TestCase parameter list before deleting the parameter in order
 		//to have a clean deletion in the database tables.
-		TestCase tc = testCaseDao.findAndInitParameters(parameter.getTestCase().getId());
+		TestCase tc = parameter.getTestCase();
 		tc.getParameters().remove(parameter);
 		this.parameterDao.delete(parameter);
 	}

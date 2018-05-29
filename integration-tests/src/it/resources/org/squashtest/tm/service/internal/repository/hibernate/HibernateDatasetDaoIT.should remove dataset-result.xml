@@ -33,16 +33,16 @@
 	<PARAMETER DESCRIPTION="" PARAM_TYPE="LOCAL" PARAM_ID="-2" NAME="p2"/>
   <TEST_CASE_PARAMETER TEST_CASE_ID="-1" PARAM_ID="-2" PARAM_ORDER="1"/>
 
-
+  <!-- The DATASET_ORDER is not update after deletion because by simply deleting the parameter,
+  Hibernate does not re-ordered. We need to remove it from test case's dataset list
+  (cf DatasetModificationServiceIT)-->
 	<DATASET DATASET_TYPE="TC" DATASET_ID="-2" NAME="dataset2"/>
-  <TEST_CASE_DATASET TEST_CASE_ID="-1" DATASET_ID="-2" DATASET_ORDER="0"/>
-
+  <TEST_CASE_DATASET TEST_CASE_ID="-1" DATASET_ID="-2" DATASET_ORDER="1"/>
 
 	<DATASET_PARAM_VALUE PARAM_ID="-1" PARAM_VALUE="val" DATASET_ID="-2" DATASET_PARAM_VALUE_ID="-3"/>
 	<DATASET_PARAM_VALUE PARAM_ID="-2" PARAM_VALUE="val" DATASET_ID="-2" DATASET_PARAM_VALUE_ID="-4"/>
 
 	<Dataset/>
 	<dataset_param_value/>
-
 
 </dataset>

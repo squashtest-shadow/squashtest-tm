@@ -95,7 +95,9 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public void remove(Dataset dataset) {
+		TestCase tc = dataset.getTestCase();
 		this.datasetDao.removeDatasetFromTestPlanItems(dataset.getId());
+		tc.removeDataset(dataset);
 		this.datasetDao.delete(dataset);
 	}
 

@@ -35,7 +35,6 @@ public class ParameterModificationServiceImplTest extends Specification {
 
 	def setup() {
 		service.parameterDao = parameterDao;
-		service.testCaseDao = testCaseDao
 	}
 
 	def "should delete parameter "(){
@@ -48,7 +47,6 @@ public class ParameterModificationServiceImplTest extends Specification {
 		tc.getParameters() >> list
 		parameter.getTestCase() >> tc
 		parameterDao.findById(1L) >> parameter
-		testCaseDao.findAndInitParameters(1L) >> tc
 		when :
 		service.removeById(1L)
 

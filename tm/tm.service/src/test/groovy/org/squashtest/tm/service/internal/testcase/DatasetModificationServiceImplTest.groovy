@@ -21,9 +21,10 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.DatasetDao
-import org.squashtest.tm.service.internal.repository.ParameterDao;
-
+import org.squashtest.tm.service.internal.repository.ParameterDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import spock.lang.Specification;
 
 public class DatasetModificationServiceImplTest extends Specification {
@@ -31,20 +32,26 @@ public class DatasetModificationServiceImplTest extends Specification {
 	DatasetModificationServiceImpl service = new DatasetModificationServiceImpl();
 	ParameterDao parameterDao = Mock()
 	DatasetDao datasetDao = Mock()
-	
+	TestCaseDao testCaseDao = Mock()
+
 	def setup() {
 		service.parameterDao = parameterDao;
 		service.datasetDao = datasetDao;
+		service.testCaseDao = testCaseDao
 	}
-	
+
 	def "should delete dataset "(){
 		given:
 		Dataset dataset = Mock()
+		TestCase tc = Mock()
+		tc.addDataset(dataset)
+		dataset.getTestCase() >> tc
+		dataset.getTestCase().getId() >> 1L
 		datasetDao.findById(1L) >> dataset
-			
+
 		when :
 		service.removeById(1L);
-		
+
 		then:
 		1* datasetDao.delete(dataset)
 	}
