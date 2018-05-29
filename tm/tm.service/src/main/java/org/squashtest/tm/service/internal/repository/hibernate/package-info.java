@@ -229,6 +229,7 @@
 	//TestCase
 	@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
 	@NamedQuery(name = "TestCase.findInitialized", query = "select tc from TestCase tc left join fetch tc.steps steps left join fetch steps.attachmentList al left join fetch al.attachments where tc.id = :tcId order by index(steps)"),
+	@NamedQuery(name = "TestCase.findInitializedWithParameters", query = "select tc from TestCase tc inner join fetch tc.parameters parameters where tc.id = :tcId order by index(parameters)"),
 	@NamedQuery(name = "testCase.findTestCaseByName", query = "from TestCaseLibraryNode tc where tc.name like :testCaseName order by tc.name asc"),
 	@NamedQuery(name = "testCase.findAllStepsByIdFiltered", query = "select s from TestCase tc join tc.steps s where tc.id = :testCaseId and index(s) between :firstIndex and :lastIndex order by index(s)"),
 	@NamedQuery(name = "TestCase.countCallingTestSteps", query = "select count(*) from CallTestStep s join s.calledTestCase ctc where ctc.id = ?1"),

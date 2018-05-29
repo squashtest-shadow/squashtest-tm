@@ -29,6 +29,7 @@ import org.squashtest.tm.service.testcase.DatasetModificationService
 import org.squashtest.tm.service.testcase.ParameterFinder
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
@@ -103,16 +104,15 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		parameterDao.findById(-10100L).description == "newDescription"
 	}
 
-	@DataSet("ParameterModificationServiceIT.xml")
+	@DataSet("ParameterModificationServiceIT.should remove parameter.xml")
+	@ExpectedDataSet("ParameterModificationServiceIT.should remove parameter-result.xml")
 	def "should remove parameter"() {
 
 		when:
-		TestCase testCase = testCaseDao.findById(-100L)
-		Parameter param = parameterDao.findById(-10100L)
-		parameterDao.delete(param)
-		then:
+		service.removeById(-1L)
 		em.flush()
-		testCase.getParameters().size() == 0
+		then: "expected dataset is verified"
+		notThrown(Exception.class)
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")

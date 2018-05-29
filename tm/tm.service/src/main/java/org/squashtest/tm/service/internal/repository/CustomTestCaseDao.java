@@ -49,6 +49,13 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	TestCase findAndInit(Long testCaseId);
 
+	/**
+	 * Given a test case id, return the test case with its parameter list
+	 * @param testCaseId the test step id
+	 * @return the corresponding test case with its parameter list
+	 */
+	TestCase findAndInitParameters(Long testCaseId);
+
 
 	/**
 	 * Given a test case id, return its steps ordered by their index

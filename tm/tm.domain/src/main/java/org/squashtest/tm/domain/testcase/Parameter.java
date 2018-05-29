@@ -84,7 +84,9 @@ public class Parameter implements Identified {
 
 	public Parameter(String name, @NotNull TestCase testCase) {
 		this(name);
-//		this.testCase = testCase;
+		//Squash TM 1.19 Database parameter and dataset schema changes: using this.testCase.addParameter() result
+		// in wrong sql request by hibernate.
+		this.testCase = testCase;
 		testCase.addParameter(this);
 	}
 

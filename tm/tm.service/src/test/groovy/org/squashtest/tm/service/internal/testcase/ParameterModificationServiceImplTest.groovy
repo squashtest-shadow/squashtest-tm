@@ -21,28 +21,37 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.DatasetDao
-import org.squashtest.tm.service.internal.repository.ParameterDao;
-
+import org.squashtest.tm.service.internal.repository.ParameterDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import spock.lang.Specification;
 
 public class ParameterModificationServiceImplTest extends Specification {
 
 	ParameterModificationServiceImpl service = new ParameterModificationServiceImpl();
 	ParameterDao parameterDao = Mock()
-	
+	TestCaseDao testCaseDao = Mock()
+
 	def setup() {
 		service.parameterDao = parameterDao;
+		service.testCaseDao = testCaseDao
 	}
-	
+
 	def "should delete parameter "(){
 		given:
 		Parameter parameter = Mock()
+		TestCase tc = Mock()
+		tc.getId() >> 1L
+		List<Parameter> list = new ArrayList<>()
+		list.add(parameter)
+		tc.getParameters() >> list
+		parameter.getTestCase() >> tc
 		parameterDao.findById(1L) >> parameter
-			
+		testCaseDao.findAndInitParameters(1L) >> tc
 		when :
 		service.removeById(1L)
-		
+
 		then:
 		1* parameterDao.delete(parameter)
 	}

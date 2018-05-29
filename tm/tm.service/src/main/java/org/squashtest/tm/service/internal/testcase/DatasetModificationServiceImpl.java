@@ -77,7 +77,9 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 				throw new IllegalArgumentException("Cannot add dataset to scripted test case.");
 			}
 
-			dataset.setTestCase(testCase);
+			//Squash TM 1.19 Database parameter and dataset schema changes: making the association both ways result
+			// in wrong sql request by hibernate.
+//			dataset.setTestCase(testCase);
 			testCase.addDataset(dataset);
 
 			Collection<Parameter> parameters = parameterDao.findAllParametersByTestCase(testCaseId);

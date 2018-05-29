@@ -56,6 +56,10 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
  *
@@ -88,6 +92,9 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			"join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	static {
 		defaultVerifiedTcSorting = new LinkedList<>();
@@ -122,6 +129,13 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		Hibernate.initialize(tc.getSteps());
 
 		return tc;
+	}
+
+	@Override
+	public TestCase findAndInitParameters(Long testCaseId) {
+		javax.persistence.Query query = em.createNamedQuery("TestCase.findInitializedWithParameters").setParameter("tcId", testCaseId);
+		return (TestCase) query.getSingleResult();
+
 	}
 
 	/*
