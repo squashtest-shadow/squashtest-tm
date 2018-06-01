@@ -28,50 +28,22 @@ import java.util.regex.Matcher;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.parameter.AbstractParameter;
 import org.squashtest.tm.exception.DuplicateNameException;
 
+import static org.squashtest.tm.domain.testcase.Parameter.PARAM_TYPE;
+
 @Entity
-public class Parameter implements Identified {
+@DiscriminatorValue(PARAM_TYPE)
+public class Parameter extends AbstractParameter {
 
-	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
-	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";
-	public static final int MIN_NAME_SIZE = 1;
-	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 
-	public static final String USAGE_PREFIX = "${";
-	public static final String USAGE_SUFFIX = "}";
-	public static final String USAGE_PATTERN = "\\Q" + USAGE_PREFIX + "\\E(" + PARAM_REGEXP + ")\\Q" + USAGE_SUFFIX
-			+ "\\E";
-
-	@Id
-	@Column(name = "PARAM_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "parameter_param_id_seq")
-	@SequenceGenerator(name = "parameter_param_id_seq", sequenceName = "parameter_param_id_seq", allocationSize = 1)
-	private Long id;
-
-	@NotBlank
-	@Pattern(regexp = NAME_REGEXP)
-	@Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
-	private String name;
-
-	@Lob
-	@Type(type="org.hibernate.type.TextType")
-	private String description = "";
+	static final String PARAM_TYPE = "LOCAL";
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "TEST_CASE_PARAMETER", joinColumns = @JoinColumn(name = "PARAM_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", insertable = false, updatable = false))
 	private TestCase testCase;
-
-	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })
-	private List<DatasetParamValue> datasetParamValues = new ArrayList<>();
 
 	public Parameter() {
 		super();
@@ -100,10 +72,7 @@ public class Parameter implements Identified {
 		return p;
 	}
 
-	public String getName() {
-		return name;
-	}
-
+	@Override
 	public void setName(String newName) {
 		if (this.name != null) {
 			if (!this.name.equals(newName)) {
@@ -123,16 +92,7 @@ public class Parameter implements Identified {
 				throw new DuplicateNameException(this.name, newName);
 			}
 			updateParamNameInSteps(newName);
-
 		}
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(@NotNull String description) {
-		this.description = description;
 	}
 
 	public TestCase getTestCase() {
@@ -150,11 +110,6 @@ public class Parameter implements Identified {
 	public void setTestCase(@NotNull TestCase testCase) {
 //		this.testCase = testCase;
 		testCase.addParameter(this);
-	}
-
-	@Override
-	public Long getId() {
-		return id;
 	}
 
 	/**
