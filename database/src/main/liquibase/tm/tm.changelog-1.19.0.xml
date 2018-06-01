@@ -139,6 +139,9 @@
       <column name="DL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
         <constraints primaryKey="true" nullable="false" primaryKeyName="PK_DATASET_LIBRARY"/>
       </column>
+
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to ATTACHMENT_LIST">
+      </column>
     </createTable>
 
     <createIndex tableName="DATASET_LIBRARY" indexName="IDX_DATASET_LIBRARY">

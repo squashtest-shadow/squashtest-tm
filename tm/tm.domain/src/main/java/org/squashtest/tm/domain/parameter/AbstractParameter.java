@@ -33,6 +33,10 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author aguilhem
+ */
+
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "PARAM_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Entity
@@ -62,7 +66,7 @@ public abstract class AbstractParameter implements Identified {
 	@Lob
 	@Type(type="org.hibernate.type.TextType")
 	protected String description = "";
-	
+
 	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })
 	private List<DatasetParamValue> datasetParamValues = new ArrayList<>();
 

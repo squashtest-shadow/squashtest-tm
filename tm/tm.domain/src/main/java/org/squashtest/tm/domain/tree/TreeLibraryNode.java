@@ -47,7 +47,7 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 
 	long getEntityId();
 
-	void setEntityType(CustomReportTreeDefinition entityType);
+	void setEntityType(TreeEntityDefinition entityType);
 
 	TreeEntity getEntity();
 

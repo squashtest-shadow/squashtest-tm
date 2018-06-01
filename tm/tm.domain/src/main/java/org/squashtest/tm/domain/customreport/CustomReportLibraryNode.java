@@ -212,8 +212,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public void setEntityType(CustomReportTreeDefinition entityType) {
-		this.entityType = entityType;
+	public void setEntityType(TreeEntityDefinition entityType) {
+		this.entityType = (CustomReportTreeDefinition) entityType;
 	}
 
 	/**
