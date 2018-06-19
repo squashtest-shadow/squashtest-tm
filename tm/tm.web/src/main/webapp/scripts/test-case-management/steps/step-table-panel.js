@@ -64,10 +64,10 @@
  *
  */
 
-define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
-	"./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog",
+define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
+	"./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog","../ParameterValidationNameHelper",
 	"jquery.squash.formdialog", "squashtable"], function ($, TableCollapser,
-	cufValuesManager, eventBus, popups, storage, translator, oneshot) {
+	cufValuesManager, eventBus, popups, storage, translator, oneshot, paramNameValidation) {
 	"use strict";
 
 	// ************************* configuration functions
@@ -405,8 +405,14 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 				},
 
 				richEditables: {
-					'rich-edit-action': urls.editActionUrl,
-					'rich-edit-result': urls.editResultUrl
+					'rich-edit-action': {
+						url : urls.editActionUrl,
+						onsubmit : paramNameValidation.parameterNameValidationFunction
+					},
+					'rich-edit-result':{
+						url : urls.editResultUrl,
+						onsubmit : paramNameValidation.parameterNameValidationFunction
+					}
 				},
 
 				functions: {

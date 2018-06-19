@@ -18,28 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.configmanager", "jquery.squash.jeditable"],
-		function($, Backbone, _, confman ) {
-	
+define([ "jquery", "backbone", "underscore", "squash.configmanager", "../ParameterValidationNameHelper", "jquery.squash.jeditable"],
+		function($, Backbone, _, confman, paramNameValidation ) {
+
 			var PrerequisitePanel = Backbone.View.extend({
-				
+
 				el : "#test-case-prerequisite-panel",
-				
+
 				initialize : function(options) {
 					this.settings = options.settings;
-						
+
 					if(this.settings.writable){
-						
+
 						var richEditSettings = confman.getJeditableCkeditor();
 						richEditSettings.url = this.settings.urls.testCaseUrl;
+						richEditSettings.onsubmit = paramNameValidation.parameterNameValidationFunction;
 
 						$('#test-case-prerequisite').richEditable(richEditSettings).addClass("editable");
 					}
-						
+
 				},
-				
+
 				events : {
-					
+
 				}
 
 			});

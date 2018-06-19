@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectSelectorPopup","../custom-report-workspace/utils", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectSelectorPopup,chartUtils) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup","../project-filter/ProjectSelectorPopup","../custom-report-workspace/utils", "../app/util/StringUtil","jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, Handlebars, projects, AbstractStepView, tree, translator, TreePopup,ProjectSelectorPopup,chartUtils, StringUtil) {
 		"use strict";
 
 		translator.load({
@@ -81,13 +81,28 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 			initProjectPerimeterPopup : function() {
 				var self = this;
 				var projects = squashtm.workspace.projects;
+
+
+				// Issue 7415, when filter is enabled, we will compare the activated projects in the filter and remove
+				// the non activated projects from the projects list above.
+				var filter = squashtm.workspace.filter;
+				if (filter.enabled) {
+					filter.projectData.forEach(function (row) {
+						if (!row[2]) {
+							projects = projects.filter(function (p) {
+								return p.id !== row[0];
+							});
+						}
+					})
+				}
+
 				var isModifyMode = this.model.get('chartDef');
 				var initialModel =  _.chain(projects)
 					.map(function(project) {
 						var checked = _.contains(self.model.get("projectsScope"),project.id);
 						return {
 							id: project.id,
-							name: project.name,
+							name: StringUtil.unescape(project.name),
 							label: project.label,
 							checked : isModifyMode ? checked : false
 						};

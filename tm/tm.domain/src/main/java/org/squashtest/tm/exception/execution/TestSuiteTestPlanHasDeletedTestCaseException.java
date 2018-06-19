@@ -18,10 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchexport;
+package org.squashtest.tm.exception.execution;
 
-import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-@Service
-public class GherkinFeatureFilesExporterService {
+public class TestSuiteTestPlanHasDeletedTestCaseException extends ActionException {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 4015267434405584486L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.testsuitetestplanhasdeletedtestcase.label";
+
+
+	public TestSuiteTestPlanHasDeletedTestCaseException(Exception ex) {
+		super(ex);
+	}
+
+	public TestSuiteTestPlanHasDeletedTestCaseException(String message) {
+		super(message);
+	}
+
+	public TestSuiteTestPlanHasDeletedTestCaseException(){
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
+	}
+
 }
