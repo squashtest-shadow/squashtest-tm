@@ -22,11 +22,14 @@ package org.squashtest.tm.domain.dataset;
 
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.parameter.GlobalParameter;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import java.util.List;
 
 import static org.squashtest.tm.domain.dataset.GlobalDataset.DATASET_TYPE;
 
@@ -58,5 +61,20 @@ public class GlobalDataset extends AbstractDataset implements TreeEntity {
 	@Override
 	public TreeEntity createCopy() {
 		return null;
+	}
+
+	@Override
+	public List<GlobalParameter> getGlobalParameters() {
+		return globalParameters;
+	}
+
+	@Override
+	public void addGlobalParameter(GlobalParameter globalParameter) {
+		this.globalParameters.add(globalParameter);
+	}
+
+	@Override
+	public void removeGlobalParameter(GlobalParameter globalParameter) {
+		this.globalParameters.remove(globalParameter);
 	}
 }

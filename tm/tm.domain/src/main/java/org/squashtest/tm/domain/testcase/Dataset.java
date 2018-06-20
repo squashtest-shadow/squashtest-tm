@@ -22,9 +22,12 @@ package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.dataset.AbstractDataset;
+import org.squashtest.tm.domain.parameter.GlobalParameter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import java.util.List;
 
 import static org.squashtest.tm.domain.testcase.Dataset.DATASET_TYPE;
 
@@ -58,4 +61,18 @@ public class Dataset extends AbstractDataset  {
 		this.testCase = testCase;
 	}
 
+	@Override
+	public List<GlobalParameter> getGlobalParameters() {
+		return null;
+	}
+
+	@Override
+	public void addGlobalParameter(GlobalParameter globalParameter) {
+
+	}
+
+	@Override
+	public void removeGlobalParameter(GlobalParameter globalParameter) {
+
+	}
 }
