@@ -20,18 +20,22 @@
  */
 package org.squashtest.tm.domain.dataset;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.parameter.GlobalParameter;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DATASET_TYPE", discriminatorType = DiscriminatorType.STRING)
@@ -55,6 +59,13 @@ public abstract class AbstractDataset implements Identified {
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")
 	protected Set<DatasetParamValue> parameterValues = new HashSet<>(0);
 
+	@OneToMany(cascade = {CascadeType.ALL})
+	@OrderColumn(name = "PARAM_ORDER")
+	@JoinTable(name = "DATASET_PARAMETER", joinColumns = @JoinColumn(name = "DATASET_ID"), inverseJoinColumns = @JoinColumn(name = "PARAM_ID"))
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = CollectionSizeBridge.class)
+	protected List<GlobalParameter> globalParameters = new ArrayList<>();
+
 	public String getName() {
 		return name;
 	}
@@ -62,6 +73,8 @@ public abstract class AbstractDataset implements Identified {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public abstract List<GlobalParameter> getGlobalParameters();
 
 	@Override
 	public Long getId() {
@@ -79,5 +92,9 @@ public abstract class AbstractDataset implements Identified {
 	public void removeParameterValue(@NotNull DatasetParamValue datasetParamValue) {
 		this.parameterValues.remove(datasetParamValue);
 	}
+
+	public abstract void addGlobalParameter(@NotNull GlobalParameter globalParameter);
+
+	public abstract void removeGlobalParameter(@NotNull GlobalParameter globalParameter);
 
 }
