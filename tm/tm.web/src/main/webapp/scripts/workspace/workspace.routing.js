@@ -256,6 +256,8 @@ define([], function(){
 
 		'dataset-library': '/dataset-library/{\\d+}',
 		'dataset-folder': '/dataset-folder/{\\d+}',
+		'dataset-library-server' :	root + '/dataset-library',
+		'dataset-folder-server' :		root + '/dataset-folder',
 
 		// report-workspace
 		'report-workspace' : root + '/report-workspace/{\\d+}',

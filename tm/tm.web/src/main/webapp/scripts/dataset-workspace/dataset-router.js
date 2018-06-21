@@ -23,7 +23,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 		"use strict";
 
 		var LibraryModel = Backbone.Model.extend({
-			urlRoot: urlBuilder.buildURL("custom-report-library-server"),
+			urlRoot: urlBuilder.buildURL("dataset-library-server"),
 
 			parse: function (response) {//flattening the embeded project from server in backbone model...
 				var attr = response && _.clone(response) || {};
@@ -40,7 +40,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 		});
 
 		var FolderModel = Backbone.Model.extend({
-			urlRoot: urlBuilder.buildURL("custom-report-folder-server")
+			urlRoot: urlBuilder.buildURL("dataset-folder-server")
 		});
 
 		/**

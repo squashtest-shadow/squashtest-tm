@@ -140,6 +140,15 @@ li[rel="ta-test"] > a > .jstree-icon {
 	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons; */
 }
 
+li[rel="dataset"] > a > .jstree-icon{
+	background-image: url("../images/Search_Content.png"); /** sprite-ref: sprites-icons; */
+}
+li[rel="dataset-composite"] > a > .jstree-icon{
+	background-image: url("../images/icon-lib/databases.png"); /** sprite-ref: sprites-icons; */
+}
+li[rel="dataset-template"] > a > .jstree-icon{
+	background-image: url("../images/icon-lib/page_white_database.png");  /** sprite-ref: sprites-icons; */
+}
 
 div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border: none;}
 

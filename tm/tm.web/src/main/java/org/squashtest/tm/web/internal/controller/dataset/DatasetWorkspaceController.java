@@ -13,10 +13,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Controller
 @RequestMapping("/dataset-workspace")
@@ -33,9 +30,56 @@ public class DatasetWorkspaceController {
 	                            @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 	                            @CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
 
-		String[] emptyList = new String[0];
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-		List<JsTreeNode> rootNodes = new ArrayList<>(customReportWorkspaceDisplayService.findAllLibraries(Collections.singletonList(14L), currentUser, mapIdsByType(emptyList)));
+
+		List<JsTreeNode> rootNodes = new ArrayList<>();
+
+		JsTreeNode datasetLibrary = new JsTreeNode();
+		datasetLibrary.setTitle("Test Project-1");
+		datasetLibrary.setState(JsTreeNode.State.open);
+		datasetLibrary.addAttr("rel", "drive");
+		datasetLibrary.addAttr("id", "DatasetLibrary-1");
+		datasetLibrary.addAttr("resId", 1L);
+
+		JsTreeNode datasetFolder = new JsTreeNode();
+		datasetFolder.setTitle("Dataset Folder");
+		datasetFolder.setState(JsTreeNode.State.open);
+		datasetFolder.addAttr("rel", "folder");
+		datasetFolder.addAttr("id", "DatasetFolder-1");
+		datasetFolder.addAttr("resId", 1L);
+
+
+		JsTreeNode dataset = new JsTreeNode();
+		dataset.setTitle("Dataset");
+		dataset.setState(JsTreeNode.State.closed);
+		dataset.addAttr("rel", "dataset");
+		dataset.addAttr("id", "Dataset-1");
+		dataset.addAttr("resId", 1L);
+
+		JsTreeNode datasetTemplate = new JsTreeNode();
+		datasetTemplate.setTitle("Dataset Template");
+		datasetTemplate.setState(JsTreeNode.State.closed);
+		datasetTemplate.addAttr("rel", "dataset-template");
+		datasetTemplate.addAttr("id", "DatasetTemplate-1");
+		datasetTemplate.addAttr("resId", 1L);
+
+		JsTreeNode datasetComposite = new JsTreeNode();
+		datasetComposite.setTitle("Dataset Composite");
+		datasetComposite.setState(JsTreeNode.State.closed);
+		datasetComposite.addAttr("rel", "dataset-composite");
+		datasetComposite.addAttr("id", "DatasetComposite-1");
+		datasetComposite.addAttr("resId", 1L);
+
+		datasetFolder.setChildren(new ArrayList<>(Arrays.asList(dataset,datasetComposite,datasetTemplate)));
+		datasetLibrary.setChildren(Collections.singletonList(datasetFolder));
+
+		rootNodes.add(datasetLibrary);
+
+//		Set<String> nodeToOpen = new HashSet<>(Arrays.asList(openedNodes));
+//
+//		UserDto currentUser = userAccountService.findCurrentUserDto();
+//		List<JsTreeNode> rootNodes = new ArrayList<>(
+//			customReportWorkspaceDisplayService.findAllLibraries(Collections.singletonList(14L), currentUser,
+//				mapIdsByType(nodeToOpen.toArray(new String[0]))));
 
 		model.addAttribute("rootModel", rootNodes);
 		return getWorkspaceViewName();
