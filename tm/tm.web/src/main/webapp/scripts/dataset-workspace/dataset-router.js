@@ -1,0 +1,127 @@
+/*
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView"],
+	function ($, Backbone, urlBuilder, libraryView, folderView) {
+		"use strict";
+
+		var LibraryModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("custom-report-library-server"),
+
+			parse: function (response) {//flattening the embeded project from server in backbone model...
+				var attr = response && _.clone(response) || {};
+				if (response.project) {
+					for (var key in response.project) {
+						if (response.project.hasOwnProperty(key)) {
+							attr["project-" + key] = response.project[key];
+						}
+					}
+					delete attr.project;
+				}
+				return attr;
+			}
+		});
+
+		var FolderModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("custom-report-folder-server")
+		});
+
+		/**
+		 * AclModel should be initialized with dash-style resource type and id : {type: "test-case", id: 10}
+		 */
+		var AclModel = Backbone.Model.extend({
+			defaults: {
+				type: undefined
+			},
+			urlRoot: function () {
+				return urlBuilder.buildURL("acls") + "/" + this.attributes.type;
+			}
+		});
+
+		var router = Backbone.Router.extend({
+
+			activeView: null,
+
+			initialize: function () {
+			},
+
+			routes: {
+				"": "cleanContextContent",
+				"dataset-library/:query": "showLibraryDetails",
+				"dataset-folder/:query": "showFolderDetails"
+			},
+
+			showLibraryDetails: function (id) {
+				this.cleanContextContent();
+
+				var activeModel = new LibraryModel({id: id});
+
+				this.activeView = new libraryView({
+					model: activeModel
+				});
+			},
+
+			showFolderDetails: function (id) {
+				this.cleanContextContent();
+
+				var activeModel = new FolderModel({id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+				this.activeView = new folderView({
+					model: activeModel,
+					acls: acls
+				});
+			},
+
+			//Only for forcing router to reload page after updates on selected node
+			//To navigate inside workspace and have a correct history please use router.navigateTo()
+			showNodeDetails: function (nodeType, nodeId) {
+				switch (nodeType) {
+					case "drive":
+						this.showLibraryDetails(nodeId);
+						break;
+					case "folder":
+						this.showFolderDetails(nodeId);
+						break;
+					default:
+				}
+			},
+
+			//Will clean the contextual part and restore the contextual div
+			cleanContextContent: function () {
+				if (this.activeView !== null) {
+					window.squashtm.app.wreqr.off('dropFromTree');
+					this.activeView.remove();
+					this.activeView = null;
+				}
+				//recreating the context div to allow new view to target the context div as el
+				$("#contextual-content").html("<div id='contextual-content-wrapper' style='height: 100%; width:98%; overflow: auto;'></div>");
+			}
+		});
+
+		function init() {
+			return new router();
+		}
+
+		// TODO simply return the Router function
+		return {
+			init: init
+		};
+	});

@@ -113,6 +113,11 @@
 			include: ['./custom-report-workspace/custom-report-workspace-main', "app/ws/squashtm.workspace", 'backbone.wreqr', 'backbone', './custom-report-workspace/custom-report-router', 'jquery.cookie'],
 			exclude: ["common"]
 		},
+		{
+			name: "dataset-workspace",
+			include: ['./dataset-workspace/dataset-workspace-main', "app/ws/squashtm.workspace", 'backbone.wreqr', 'backbone', './dataset-workspace/dataset-router', 'jquery.cookie'],
+			exclude: ["common"]
+		},
 		/* "edit-test-case-from-exec" is a module definition */
 		{
 			name: "edit-test-step",

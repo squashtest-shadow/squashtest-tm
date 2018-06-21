@@ -251,6 +251,12 @@ define([], function(){
 		//and the cookie path will be a nasty '/squash'
 		'custom-report-base' : root + '/custom-report-workspace/',
 
+
+		// dataset-workspace
+
+		'dataset-library': '/dataset-library/{\\d+}',
+		'dataset-folder': '/dataset-folder/{\\d+}',
+
 		// report-workspace
 		'report-workspace' : root + '/report-workspace/{\\d+}',
 		'reports': root + '/reports/',
