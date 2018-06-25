@@ -1,4 +1,24 @@
-package org.squashtest.tm.web.internal.controller.dataset;
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.web.internal.controller.globaldataset;
 
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
@@ -7,7 +27,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -44,32 +63,32 @@ public class DatasetWorkspaceController {
 		datasetFolder.setTitle("Dataset Folder");
 		datasetFolder.setState(JsTreeNode.State.open);
 		datasetFolder.addAttr("rel", "folder");
-		datasetFolder.addAttr("id", "DatasetFolder-1");
-		datasetFolder.addAttr("resId", 1L);
+		datasetFolder.addAttr("id", "DatasetFolder-2");
+		datasetFolder.addAttr("resId", 2L);
 
 
 		JsTreeNode dataset = new JsTreeNode();
 		dataset.setTitle("Dataset");
-		dataset.setState(JsTreeNode.State.closed);
-		dataset.addAttr("rel", "dataset");
-		dataset.addAttr("id", "Dataset-1");
-		dataset.addAttr("resId", 1L);
+		dataset.setState(JsTreeNode.State.leaf);
+		dataset.addAttr("rel", "global-dataset");
+		dataset.addAttr("id", "Dataset-3");
+		dataset.addAttr("resId", 3L);
 
 		JsTreeNode datasetTemplate = new JsTreeNode();
 		datasetTemplate.setTitle("Dataset Template");
-		datasetTemplate.setState(JsTreeNode.State.closed);
+		datasetTemplate.setState(JsTreeNode.State.leaf);
 		datasetTemplate.addAttr("rel", "dataset-template");
-		datasetTemplate.addAttr("id", "DatasetTemplate-1");
-		datasetTemplate.addAttr("resId", 1L);
+		datasetTemplate.addAttr("id", "DatasetTemplate-4");
+		datasetTemplate.addAttr("resId", 4L);
 
-		JsTreeNode datasetComposite = new JsTreeNode();
-		datasetComposite.setTitle("Dataset Composite");
-		datasetComposite.setState(JsTreeNode.State.closed);
-		datasetComposite.addAttr("rel", "dataset-composite");
-		datasetComposite.addAttr("id", "DatasetComposite-1");
-		datasetComposite.addAttr("resId", 1L);
+		JsTreeNode compositeDataset = new JsTreeNode();
+		compositeDataset.setTitle("Dataset Composite");
+		compositeDataset.setState(JsTreeNode.State.leaf);
+		compositeDataset.addAttr("rel", "composite-dataset");
+		compositeDataset.addAttr("id", "CompositeDataset-5");
+		compositeDataset.addAttr("resId", 5L);
 
-		datasetFolder.setChildren(new ArrayList<>(Arrays.asList(dataset,datasetComposite,datasetTemplate)));
+		datasetFolder.setChildren(new ArrayList<>(Arrays.asList(dataset, compositeDataset, datasetTemplate)));
 		datasetLibrary.setChildren(Collections.singletonList(datasetFolder));
 
 		rootNodes.add(datasetLibrary);

@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,22 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.dataset;
+define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "app/squash.handlebars.helpers"],
+	function (_, Backbone, translator, Handlebars, basicWidgets) {
+		"use strict";
 
-import org.squashtest.tm.domain.dataset.*;
-import org.squashtest.tm.domain.testcase.Dataset;
+		var View = Backbone.View.extend({
 
-public interface DatasetLibraryNodeService {
+			el: "#contextual-content-wrapper",
+			tpl: "#tpl-show-composite-dataset",
 
-	DatasetLibraryNode findDatasetLibraryNodeById(Long id);
+			initialize: function (options) {
+				this.options = options;
+				_.bindAll(this, "render");
+				this.model.fetch({})
+					.then(function () {
+						return options.acls.fetch({});
+					}).then(this.render);
+			},
 
-	DatasetLibrary findLibraryByTreeNodeId(Long treeNodeId);
+			events: {},
 
-	DatasetFolder findFolderByTreeNodeId(Long treeNodeId);
+			render: function () {
+				// TODO template should be compiled only once
+				var source = $("#tpl-show-composite-dataset").html();
+				var template = Handlebars.compile(source);
+				var props = this.model.toJSON();
+				props.acls = this.options.acls.toJSON();
+				this.$el.append(template(props));
+				basicWidgets.init();
+			}
 
-	GlobalDataset findGlobalDatasetByTreeNodeId(Long treeNodeId);
+		});
 
-	CompositeDataset findCompositeDatasetByTreeNodeId(Long treeNodeId);
+		return View;
+	});
 
-	DatasetTemplate findDatasetTemplateByTreeNodeId(Long treeNodeId);
-}

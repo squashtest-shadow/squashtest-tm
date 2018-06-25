@@ -40,6 +40,7 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DATASET_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Entity
+@Auditable
 @Table(name = "DATASET")
 public abstract class AbstractDataset implements Identified {
 

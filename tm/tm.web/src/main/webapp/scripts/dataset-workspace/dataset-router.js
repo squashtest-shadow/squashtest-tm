@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView"],
-	function ($, Backbone, urlBuilder, libraryView, folderView) {
+define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView", "./views/datasetView", "./views/compositeDatasetView", "./views/datasetTemplateView"],
+	function ($, Backbone, urlBuilder, libraryView, folderView, datasetView, compositeDatasetView, datasetTemplateView) {
 		"use strict";
 
 		var LibraryModel = Backbone.Model.extend({
@@ -41,6 +41,18 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 		var FolderModel = Backbone.Model.extend({
 			urlRoot: urlBuilder.buildURL("dataset-folder-server")
+		});
+
+		var DatasetModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("global-dataset-server")
+		});
+
+		var CompositeDatasetModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("composite-dataset-server")
+		});
+
+		var DatasetTemplateModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("dataset-template-server")
 		});
 
 		/**
@@ -65,7 +77,10 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 			routes: {
 				"": "cleanContextContent",
 				"dataset-library/:query": "showLibraryDetails",
-				"dataset-folder/:query": "showFolderDetails"
+				"dataset-folder/:query": "showFolderDetails",
+				"global-dataset/:query": "showGlobalDatasetDetails",
+				"composite-dataset/:query": "showCompositeDatasetDetails",
+				"dataset-template/:query": "showDatasetTemplateDetails"
 			},
 
 			showLibraryDetails: function (id) {
@@ -85,6 +100,42 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 				this.activeView = new folderView({
+					model: activeModel,
+					acls: acls
+				});
+			},
+
+			showGlobalDatasetDetails: function (id) {
+				this.cleanContextContent();
+
+				var activeModel = new DatasetModel({id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+				this.activeView = new datasetView({
+					model: activeModel,
+					acls: acls
+				});
+			},
+
+			showCompositeDatasetDetails: function (id) {
+				this.cleanContextContent();
+
+				var activeModel = new CompositeDatasetModel({id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+				this.activeView = new compositeDatasetView({
+					model: activeModel,
+					acls: acls
+				});
+			},
+
+			showDatasetTemplateDetails: function (id) {
+				this.cleanContextContent();
+
+				var activeModel = new DatasetTemplateModel({id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
+
+				this.activeView = new datasetTemplateView({
 					model: activeModel,
 					acls: acls
 				});

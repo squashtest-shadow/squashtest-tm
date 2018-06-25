@@ -694,4 +694,29 @@
     </sql>
   </changeSet>
 
+  <changeSet id="Dataset Front" author="cholc">
+    <comment>make datasets auditable</comment>
+
+    <addColumn tableName="DATASET">
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="admin">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+
+    <addColumn tableName="DATASET">
+      <column name="CREATED_ON" type="DATETIME" defaultValue="2010-01-01 00:00:00">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="DATASET">
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"/>
+    </addColumn>
+
+    <addColumn tableName="DATASET">
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

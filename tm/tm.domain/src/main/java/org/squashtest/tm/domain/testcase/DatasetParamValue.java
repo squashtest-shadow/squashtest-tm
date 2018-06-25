@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.dataset.AbstractDataset;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -41,7 +42,7 @@ public class DatasetParamValue implements Identified {
 
 	@ManyToOne
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
-	private Dataset dataset;
+	private AbstractDataset dataset;
 
 	@NotNull
 	@Size(max = 255)
@@ -71,11 +72,11 @@ public class DatasetParamValue implements Identified {
 		this.parameter = parameter;
 	}
 
-	public Dataset getDataset() {
+	public AbstractDataset getDataset() {
 		return dataset;
 	}
 
-	public void setDataset(Dataset dataset) {
+	public void setDataset(AbstractDataset dataset) {
 		this.dataset = dataset;
 	}
 

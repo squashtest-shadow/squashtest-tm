@@ -83,6 +83,18 @@ define(["jquery", "tree", "./permissions-rules", "workspace.contextual-content",
 				url = urlBuilder.buildURL("dataset-folder", nodeId);
 				backboneRouter.navigate(url, {trigger: true});
 				break;
+			case "global-dataset":
+				url = urlBuilder.buildURL("global-dataset", nodeId);
+				backboneRouter.navigate(url, {trigger: true});
+				break;
+			case "composite-dataset":
+				url = urlBuilder.buildURL("composite-dataset", nodeId);
+				backboneRouter.navigate(url, {trigger: true});
+				break;
+			case "dataset-template":
+				url = urlBuilder.buildURL("dataset-template", nodeId);
+				backboneRouter.navigate(url, {trigger: true});
+				break;
 			default:
 		}
 	}

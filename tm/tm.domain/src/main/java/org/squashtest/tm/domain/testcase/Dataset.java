@@ -26,20 +26,19 @@ import org.squashtest.tm.domain.parameter.GlobalParameter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
 import java.util.List;
 
 import static org.squashtest.tm.domain.testcase.Dataset.DATASET_TYPE;
 
 @Entity
 @DiscriminatorValue(DATASET_TYPE)
-public class Dataset extends AbstractDataset  {
+public class Dataset extends AbstractDataset {
 
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	static final String DATASET_TYPE = "TC";
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "TEST_CASE_DATASET", joinColumns = @JoinColumn(name = "DATASET_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID",updatable = false, insertable = false))
+	@JoinTable(name = "TEST_CASE_DATASET", joinColumns = @JoinColumn(name = "DATASET_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", updatable = false, insertable = false))
 	private TestCase testCase;
 
 	public Dataset() {

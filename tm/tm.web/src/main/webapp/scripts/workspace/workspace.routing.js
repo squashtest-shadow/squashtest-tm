@@ -256,8 +256,15 @@ define([], function(){
 
 		'dataset-library': '/dataset-library/{\\d+}',
 		'dataset-folder': '/dataset-folder/{\\d+}',
-		'dataset-library-server' :	root + '/dataset-library',
-		'dataset-folder-server' :		root + '/dataset-folder',
+		'global-dataset': '/global-dataset/{\\d+}',
+		'composite-dataset': '/composite-dataset/{\\d+}',
+		'dataset-template': '/dataset-template/{\\d+}',
+
+		'dataset-library-server': root + '/dataset-library',
+		'dataset-folder-server': root + '/dataset-folder',
+		'global-dataset-server': root + '/global-dataset',
+		'composite-dataset-server': root + '/composite-dataset',
+		'dataset-template-server': root + '/dataset-template',
 
 		// report-workspace
 		'report-workspace' : root + '/report-workspace/{\\d+}',
