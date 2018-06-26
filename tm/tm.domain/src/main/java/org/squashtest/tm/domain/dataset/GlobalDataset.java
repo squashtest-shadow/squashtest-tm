@@ -38,15 +38,10 @@ import static org.squashtest.tm.domain.dataset.GlobalDataset.DATASET_TYPE;
  */
 @Entity
 @DiscriminatorValue(DATASET_TYPE)
-public class GlobalDataset extends AbstractDataset implements TreeEntity {
+public class GlobalDataset extends AbstractDataset implements TreeEntity<DatasetTreeEntityVisitor> {
 
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	static final String DATASET_TYPE = "GLOBAL";
-
-	@Override
-	public void accept(CustomReportTreeEntityVisitor visitor) {
-		//Should never be called.
-	}
 
 	@Override
 	public void accept(DatasetTreeEntityVisitor visitor) {

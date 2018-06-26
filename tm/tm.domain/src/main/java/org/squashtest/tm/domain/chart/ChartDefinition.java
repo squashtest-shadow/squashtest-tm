@@ -65,7 +65,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Table(name = "CHART_DEFINITION")
 @Auditable
-public class ChartDefinition implements TreeEntity{
+public class ChartDefinition implements TreeEntity<CustomReportTreeEntityVisitor>{
 
 	@Id
 	@Column(name = "CHART_ID")
@@ -200,11 +200,6 @@ public class ChartDefinition implements TreeEntity{
 	@Override
 	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
-	}
-
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		//Should never be called.
 	}
 
 	public void setOwner(User user) {

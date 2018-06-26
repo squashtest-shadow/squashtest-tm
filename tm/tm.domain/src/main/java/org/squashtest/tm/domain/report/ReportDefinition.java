@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "REPORT_DEFINITION")
 @Auditable
-public class ReportDefinition implements TreeEntity{
+public class ReportDefinition implements TreeEntity<CustomReportTreeEntityVisitor>{
 
 	@Id
 	@Column(name = "REPORT_ID")
@@ -148,11 +148,6 @@ public class ReportDefinition implements TreeEntity{
 	@Override
 	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
-	}
-
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		//Should never be called.
 	}
 
 	@Override

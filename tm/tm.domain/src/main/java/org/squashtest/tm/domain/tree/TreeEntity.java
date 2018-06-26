@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.project.Project;
  * @author jthebault
  *
  */
-public interface TreeEntity extends Identified{
+public interface TreeEntity<VISITOR extends TreeEntityVisitor> extends Identified{
 
 	/**
 	 * @return Name of this node.
@@ -46,9 +46,7 @@ public interface TreeEntity extends Identified{
 	 */
 	void setName(String name);
 
-	void accept(CustomReportTreeEntityVisitor visitor);
-
-	void accept(DatasetTreeEntityVisitor visitor);
+	void accept(VISITOR visitor);
 
 	Project getProject();
 
