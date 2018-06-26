@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.dataset;
 
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
@@ -54,8 +54,13 @@ public class DatasetLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
+		//Should never be called.
+	}
 
+	@Override
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

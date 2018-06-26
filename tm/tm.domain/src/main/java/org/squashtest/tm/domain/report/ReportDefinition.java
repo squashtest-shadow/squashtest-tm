@@ -22,10 +22,10 @@ package org.squashtest.tm.domain.report;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
+import org.squashtest.tm.domain.dataset.DatasetTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
@@ -146,8 +146,13 @@ public class ReportDefinition implements TreeEntity{
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		//Should never be called.
 	}
 
 	@Override

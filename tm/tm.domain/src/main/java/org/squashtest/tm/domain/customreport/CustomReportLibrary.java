@@ -28,6 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.squashtest.tm.domain.dataset.DatasetTreeEntityVisitor;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
@@ -82,8 +83,13 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		//Should never be called.
 	}
 
 	@Override

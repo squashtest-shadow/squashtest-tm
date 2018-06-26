@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.dataset;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
@@ -67,8 +67,13 @@ public class DatasetFolder implements TreeEntity {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
+		//Should never be called.
+	}
 
+	@Override
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

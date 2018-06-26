@@ -44,7 +44,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "DATASET_LIBRARY_NODE")
-public class DatasetLibraryNode implements TreeLibraryNode {
+public class DatasetLibraryNode extends GenericTreeLibraryNode {
 
 	private static final String DLN_ID = "DLN_ID";
 
@@ -82,7 +82,7 @@ public class DatasetLibraryNode implements TreeLibraryNode {
 		inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName= DLN_ID)})
 	@OneToMany(cascade={ CascadeType.ALL },fetch = FetchType.LAZY,
 		targetEntity=DatasetLibraryNode.class)
-	@IndexColumn(name="CONTENT_ORDER")
+	@OrderColumn(name="CONTENT_ORDER")
 	private List<TreeLibraryNode> children = new ArrayList<>();
 
 	//for the @MetaValue we cannot use the Tree Entity Definition

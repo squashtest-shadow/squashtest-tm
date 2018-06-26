@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.dataset;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
@@ -27,6 +28,7 @@ import org.squashtest.tm.domain.dataset.*;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.dataset.DatasetLibraryNodeService;
 import org.squashtest.tm.service.internal.customreport.CRLNCopier;
 import org.squashtest.tm.service.internal.customreport.CRLNDeletionHandler;
@@ -37,6 +39,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("org.squashtest.tm.service.dataset.DatasetLibraryNodeService")
 @Transactional
@@ -51,15 +55,6 @@ public class DatasetLibraryNodeServiceImpl implements
 
 	@PersistenceContext
 	private EntityManager em;
-
-	@Inject
-	private CRLNDeletionHandler deletionHandler;
-
-	@Inject
-	private CRLNCopier nodeCopier;
-
-	@Inject
-	private CRLNMover nodeMover;
 
 	@Override
 	public DatasetLibraryNode findDatasetLibraryNodeById(Long id) {
@@ -82,7 +77,7 @@ public class DatasetLibraryNodeServiceImpl implements
 
 	@Override
 	public GlobalDataset findGlobalDatasetByTreeNodeId(Long treeNodeId) {
-		TreeEntity entity = findEntityAndCheckType(treeNodeId, DatasetTreeDefinition.DATASET);
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, DatasetTreeDefinition.GLOBAL_DATASET);
 		return (GlobalDataset) entity;
 	}
 
@@ -96,6 +91,27 @@ public class DatasetLibraryNodeServiceImpl implements
 	public DatasetTemplate findDatasetTemplateByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, DatasetTreeDefinition.TEMPLATE);
 		return (DatasetTemplate) entity;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.DatasetLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public DatasetLibraryNode createNewNode(Long parentId, TreeEntity entity) {
+		DatasetLibraryNode parentNode = datasetLibraryNodeDao.findOne(parentId);
+		if (parentNode == null) {
+			throw new IllegalArgumentException("The node designed by parentId doesn't exist, can't add new node");
+		}
+		DatasetLibraryNode newNode = new DatasetLibraryNodeBuilder(parentNode, entity).build();
+		datasetLibraryNodeDao.save(newNode);
+		em.flush();
+		em.clear();//needed to force hibernate to reload the persisted entities...
+		return datasetLibraryNodeDao.findOne(newNode.getId());
+	}
+
+	@Override
+	public void renameNode(Long nodeId, String newName) throws DuplicateNameException {
+		DatasetLibraryNode dln = datasetLibraryNodeDao.findOne(nodeId);
+		dln.renameNode(newName);
 	}
 
 	//--------------- PRIVATE METHODS --------------

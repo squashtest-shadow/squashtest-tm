@@ -24,7 +24,7 @@ import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 
 public enum DatasetTreeDefinition implements TreeEntityDefinition {
 
-	DATASET(false, DatasetNodeType.DATASET_NAME),
+	GLOBAL_DATASET(false, DatasetNodeType.DATASET_NAME),
 	COMPOSITE(false, DatasetNodeType.COMPOSITE_NAME),
 	TEMPLATE(false, DatasetNodeType.TEMPLATE_NAME),
 	FOLDER(true, DatasetNodeType.FOLDER_NAME),
@@ -41,11 +41,11 @@ public enum DatasetTreeDefinition implements TreeEntityDefinition {
 
 	@Override
 	public String getTypeName() {
-		return null;
+		return typeIdentifier;
 	}
 
 	@Override
 	public boolean isContainer() {
-		return false;
+		return container;
 	}
 }

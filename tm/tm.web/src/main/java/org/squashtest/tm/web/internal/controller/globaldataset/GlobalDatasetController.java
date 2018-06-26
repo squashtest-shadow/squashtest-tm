@@ -20,19 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.globaldataset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.dataset.*;
 import org.squashtest.tm.service.dataset.DatasetLibraryNodeService;
+import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 import javax.inject.Inject;
 
 @Controller
 public class GlobalDatasetController {
 
+	public static final Logger LOGGER = LoggerFactory.getLogger(GlobalDatasetController.class);
+
+	private static final String NEW_NAME = "newName";
 	@Inject
 	private DatasetLibraryNodeService datasetLibraryNodeService;
 
@@ -64,5 +67,36 @@ public class GlobalDatasetController {
 	@RequestMapping(value = "dataset-template/{id}", method = RequestMethod.GET)
 	public DatasetTemplate getDatasetTemplateDetails(@PathVariable Long id) {
 		return datasetLibraryNodeService.findDatasetTemplateByTreeNodeId(id);
+	}
+
+	//---- RENAME ----
+
+	@RequestMapping(method = RequestMethod.POST, value="dataset-folders/{nodeId}",params = {NEW_NAME})
+	@ResponseBody
+	public RenameModel renameDatasetFolder(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="global-dataset/{nodeId}",params = {NEW_NAME})
+	@ResponseBody
+	public RenameModel renameGlobalDataset(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="composite-dataset/{nodeId}",params = {NEW_NAME})
+	@ResponseBody
+	public RenameModel renameChartDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="dataset-template/{nodeId}",params = {NEW_NAME})
+	@ResponseBody
+	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	private RenameModel renameNode (long nodeId, String newName){
+		datasetLibraryNodeService.renameNode(nodeId, newName);
+		return new RenameModel(newName);
 	}
 }
