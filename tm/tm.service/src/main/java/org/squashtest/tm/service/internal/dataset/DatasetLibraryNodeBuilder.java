@@ -22,17 +22,14 @@ package org.squashtest.tm.service.internal.dataset;
 
 import org.squashtest.tm.domain.dataset.*;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.service.builder.GenericTreeLibraryNodeBuilder;
 
 /**
  * Builder for new {@link org.squashtest.tm.domain.dataset.DatasetLibraryNode}.
  * Implement {@link DatasetTreeEntityVisitor} if type dependent process is necessary
  * @author aguilhem
  */
-public class DatasetLibraryNodeBuilder implements DatasetTreeEntityVisitor {
-
-	private DatasetLibraryNode builtNode;
-	private DatasetLibraryNode parentNode;
-	private TreeEntity treeEntity;
+public class DatasetLibraryNodeBuilder extends GenericTreeLibraryNodeBuilder<DatasetLibraryNode> implements DatasetTreeEntityVisitor {
 
 	public DatasetLibraryNodeBuilder(DatasetLibraryNode parentNode, TreeEntity treeEntity){
 		builtNode = new DatasetLibraryNode();
@@ -40,13 +37,7 @@ public class DatasetLibraryNodeBuilder implements DatasetTreeEntityVisitor {
 		this.parentNode = parentNode;
 	}
 
-	public DatasetLibraryNode build(){
-		nameBuiltNode();
-		linkEntity();
-		linkToParent();
-		treeEntity.accept(this);
-		return builtNode;
-	}
+
 
 	@Override
 	public void visit(DatasetFolder datasetFolder) {
@@ -73,22 +64,5 @@ public class DatasetLibraryNodeBuilder implements DatasetTreeEntityVisitor {
 		linkToProject();
 	}
 
-	//******************* PRIVATE STUFF *******************************//
 
-	private void nameBuiltNode(){
-		builtNode.setName(treeEntity.getName());
-	}
-
-	private void linkEntity(){
-		builtNode.setEntity(treeEntity);
-	}
-
-	private void linkToParent(){
-		parentNode.addChild(builtNode);
-		builtNode.setLibrary(parentNode.getDatasetLibrary());
-	}
-
-	private void linkToProject(){
-		treeEntity.setProject(parentNode.getDatasetLibrary().getProject());
-	}
 }

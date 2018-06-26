@@ -71,7 +71,7 @@ public class CRLNCopier {
 
 	private CustomReportLibraryNode createBasicCopy(CustomReportLibraryNode node, CustomReportLibraryNode target) {
 		CustomReportLibraryNode copy = new CustomReportLibraryNode();
-		copy.setLibrary(target.getCustomReportLibrary());
+		copy.setLibrary(target.getTypedLibrary());
 		copy.setName(node.getName());
 		copyTreeEntity(node, copy);
 		return copy;
@@ -79,7 +79,7 @@ public class CRLNCopier {
 
 	private void copyTreeEntity(CustomReportLibraryNode node, CustomReportLibraryNode copy) {
 		TreeEntity treeEntity = node.getEntity().createCopy();
-		treeEntity.setProject(copy.getCustomReportLibrary().getProject());
+		treeEntity.setProject(copy.getTypedLibrary().getProject());
 		copy.setEntity(treeEntity);
 		copy.setEntityType((CustomReportTreeDefinition) node.getEntityType());
 	}

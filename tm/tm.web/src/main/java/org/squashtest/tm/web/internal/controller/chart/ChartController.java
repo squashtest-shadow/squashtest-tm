@@ -48,7 +48,6 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
-import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
@@ -106,7 +105,7 @@ public class ChartController {
 			mav.addObject("chartDef", JsonHelper.serialize(def));
 		}
 
-		GenericProject project = reportNodeService.findCustomReportLibraryNodeById(parentId).getCustomReportLibrary()
+		GenericProject project = reportNodeService.findCustomReportLibraryNodeById(parentId).getTypedLibrary()
 				.getProject();
 		mav.addObject("parentId", parentId);
 		mav.addObject("defaultProject", project.getId());
