@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
 
@@ -120,7 +121,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@Override
 	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
 		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
+		CustomReportTreeEntityVisitor visitor = new CustomReportTreeEntityVisitor() {
 
 			@Override
 			public void visit(ReportDefinition reportDefinition) {
@@ -157,7 +158,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@Override
 	public Long countNodeFromEntity(TreeEntity treeEntity) {
 		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
+		CustomReportTreeEntityVisitor visitor = new CustomReportTreeEntityVisitor() {
 
 			@Override
 			public void visit(ReportDefinition reportDefinition) {

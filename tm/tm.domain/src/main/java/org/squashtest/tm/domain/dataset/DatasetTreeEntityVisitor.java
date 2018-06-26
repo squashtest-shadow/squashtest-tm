@@ -20,21 +20,10 @@
  */
 package org.squashtest.tm.domain.dataset;
 
-/**
- * This interface just define the name of custom report entity. Please make names consistent with
- * {@link DatasetTreeDefinition} because hibernate have mapped values on these Strings in
- * {@link DatasetLibraryNode#getEntity()} AND in {@link DatasetLibraryNode#getEntityType()}.
- *
- * As these values are represented by columns data in database, PLEASE DON'T MODIFY these values.
- * You can however freely add new types here but you have to put a corresponding type in {@link DatasetTreeDefinition}
- * with a consistent name
- * @author aguilhem
- *
- */
-public interface DatasetNodeType {
-	String DATASET_NAME = "GLOBAL_DATASET";
-	String COMPOSITE_NAME = "COMPOSITE";
-	String TEMPLATE_NAME = "TEMPLATE";
-	String FOLDER_NAME = "FOLDER";
-	String LIBRARY_NAME = "LIBRARY";
+public interface DatasetTreeEntityVisitor {
+	void visit(DatasetFolder datasetFolder);
+	void visit(DatasetLibrary datasetLibrary);
+	void visit(CompositeDataset compositeDataset);
+	void visit(DatasetTemplate datasetTemplate);
+	void visit(GlobalDataset globalDataset);
 }

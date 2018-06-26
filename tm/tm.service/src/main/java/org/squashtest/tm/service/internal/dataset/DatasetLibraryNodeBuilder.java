@@ -18,35 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport;
+package org.squashtest.tm.service.internal.dataset;
 
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
-import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.domain.dataset.*;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 /**
- * Builder for new {@link CustomReportLibraryNode}.
- * Implement {@link CustomReportTreeEntityVisitor} if type dependent process is necessary
- * @author jthebault
+ * Builder for new {@link org.squashtest.tm.domain.dataset.DatasetLibraryNode}.
+ * Implement {@link DatasetTreeEntityVisitor} if type dependent process is necessary
+ * @author aguilhem
  */
-public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVisitor {
+public class DatasetLibraryNodeBuilder implements DatasetTreeEntityVisitor {
 
-	private CustomReportLibraryNode builtNode;
-	private CustomReportLibraryNode parentNode;
+	private DatasetLibraryNode builtNode;
+	private DatasetLibraryNode parentNode;
 	private TreeEntity treeEntity;
 
-	public CustomReportLibraryNodeBuilder(CustomReportLibraryNode parentNode,TreeEntity treeEntity) {
-		builtNode = new CustomReportLibraryNode();
+	public DatasetLibraryNodeBuilder(DatasetLibraryNode parentNode, TreeEntity treeEntity){
+		builtNode = new DatasetLibraryNode();
 		this.treeEntity = treeEntity;
 		this.parentNode = parentNode;
 	}
 
-	public CustomReportLibraryNode build(){
+	public DatasetLibraryNode build(){
 		nameBuiltNode();
 		linkEntity();
 		linkToParent();
@@ -54,34 +48,29 @@ public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVis
 		return builtNode;
 	}
 
-	//--------------- SPECIFIC JOB TO EACH ENTITY TYPE --------------------
-
 	@Override
-	public void visit(CustomReportFolder crf) {
+	public void visit(DatasetFolder datasetFolder) {
 		linkToProject();
 	}
 
 	@Override
-	public void visit(CustomReportLibrary crl) {
-		// TODO Auto-generated method stub
-
+	public void visit(DatasetLibrary datasetLibrary) {
+		// Noop
 	}
 
 	@Override
-	public void visit(CustomReportDashboard crf) {
+	public void visit(CompositeDataset compositeDataset) {
 		linkToProject();
-
 	}
 
 	@Override
-	public void visit(ChartDefinition chartDefinition) {
+	public void visit(DatasetTemplate datasetTemplate) {
 		linkToProject();
-
 	}
 
-	public void visit(ReportDefinition reportDefinition) {
+	@Override
+	public void visit(GlobalDataset globalDataset) {
 		linkToProject();
-
 	}
 
 	//******************* PRIVATE STUFF *******************************//
@@ -96,12 +85,10 @@ public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVis
 
 	private void linkToParent(){
 		parentNode.addChild(builtNode);
-		builtNode.setLibrary(parentNode.getCustomReportLibrary());
+		builtNode.setLibrary(parentNode.getDatasetLibrary());
 	}
 
 	private void linkToProject(){
-		treeEntity.setProject(parentNode.getCustomReportLibrary().getProject());
+		treeEntity.setProject(parentNode.getDatasetLibrary().getProject());
 	}
-
-
 }

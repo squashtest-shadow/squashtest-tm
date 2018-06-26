@@ -21,7 +21,8 @@
 package org.squashtest.tm.domain.tree;
 
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
+import org.squashtest.tm.domain.dataset.DatasetTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 
 /**
@@ -45,7 +46,9 @@ public interface TreeEntity extends Identified{
 	 */
 	void setName(String name);
 
-	void accept(TreeEntityVisitor visitor);
+	void accept(CustomReportTreeEntityVisitor visitor);
+
+	void accept(DatasetTreeEntityVisitor visitor);
 
 	Project getProject();
 

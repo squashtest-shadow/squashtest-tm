@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.dataset.DatasetTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -91,8 +92,13 @@ public class CustomReportFolder implements TreeEntity {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		//Should never be called.
 	}
 
 	@AclConstrainedObject

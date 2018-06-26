@@ -50,17 +50,13 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.tree.GenericTreeLibrary;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeEntityDefinition;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeNodeVisitor;
+import org.squashtest.tm.domain.tree.*;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(name="CUSTOM_REPORT_LIBRARY_NODE")
-public class CustomReportLibraryNode  implements TreeLibraryNode {
+public class CustomReportLibraryNode  extends GenericTreeLibraryNode {
 
 	private static final String CRLN_ID = "CRLN_ID";
 
