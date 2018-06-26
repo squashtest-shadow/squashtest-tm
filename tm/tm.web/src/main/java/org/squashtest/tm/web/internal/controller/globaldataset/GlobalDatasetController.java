@@ -30,6 +30,11 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 import javax.inject.Inject;
 
+/**
+ * This controller is dedicated to the contextual content of global dataset (ie the right part of the screen)
+ * @author aguilhem
+ * @author cholc
+ */
 @Controller
 public class GlobalDatasetController {
 
