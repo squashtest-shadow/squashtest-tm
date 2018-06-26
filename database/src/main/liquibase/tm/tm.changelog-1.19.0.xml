@@ -694,7 +694,7 @@
     </sql>
   </changeSet>
 
-  <changeSet id="Dataset Front" author="cholc">
+  <changeSet id="tm-1.19.0-SQTM-194-13" author="cholc">
     <comment>make datasets auditable</comment>
 
     <addColumn tableName="DATASET">
@@ -716,6 +716,15 @@
 
     <addColumn tableName="DATASET">
       <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-194-14" author="aguilhem">
+    <comment>Adding project_id column in dataset for datasetWorkspace tree</comment>
+    <addColumn tableName="DATASET">
+      <column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. " defaultValue="NULL">
+        <constraints nullable="true" foreignKeyName="fk_project_dataset_project_id" references="PROJECT(PROJECT_ID)" />
+      </column>
     </addColumn>
   </changeSet>
 

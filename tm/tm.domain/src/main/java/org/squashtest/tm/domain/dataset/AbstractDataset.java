@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.parameter.GlobalParameter;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
@@ -55,6 +56,10 @@ public abstract class AbstractDataset implements Identified {
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	protected String name;
+
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROJECT_ID")
+	protected Project project;
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")

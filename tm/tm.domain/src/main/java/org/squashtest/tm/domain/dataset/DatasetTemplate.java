@@ -40,7 +40,6 @@ import static org.squashtest.tm.domain.dataset.DatasetTemplate.DATASET_TYPE;
 @DiscriminatorValue(DATASET_TYPE)
 public class DatasetTemplate extends AbstractDataset implements TreeEntity<DatasetTreeEntityVisitor> {
 
-	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	static final String DATASET_TYPE = "TEMPLATE";
 
 	@Override
@@ -50,12 +49,12 @@ public class DatasetTemplate extends AbstractDataset implements TreeEntity<Datas
 
 	@Override
 	public Project getProject() {
-		return null;
+		return project;
 	}
 
 	@Override
 	public void setProject(Project project) {
-
+		this.project = project;
 	}
 
 	@Override
