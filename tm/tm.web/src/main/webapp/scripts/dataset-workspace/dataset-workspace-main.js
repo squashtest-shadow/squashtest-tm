@@ -54,7 +54,7 @@ define(['squash.translator', 'tree', './dataset-treemenu', './init-actions',
 			initResizer();
 			initTabbedPane();
 			ToggleWorkspace.init(settings.toggleWS);
-			tree.initDatasetWorkspaceTree(settings.tree);
+			tree.initWorkspaceTree(settings.tree);
 			treemenu.init(settings.treemenu);
 			popups.init();
 			actions.init();

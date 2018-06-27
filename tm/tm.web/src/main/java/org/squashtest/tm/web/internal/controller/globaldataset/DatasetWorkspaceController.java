@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.service.internal.customreport.CustomReportWorkspaceDisplayService;
+import org.squashtest.tm.service.internal.dto.PermissionWithMask;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -51,24 +53,37 @@ public class DatasetWorkspaceController {
 
 
 		List<JsTreeNode> rootNodes = new ArrayList<>();
+		EnumSet<PermissionWithMask> permissions = EnumSet.allOf(PermissionWithMask.class);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		JsTreeNode datasetLibrary = new JsTreeNode();
 		datasetLibrary.setTitle("Test Project-1");
+		datasetLibrary.addAttr("name", "Test Project-1");
 		datasetLibrary.setState(JsTreeNode.State.open);
 		datasetLibrary.addAttr("rel", "drive");
 		datasetLibrary.addAttr("id", "DatasetLibrary-1");
 		datasetLibrary.addAttr("resId", 1L);
+		datasetLibrary.addAttr("restype", "global-dataset-libraries");
 
 		JsTreeNode datasetFolder = new JsTreeNode();
 		datasetFolder.setTitle("Dataset Folder");
+		datasetFolder.addAttr("name","Dataset Folder");
 		datasetFolder.setState(JsTreeNode.State.open);
 		datasetFolder.addAttr("rel", "folder");
 		datasetFolder.addAttr("id", "DatasetFolder-2");
 		datasetFolder.addAttr("resId", 2L);
 
+		JsTreeNode datasetFolder2 = new JsTreeNode();
+		datasetFolder2.setTitle("Dataset Folder2");
+		datasetFolder2.addAttr("name","Dataset Folder2");
+		datasetFolder2.setState(JsTreeNode.State.open);
+		datasetFolder2.addAttr("rel", "folder");
+		datasetFolder2.addAttr("id", "DatasetFolder-6");
+		datasetFolder2.addAttr("resId", 6L);
 
 		JsTreeNode dataset = new JsTreeNode();
 		dataset.setTitle("Dataset");
+		dataset.addAttr("name","Dataset");
 		dataset.setState(JsTreeNode.State.leaf);
 		dataset.addAttr("rel", "global-dataset");
 		dataset.addAttr("id", "Dataset-3");
@@ -76,6 +91,7 @@ public class DatasetWorkspaceController {
 
 		JsTreeNode datasetTemplate = new JsTreeNode();
 		datasetTemplate.setTitle("Dataset Template");
+		datasetTemplate.addAttr("name","Dataset Template");
 		datasetTemplate.setState(JsTreeNode.State.leaf);
 		datasetTemplate.addAttr("rel", "dataset-template");
 		datasetTemplate.addAttr("id", "DatasetTemplate-4");
@@ -83,19 +99,27 @@ public class DatasetWorkspaceController {
 
 		JsTreeNode compositeDataset = new JsTreeNode();
 		compositeDataset.setTitle("Dataset Composite");
+		compositeDataset.addAttr("name","Dataset Composite");
 		compositeDataset.setState(JsTreeNode.State.leaf);
 		compositeDataset.addAttr("rel", "composite-dataset");
 		compositeDataset.addAttr("id", "CompositeDataset-5");
 		compositeDataset.addAttr("resId", 5L);
 
+		for (PermissionWithMask permission : permissions) {
+			datasetLibrary.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+			datasetFolder2.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+			dataset.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+			datasetTemplate.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+			compositeDataset.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+		}
+
 		datasetFolder.setChildren(new ArrayList<>(Arrays.asList(dataset, compositeDataset, datasetTemplate)));
-		datasetLibrary.setChildren(Collections.singletonList(datasetFolder));
+		datasetLibrary.setChildren(new ArrayList<>(Arrays.asList(datasetFolder, datasetFolder2)));
 
 		rootNodes.add(datasetLibrary);
 
 //		Set<String> nodeToOpen = new HashSet<>(Arrays.asList(openedNodes));
 //
-//		UserDto currentUser = userAccountService.findCurrentUserDto();
 //		List<JsTreeNode> rootNodes = new ArrayList<>(
 //			customReportWorkspaceDisplayService.findAllLibraries(Collections.singletonList(14L), currentUser,
 //				mapIdsByType(nodeToOpen.toArray(new String[0]))));

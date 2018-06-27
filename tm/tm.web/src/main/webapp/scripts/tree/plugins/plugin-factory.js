@@ -26,7 +26,6 @@ define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin', '
 		configure: function (type, settings) {
 			switch (type) {
 				case 'custom-report-workspace-tree' :
-				case 'dataset-workspace-tree' :
 					applyDndOverride(settings);
 					applySquashPlugin();
 					applyContinuousShiftSelectPlugin();

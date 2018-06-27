@@ -53,11 +53,6 @@ define(["jquery",
 			this.initWorkspaceTreeCommon(settings);
 		},
 
-		initDatasetWorkspaceTree: function (settings) {
-			pluginsFactory.configure("dataset-workspace-tree", settings);
-			this.initWorkspaceTreeCommon(settings);
-		},
-
 		// TODO : move the extra event bindings into workspace-tree-plugin.js
 		initWorkspaceTreeCommon: function (settings) {
 			var conf = wkspConf.generate(settings);
@@ -123,13 +118,13 @@ define(["jquery",
 				var zetree = $("#tree");
 
 				// if not found, try to find if there is one matching .tree.jstree
-				if (zetree.length === 0){
+				if (zetree.length === 0) {
 					zetree = $(".tree.jstree");
 				}
 
 				// if 0 or more instances were found, that's no good
 				// return null instead to fail-fast
-				if (zetree.length !== 1){
+				if (zetree.length !== 1) {
 					zetree = null;
 				}
 
