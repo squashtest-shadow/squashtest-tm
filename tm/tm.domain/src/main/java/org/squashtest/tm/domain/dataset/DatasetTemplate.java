@@ -46,10 +46,6 @@ public class DatasetTemplate extends AbstractDataset implements TreeEntity<Datas
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		visitor.visit(this);
-	}
 
 	@Override
 	public Project getProject() {

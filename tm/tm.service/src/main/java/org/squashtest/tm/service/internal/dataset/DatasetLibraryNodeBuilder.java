@@ -37,8 +37,6 @@ public class DatasetLibraryNodeBuilder extends GenericTreeLibraryNodeBuilder<Dat
 		this.parentNode = parentNode;
 	}
 
-
-
 	@Override
 	public void visit(DatasetFolder datasetFolder) {
 		linkToProject();
@@ -64,31 +62,4 @@ public class DatasetLibraryNodeBuilder extends GenericTreeLibraryNodeBuilder<Dat
 		linkToProject();
 	}
 
-
-}
-	}
-
-	@Override
-	public void visit(GlobalDataset globalDataset) {
-		linkToProject();
-	}
-
-	//******************* PRIVATE STUFF *******************************//
-
-	private void nameBuiltNode(){
-		builtNode.setName(treeEntity.getName());
-	}
-
-	private void linkEntity(){
-		builtNode.setEntity(treeEntity);
-	}
-
-	private void linkToParent(){
-		parentNode.addChild(builtNode);
-		builtNode.setLibrary(parentNode.getDatasetLibrary());
-	}
-
-	private void linkToProject(){
-		treeEntity.setProject(parentNode.getDatasetLibrary().getProject());
-	}
 }

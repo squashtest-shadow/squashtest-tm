@@ -46,10 +46,6 @@ public class CompositeDataset extends AbstractDataset implements TreeEntity<Data
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		visitor.visit(this);
-	}
 
 	@Override
 	public Project getProject() {

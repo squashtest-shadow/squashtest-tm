@@ -46,10 +46,6 @@ public class GlobalDataset extends AbstractDataset implements TreeEntity<Dataset
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		visitor.visit(this);
-	}
 
 	@Override
 	public Project getProject() {

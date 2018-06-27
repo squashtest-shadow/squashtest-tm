@@ -57,10 +57,6 @@ public class DatasetLibrary extends GenericTreeLibrary<DatasetTreeEntityVisitor>
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		visitor.visit(this);
-	}
 
 	@Override
 	public Project getProject() {

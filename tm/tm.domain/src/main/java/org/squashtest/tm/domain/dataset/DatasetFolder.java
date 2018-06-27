@@ -70,10 +70,6 @@ public class DatasetFolder implements TreeEntity<DatasetTreeEntityVisitor> {
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	@Override
-	public void accept(DatasetTreeEntityVisitor visitor) {
-		visitor.visit(this);
-	}
 
 	@Override
 	public Project getProject() {
