@@ -59,15 +59,15 @@ public class GlobalDatasetNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @Valid @RequestBody DatasetFolder customReportFolder) {
-		return createNewDatasetLibraryNode(libraryId, customReportFolder);
+	public JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @Valid @RequestBody DatasetFolder datasetFolder) {
+		return createNewDatasetLibraryNode(libraryId, datasetFolder);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @Valid @RequestBody DatasetFolder customReportFolder) {
-		return createNewDatasetLibraryNode(folderId, customReportFolder);
+	public JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @Valid @RequestBody DatasetFolder datasetFolder) {
+		return createNewDatasetLibraryNode(folderId, datasetFolder);
 	}
 
 	//-------------- PRIVATE STUFF ---------------------------

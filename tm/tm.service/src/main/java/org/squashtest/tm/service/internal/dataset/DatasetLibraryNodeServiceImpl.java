@@ -97,7 +97,7 @@ public class DatasetLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.DatasetLibraryNode' ,'WRITE') "
+	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.dataset.DatasetLibraryNode' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public DatasetLibraryNode createNewNode(Long parentId, TreeEntity entity) {
 		DatasetLibraryNode parentNode = datasetLibraryNodeDao.findOne(parentId);
