@@ -21,8 +21,7 @@
 define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "app/squash.handlebars.helpers"],
 	function (_, Backbone, translator, Handlebars, basicWidgets) {
 		"use strict";
-
-		var View = Backbone.View.extend({
+		return Backbone.View.extend({
 
 			el: "#contextual-content-wrapper",
 			tpl: "#tpl-show-composite-dataset",
@@ -49,7 +48,5 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 			}
 
 		});
-
-		return View;
 	});
 

@@ -25,7 +25,7 @@ require(["common"], function () {
 			'backbone', './dataset-workspace/dataset-router', 'jquery.cookie'],
 		function ($, datasetWorkspace, WS, wreqr, Backbone, router) {
 			$(function () {
-				window.squashtm.app.router = router.init();
+				window.squashtm.app.router = router;
 				//setting the event bus at global level so it will be avaible for all objects in workspace
 				window.squashtm.app.wreqr = new wreqr.EventAggregator();
 				//starting the history push state router

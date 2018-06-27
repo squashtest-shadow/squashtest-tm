@@ -18,11 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "app/squash.handlebars.helpers"],
-	function (_, Backbone, translator, Handlebars, basicWidgets) {
+define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "squash.dateutils",
+		"app/squash.handlebars.helpers"],
+	function (_, Backbone, translator, Handlebars, basicWidgets, dateutils) {
 		"use strict";
 
-		var View = Backbone.View.extend({
+		return Backbone.View.extend({
 
 			el: "#contextual-content-wrapper",
 			tpl: "#tpl-show-dataset",
@@ -46,16 +47,30 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 
 			render: function () {
 				// TODO template should be compiled only once
+				this.setBaseModelAttributes(this.model.toJSON());
 				var source = $("#tpl-show-dataset").html();
 				var template = Handlebars.compile(source);
 				var props = this.model.toJSON();
 				props.acls = this.options.acls.toJSON();
 				this.$el.append(template(props));
 				basicWidgets.init();
+			},
+
+			setBaseModelAttributes: function (json) {
+				this.model.set("createdOn", (this.i18nFormatDate(json.createdOn) + " " + this.i18nFormatHour(json.createdOn)));
+				if (json.lastModifiedBy) {
+					this.model.set("lastModifiedOn", (this.i18nFormatDate(json.lastModifiedOn) + " " + this.i18nFormatHour(json.lastModifiedOn)));
+				}
+			},
+
+			i18nFormatDate: function (date) {
+				return dateutils.format(date, this.i18nString.dateFormatShort);
+			},
+
+			i18nFormatHour: function (date) {
+				return dateutils.format(date, "HH:mm");
 			}
 
 		});
-
-		return View;
 	});
 

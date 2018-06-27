@@ -22,7 +22,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 	function (_, Backbone, translator, Handlebars, basicWidgets) {
 		"use strict";
 
-		var View = Backbone.View.extend({
+		return Backbone.View.extend({
 
 			el: "#contextual-content-wrapper",
 			tpl: "#tpl-show-folder",
@@ -49,7 +49,5 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 			}
 
 		});
-
-		return View;
 	});
 

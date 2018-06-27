@@ -151,6 +151,15 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 					case "folder":
 						this.showFolderDetails(nodeId);
 						break;
+					case "global-dataset":
+						this.showGlobalDatasetDetails(nodeId);
+						break;
+					case "composite-dataset":
+						this.showCompositeDatasetDetails(nodeId);
+						break;
+					case "dataset-template":
+						this.showDatasetTemplateDetails(nodeId);
+						break;
 					default:
 				}
 			},
@@ -167,12 +176,5 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 			}
 		});
 
-		function init() {
-			return new router();
-		}
-
-		// TODO simply return the Router function
-		return {
-			init: init
-		};
+		return new router()
 	});

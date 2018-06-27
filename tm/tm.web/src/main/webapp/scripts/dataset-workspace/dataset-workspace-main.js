@@ -60,9 +60,7 @@ define(['squash.translator', 'tree', './dataset-treemenu', './init-actions',
 			actions.init();
 		}
 
-
 		return {
 			init: init
 		};
-
 	});

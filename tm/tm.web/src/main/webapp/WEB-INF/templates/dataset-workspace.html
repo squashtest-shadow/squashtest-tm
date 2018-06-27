@@ -55,22 +55,13 @@
           treeselector: "#tree",
           selectedNode: /*[[${selectedNode}]]*/[]
         },
-        treemenu: {
-          wizards: /*[[${ wizards }]]*/ '',
-        },
         toggleWS: {
           expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
           collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
           workspace: pathname
         },
         activeMilestone: /*[[${activeMilestone}]]*/{}
-      },
-      defaultInfoList: /*[[${defaultInfoLists}]]*/{},
-      testCaseImportance: /*[[${testCaseImportance}]]*/{},
-      testCaseStatus: /*[[${testCaseStatus}]]*/{},
-      requirementStatus: /*[[${requirementStatus}]]*/{},
-      requirementCriticality: /*[[${requirementCriticality}]]*/{},
-      executionStatus: /*[[${executionStatus}]]*/{}
+      }
     };
 
     squashtm.workspace = squashtm.workspace || {};

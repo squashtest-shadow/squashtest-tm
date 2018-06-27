@@ -18,9 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./permissions-rules",
-	"jquery.squash.buttonmenu"], function ($, permissions) {
-
+define(["jquery", "./permissions-rules", "jquery.squash.buttonmenu"], function ($, permissions) {
 
 	function createWidgets() {
 		$("#tree-create-button").buttonmenu();
@@ -59,15 +57,11 @@ define(["jquery", "./permissions-rules",
 		}
 	}
 
-
 	function bindTreeEvents() {
 
 		var btnselector = [
 			"#tree-create-button",
 			"#new-folder-tree-button",
-			"#new-report-tree-button",
-			"#new-chart-tree-button",
-			"#new-dashboard-tree-button",
 			"#rename-node-tree-button",
 			"#delete-node-tree-button"
 		].join(", ");
@@ -88,9 +82,9 @@ define(["jquery", "./permissions-rules",
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
 			var nodes = tree.jstree("get_selected");
-			var i = 0, len = buttons.length;
+			var len = buttons.length;
 
-			for (i = 0; i < len; i++) {
+			for (var i = 0; i < len; i++) {
 				var btn = arbuttons[i];
 				var id = btn.attr("id");
 				var rule = rules[id];
@@ -113,65 +107,16 @@ define(["jquery", "./permissions-rules",
 				obj: tree.jstree("get_selected")
 			}
 		});
-
-
 	}
-
-
-	// the wizard menu is a bit different from the rest, hence the init code
-	// is put appart
-	function createWizardMenu(wizards) {
-
-		if (!!wizards && wizards.length > 0) {
-
-			var wmenu = new WizardMenu({
-				collection: wizards
-			});
-
-			var tree = $("#tree");
-
-			//state init
-			wmenu.refreshSelection(tree.jstree("get_selected"));
-
-			//evt binding
-			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", function (evt, data) {
-				wmenu.refreshSelection(data.inst.get_selected());
-			});
-		}
-	}
-
-	function initExportPlugins() {
-		var plugins = $("#tree_element_menu .export-plugin");
-		var modules = plugins.map(function (idx, elt) {
-			var modulename = $(elt).data("module");
-			return require.toUrl(modulename);
-		}).get();
-		var items = plugins.get();
-
-		require(modules, function () {
-			var i, len = modules.length;
-			for (i = 0; i < len; i++) {
-				var module = arguments[i],
-					item = items[i];
-				module.init(item);
-			}
-		});
-	}
-
 
 	function init(settings) {
 		createWidgets();
 		bindTreeEvents();
-		initExportPlugins();
 
 		$("#tree_element_menu").removeClass("unstyled-pane");
 	}
 
-
 	return {
-
 		init: init
-
 	};
-
 });

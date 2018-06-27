@@ -20,7 +20,7 @@
  */
 define(["underscore", "backbone", "squash.translator", "handlebars"],
 	function (_, Backbone, translator, Handlebars) {
-		var View = Backbone.View.extend({
+		return Backbone.View.extend({
 
 			el: "#contextual-content-wrapper",
 			tpl: "#tpl-show-library",
@@ -42,6 +42,4 @@ define(["underscore", "backbone", "squash.translator", "handlebars"],
 			}
 
 		});
-
-		return View;
 	});
