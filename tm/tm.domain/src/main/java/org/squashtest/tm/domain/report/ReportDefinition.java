@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "REPORT_DEFINITION")
 @Auditable
-public class ReportDefinition implements TreeEntity{
+public class ReportDefinition implements TreeEntity<CustomReportTreeEntityVisitor>{
 
 	@Id
 	@Column(name = "REPORT_ID")

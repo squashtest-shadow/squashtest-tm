@@ -20,20 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.CREATE;
-import static org.squashtest.tm.api.security.acls.Permission.DELETE;
-import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
-import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -51,31 +40,16 @@ import javax.inject.Inject;
  */
 @Component("customReport.nodeBuilder")
 @Scope("prototype")
-public class CustomReportTreeNodeBuilder {
-
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
-	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
-
-	private final PermissionEvaluationService permissionEvaluationService;
+public class CustomReportTreeNodeBuilder extends GenericTreeNodeBuilder<CustomReportLibraryNode> {
 
 	@Inject
 	public CustomReportTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
-		super();
-		this.permissionEvaluationService = permissionEvaluationService;
+		super(permissionEvaluationService);
 	}
 
+	@Override
 	public JsTreeNode build(CustomReportLibraryNode crln){
-		JsTreeNode builtNode = new JsTreeNode();
-		builtNode.setTitle(HtmlUtils.htmlEscape(crln.getName()));
-		builtNode.addAttr("resId", String.valueOf(crln.getId()));
-		builtNode.addAttr("name", HtmlUtils.htmlEscape(crln.getName()));
-
-		//No milestone for custom report tree in first version so yes for all perm
-		builtNode.addAttr("milestone-creatable-deletable", "true");
-		builtNode.addAttr("milestone-editable", "true");
-
-		doPermissionCheck(builtNode,crln);
+		JsTreeNode builtNode = buildGenericNode(crln);
 
 		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
 		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
@@ -139,36 +113,8 @@ public class CustomReportTreeNodeBuilder {
 		setStateForNodeContainer(builtNode, crln);
 	}
 
-	private void doPermissionCheck(JsTreeNode builtNode, CustomReportLibraryNode crln){
-		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
-		for (Permission perm : NODE_PERMISSIONS) {
-			builtNode.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
-		}
-	}
 
-	private void setStateForNodeContainer(JsTreeNode builtNode, TreeLibraryNode tln){
-		if (tln.hasContent()) {
-			builtNode.setState(State.closed);
-		}
-		else {
-			builtNode.setState(State.leaf);
-		}
-	}
 
-	private void setNodeRel(JsTreeNode builtNode, String rel){
-		builtNode.addAttr("rel", rel);
-	}
 
-	private void setNodeResType(JsTreeNode builtNode, String resType){
-		builtNode.addAttr("resType", resType);
-	}
-
-	private void setNodeLeaf(JsTreeNode builtNode){
-		builtNode.setState(State.leaf);
-	}
-
-	private void setNodeHTMLId(JsTreeNode builtNode, String id){
-		builtNode.addAttr("id", id);
-	}
 
 }

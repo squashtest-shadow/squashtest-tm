@@ -56,7 +56,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(name="CUSTOM_REPORT_LIBRARY_NODE")
-public class CustomReportLibraryNode  extends GenericTreeLibraryNode {
+public class CustomReportLibraryNode extends GenericTreeLibraryNode<CustomReportLibrary> {
 
 	private static final String CRLN_ID = "CRLN_ID";
 
@@ -174,10 +174,12 @@ public class CustomReportLibraryNode  extends GenericTreeLibraryNode {
 	 * @return
 	 */
 	@AclConstrainedObject
-	public CustomReportLibrary getCustomReportLibrary() {
+	@Override
+	public CustomReportLibrary getTypedLibrary() {
 		return library;
 	}
 
+	@Override
 	public void setLibrary(CustomReportLibrary library) {
 		this.library = library;
 	}

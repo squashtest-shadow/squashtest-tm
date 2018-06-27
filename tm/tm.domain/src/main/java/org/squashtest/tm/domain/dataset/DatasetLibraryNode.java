@@ -44,7 +44,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "DATASET_LIBRARY_NODE")
-public class DatasetLibraryNode extends GenericTreeLibraryNode {
+public class DatasetLibraryNode extends GenericTreeLibraryNode<DatasetLibrary> {
 
 	private static final String DLN_ID = "DLN_ID";
 
@@ -174,17 +174,19 @@ public class DatasetLibraryNode extends GenericTreeLibraryNode {
 		return library;
 	}
 
+	@Override
+	public void setLibrary(DatasetLibrary library) {
+		this.library = library;
+	}
+
 	/**
 	 * concrete class getter for @AclConstrainedObject
 	 * @return
 	 */
 	@AclConstrainedObject
-	public DatasetLibrary getDatasetLibrary() {
+	@Override
+	public DatasetLibrary getTypedLibrary() {
 		return library;
-	}
-
-	public void setLibrary(DatasetLibrary library) {
-		this.library = library;
 	}
 
 	@Override

@@ -38,16 +38,14 @@ import static org.squashtest.tm.domain.dataset.CompositeDataset.DATASET_TYPE;
  */
 @Entity
 @DiscriminatorValue(DATASET_TYPE)
-public class CompositeDataset extends AbstractDataset implements TreeEntity {
+public class CompositeDataset extends AbstractDataset implements TreeEntity<DatasetTreeEntityVisitor> {
 
-	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	static final String DATASET_TYPE = "COMPOSITE";
 
 	@Override
-	public void accept(CustomReportTreeEntityVisitor visitor) {
-		//Should never be called.
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
-
 	@Override
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);
@@ -55,12 +53,12 @@ public class CompositeDataset extends AbstractDataset implements TreeEntity {
 
 	@Override
 	public Project getProject() {
-		return null;
+		return project;
 	}
 
 	@Override
 	public void setProject(Project project) {
-
+		this.project = project;
 	}
 
 	@Override

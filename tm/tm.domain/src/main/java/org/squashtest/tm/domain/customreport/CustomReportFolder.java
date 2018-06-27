@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
-public class CustomReportFolder implements TreeEntity {
+public class CustomReportFolder implements TreeEntity<CustomReportTreeEntityVisitor> {
 
 	@Id
 	@Column(name = "CRF_ID")

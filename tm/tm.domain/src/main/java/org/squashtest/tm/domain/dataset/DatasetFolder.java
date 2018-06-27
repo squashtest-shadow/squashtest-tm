@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
  * @author aguilhem
  */
 @Entity
-public class DatasetFolder implements TreeEntity {
+public class DatasetFolder implements TreeEntity<DatasetTreeEntityVisitor> {
 
 	@Id
 	@Column(name = "DF_ID")
@@ -67,10 +67,9 @@ public class DatasetFolder implements TreeEntity {
 	}
 
 	@Override
-	public void accept(CustomReportTreeEntityVisitor visitor) {
-		//Should never be called.
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
-
 	@Override
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);

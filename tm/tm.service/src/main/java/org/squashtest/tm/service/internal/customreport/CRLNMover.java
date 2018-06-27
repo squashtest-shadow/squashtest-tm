@@ -76,8 +76,8 @@ public class CRLNMover {
 	}
 
 	private void changeNodeLibrary(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		node.setLibrary(target.getCustomReportLibrary());
-		node.getEntity().setProject(target.getCustomReportLibrary().getProject());
+		node.setLibrary(target.getTypedLibrary());
+		node.getEntity().setProject(target.getTypedLibrary().getProject());
 	}
 
 	private boolean userCanMoveNodesToTarget (CustomReportLibraryNode target){

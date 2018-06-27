@@ -42,6 +42,9 @@ import javax.persistence.PersistenceContext;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+/**
+ * @author aguilhem
+ */
 @Service("org.squashtest.tm.service.dataset.DatasetLibraryNodeService")
 @Transactional
 public class DatasetLibraryNodeServiceImpl implements

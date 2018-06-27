@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.domain.dataset;
 
-public interface DatasetTreeEntityVisitor {
+import org.squashtest.tm.domain.tree.TreeEntityVisitor;
+
+public interface DatasetTreeEntityVisitor extends TreeEntityVisitor {
 	void visit(DatasetFolder datasetFolder);
 	void visit(DatasetLibrary datasetLibrary);
 	void visit(CompositeDataset compositeDataset);

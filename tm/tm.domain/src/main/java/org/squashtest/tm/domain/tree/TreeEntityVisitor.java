@@ -20,28 +20,8 @@
  */
 package org.squashtest.tm.domain.tree;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-
-import org.squashtest.tm.domain.attachment.AttachmentList;
-
-@MappedSuperclass
-public abstract class GenericTreeLibrary<VISITOR extends TreeEntityVisitor> implements TreeLibrary, TreeEntity<VISITOR> {
-
-	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch=FetchType.LAZY)
-	@JoinColumn(name="ATTACHMENT_LIST_ID")
-	private AttachmentList attachmentList = new AttachmentList();
-
-	public GenericTreeLibrary() {
-		super();
-	}
-
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
-	}
-
+/**
+ * @author aguilhem
+ */
+public interface TreeEntityVisitor {
 }

@@ -36,6 +36,10 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import javax.inject.Inject;
 import java.util.*;
 
+/**
+ * This controller is dedicated to the initial page of Global Datasets.
+ * @author cholc
+ */
 @Controller
 @RequestMapping("/dataset-workspace")
 public class DatasetWorkspaceController {

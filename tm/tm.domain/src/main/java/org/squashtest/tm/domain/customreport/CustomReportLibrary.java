@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 @Entity
-public class CustomReportLibrary extends GenericTreeLibrary {
+public class CustomReportLibrary extends GenericTreeLibrary<CustomReportTreeEntityVisitor> {
 
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.customreport.CustomReportLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CustomReportLibrary";

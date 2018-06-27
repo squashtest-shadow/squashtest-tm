@@ -27,31 +27,21 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.domain.tree.GenericTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.service.builder.GenericTreeLibraryNodeBuilder;
 
 /**
  * Builder for new {@link CustomReportLibraryNode}.
  * Implement {@link CustomReportTreeEntityVisitor} if type dependent process is necessary
  * @author jthebault
  */
-public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVisitor {
-
-	private CustomReportLibraryNode builtNode;
-	private CustomReportLibraryNode parentNode;
-	private TreeEntity treeEntity;
+public class CustomReportLibraryNodeBuilder extends GenericTreeLibraryNodeBuilder<CustomReportLibraryNode> implements CustomReportTreeEntityVisitor {
 
 	public CustomReportLibraryNodeBuilder(CustomReportLibraryNode parentNode,TreeEntity treeEntity) {
 		builtNode = new CustomReportLibraryNode();
 		this.treeEntity = treeEntity;
 		this.parentNode = parentNode;
-	}
-
-	public CustomReportLibraryNode build(){
-		nameBuiltNode();
-		linkEntity();
-		linkToParent();
-		treeEntity.accept(this);
-		return builtNode;
 	}
 
 	//--------------- SPECIFIC JOB TO EACH ENTITY TYPE --------------------
@@ -82,25 +72,6 @@ public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVis
 	public void visit(ReportDefinition reportDefinition) {
 		linkToProject();
 
-	}
-
-	//******************* PRIVATE STUFF *******************************//
-
-	private void nameBuiltNode(){
-		builtNode.setName(treeEntity.getName());
-	}
-
-	private void linkEntity(){
-		builtNode.setEntity(treeEntity);
-	}
-
-	private void linkToParent(){
-		parentNode.addChild(builtNode);
-		builtNode.setLibrary(parentNode.getCustomReportLibrary());
-	}
-
-	private void linkToProject(){
-		treeEntity.setProject(parentNode.getCustomReportLibrary().getProject());
 	}
 
 

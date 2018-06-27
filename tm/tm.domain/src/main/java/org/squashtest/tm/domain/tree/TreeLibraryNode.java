@@ -34,7 +34,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
  * @author jthebault
  *
  */
-public interface TreeLibraryNode extends TreeVisitable, Identified {
+public interface TreeLibraryNode<LIBRARY extends GenericTreeLibrary> extends TreeVisitable, Identified {
 	String getName ();
 
 	/**
@@ -62,6 +62,10 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	List<TreeLibraryNode> getChildren();
 
 	GenericTreeLibrary getLibrary();
+
+	LIBRARY getTypedLibrary();
+
+	void setLibrary(LIBRARY library);
 
 	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
 

@@ -47,7 +47,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Auditable
-public class CustomReportDashboard implements TreeEntity {
+public class CustomReportDashboard implements TreeEntity<CustomReportTreeEntityVisitor> {
 
 	@Id
 	@Column(name = "CRD_ID")

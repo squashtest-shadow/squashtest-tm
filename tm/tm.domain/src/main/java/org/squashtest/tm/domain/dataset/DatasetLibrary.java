@@ -32,7 +32,7 @@ import javax.persistence.*;
  * @author aguilhem
  */
 @Entity
-public class DatasetLibrary extends GenericTreeLibrary {
+public class DatasetLibrary extends GenericTreeLibrary<DatasetTreeEntityVisitor> {
 
 	@Id
 	@Column(name = "DL_ID")
@@ -54,10 +54,9 @@ public class DatasetLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public void accept(CustomReportTreeEntityVisitor visitor) {
-		//Should never be called.
+	public void accept(DatasetTreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
-
 	@Override
 	public void accept(DatasetTreeEntityVisitor visitor) {
 		visitor.visit(this);

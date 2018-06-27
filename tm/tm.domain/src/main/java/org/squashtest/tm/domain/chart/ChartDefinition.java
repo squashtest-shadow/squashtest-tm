@@ -65,7 +65,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Table(name = "CHART_DEFINITION")
 @Auditable
-public class ChartDefinition implements TreeEntity{
+public class ChartDefinition implements TreeEntity<CustomReportTreeEntityVisitor>{
 
 	@Id
 	@Column(name = "CHART_ID")
