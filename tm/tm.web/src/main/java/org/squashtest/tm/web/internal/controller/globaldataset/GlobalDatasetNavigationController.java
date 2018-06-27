@@ -24,9 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.dataset.DatasetFolder;
 import org.squashtest.tm.domain.dataset.DatasetLibraryNode;
+import org.squashtest.tm.domain.dataset.GlobalDataset;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.service.dataset.DatasetLibraryNodeService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -70,9 +73,38 @@ public class GlobalDatasetNavigationController {
 		return createNewDatasetLibraryNode(folderId, datasetFolder);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/drives/{libraryId}/content/new-global-dataset", method = RequestMethod.POST, consumes = "application/json")
+	public JsTreeNode addNewGlobalDatasetToLibrary(
+		@PathVariable long libraryId,
+		@Valid @RequestBody GlobalDatasetFormModel globalDatasetModel) {
+
+		GlobalDataset globalDataset = globalDatasetModel.getGlobalDataset();
+
+		Project parentProject = datasetLibraryNodeService.findDatasetLibraryNodeById(libraryId).getEntity().getProject();
+		globalDataset.setProject(parentProject);
+
+		return createNewDatasetLibraryNode(libraryId, globalDataset);
+	}
+
+
+	@ResponseBody
+	@RequestMapping(value = "/folders/{folderId}/content/new-global-dataset", method = RequestMethod.POST, consumes = "application/json")
+	public JsTreeNode addNewTestCaseToFolder(
+		@PathVariable long folderId,
+		@Valid @RequestBody GlobalDatasetFormModel globalDatasetModel) {
+
+		GlobalDataset globalDataset = globalDatasetModel.getGlobalDataset();
+
+		Project parentProject = datasetLibraryNodeService.findDatasetLibraryNodeById(folderId).getEntity().getProject();
+		globalDataset.setProject(parentProject);
+
+		return createNewDatasetLibraryNode(folderId, globalDataset);
+	}
+
 	//-------------- PRIVATE STUFF ---------------------------
-	private JsTreeNode createNewDatasetLibraryNode(Long libraryId, TreeEntity entity) {
-		DatasetLibraryNode newNode = datasetLibraryNodeService.createNewNode(libraryId, entity);
+	private JsTreeNode createNewDatasetLibraryNode(Long parentId, TreeEntity entity) {
+		DatasetLibraryNode newNode = datasetLibraryNodeService.createNewNode(parentId, entity);
 		return builderProvider.get().build(newNode);
 	}
 }

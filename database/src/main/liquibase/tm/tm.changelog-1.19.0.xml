@@ -728,4 +728,14 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.19.0-SQTM-194-15" author="aguilhem">
+    <comment>Adding reference and description columns in dataset tables for datasetWorkspace type dataset</comment>
+    <addColumn tableName="DATASET">
+      <column name="REFERENCE" type="VARCHAR(50)"/>
+    </addColumn>
+    <addColumn tableName="DATASET">
+      <column name="DESCRIPTION" type="CLOB"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>
