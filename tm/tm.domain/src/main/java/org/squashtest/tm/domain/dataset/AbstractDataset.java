@@ -20,17 +20,11 @@
  */
 package org.squashtest.tm.domain.dataset;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.parameter.GlobalParameter;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
 import javax.persistence.*;
@@ -43,9 +37,10 @@ import java.util.*;
 @Entity
 @Auditable
 @Table(name = "DATASET")
-public abstract class AbstractDataset implements Identified {
+public abstract class AbstractDataset {
 
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
+	public static final int MAX_REF_SIZE = 50;
 
 	@Id
 	@Column(name = "DATASET_ID")
@@ -54,23 +49,13 @@ public abstract class AbstractDataset implements Identified {
 	protected Long id;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = MAX_NAME_SIZE)
+	@Column
 	protected String name;
-
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="PROJECT_ID")
-	protected Project project;
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")
 	protected Set<DatasetParamValue> parameterValues = new HashSet<>(0);
-
-	@OneToMany(cascade = {CascadeType.ALL})
-	@OrderColumn(name = "PARAM_ORDER")
-	@JoinTable(name = "DATASET_PARAMETER", joinColumns = @JoinColumn(name = "DATASET_ID"), inverseJoinColumns = @JoinColumn(name = "PARAM_ID"))
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	protected List<GlobalParameter> globalParameters = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -78,13 +63,6 @@ public abstract class AbstractDataset implements Identified {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public abstract List<GlobalParameter> getGlobalParameters();
-
-	@Override
-	public Long getId() {
-		return id;
 	}
 
 	public Set<DatasetParamValue> getParameterValues() {
@@ -98,9 +76,5 @@ public abstract class AbstractDataset implements Identified {
 	public void removeParameterValue(@NotNull DatasetParamValue datasetParamValue) {
 		this.parameterValues.remove(datasetParamValue);
 	}
-
-	public abstract void addGlobalParameter(@NotNull GlobalParameter globalParameter);
-
-	public abstract void removeGlobalParameter(@NotNull GlobalParameter globalParameter);
 
 }

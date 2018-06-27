@@ -63,6 +63,7 @@ class DatasetLibraryNodeServiceIT extends DbunitServiceSpecification {
 		resId != null
 		parentNode.id == parent.id
 		entityLinkedToNode != null
+		entityLinkedToNode.name == "newFolder"
 		projectLinked.id == -1L
 
 	}

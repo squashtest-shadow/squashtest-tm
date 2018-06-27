@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.parameter;
 
 import org.squashtest.tm.domain.dataset.AbstractDataset;
+import org.squashtest.tm.domain.dataset.DatasetWorkspaceElement;
 import org.squashtest.tm.domain.testcase.Dataset;
 
 import javax.persistence.*;
@@ -49,9 +50,8 @@ public class GlobalParameter extends AbstractParameter {
 		this.name = name;
 	}
 
-	public GlobalParameter(String name, @NotNull AbstractDataset dataset){
+	public GlobalParameter(String name, @NotNull DatasetWorkspaceElement dataset){
 		this(name);
-		this.dataset = dataset;
 		dataset.addGlobalParameter(this);
 	}
 
@@ -59,8 +59,7 @@ public class GlobalParameter extends AbstractParameter {
 		return dataset;
 	}
 
-	public void setDataset(AbstractDataset dataset) {
-		this.dataset = dataset;
+	public void setDataset(DatasetWorkspaceElement dataset) {
 		dataset.addGlobalParameter(this);
 	}
 }
