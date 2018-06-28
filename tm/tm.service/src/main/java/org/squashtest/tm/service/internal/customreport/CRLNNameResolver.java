@@ -22,25 +22,11 @@ package org.squashtest.tm.service.internal.customreport;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.service.treelibrarynode.NameResolver;
 
+/**
+ * @author aguilhem
+ */
 @Component
-public class NameResolver {
-
-	final String copySuffix = "-Copie";
-
-	void resolveNewName(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		if (target.childNameAlreadyUsed(node.getName())) {
-			resolveNameConflict(target, node, 1);
-		}
-	}
-
-	void resolveNameConflict(CustomReportLibraryNode target, CustomReportLibraryNode node, int i) {
-		String testedName = node.getName() + copySuffix + i;
-		if (target.childNameAlreadyUsed(testedName)) {
-			resolveNameConflict(target, node, i + 1);
-		} else {
-			node.setName(testedName);
-			node.getEntity().setName(testedName);
-		}
-	}
+public class CRLNNameResolver extends NameResolver<CustomReportLibraryNode> {
 }

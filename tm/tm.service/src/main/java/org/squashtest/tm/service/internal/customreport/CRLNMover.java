@@ -38,7 +38,7 @@ public class CRLNMover {
 	private final String copySuffix = "-copy-";
 
 	@Inject
-	private NameResolver nameResolver;
+	private CRLNNameResolver nameResolver;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;

@@ -90,4 +90,11 @@ public abstract class AbstractParameter implements Identified {
 	public Long getId() {
 		return id;
 	}
+
+	public GlobalParameter createGlobalParameterTypeCopy() {
+		GlobalParameter copy = new GlobalParameter();
+		copy.setName(this.name);
+		copy.setDescription(this.description);
+		return copy;
+	}
 }

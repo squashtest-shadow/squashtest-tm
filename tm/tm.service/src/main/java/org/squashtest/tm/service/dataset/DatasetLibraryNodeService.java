@@ -23,9 +23,14 @@ package org.squashtest.tm.service.dataset;
 import org.squashtest.tm.domain.dataset.*;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 
+import java.util.List;
+
 public interface DatasetLibraryNodeService {
+
+	List<TreeLibraryNode> copyNodes(List<Long> nodeIds, long targetId);
 
 	DatasetLibraryNode findDatasetLibraryNodeById(Long id);
 
@@ -40,6 +45,10 @@ public interface DatasetLibraryNodeService {
 	DatasetTemplate findDatasetTemplateByTreeNodeId(Long treeNodeId);
 
 	DatasetLibraryNode createNewNode(Long parentId, TreeEntity entity);
+
+	List<TreeLibraryNode> copyNodes(List<DatasetLibraryNode> nodes, DatasetLibraryNode target);
+
+	List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId);
 
 	void renameNode(Long nodeId, String newName) throws DuplicateNameException;
 }

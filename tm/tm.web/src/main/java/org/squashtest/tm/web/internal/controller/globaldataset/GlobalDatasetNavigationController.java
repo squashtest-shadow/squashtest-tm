@@ -24,21 +24,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.dataset.DatasetFolder;
 import org.squashtest.tm.domain.dataset.DatasetLibraryNode;
 import org.squashtest.tm.domain.dataset.GlobalDataset;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.dataset.DatasetLibraryNodeService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.web.internal.model.builder.GlobalDatasetListTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.GlobalDatasetTreeNodeBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This controller is dedicated to the operations in the tree of Global Datasets.
@@ -50,8 +53,14 @@ import javax.validation.Valid;
 public class GlobalDatasetNavigationController {
 	public static final Logger LOGGER = LoggerFactory.getLogger(GlobalDatasetNavigationController.class);
 
+	private static final String NODE_IDS = "nodeIds[]";
+	private static final String DESTINATION_ID = "destinationId";
+
 	@Inject
 	DatasetLibraryNodeService datasetLibraryNodeService;
+
+	@Inject
+	private GlobalDatasetListTreeNodeBuilder listBuilder;
 
 	@Inject
 	@Named("globalDataset.nodeBuilder")
@@ -87,6 +96,23 @@ public class GlobalDatasetNavigationController {
 		return createNewDatasetLibraryNode(libraryId, globalDataset);
 	}
 
+	//-------------- COPY-NODES ------------------------------
+	//Two Request mappings for the same function, as we have to follow the jstree logic... or re do the tree :-(
+
+	@ResponseBody
+	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
+	public List<JsTreeNode> copyNodesTofolder(@RequestParam(NODE_IDS) Long[] nodeIds,
+											  @PathVariable(DESTINATION_ID) long destinationId) {
+		return copyNodes(nodeIds, destinationId);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
+	public List<JsTreeNode> copyNodesToDrives(@RequestParam(NODE_IDS) Long[] nodeIds,
+											  @PathVariable(DESTINATION_ID) long destinationId) {
+		return copyNodes(nodeIds, destinationId);
+	}
+
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-global-dataset", method = RequestMethod.POST, consumes = "application/json")
@@ -106,5 +132,11 @@ public class GlobalDatasetNavigationController {
 	private JsTreeNode createNewDatasetLibraryNode(Long parentId, TreeEntity entity) {
 		DatasetLibraryNode newNode = datasetLibraryNodeService.createNewNode(parentId, entity);
 		return builderProvider.get().build(newNode);
+	}
+
+	private List<JsTreeNode> copyNodes(@RequestParam(NODE_IDS) Long[] nodeIds, @PathVariable(DESTINATION_ID) long destinationId) {
+		List<TreeLibraryNode> nodeList;
+		nodeList = datasetLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
+		return listBuilder.build(nodeList);
 	}
 }

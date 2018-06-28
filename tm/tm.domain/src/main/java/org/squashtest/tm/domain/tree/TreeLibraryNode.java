@@ -85,4 +85,6 @@ public interface TreeLibraryNode<LIBRARY extends GenericTreeLibrary> extends Tre
 	 */
 	void renameNode(String newName);
 
+	boolean childNameAlreadyUsed(String newChildName);
+
 }

@@ -18,32 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.dataset;
+package org.squashtest.tm.service.treelibrarynode;
 
-import org.squashtest.tm.domain.parameter.GlobalParameter;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.tree.GenericTreeLibraryNode;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+@Component
+public class NameResolver<NODE extends GenericTreeLibraryNode> {
 
-/**
- * Interface for sub-class of {@link AbstractDataset} who appears in DatasetWorkspace tree.
- * @author aguilhem
- */
-public interface DatasetWorkspaceElement {
+	final String copySuffix = "-Copie";
 
-	void addGlobalParameter(GlobalParameter globalParameter);
+	public void resolveNewName(NODE node, NODE target) {
+		if (target.childNameAlreadyUsed(node.getName())) {
+			resolveNameConflict(target, node, 1);
+		}
+	}
 
-	void removeGlobalParameter(GlobalParameter globalParameter);
-
-	List<GlobalParameter> getGlobalParameters();
-
-	String getReference();
-
-	void setReference(String reference);
-
-	String getDescription();
-
-	void setDescription(String description);
+	public void resolveNameConflict(NODE target, NODE node, int i) {
+		String testedName = node.getName() + copySuffix + i;
+		if (target.childNameAlreadyUsed(testedName)) {
+			resolveNameConflict(target, node, i + 1);
+		} else {
+			node.setName(testedName);
+			node.getEntity().setName(testedName);
+		}
+	}
 }

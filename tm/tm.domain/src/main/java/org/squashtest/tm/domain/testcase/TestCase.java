@@ -362,14 +362,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Parameter getParameterToLinkedTheCopiedDatasetParamValueTo(TestCase source,
 																	   Map<Parameter, Parameter> copyByOriginalParam, DatasetParamValue datasetParamValue) {
 		Parameter datasetParamValueCopyParam;
-		if (datasetParamValue.getParameter().getTestCase().getId().equals(source.getId())) {
+		Parameter datasetParamValueParameter = (Parameter) datasetParamValue.getParameter();
+		if (datasetParamValueParameter.getTestCase().getId().equals(source.getId())) {
 			// if the parameter associated to the datasetParamValue is from this test case we need to link the
 			// copied paramValue to the copy of the parameter
-			datasetParamValueCopyParam = copyByOriginalParam.get(datasetParamValue.getParameter());
+			datasetParamValueCopyParam = copyByOriginalParam.get(datasetParamValueParameter);
 		} else {
 			// if the parameter associated to the datasetParamValue belongs to a called test-case we link the
 			// copied paramValue to the same parameter it's source is.
-			datasetParamValueCopyParam = datasetParamValue.getParameter();
+			datasetParamValueCopyParam = datasetParamValueParameter;
 		}
 		return datasetParamValueCopyParam;
 	}

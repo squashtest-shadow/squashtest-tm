@@ -260,6 +260,7 @@ public class CustomReportLibraryNode extends GenericTreeLibraryNode<CustomReport
 		}
 	}
 
+	@Override
 	public boolean childNameAlreadyUsed(String newChildName) {
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(newChildName)) {

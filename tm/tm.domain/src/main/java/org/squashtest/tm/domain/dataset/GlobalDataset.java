@@ -28,13 +28,13 @@ import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.parameter.GlobalParameter;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.squashtest.tm.domain.dataset.GlobalDataset.DATASET_TYPE;
 
@@ -104,7 +104,26 @@ public class GlobalDataset extends AbstractDataset implements TreeEntity<Dataset
 
 	@Override
 	public TreeEntity createCopy() {
-		return null;
+		GlobalDataset copy = new GlobalDataset();
+		copy.setProject(this.getProject());
+		copy.setName(this.getName());
+		copy.setDescription(this.getDescription());
+		copy.setReference(this.getReference());
+		return this.copyGlobalParametersAndParameterValues(copy);
+	}
+
+	//TODO keep GlobalParameters order when copying
+	private GlobalDataset copyGlobalParametersAndParameterValues(GlobalDataset target) {
+		this.parameterValues.forEach(datasetParamValue -> {
+			GlobalParameter globalParameterCopy = datasetParamValue.getParameter().createGlobalParameterTypeCopy();
+			globalParameterCopy.setDataset(target);
+
+			DatasetParamValue paramValueCopy = datasetParamValue.createCopy();
+			paramValueCopy.setParameter(globalParameterCopy);
+			paramValueCopy.setDataset(target);
+			target.addParameterValue(paramValueCopy);
+		});
+		return target;
 	}
 
 	@Override

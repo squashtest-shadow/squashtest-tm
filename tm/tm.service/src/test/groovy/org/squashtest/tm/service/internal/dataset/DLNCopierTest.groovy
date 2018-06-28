@@ -18,66 +18,65 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.service.internal.dataset
 
-import org.squashtest.tm.domain.customreport.CustomReportFolder
-import org.squashtest.tm.domain.customreport.CustomReportLibrary
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition
+import org.squashtest.tm.domain.dataset.DatasetFolder
+import org.squashtest.tm.domain.dataset.DatasetLibrary
+import org.squashtest.tm.domain.dataset.DatasetLibraryNode
+import org.squashtest.tm.domain.dataset.DatasetTreeDefinition
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
+import org.squashtest.tm.service.internal.repository.DatasetLibraryNodeDao
 import org.squashtest.tm.service.treelibrarynode.NameResolver
 import spock.lang.Specification
 
 /**
- * Created by jthebault on 29/02/2016.
+ * @author aguilhem
  */
-class CRLNCopierTest extends Specification {
-
-	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
+class DLNCopierTest extends Specification {
+	DatasetLibraryNodeDao datasetLibraryNodeDao = Mock()
 
 	def setup(){
 		Project project = Mock()
-		CustomReportLibrary library = Mock()
-		CustomReportLibraryNode nodeFolder1 = new CustomReportLibraryNode()
-		CustomReportFolder folder1 = new CustomReportFolder()
+		DatasetLibrary library = Mock()
+		DatasetLibraryNode nodeFolder1 = new DatasetLibraryNode()
+		DatasetFolder folder1 = new DatasetFolder()
 		folder1.setName("Folder1")
 		folder1.setDescription("un superbe repertoire")
 		folder1.setProject(project)
 		nodeFolder1.setName("Folder1")
 		nodeFolder1.setEntity(folder1)
 		nodeFolder1.setLibrary(library)
-		customReportLibraryNodeDao.findOne(1L) >> nodeFolder1
+		datasetLibraryNodeDao.findOne(1L) >> nodeFolder1
 
-		CustomReportLibraryNode targetNode = new CustomReportLibraryNode()
-		CustomReportFolder targetFolder = new CustomReportFolder()
+		DatasetLibraryNode targetNode = new DatasetLibraryNode()
+		DatasetFolder targetFolder = new DatasetFolder()
 		targetFolder.setName("FolderTarget")
 		targetFolder.setDescription("un autre repertoire")
 		targetNode.setName("FolderTarget")
 		targetNode.setEntity(targetFolder)
 		targetNode.setLibrary(library)
-		targetNode.entityType = CustomReportTreeDefinition.FOLDER
-		customReportLibraryNodeDao.findOne(2L) >> targetNode
+		targetNode.entityType = DatasetTreeDefinition.FOLDER
+		datasetLibraryNodeDao.findOne(2L) >> targetNode
 
 	}
 
 	def "shouldResolveNameConflict"(){
 		given:
-		CustomReportLibraryNode target = Mock()
+		DatasetLibraryNode target = Mock()
 		target.childNameAlreadyUsed('name1') >> true
 		target.childNameAlreadyUsed('name2') >> true
 		target.childNameAlreadyUsed('name2-Copie1') >> true
 
-		CustomReportLibraryNode origin = new CustomReportLibraryNode()
-		origin.setEntity(new CustomReportFolder())
+		DatasetLibraryNode origin = new DatasetLibraryNode()
+		origin.setEntity(new DatasetFolder())
 		origin.setName('name1')
 
-		CustomReportLibraryNode origin2 = new CustomReportLibraryNode()
-		origin2.setEntity(new CustomReportFolder())
+		DatasetLibraryNode origin2 = new DatasetLibraryNode()
+		origin2.setEntity(new DatasetFolder())
 		origin2.setName('name2')
 
 		and:
-		CRLNNameResolver resolver = new CRLNNameResolver()
+		NameResolver resolver = new NameResolver()
 
 		when:
 		resolver.resolveNewName(origin,target)
@@ -90,11 +89,11 @@ class CRLNCopierTest extends Specification {
 
 	def "should copy a single node"(){
 		given:
-		CustomReportLibraryNode source = customReportLibraryNodeDao.findOne(1L)
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(2L)
+		DatasetLibraryNode source = datasetLibraryNodeDao.findOne(1L)
+		DatasetLibraryNode target = datasetLibraryNodeDao.findOne(2L)
 
 		and:
-		CRLNCopier treeLibraryNodeCopier = new CRLNCopier()
+		DLNCopier treeLibraryNodeCopier = new DLNCopier()
 		treeLibraryNodeCopier.nameResolver = Mock(NameResolver)
 
 		when:
@@ -106,9 +105,8 @@ class CRLNCopierTest extends Specification {
 		def copy = children.get(0)
 		copy.name == source.getName()
 		copy.id != 1L
-		CustomReportFolder entity = copy.getEntity()
-		entity.getDescription().equals(source.getEntity().getDescription())
+		DatasetFolder entity = copy.getEntity()
+		entity.description == source.entity.getDescription()
 
 	}
-
 }

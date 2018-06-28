@@ -18,47 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
+package org.squashtest.tm.service.internal.dataset;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.dataset.DatasetLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.treelibrarynode.GenericTreeLibraryNodeCopier;
 
 /**
- * Created by jthebault on 29/02/2016.
+ * @author aguilhem
  */
 @Component
-public class CRLNCopier extends GenericTreeLibraryNodeCopier<CustomReportLibraryNode> {
-
+public class DLNCopier extends GenericTreeLibraryNodeCopier<DatasetLibraryNode> {
 	@Override
-	protected CustomReportLibraryNode createFirstLayerCopy(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		CustomReportLibraryNode copy = createBasicCopy(node, target);
+	protected DatasetLibraryNode createFirstLayerCopy(DatasetLibraryNode node, DatasetLibraryNode target) {
+		DatasetLibraryNode copy = createBasicCopy(node, target);
 		for (TreeLibraryNode child : node.getChildren()) {
-			createSubTreeCopy((CustomReportLibraryNode) child,copy);
+			createSubTreeCopy((DatasetLibraryNode) child,copy);
 		}
 		return copy;
 	}
 
 	@Override
-	protected CustomReportLibraryNode createSubTreeCopy(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		CustomReportLibraryNode copy = createBasicCopy(node, target);
+	protected DatasetLibraryNode createSubTreeCopy(DatasetLibraryNode node, DatasetLibraryNode target) {
+		DatasetLibraryNode copy = createBasicCopy(node, target);
 		target.addChild(copy);
 		for (TreeLibraryNode child : node.getChildren()) {
-			createSubTreeCopy((CustomReportLibraryNode) child,copy);
+			createSubTreeCopy((DatasetLibraryNode) child,copy);
 		}
 		return copy;
 	}
 
 	@Override
-	protected CustomReportLibraryNode createBasicCopy(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		CustomReportLibraryNode copy = new CustomReportLibraryNode();
+	protected DatasetLibraryNode createBasicCopy(DatasetLibraryNode node, DatasetLibraryNode target) {
+		DatasetLibraryNode copy = new DatasetLibraryNode();
 		copy.setLibrary(target.getTypedLibrary());
 		copy.setName(node.getName());
 		copyTreeEntity(node, copy);
@@ -66,11 +60,10 @@ public class CRLNCopier extends GenericTreeLibraryNodeCopier<CustomReportLibrary
 	}
 
 	@Override
-	protected void copyTreeEntity(CustomReportLibraryNode node, CustomReportLibraryNode copy) {
+	protected void copyTreeEntity(DatasetLibraryNode node, DatasetLibraryNode copy) {
 		TreeEntity treeEntity = node.getEntity().createCopy();
 		treeEntity.setProject(copy.getTypedLibrary().getProject());
 		copy.setEntity(treeEntity);
 		copy.setEntityType(node.getEntityType());
 	}
-
 }

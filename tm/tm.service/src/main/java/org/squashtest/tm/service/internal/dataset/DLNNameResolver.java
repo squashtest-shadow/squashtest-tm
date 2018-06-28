@@ -18,32 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.dataset;
+package org.squashtest.tm.service.internal.dataset;
 
-import org.squashtest.tm.domain.parameter.GlobalParameter;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.dataset.DatasetLibraryNode;
+import org.squashtest.tm.service.treelibrarynode.NameResolver;
 
 /**
- * Interface for sub-class of {@link AbstractDataset} who appears in DatasetWorkspace tree.
  * @author aguilhem
  */
-public interface DatasetWorkspaceElement {
-
-	void addGlobalParameter(GlobalParameter globalParameter);
-
-	void removeGlobalParameter(GlobalParameter globalParameter);
-
-	List<GlobalParameter> getGlobalParameters();
-
-	String getReference();
-
-	void setReference(String reference);
-
-	String getDescription();
-
-	void setDescription(String description);
+@Component
+public class DLNNameResolver extends NameResolver<DatasetLibraryNode> {
 }

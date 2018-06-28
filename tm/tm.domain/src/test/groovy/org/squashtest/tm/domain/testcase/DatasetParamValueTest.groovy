@@ -20,25 +20,22 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import org.hibernate.dialect.function.TrimFunctionTemplate.Specification;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 
-public class DatasetParamValueTest extends Specification {
-	
+import spock.lang.Specification;
+
+class DatasetParamValueTest extends Specification {
+
 	def "when creating a new value, dataset contains the new value"() {
 		given:
 		TestCase testCase = new TestCase()
 		Dataset dataset = new Dataset("dataset", testCase)
 		Parameter parameter = new Parameter("parameter", testCase)
-		
-		
-	
+
+
+
 		when:
 		DatasetParamValue value = new DatasetParamValue(parameter, dataset, "paramValue");
-		
+
 		then:
 		dataset.parameterValues.contains value
 	}

@@ -231,6 +231,7 @@ public class DatasetLibraryNode extends GenericTreeLibraryNode<DatasetLibrary> {
 		}
 	}
 
+	@Override
 	public boolean childNameAlreadyUsed(String newChildName) {
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(newChildName)) {

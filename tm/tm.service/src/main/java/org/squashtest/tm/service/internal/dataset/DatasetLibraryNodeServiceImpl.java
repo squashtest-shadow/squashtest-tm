@@ -23,22 +23,20 @@ package org.squashtest.tm.service.internal.dataset;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.dataset.*;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.dataset.DatasetLibraryNodeService;
-import org.squashtest.tm.service.internal.customreport.CRLNCopier;
-import org.squashtest.tm.service.internal.customreport.CRLNDeletionHandler;
-import org.squashtest.tm.service.internal.customreport.CRLNMover;
 import org.squashtest.tm.service.internal.repository.DatasetLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -56,8 +54,19 @@ public class DatasetLibraryNodeServiceImpl implements
 	@Inject
 	private DatasetLibraryNodeDao datasetLibraryNodeDao;
 
+	@Inject
+	private DLNCopier nodeCopier;
+
 	@PersistenceContext
 	private EntityManager em;
+
+	@Override
+	@PreAuthorize("hasPermission(#target, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') ")
+	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, long targetId) {
+		List<DatasetLibraryNode> nodes = datasetLibraryNodeDao.findAll(nodeIds);
+		DatasetLibraryNode target = datasetLibraryNodeDao.findOne(targetId);
+		return makeCopy(nodes, target);
+	}
 
 	@Override
 	public DatasetLibraryNode findDatasetLibraryNodeById(Long id) {
@@ -112,6 +121,22 @@ public class DatasetLibraryNodeServiceImpl implements
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#target, 'org.squashtest.tm.domain.dataset.DatasetLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public List<TreeLibraryNode> copyNodes(List<DatasetLibraryNode> nodes, DatasetLibraryNode target) {
+		return makeCopy(nodes, target);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.dataset.DatasetLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId) {
+		List<DatasetLibraryNode> nodes = datasetLibraryNodeDao.findAll(nodeIds);
+		DatasetLibraryNode target = datasetLibraryNodeDao.findOne(targetId);
+		return makeCopy(nodes, target);
+	}
+
+	@Override
 	public void renameNode(Long nodeId, String newName) throws DuplicateNameException {
 		DatasetLibraryNode dln = datasetLibraryNodeDao.findOne(nodeId);
 		dln.renameNode(newName);
@@ -134,5 +159,11 @@ public class DatasetLibraryNodeServiceImpl implements
 			throw new IllegalArgumentException(String.format(message, nodeId));
 		}
 		return entity;
+	}
+
+	private List<TreeLibraryNode> makeCopy(List<DatasetLibraryNode> nodes, DatasetLibraryNode target) {
+		List<TreeLibraryNode> copies = new ArrayList<>();
+		copies.addAll(nodeCopier.copyNodes(nodes, target));
+		return copies;
 	}
 }

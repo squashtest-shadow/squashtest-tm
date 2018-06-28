@@ -21,10 +21,8 @@
 package org.squashtest.tm.domain.dataset;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.parameter.GlobalParameter;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
 import javax.persistence.*;
