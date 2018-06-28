@@ -90,13 +90,13 @@ public class GlobalDatasetController {
 
 	@RequestMapping(method = RequestMethod.POST, value="composite-dataset/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
-	public RenameModel renameChartDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+	public RenameModel renameCompositeDataset(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value="dataset-template/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
-	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+	public RenameModel renameDatasetTemplate(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 

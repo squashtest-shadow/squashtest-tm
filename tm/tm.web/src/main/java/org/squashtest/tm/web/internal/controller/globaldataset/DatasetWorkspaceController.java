@@ -76,6 +76,7 @@ public class DatasetWorkspaceController {
 		datasetFolder.addAttr("rel", "folder");
 		datasetFolder.addAttr("id", "DatasetFolder-2");
 		datasetFolder.addAttr("resId", 2L);
+		datasetFolder.addAttr("restype", "dataset-folders");
 
 		JsTreeNode datasetFolder2 = new JsTreeNode();
 		datasetFolder2.setTitle("Dataset Folder2");
@@ -84,6 +85,7 @@ public class DatasetWorkspaceController {
 		datasetFolder2.addAttr("rel", "folder");
 		datasetFolder2.addAttr("id", "DatasetFolder-6");
 		datasetFolder2.addAttr("resId", 6L);
+		datasetFolder2.addAttr("restype", "dataset-folders");
 
 		JsTreeNode dataset = new JsTreeNode();
 		dataset.setTitle("Dataset");
@@ -92,6 +94,7 @@ public class DatasetWorkspaceController {
 		dataset.addAttr("rel", "global-dataset");
 		dataset.addAttr("id", "Dataset-3");
 		dataset.addAttr("resId", 3L);
+		dataset.addAttr("restype", "global-dataset");
 
 		JsTreeNode datasetTemplate = new JsTreeNode();
 		datasetTemplate.setTitle("Dataset Template");
@@ -100,6 +103,7 @@ public class DatasetWorkspaceController {
 		datasetTemplate.addAttr("rel", "dataset-template");
 		datasetTemplate.addAttr("id", "DatasetTemplate-4");
 		datasetTemplate.addAttr("resId", 4L);
+		datasetTemplate.addAttr("restype", "dataset-template");
 
 		JsTreeNode compositeDataset = new JsTreeNode();
 		compositeDataset.setTitle("Dataset Composite");
@@ -108,10 +112,11 @@ public class DatasetWorkspaceController {
 		compositeDataset.addAttr("rel", "composite-dataset");
 		compositeDataset.addAttr("id", "CompositeDataset-5");
 		compositeDataset.addAttr("resId", 5L);
+		compositeDataset.addAttr("restype", "composite-dataset");
 
 		for (PermissionWithMask permission : permissions) {
 			datasetLibrary.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
-			datasetFolder2.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
+			datasetFolder.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
 			dataset.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
 			datasetTemplate.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
 			compositeDataset.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));
