@@ -78,6 +78,18 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 
+		this.canCreateGlobalDataset = function (nodes) {
+			return nodes && nodes.filter(':creatable').length === 1;
+		};
+
+		this.canCreateCompositeDataset = function (nodes) {
+			return nodes && nodes.filter(':creatable').length === 1;
+		};
+
+		this.canCreateDatasetTemplate = function (nodes) {
+			return nodes && nodes.filter(':creatable').length === 1;
+		};
+
 		this.whyCantCreate = function (nodes) {
 			if (!milestonesAllowCreation()) {
 				return "milestone-denied";
@@ -229,6 +241,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 		this.buttonrules = {
 			'tree-create-button': this.canCreateButton,
 			'new-folder-tree-button': this.canCreateFolder,
+			'new-global-dataset-tree-button': this.canCreateGlobalDataset,
+			'new-composite-dataset-tree-button': this.canCreateCompositeDataset,
+			'new-dataset-template-tree-button': this.canCreateDatasetTemplate,
 			'copy-node-tree-button': this.canCopy,
 			'paste-node-tree-button': this.canPaste,
 			'rename-node-tree-button': this.canRename,

@@ -94,7 +94,7 @@ public class DatasetWorkspaceController {
 		dataset.addAttr("rel", "global-dataset");
 		dataset.addAttr("id", "Dataset-3");
 		dataset.addAttr("resId", 3L);
-		dataset.addAttr("restype", "global-dataset");
+		dataset.addAttr("restype", "global-datasets");
 
 		JsTreeNode datasetTemplate = new JsTreeNode();
 		datasetTemplate.setTitle("Dataset Template");
@@ -103,7 +103,7 @@ public class DatasetWorkspaceController {
 		datasetTemplate.addAttr("rel", "dataset-template");
 		datasetTemplate.addAttr("id", "DatasetTemplate-4");
 		datasetTemplate.addAttr("resId", 4L);
-		datasetTemplate.addAttr("restype", "dataset-template");
+		datasetTemplate.addAttr("restype", "dataset-templates");
 
 		JsTreeNode compositeDataset = new JsTreeNode();
 		compositeDataset.setTitle("Dataset Composite");
@@ -112,7 +112,7 @@ public class DatasetWorkspaceController {
 		compositeDataset.addAttr("rel", "composite-dataset");
 		compositeDataset.addAttr("id", "CompositeDataset-5");
 		compositeDataset.addAttr("resId", 5L);
-		compositeDataset.addAttr("restype", "composite-dataset");
+		compositeDataset.addAttr("restype", "composite-datasets");
 
 		for (PermissionWithMask permission : permissions) {
 			datasetLibrary.addAttr(permission.getQuality(), String.valueOf(currentUser.isAdmin()));

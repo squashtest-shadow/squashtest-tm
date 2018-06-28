@@ -62,6 +62,9 @@ define(["jquery", "./permissions-rules", "jquery.squash.buttonmenu"], function (
 		var btnselector = [
 			"#tree-create-button",
 			"#new-folder-tree-button",
+			"#new-global-dataset-tree-button",
+			"#new-composite-dataset-tree-button",
+			"#new-dataset-template-tree-button",
 			"#rename-node-tree-button",
 			"#delete-node-tree-button"
 		].join(", ");

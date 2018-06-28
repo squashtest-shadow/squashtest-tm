@@ -116,6 +116,15 @@
                 <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
                   <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
                 </li>
+                <li id="new-global-dataset-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-global-dataset.label}+'...'">New Global Dataset...</a>
+                </li>
+                <li id="new-composite-dataset-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-composite-dataset.label}+'...'">New Composite Dataset...</a>
+                </li>
+                <li id="new-dataset-template-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-dataset-template.label}+'...'">New Dataset TEmplate...</a>
+                </li>
               </ul>
             </div>
 
@@ -238,6 +247,170 @@
             <textarea id="add-folder-description" data-def="isrich"></textarea>
           </td>
         </tr>
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.addAnother}" value="add another"
+               data-def="evt=add-another, state=confirm, mainbtn=confirm"/>
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm"/>
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-global-dataset-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-global-dataset.title}"
+       title="new test case">
+
+
+    <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+
+    <div data-def="state=confirm">
+      <table class="add-node-attributes">
+
+        <tr>
+          <td>
+            <label for="add-global-dataset-name" th:text="#{label.Name}">Name</label>
+          </td>
+
+          <td>
+            <input id="add-global-dataset-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <br/>
+            <span class="error-message name-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-global-dataset-reference" th:text="#{label.Reference}">Reference</label>
+          </td>
+
+          <td>
+            <input id="add-global-dataset-reference" type="text" size="20" maxlength="50"/>
+            <br/>
+            <span class="error-message reference-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-global-dataset-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td>
+            <textarea id="add-global-dataset-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+
+
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.addAnother}" value="add another"
+               data-def="evt=add-another, state=confirm, mainbtn=confirm"/>
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm"/>
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-composite-dataset-dialog" class="popup-dialog not-displayed"
+       th:title="#{dialog.new-composite-dataset.title}"
+       title="new test case">
+
+
+    <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+
+    <div data-def="state=confirm">
+      <table class="add-node-attributes">
+
+        <tr>
+          <td>
+            <label for="add-composite-dataset-name" th:text="#{label.Name}">Name</label>
+          </td>
+
+          <td>
+            <input id="add-composite-dataset-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <br/>
+            <span class="error-message name-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-composite-dataset-reference" th:text="#{label.Reference}">Reference</label>
+          </td>
+
+          <td>
+            <input id="add-composite-dataset-reference" type="text" size="20" maxlength="50"/>
+            <br/>
+            <span class="error-message reference-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-composite-dataset-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td>
+            <textarea id="add-composite-dataset-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+
+
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.addAnother}" value="add another"
+               data-def="evt=add-another, state=confirm, mainbtn=confirm"/>
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm"/>
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-dataset-template-dialog" class="popup-dialog not-displayed"
+       th:title="#{dialog.new-dataset-template.title}"
+       title="new test case">
+
+
+    <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+
+    <div data-def="state=confirm">
+      <table class="add-node-attributes">
+
+        <tr>
+          <td>
+            <label for="add-dataset-template-name" th:text="#{label.Name}">Name</label>
+          </td>
+
+          <td>
+            <input id="add-dataset-template-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <br/>
+            <span class="error-message name-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-dataset-template-reference" th:text="#{label.Reference}">Reference</label>
+          </td>
+
+          <td>
+            <input id="add-dataset-template-reference" type="text" size="20" maxlength="50"/>
+            <br/>
+            <span class="error-message reference-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-dataset-template-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td>
+            <textarea id="add-dataset-template-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+
+
       </table>
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.addAnother}" value="add another"

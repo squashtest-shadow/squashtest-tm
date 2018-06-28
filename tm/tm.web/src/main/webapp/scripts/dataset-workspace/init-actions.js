@@ -119,6 +119,18 @@ define(["jquery", "tree", "./permissions-rules", "workspace.contextual-content",
 				$("#add-folder-dialog").formDialog("open");
 			});
 
+			$("#new-global-dataset-tree-button").on("click", function () {
+				$("#add-global-dataset-dialog").formDialog("open");
+			});
+
+			$("#new-composite-dataset-tree-button").on("click", function () {
+				$("#add-composite-dataset-dialog").formDialog("open");
+			});
+
+			$("#new-dataset-template-tree-button").on("click", function () {
+				$("#add-dataset-template-dialog").formDialog("open");
+			});
+
 			// *************** copy paste ****************
 
 			$("#copy-node-tree-button").on("click", function () {

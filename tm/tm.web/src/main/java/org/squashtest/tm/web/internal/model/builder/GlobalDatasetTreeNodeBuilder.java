@@ -85,22 +85,22 @@ public class GlobalDatasetTreeNodeBuilder extends GenericTreeNodeBuilder<Dataset
 
 	private void doGlobalDatasetBuild(JsTreeNode builtNode, DatasetLibraryNode dln) {
 		setNodeHTMLId(builtNode, "DatasetGlobal-"+dln.getId());
-		setNodeRel(builtNode, "globalDataset");
-		setNodeResType(builtNode, "dataset-composite");
+		setNodeRel(builtNode, "global-dataset");
+		setNodeResType(builtNode, "global-datasets");
 		setStateForNodeContainer(builtNode, dln);
 	}
 
 	private void doCompositeBuild(JsTreeNode builtNode, DatasetLibraryNode dln) {
 		setNodeHTMLId(builtNode, "DatasetComposite-"+dln.getId());
-		setNodeRel(builtNode, "composite");
-		setNodeResType(builtNode, "dataset-composite");
+		setNodeRel(builtNode, "composite-dataset");
+		setNodeResType(builtNode, "composite-datasets");
 		setStateForNodeContainer(builtNode, dln);
 	}
 
 	private void doTemplateBuild(JsTreeNode builtNode, DatasetLibraryNode dln) {
 		setNodeHTMLId(builtNode, "DatasetTemplate-"+dln.getId());
-		setNodeRel(builtNode, "template");
-		setNodeResType(builtNode, "dataset-template");
+		setNodeRel(builtNode, "dataset-template");
+		setNodeResType(builtNode, "dataset-templates");
 		setStateForNodeContainer(builtNode, dln);
 	}
 }

@@ -18,11 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup', './delete-node-popup', './rename-node-popup'],
-	function (folderPopup, deleteNodePopup, renameNodePopup) {
+define(['./add-folder-popup', './add-global-dataset-popup', './add-composite-dataset-popup', './add-dataset-template-popup', './delete-node-popup', './rename-node-popup'],
+	function (folderPopup, globalDatasetPopup, compositeDatasetPopup, datasetTemplatePopup, deleteNodePopup, renameNodePopup) {
 
 		function init() {
 			folderPopup.init();
+			globalDatasetPopup.init();
+			compositeDatasetPopup.init();
+			datasetTemplatePopup.init();
 			deleteNodePopup.init();
 			renameNodePopup.init();
 		}
