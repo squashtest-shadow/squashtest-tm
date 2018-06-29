@@ -66,29 +66,22 @@ import java.util.List;
 @RequestMapping("/custom-report-browser")
 public class CustomReportNavigationController {
 
+	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 	private static final String DESTINATION_ID = "destinationId";
-
 	@Inject
 	private CustomReportWorkspaceService workspaceService;
-
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
-
 	@Inject
 	private CustomReportWorkspaceDisplayService customReportWorkspaceDisplayService;
-
 	@Inject
 	private CustomReportListTreeNodeBuilder listBuilder;
-
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
-
 	@Inject
 	private UserAccountService userAccountService;
-
-	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 
 	//----- CREATE NODE METHODS -----
 
@@ -147,42 +140,42 @@ public class CustomReportNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesTofolder(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesToDrives(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											 @PathVariable(DESTINATION_ID) long destinationId) {
+	                                         @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodesToFolder(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-								  @PathVariable(DESTINATION_ID) long destinationId) {
+	                              @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public void moveNodesToDrive(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-								 @PathVariable(DESTINATION_ID) long destinationId) {
+	                             @PathVariable(DESTINATION_ID) long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
@@ -219,11 +212,11 @@ public class CustomReportNavigationController {
 		return builderProvider.get().build(newNode);
 	}
 
-	private void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(DESTINATION_ID) long destinationId) {
+	private void moveNodes(Long[] nodeIds, long destinationId) {
 		customReportLibraryNodeService.moveNodes(Arrays.asList(nodeIds), destinationId);
 	}
 
-	private List<JsTreeNode> copyNodes(@RequestParam(NODE_IDS) Long[] nodeIds, @PathVariable(DESTINATION_ID) long destinationId) {
+	private List<JsTreeNode> copyNodes(Long[] nodeIds, long destinationId) {
 		List<TreeLibraryNode> nodeList;
 		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
 		return listBuilder.build(nodeList);

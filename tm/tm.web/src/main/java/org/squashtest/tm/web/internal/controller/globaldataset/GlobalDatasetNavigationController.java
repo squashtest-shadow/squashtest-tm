@@ -102,14 +102,14 @@ public class GlobalDatasetNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesTofolder(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = {NODE_IDS})
 	public List<JsTreeNode> copyNodesToDrives(@RequestParam(NODE_IDS) Long[] nodeIds,
-											  @PathVariable(DESTINATION_ID) long destinationId) {
+	                                          @PathVariable(DESTINATION_ID) long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
@@ -134,7 +134,7 @@ public class GlobalDatasetNavigationController {
 		return builderProvider.get().build(newNode);
 	}
 
-	private List<JsTreeNode> copyNodes(@RequestParam(NODE_IDS) Long[] nodeIds, @PathVariable(DESTINATION_ID) long destinationId) {
+	private List<JsTreeNode> copyNodes(Long[] nodeIds, long destinationId) {
 		List<TreeLibraryNode> nodeList;
 		nodeList = datasetLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
 		return listBuilder.build(nodeList);

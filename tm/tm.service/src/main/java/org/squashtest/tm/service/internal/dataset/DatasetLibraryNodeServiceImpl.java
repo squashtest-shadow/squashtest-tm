@@ -34,7 +34,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
