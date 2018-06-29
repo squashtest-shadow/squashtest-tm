@@ -35,15 +35,24 @@ class GlobalDatasetTest extends Specification {
 		source.name = "source"
 		source.description = "source description"
 		source.reference = "SC1"
-		GlobalParameter param = new GlobalParameter();
+		GlobalParameter param = new GlobalParameter()
 		param.name = "param"
 		param.description = "param description"
-		DatasetParamValue paramValue = new DatasetParamValue();
+		DatasetParamValue paramValue = new DatasetParamValue()
 		paramValue.parameter = param
 		paramValue.dataset = source
 		paramValue.paramValue = "value"
+		GlobalParameter param2 = new GlobalParameter();
+		param2.name = "param2"
+		param2.description = "param2 description"
+		DatasetParamValue paramValue2 = new DatasetParamValue()
+		paramValue2.parameter = param2
+		paramValue2.dataset = source
+		paramValue2.paramValue = "value"
 
 		source.addGlobalParameter(param)
+		source.addParameterValue(paramValue2)
+		source.addGlobalParameter(param2)
 		source.addParameterValue(paramValue)
 
 		GlobalDataset copy = source.createCopy()
@@ -54,15 +63,14 @@ class GlobalDatasetTest extends Specification {
 		copy.name == source.name
 		copy.description == source.description
 		copy.reference == source.reference
-		copy.globalParameters.size() == 1
-		copy.getParameterValues().size() == 1
+		copy.globalParameters.size() == 2
+		copy.parameterValues.size() == 2
 
 		copiedParam.name == param.name
 		copiedParam.description == param.description
 
 		copiedParamValue.paramValue == paramValue.paramValue
 		copiedParamValue.dataset == copy
-		copiedParamValue.parameter == copiedParam
 
 
 	}

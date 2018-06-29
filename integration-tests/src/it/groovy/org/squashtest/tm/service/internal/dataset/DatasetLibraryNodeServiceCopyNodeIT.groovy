@@ -144,13 +144,19 @@ class DatasetLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecification {
 		//checking global dataset parameters
 		globalDataset.globalParameters.get(0).id != -1
 		globalDataset.globalParameters.get(0).id != -2
-		globalDataset.globalParameters.size() == 2
+		globalDataset.globalParameters.get(0).id != -3
+		globalDataset.globalParameters.size() == 3
+		globalDataset.globalParameters.get(0).name == "Param1"
+		globalDataset.globalParameters.get(0).description == "param1 description"
+		globalDataset.globalParameters.get(2).name == "Param3"
+		globalDataset.globalParameters.get(2).description == "param3 description"
 
 		//checking global dataset paramValue
-		globalDataset.parameterValues.size() == 2
+		globalDataset.parameterValues.size() == 3
 		globalDataset.parameterValues.first().dataset == globalDataset
 		globalDataset.parameterValues.first().parameter.id != -1
 		globalDataset.parameterValues.first().parameter.id != -2
+		globalDataset.parameterValues.first().parameter.id != -3
 
 	}
 

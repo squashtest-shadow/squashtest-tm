@@ -114,17 +114,35 @@ public class GlobalDataset extends AbstractDataset implements TreeEntity<Dataset
 
 	//TODO keep GlobalParameters order when copying
 	private GlobalDataset copyGlobalParametersAndParameterValues(GlobalDataset target) {
+		List<GlobalParameter> unorderedParamList = new ArrayList<>();
 		this.parameterValues.forEach(datasetParamValue -> {
 			GlobalParameter globalParameterCopy = datasetParamValue.getParameter().createGlobalParameterTypeCopy();
-			globalParameterCopy.setDataset(target);
+			unorderedParamList.add(globalParameterCopy);
 
 			DatasetParamValue paramValueCopy = datasetParamValue.createCopy();
 			paramValueCopy.setParameter(globalParameterCopy);
 			paramValueCopy.setDataset(target);
 			target.addParameterValue(paramValueCopy);
 		});
-
+		target.setGlobalParameters(sortGlobalParameters(unorderedParamList));
 		return target;
+	}
+
+	private List<GlobalParameter> sortGlobalParameters(List<GlobalParameter> unorderedParamList) {
+		List<GlobalParameter> orderedParamList = new ArrayList<>();
+		Iterator<GlobalParameter> iterator = this.globalParameters.iterator();
+		GlobalParameter paramToRemove = new GlobalParameter();
+		while (iterator.hasNext()){
+			GlobalParameter param = iterator.next();
+			for (GlobalParameter unorderedParam : unorderedParamList){
+				if(param.getName().equals(unorderedParam.getName())){
+					orderedParamList.add(unorderedParam);
+					paramToRemove = unorderedParam;
+				}
+			}
+			unorderedParamList.remove(paramToRemove);
+		}
+		return orderedParamList;
 	}
 
 	@Override
