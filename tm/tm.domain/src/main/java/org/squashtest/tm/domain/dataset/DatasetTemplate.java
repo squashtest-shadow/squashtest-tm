@@ -93,6 +93,11 @@ public class DatasetTemplate extends AbstractDataset implements TreeEntity<Datas
 	}
 
 	@Override
+	public void setGlobalParameters(List<GlobalParameter> globalParameters) {
+
+	}
+
+	@Override
 	public String getReference() {
 		return reference;
 	}

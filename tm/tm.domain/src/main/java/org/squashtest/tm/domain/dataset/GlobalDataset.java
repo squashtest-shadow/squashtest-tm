@@ -123,12 +123,18 @@ public class GlobalDataset extends AbstractDataset implements TreeEntity<Dataset
 			paramValueCopy.setDataset(target);
 			target.addParameterValue(paramValueCopy);
 		});
+
 		return target;
 	}
 
 	@Override
 	public List<GlobalParameter> getGlobalParameters() {
 		return globalParameters;
+	}
+
+	@Override
+	public void setGlobalParameters(List<GlobalParameter> globalParameters) {
+		this.globalParameters = globalParameters;
 	}
 
 	@Override

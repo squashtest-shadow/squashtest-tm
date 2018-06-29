@@ -39,6 +39,8 @@ public interface DatasetWorkspaceElement {
 
 	List<GlobalParameter> getGlobalParameters();
 
+	void setGlobalParameters(List<GlobalParameter> globalParameters);
+
 	String getReference();
 
 	void setReference(String reference);

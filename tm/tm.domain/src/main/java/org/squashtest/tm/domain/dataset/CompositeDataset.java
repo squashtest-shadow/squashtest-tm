@@ -113,6 +113,11 @@ public class CompositeDataset extends AbstractDataset implements TreeEntity<Data
 	}
 
 	@Override
+	public void setGlobalParameters(List<GlobalParameter> globalParameters) {
+		this.globalParameters = globalParameters;
+	}
+
+	@Override
 	public void addGlobalParameter(GlobalParameter globalParameter) {
 		this.globalParameters.add(globalParameter);
 	}
