@@ -55,15 +55,45 @@
     <div class="unsnap"></div>
   </div>
 
-  <div>
-    <div class="sq-tg expand">
-      <div class="tg-head">
-        <h3 th:text="#{label.Description}">desc</h3>
-      </div>
-      <div class="tg-body" id="description-panel">
-        <div id="folder-description" class="{{ift (contains acls.perms 'WRITE') 'editable rich-editable'}}"> dataset
+  <div id="tabs" class="fragment-tabs" style="height: 100%; width:98%;">
+    <ul class="tab-menu">
+      <li><a href="#tab-dataset-informations" th:text="#{tabs.label.mainpanel}">Informations</a></li>
+      <li><a href="#tab-dataset-attachments" th:text="#{label.Attachments}">Attachments</a></li>
+    </ul>
+
+    <div id="tab-dataset-informations">
+      <div class="sq-tg expand">
+        <!--head-->
+        <div class="tg-head">
+          <h3 th:text="#{label.Description}">desc</h3>
         </div>
+        <!--/head-->
+
+        <!--body-->
+        <div class="tg-body" id="description-panel">
+
+
+          <div id="test-case-description-table" class="display-table">
+
+            <div class="display-table-row">
+              <label class="display-table-cell" for="dataset-reference" th:text="#{label.Reference}"></label>
+              <div class="display-table-cell" id="dataset-reference">{{reference}}</div>
+            </div>
+
+            <div class="display-table-row">
+              <label for="dataset-description" class="display-table-cell" th:text="#{label.Description}"></label>
+              <div class="display-table-cell" id="dataset-description">{{description}}</div>
+            </div>
+          </div>
+
+        </div>
+        <!--/body-->
+
       </div>
+    </div>
+
+    <div id="tab-dataset-attachments">
+      <p>Attachments</p>
     </div>
   </div>
 </div>

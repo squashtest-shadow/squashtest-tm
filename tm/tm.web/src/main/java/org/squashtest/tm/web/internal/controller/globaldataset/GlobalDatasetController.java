@@ -82,19 +82,19 @@ public class GlobalDatasetController {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="global-dataset/{nodeId}",params = {NEW_NAME})
+	@RequestMapping(method = RequestMethod.POST, value="global-datasets/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameGlobalDataset(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="composite-dataset/{nodeId}",params = {NEW_NAME})
+	@RequestMapping(method = RequestMethod.POST, value="composite-datasets/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameCompositeDataset(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value="dataset-template/{nodeId}",params = {NEW_NAME})
+	@RequestMapping(method = RequestMethod.POST, value="dataset-templates/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameDatasetTemplate(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);

@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "squash.dateutils",
+define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "squash.dateutils", "squash.configmanager",
 		"app/squash.handlebars.helpers"],
-	function (_, Backbone, translator, Handlebars, basicWidgets, dateutils) {
+	function (_, Backbone, translator, Handlebars, basicWidgets, dateutils, confman) {
 		"use strict";
 
 		return Backbone.View.extend({
@@ -43,7 +43,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 					}).then(this.render);
 			},
 
-			events: {},
+			events: {
+				"click #rename-report-button": "rename"
+			},
 
 			render: function () {
 				// TODO template should be compiled only once
@@ -53,7 +55,12 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 				var props = this.model.toJSON();
 				props.acls = this.options.acls.toJSON();
 				this.$el.append(template(props));
+				this.initTabs();
 				basicWidgets.init();
+
+				if (_.contains(props.acls.perms, 'WRITE')) {
+					this.initEditableParts(props.id);
+				}
 			},
 
 			setBaseModelAttributes: function (json) {
@@ -69,6 +76,36 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 
 			i18nFormatHour: function (date) {
 				return dateutils.format(date, "HH:mm");
+			},
+
+			rename: function () {
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("renameNode");
+			},
+
+			initTabs: function () {
+				$("#tabs").tabs({
+					cache: true,
+					active: 0
+				});
+			},
+
+			initEditableParts: function (id) {
+				// reference
+				var refEditable = $("#dataset-reference").addClass('editable');
+				var url = "dataset/" + id;
+				var cfg = confman.getStdJeditable();
+				cfg = $.extend(cfg, {
+					maxLength: 50
+				});
+
+				refEditable.editable(url, cfg);
+
+				//description
+				var richEditSettings = confman.getJeditableCkeditor();
+				richEditSettings.url = url;
+
+				$('#dataset-description').richEditable(richEditSettings).addClass("editable");
 			}
 
 		});
