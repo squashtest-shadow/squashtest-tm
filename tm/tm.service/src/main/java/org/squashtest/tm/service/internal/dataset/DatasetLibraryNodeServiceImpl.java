@@ -61,14 +61,6 @@ public class DatasetLibraryNodeServiceImpl implements
 	private EntityManager em;
 
 	@Override
-	@PreAuthorize("hasPermission(#target, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') ")
-	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, long targetId) {
-		List<DatasetLibraryNode> nodes = datasetLibraryNodeDao.findAll(nodeIds);
-		DatasetLibraryNode target = datasetLibraryNodeDao.findOne(targetId);
-		return makeCopy(nodes, target);
-	}
-
-	@Override
 	public DatasetLibraryNode findDatasetLibraryNodeById(Long id) {
 		return datasetLibraryNodeDao.findOne(id);
 	}

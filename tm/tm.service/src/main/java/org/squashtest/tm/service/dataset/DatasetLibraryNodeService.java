@@ -30,8 +30,6 @@ import java.util.List;
 
 public interface DatasetLibraryNodeService {
 
-	List<TreeLibraryNode> copyNodes(List<Long> nodeIds, long targetId);
-
 	DatasetLibraryNode findDatasetLibraryNodeById(Long id);
 
 	DatasetLibrary findLibraryByTreeNodeId(Long treeNodeId);
