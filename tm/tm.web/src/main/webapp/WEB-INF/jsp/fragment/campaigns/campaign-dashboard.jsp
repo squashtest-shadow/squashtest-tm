@@ -20,11 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
-	
-	
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
@@ -33,6 +28,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <?xml version="1.0" encoding="utf-8" contentType="text/html; charset=utf-8" ?>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 

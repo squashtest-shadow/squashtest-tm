@@ -30,9 +30,7 @@
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8" %>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 

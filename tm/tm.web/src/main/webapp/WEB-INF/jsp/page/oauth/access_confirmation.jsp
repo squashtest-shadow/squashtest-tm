@@ -20,73 +20,75 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="authz"
-	uri="http://www.springframework.org/security/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+           uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page
-	import="org.springframework.security.core.AuthenticationException"%>
+  import="org.springframework.security.core.AuthenticationException" %>
 <%@ page
-	import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter"%>
+  import="org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException" %>
 <%@ page
-	import="org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException"%>
+  import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter" %>
 <!DOCTYPE html>
 <html lang="en">
 
-		<%
-			if (session.getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) != null
-					&& !(session
-							.getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) instanceof UnapprovedClientAuthenticationException)) {
-		%>
-		<div class="error">
-			<h2>Error</h2>
+<%
+  if (session.getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) != null
+    && !(session
+    .getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) instanceof UnapprovedClientAuthenticationException)) {
+%>
+<div class="error">
+  <h2>Error</h2>
 
-			<p>
-				Access could not be granted. (<%=((AuthenticationException) session
-						.getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY))
-						.getMessage()%>)
-			</p>
-		</div>
-		<%
-			}
-		%>
-		<c:remove scope="session" var="SPRING_SECURITY_LAST_EXCEPTION" />
+  <p>
+    Access could not be granted. (<%=((AuthenticationException) session
+    .getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY))
+    .getMessage()%>)
+  </p>
+</div>
+<%
+  }
+%>
+<c:remove scope="session" var="SPRING_SECURITY_LAST_EXCEPTION"/>
 
-		<authz:authorize access="true">
-			<h2><f:message key="oauth.confirm" /></h2>
+<authz:authorize access="true">
+  <h2><f:message key="oauth.confirm"/></h2>
 
-			<p>
-				<f:message key="oauth.authorize1" />
-				<c:out value="${client.clientId}" />
-				<f:message key="oauth.authorize2" />
-			</p>
+  <p>
+    <f:message key="oauth.authorize1"/>
+    <c:out value="${client.clientId}"/>
+    <f:message key="oauth.authorize2"/>
+  </p>
 
-			<form id="confirmationForm" name="confirmationForm"
-				action="<%=request.getContextPath()%>/oauth/authorize" method="post">
-				<input name="user_oauth_approval" value="true" type="hidden" />
-				<ul class="list-unstyled">
-					<c:forEach items="${scopes}" var="scope">
-						<c:set var="approved">
-							<c:if test="${scope.value}"> checked</c:if>
-						</c:set>
-						<c:set var="denied">
-							<c:if test="${!scope.value}"> checked</c:if>
-						</c:set>
-						<li>
-							<div class="form-group">
-								${scope.key}: <input type="radio" name="${scope.key}"
-									value="true" ${approved}>Approve</input> <input type="radio"
-									name="${scope.key}" value="false" ${denied}>Deny</input>
-							</div>
-						</li>
-					</c:forEach>
-				</ul>
-				<button class="btn btn-primary" type="submit"><f:message key="oauth.accept" /></button>
-			</form>
+  <form id="confirmationForm" name="confirmationForm"
+        action="<%=request.getContextPath()%>/oauth/authorize" method="post">
+    <input name="user_oauth_approval" value="true" type="hidden"/>
+    <ul class="list-unstyled">
+      <c:forEach items="${scopes}" var="scope">
+        <c:set var="approved">
+          <c:if test="${scope.value}"> checked</c:if>
+        </c:set>
+        <c:set var="denied">
+          <c:if test="${!scope.value}"> checked</c:if>
+        </c:set>
+        <li>
+          <div class="form-group">
+              ${scope.key}: <input type="radio" name="${scope.key}"
+                                   value="true" ${approved}>Approve</input> <input type="radio"
+                                                                                   name="${scope.key}"
+                                                                                   value="false" ${denied}>Deny</input>
+          </div>
+        </li>
+      </c:forEach>
+    </ul>
+    <button class="btn btn-primary" type="submit"><f:message key="oauth.accept"/></button>
+  </form>
 
-		</authz:authorize>
+</authz:authorize>
 </html>
 
 

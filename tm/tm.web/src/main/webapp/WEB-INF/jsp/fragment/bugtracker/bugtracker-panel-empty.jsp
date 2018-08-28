@@ -21,8 +21,7 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!--  
 	when no bugtracker is defined, no butrackerpanel is needed. That jsp is empty because that's exactly 
 	what we want to send back to the client.

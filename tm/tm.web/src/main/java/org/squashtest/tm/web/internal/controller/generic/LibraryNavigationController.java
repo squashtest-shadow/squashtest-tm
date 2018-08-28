@@ -295,7 +295,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			// is unsatisfying. Find something else.
 			Map<JRExporterParameter, Object> exportParameter = new HashMap<>();
 			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
-			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
+			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "UTF-8");
 			exportParameter.put(JRXlsAbstractExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
 			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);

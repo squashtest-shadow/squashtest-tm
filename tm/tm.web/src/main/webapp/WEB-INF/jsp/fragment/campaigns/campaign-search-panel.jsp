@@ -31,6 +31,7 @@
 	15/06/15 : i get this file from an old commit, dunno if these previous comments should be still here.
 	
 --%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>

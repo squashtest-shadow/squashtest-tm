@@ -21,8 +21,7 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8" %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
@@ -99,10 +98,7 @@
     <body class="execute-html-body">
 
 
-
-
     <script type="text/javascript">
-
 
 
       requirejs.config({
@@ -126,8 +122,8 @@
               hasNextStep: ${ (not empty hasNextStep) and hasNextStep },
               hasCufs: ${hasCustomFields},
               hasDenormCufs: ${hasDenormFields},
-                				hasBugtracker : ${executionStep.project.bugtrackerConnected},
-                        bugtrackerMode:"${bugtrackerMode}"
+              hasBugtracker: ${executionStep.project.bugtrackerConnected},
+              bugtrackerMode: "${bugtrackerMode}"
             },
             urls: {
               baseURL: "${currentStepsUrl}",
@@ -149,7 +145,7 @@
         }
       });
 
-      document.addEventListener("DOMContentLoaded", function(event) {
+      document.addEventListener("DOMContentLoaded", function (event) {
         require(["common"], function () {
           require(["execution-dialog-main"], function () {
           });
@@ -184,10 +180,11 @@
           </td>
           <td id="execution-previous-next" style="position: relative; top: -2px" class="centered">
             <button id="execute-previous-button" class="sq-btn std-btn ui-button control-button"
-                    ${stIndex == 0 and executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''} title="${previousTitle}">
+              ${stIndex == 0 and executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''}
+                    title="${previousTitle}">
               <span class="ui-icon ui-icon-triangle-1-w"></span>
             </button>
-  				<span id="execute-header-numbers-label">
+            <span id="execute-header-numbers-label">
   					${executionStep.executionStepOrder+1} / ${totalSteps}
   				</span>
             <button id="execute-next-button" class="sq-btn std-btn ui-button control-button"
@@ -205,7 +202,7 @@
                         title="${ nextTestCaseTitle }">
                   <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>
                 </button>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
               </form>
             </td>
           </c:if>
@@ -250,8 +247,8 @@
                     so this 'otherwise' block might never be called
                  --%>
                 <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}"/>
-                            <span style="white-space:nowrap; display:inline-block;"
-                                  class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}">
+                <span style="white-space:nowrap; display:inline-block;"
+                      class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}">
                               <f:message key="${spanExecstatus.i18nKey}"/>
                             </span>
               </c:otherwise>
@@ -282,7 +279,6 @@
       </c:if>
 
 
-
       <comp:toggle-panel id="execution-action-panel"
                          titleKey="${actionPanelTitle}"
                          open="true">
@@ -292,13 +288,13 @@
       </comp:toggle-panel>
 
       <c:if test="${!execution.isScripted()}">
-      <comp:toggle-panel id="execution-expected-result-panel"
-                         titleKey="execute.panel.expected-result.title"
-                         open="true">
+        <comp:toggle-panel id="execution-expected-result-panel"
+                           titleKey="execute.panel.expected-result.title"
+                           open="true">
 					<jsp:attribute name="body">
 						<div id="execution-expected-result">${hu:clean(executionStep.expectedResult)} </div>
 					</jsp:attribute>
-      </comp:toggle-panel>
+        </comp:toggle-panel>
       </c:if>
 
       <div id="execute-evaluation">

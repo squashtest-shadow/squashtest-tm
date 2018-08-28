@@ -20,6 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
 <reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ criticalityList }" 
   jsonCategories="${ categoryList }" verifyingTestCasesModel="${verifyingTestCasesModel}"/>

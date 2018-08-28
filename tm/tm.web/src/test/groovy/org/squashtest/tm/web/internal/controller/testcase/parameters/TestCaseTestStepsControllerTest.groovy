@@ -49,7 +49,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
-		request.getCharacterEncoding() >> "ISO-8859-1"
+		request.getCharacterEncoding() >> "UTF-8"
 		controller.internationalizationHelper = messageSource
 		controller.cufHelperService = cufHelperService
 	}

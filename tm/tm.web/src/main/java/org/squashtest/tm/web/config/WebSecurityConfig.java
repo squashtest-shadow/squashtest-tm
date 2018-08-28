@@ -74,7 +74,7 @@ public class WebSecurityConfig {
 		 * part of the fix for [Issue #6900]
 		 */
 		@Value("${squash.security.basic.token-charset}")
-		private String basicAuthCharset = "ISO-8859-1";
+		private String basicAuthCharset = "UTF-8";
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -100,7 +100,7 @@ public class WebSecurityConfig {
 		 * part of the fix for [Issue #6900]
 		 */
 		@Value("${squash.security.basic.token-charset}")
-		private String basicAuthCharset = "ISO-8859-1";
+		private String basicAuthCharset = "UTF-8";
 
 
 		@Override
